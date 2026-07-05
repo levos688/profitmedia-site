@@ -1,0 +1,181 @@
+---
+interface Props {
+  ariaLabel: string;
+  gap?: 'normal' | 'wide';
+}
+
+const { ariaLabel, gap = 'normal' } = Astro.props;
+const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+  class:list={['carousel-outer', gap === 'wide' && 'carousel-outer--wide']}
+  role="region"
+  aria-label={ariaLabel}
+>
+  <!-- RTL: first = right edge, arrow → scrolls forward -->
+  <button
+    type="button"
+    class="carousel-arrow carousel-arrow--edge-start"
+    aria-label="גלול קדימה"
+    data-carousel-start={uid}
+  >
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M9 6l6 6-6 6"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </button>
+
+  <div class="carousel-wrap">
+    <div class="carousel-track" data-carousel-track={uid} tabindex="0">
+      <slot />
+    </div>
+  </div>
+
+  <!-- RTL: last = left edge, arrow ← scrolls backward -->
+  <button
+    type="button"
+    class="carousel-arrow carousel-arrow--edge-end"
+    aria-label="גלול אחורה"
+    data-carousel-end={uid}
+  >
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M15 6l-6 6 6 6"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </button>
+</div>
+
+<script define:vars={{ uid }}>
+  (() => {
+    const track = document.querySelector(`[data-carousel-track="${uid}"]`);
+    const startBtn = document.querySelector(`[data-carousel-start="${uid}"]`);
+    const endBtn = document.querySelector(`[data-carousel-end="${uid}"]`);
+    if (!track || !startBtn || !endBtn) return;
+
+    const isRtl = () => getComputedStyle(track).direction === 'rtl';
+
+    const getStep = () => {
+      const item = track.querySelector('.carousel-item');
+      if (!item) return 320;
+      const gap = parseFloat(getComputedStyle(track).gap) || 24;
+      return item.getBoundingClientRect().width + gap;
+    };
+
+    const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
+
+    const updateArrows = () => {
+      const overflow = maxScroll() > 1;
+      startBtn.disabled = !overflow;
+      endBtn.disabled = !overflow;
+    };
+
+    const scrollByStep = (forward) => {
+      const step = getStep();
+      const delta = isRtl() ? (forward ? -step : step) : forward ? step : -step;
+      track.scrollBy({ left: delta, behavior: 'smooth' });
+    };
+
+    startBtn.addEventListener('click', () => scrollByStep(true));
+    endBtn.addEventListener('click', () => scrollByStep(false));
+    track.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+    updateArrows();
+  })();
+</script>
+
+<style>
+  .carousel-outer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .carousel-outer--wide {
+    gap: 1rem;
+  }
+
+  .carousel-wrap {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-block: 0.25rem;
+  }
+
+  .carousel-outer--wide .carousel-track {
+    gap: 1.5rem;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-track :global(.carousel-item) {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .carousel-arrow {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    border: 2px solid #c60691;
+    background: #fff;
+    color: #651561;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+  }
+
+  .carousel-arrow:hover:not(:disabled) {
+    background: #651561;
+    color: #fff;
+    border-color: #651561;
+  }
+
+  .carousel-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .carousel-arrow:focus-visible {
+    outline: 2px solid #fcc000;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 639px) {
+    .carousel-arrow {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    .carousel-outer {
+      gap: 0.5rem;
+    }
+  }
+</style>

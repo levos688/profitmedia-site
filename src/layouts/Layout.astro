@@ -1,0 +1,39 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'פרסום באינטרנט | פרסום שמביא רווחים | Profit Media',
+  description = 'פרסום באינטרנט | פרסום בגוגל | פרסום בפייסבוק | פרסום באינסטגרם | הקמה דפי נחיתה',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-white text-gray-900 antialiased">
+    <a href="#main-content" class="skip-link">דילוג לתוכן</a>
+    <slot />
+    <script
+      src="https://levos688.github.io/profitmedia/accessibility-widget.js"
+      defer
+    ></script>
+  </body>
+</html>

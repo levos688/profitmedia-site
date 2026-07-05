@@ -9,9 +9,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "preview:cf": "npm run build && wrangler pages dev dist --port 8788",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.0.6"
+    "@tailwindcss/vite": "^4.3.2",
+    "astro": "^7.0.6",
+    "tailwindcss": "^4.3.2"
+  },
+  "devDependencies": {
+    "wrangler": "^4.107.0"
   }
 }

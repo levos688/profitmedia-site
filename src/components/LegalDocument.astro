@@ -1,0 +1,67 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<article class="legal-doc space-y-6 leading-relaxed text-gray-800">
+  <slot />
+</article>
+
+<style>
+  .legal-doc :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .legal-doc :global(h3) {
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .legal-doc :global(p) {
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-doc :global(ul) {
+    margin-bottom: 1rem;
+    padding-right: 1.5rem;
+    list-style: disc;
+  }
+
+  .legal-doc :global(li) {
+    margin-bottom: 0.35rem;
+  }
+
+  .legal-doc :global(table) {
+    width: 100%;
+    margin: 1rem 0;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .legal-doc :global(th),
+  .legal-doc :global(td) {
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    text-align: right;
+  }
+
+  .legal-doc :global(th) {
+    background: #f3f4f6;
+    font-weight: 600;
+  }
+
+  .legal-doc :global(a) {
+    color: #651561;
+    text-decoration: underline;
+  }
+</style>

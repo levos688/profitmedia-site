@@ -1,0 +1,245 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import HorizontalCarousel from './HorizontalCarousel.astro';
+import CheckIcon from './icons/CheckIcon.astro';
+---
+
+<section id="contact" class="contact-section section-padding relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="contact-glow contact-glow--top"></div>
+    <div class="contact-glow contact-glow--bottom"></div>
+    <img
+      src="/images/hero/image_2_traced.svg"
+      alt=""
+      class="absolute -start-16 top-1/4 w-80 opacity-[0.07] md:w-[28rem]"
+    />
+    <img
+      src="/images/hero/image_2_traced.svg"
+      alt=""
+      class="absolute -end-20 bottom-0 w-72 opacity-[0.06] md:w-96"
+    />
+  </div>
+
+  <div class="relative mx-auto max-w-6xl px-4 md:px-6">
+    <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+      <div class="order-2 flex flex-col justify-center text-right text-white lg:order-none lg:min-h-[28rem]">
+        <ul class="space-y-5 text-base text-white/90 md:text-lg lg:space-y-6 lg:text-xl" aria-label="יתרונות">
+          <li class="flex items-center justify-start gap-3.5">
+            <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
+            <span>בדיקת הפרסום הנוכחי שלך</span>
+          </li>
+          <li class="flex items-center justify-start gap-3.5">
+            <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
+            <span>המלצות מעשיות לשיפור</span>
+          </li>
+          <li class="flex items-center justify-start gap-3.5">
+            <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
+            <span>מענה תוך 24 שעות</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="order-1 w-full max-w-lg justify-self-start lg:order-none lg:max-w-none">
+        <div class="mb-8 text-right text-white md:mb-10">
+          <p class="mb-3 text-sm font-semibold tracking-wide text-brand-yellow uppercase md:text-base">
+            ללא כל התחייבות
+          </p>
+          <h2 class="text-3xl leading-tight font-black md:text-[42px] lg:text-[46px]">
+            השאר פרטים<br />וקבל אבחון חינם
+          </h2>
+        </div>
+
+        <form class="contact-form w-full" method="POST" action="#" id="contact-form" novalidate>
+          <div class="space-y-3.5">
+            <div class="field-group">
+              <label for="name" class="sr-only">שם מלא</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                autocomplete="name"
+                placeholder="שם:"
+                class="contact-input"
+                aria-describedby="name-error"
+              />
+              <p id="name-error" class="field-error hidden" role="alert"></p>
+            </div>
+            <div class="field-group">
+              <label for="phone" class="sr-only">טלפון</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                autocomplete="tel"
+                placeholder="טלפון:"
+                pattern="[0-9\-+() ]{9,15}"
+                class="contact-input"
+                aria-describedby="phone-error"
+              />
+              <p id="phone-error" class="field-error hidden" role="alert"></p>
+            </div>
+            <div class="field-group">
+              <label for="email" class="sr-only">אימייל</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                placeholder="מייל:"
+                class="contact-input"
+                aria-describedby="email-error"
+              />
+              <p id="email-error" class="field-error hidden" role="alert"></p>
+            </div>
+          </div>
+
+          <label class="contact-privacy mt-5 flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              id="privacy"
+              name="privacy"
+              required
+              class="contact-checkbox mt-0.5 shrink-0"
+              aria-describedby="privacy-error"
+            />
+            <span class="text-right text-sm leading-relaxed text-white/75">
+              קראתי ואני מאשר/ת את
+              <a href="/prat" class="text-brand-yellow underline underline-offset-2 hover:text-white"
+                >מדיניות הפרטיות</a
+              >, ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)
+            </span>
+          </label>
+          <p id="privacy-error" class="field-error mt-2 hidden text-right" role="alert"></p>
+
+          <button
+            type="submit"
+            id="contact-submit"
+            class="btn-yellow contact-submit mt-6 w-full rounded-full"
+          >
+            <span id="contact-submit-label">כן, אני רוצה אבחון חינם</span>
+          </button>
+
+          <p
+            id="form-status"
+            class="form-success mt-4 hidden text-center text-sm font-semibold"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status');
+  const submitBtn = document.getElementById('contact-submit') as HTMLButtonElement | null;
+  const submitLabel = document.getElementById('contact-submit-label');
+
+  const fields = {
+    name: {
+      input: document.getElementById('name') as HTMLInputElement | null,
+      error: document.getElementById('name-error'),
+      message: 'נא להזין שם מלא',
+    },
+    phone: {
+      input: document.getElementById('phone') as HTMLInputElement | null,
+      error: document.getElementById('phone-error'),
+      message: 'נא להזין מספר טלפון תקין',
+    },
+    privacy: {
+      input: document.getElementById('privacy') as HTMLInputElement | null,
+      error: document.getElementById('privacy-error'),
+      message: 'יש לאשר את מדיניות הפרטיות',
+    },
+  };
+
+  const setFieldError = (key: keyof typeof fields, show: boolean) => {
+    const field = fields[key];
+    if (!field.input || !field.error) return;
+    field.input.classList.toggle('contact-input--error', show);
+    field.input.setAttribute('aria-invalid', show ? 'true' : 'false');
+    field.error.textContent = show ? field.message : '';
+    field.error.classList.toggle('hidden', !show);
+  };
+
+  const validate = () => {
+    let valid = true;
+    if (!fields.name.input?.value.trim()) {
+      setFieldError('name', true);
+      valid = false;
+    } else setFieldError('name', false);
+
+    const phone = fields.phone.input?.value.trim() ?? '';
+    if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) {
+      setFieldError('phone', true);
+      valid = false;
+    } else setFieldError('phone', false);
+
+    if (!fields.privacy.input?.checked) {
+      setFieldError('privacy', true);
+      valid = false;
+    } else setFieldError('privacy', false);
+
+    return valid;
+  };
+
+  Object.values(fields).forEach((field) => {
+    field.input?.addEventListener('blur', validate);
+    field.input?.addEventListener('input', () => {
+      if (field.input?.getAttribute('aria-invalid') === 'true') validate();
+    });
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status?.classList.add('hidden');
+    if (!validate()) {
+      const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+      firstInvalid?.focus();
+      return;
+    }
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitLabel) submitLabel.textContent = 'שולח…';
+
+    const payload = {
+      name: fields.name.input?.value.trim(),
+      phone: fields.phone.input?.value.trim(),
+      email: (document.getElementById('email') as HTMLInputElement | null)?.value.trim() || '',
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = (await res.json()) as { ok?: boolean };
+
+      if (!res.ok || !data.ok) {
+        throw new Error('submit failed');
+      }
+
+      if (status) {
+        status.textContent = 'תודה! נחזור אליך בהקדם.';
+        status.classList.remove('hidden');
+      }
+      form?.reset();
+      Object.keys(fields).forEach((k) => setFieldError(k as keyof typeof fields, false));
+    } catch {
+      if (status) {
+        status.textContent = 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il';
+        status.classList.remove('hidden');
+        status.setAttribute('role', 'alert');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitLabel) submitLabel.textContent = 'כן, אני רוצה אבחון חינם';
+    }
+  });
+</script>

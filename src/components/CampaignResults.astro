@@ -1,0 +1,48 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import { campaignResults } from '../data/site';
+---
+
+<section id="testimonials" class="section-padding bg-brand-gray">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <SectionTitle
+      title="עדויות"
+      subtitle="תוצאות אמיתיות מקמפיינים שנהלנו"
+      class="mb-10 md:mb-14"
+    />
+
+    <div class="space-y-14 md:space-y-20">
+      {
+        campaignResults.map((item) => (
+          <article class="testimonial-card grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <div class="text-right">
+              <p class="text-xl font-bold text-gray-900 md:text-2xl">{item.label}</p>
+              <div class="stat-badge mt-4" aria-label={`${item.stat} ${item.statLabel}`}>
+                <span class="stat-badge__value">{item.stat}</span>
+                <span class="stat-badge__label">{item.statLabel}</span>
+              </div>
+              <blockquote class="mt-5 border-none p-0">
+                <p class="text-lg leading-relaxed font-bold text-gray-900 md:text-[25px]">
+                  "{item.quote}"
+                </p>
+              </blockquote>
+              <p class="mt-4 text-base text-gray-700 md:text-xl">
+                <strong>{item.author}</strong>
+              </p>
+            </div>
+            <div class="overflow-hidden rounded-lg shadow-md">
+              <img
+                src={item.image}
+                alt={item.imageAlt}
+                class="h-auto w-full"
+                loading="lazy"
+                width="600"
+                height="400"
+              />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

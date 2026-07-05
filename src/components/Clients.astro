@@ -1,0 +1,59 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import HorizontalCarousel from './HorizontalCarousel.astro';
+import { clientLogos } from '../data/site';
+---
+
+<section id="clients" class="section-padding bg-white">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <SectionTitle title="לקוחות" class="mb-10 md:mb-16" />
+
+    <HorizontalCarousel ariaLabel="לוגואים של לקוחות">
+      {
+        clientLogos.map((logo) => (
+          <div class="carousel-item client-logo">
+            <img src={logo.src} alt={logo.alt} loading="lazy" />
+          </div>
+        ))
+      }
+    </HorizontalCarousel>
+
+    <p class="mt-6 text-center text-sm text-gray-500">
+      גודל מומלץ ללוגו חדש: 240×100 px, PNG או SVG, רקע שקוף
+    </p>
+  </div>
+</section>
+
+<style>
+  .client-logo {
+    display: flex;
+    width: 200px;
+    height: 120px;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.25rem;
+    background: #fafafa;
+    border-radius: 0.75rem;
+    border: 1px solid #eee;
+  }
+
+  @media (min-width: 768px) {
+    .client-logo {
+      width: 240px;
+      height: 140px;
+    }
+  }
+
+  .client-logo img {
+    max-height: 90px;
+    max-width: 200px;
+    object-fit: contain;
+  }
+
+  @media (min-width: 768px) {
+    .client-logo img {
+      max-height: 110px;
+      max-width: 220px;
+    }
+  }
+</style>

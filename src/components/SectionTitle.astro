@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  class?: string;
+  id?: string;
+}
+
+const { title, subtitle, class: className = '', id } = Astro.props;
+---
+
+<div class={`text-center ${className}`}>
+  <h2 class="section-title" id={id}>{title}</h2>
+  {subtitle && <p class="section-subtitle">{subtitle}</p>}
+</div>
