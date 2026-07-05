@@ -225,12 +225,8 @@ import CheckIcon from './icons/CheckIcon.astro';
         throw new Error('submit failed');
       }
 
-      if (status) {
-        status.textContent = 'תודה! נחזור אליך בהקדם.';
-        status.classList.remove('hidden');
-      }
-      form?.reset();
-      Object.keys(fields).forEach((k) => setFieldError(k as keyof typeof fields, false));
+      window.location.href = '/thank-you';
+      return;
     } catch {
       if (status) {
         status.textContent = 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il';

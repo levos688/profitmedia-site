@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="404 — דף לא נמצא | Profit Media"
+  description="הדף שחיפשת לא נמצא."
+>
+  <main
+    id="main-content"
+    class="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-12 text-center"
+  >
+    <a href="/" class="mb-8 block" aria-label="Profit Media — דף הבית">
+      <img src="/logo.svg" alt="Profit Media" class="mx-auto h-12 w-auto md:h-16" width="200" height="64" />
+    </a>
+
+    <p class="text-7xl font-black tracking-tight text-brand-purple md:text-8xl" aria-hidden="true">404</p>
+
+    <div class="mt-2 space-y-1 text-lg text-gray-700 md:text-xl">
+      <p lang="en">Page not Found</p>
+      <p>דף לא נמצא</p>
+    </div>
+
+    <img
+      src="/images/404.svg"
+      alt=""
+      class="mt-8 w-full max-w-2xl px-4"
+      width="1811"
+      height="521"
+      loading="eager"
+    />
+
+    <a
+      href="/"
+      class="btn-yellow mt-10 inline-flex rounded-full px-8 py-3 text-base font-black"
+    >
+      חזרה לדף הבית
+    </a>
+  </main>
+</Layout>
