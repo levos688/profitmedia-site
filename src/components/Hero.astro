@@ -6,6 +6,19 @@ import HeroIllustration from './HeroIllustration.astro';
   <div class="hero-gradient__pattern" aria-hidden="true"></div>
   <div class="hero-gradient__mesh" aria-hidden="true"></div>
 
+  <img
+    src="/images/hero/image_2_traced.svg"
+    alt=""
+    aria-hidden="true"
+    class="hero-decoration pointer-events-none absolute -top-24 start-0 w-72 opacity-90 md:w-96"
+  />
+  <img
+    src="/images/hero/image_2_traced.svg"
+    alt=""
+    aria-hidden="true"
+    class="hero-decoration pointer-events-none absolute -top-20 end-0 hidden w-72 opacity-90 lg:block lg:w-96"
+  />
+
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
     <div class="grid items-center gap-10 py-6 md:gap-14 md:py-10 lg:grid-cols-2">
       <div class="hero-content text-right text-white max-md:text-center">
@@ -38,13 +51,22 @@ import HeroIllustration from './HeroIllustration.astro';
 <style>
   .hero-gradient__pattern {
     position: absolute;
-    inset: 0;
-    opacity: 0.05;
+    inset: -25%;
+    opacity: 0.055;
     background-image: url('/images/hero/image_2_traced.svg');
     background-size: 280px auto;
     background-repeat: repeat;
-    background-position: center;
     pointer-events: none;
+  }
+
+  .hero-decoration {
+    pointer-events: none;
+  }
+
+  @media (max-width: 767px) {
+    .hero-decoration {
+      display: none;
+    }
   }
 
   .hero-cta-group {
