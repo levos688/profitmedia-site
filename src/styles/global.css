@@ -353,15 +353,6 @@ summary {
   }
 }
 
-.contact-input--ltr {
-  direction: ltr;
-  text-align: left;
-}
-
-.contact-input--ltr::placeholder {
-  text-align: left;
-}
-
 .contact-input::placeholder {
   color: #6b7280;
   font-weight: 700;
