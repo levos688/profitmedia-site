@@ -53,7 +53,7 @@ const cases = [
           <p class="donhin-hero__subtitle">
             За последние 15 лет мои клиенты получили более 20 миллионов шекелей
           </p>
-          <a href="#form-quiz" class="donhin-btn donhin-btn--dark">Запишитесь на бесплатную консультацию</a>
+          <a href="#form-quiz" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
         </div>
         <div class="donhin-hero__photo-wrap">
           <img
@@ -66,7 +66,18 @@ const cases = [
             decoding="async"
             fetchpriority="high"
           />
-          <p class="donhin-hero__name">Адвокат Саймон Донхин</p>
+          <p class="donhin-hero__name">
+            <img
+              src="/images/donhin/icon-scales.svg"
+              alt=""
+              width="47"
+              height="33"
+              class="donhin-hero__scales"
+              loading="lazy"
+              decoding="async"
+            />
+            <span>Адвокат Саймон Донхин</span>
+          </p>
         </div>
       </div>
     </section>
@@ -79,7 +90,7 @@ const cases = [
             benefits.map((item) => (
               <article class="donhin-benefit">
                 <div class="donhin-benefit__icon-wrap">
-                  <img src={item.icon} alt="" width="120" height="120" class="donhin-benefit__icon" loading="lazy" decoding="async" />
+                  <img src={item.icon} alt="" width="150" height="150" class="donhin-benefit__icon" loading="lazy" decoding="async" />
                 </div>
                 <h3 class="donhin-benefit__title">{item.title}</h3>
                 <p class="donhin-benefit__text">{item.text}</p>
@@ -111,7 +122,7 @@ const cases = [
                 </label>
               </div>
             </fieldset>
-            <button type="button" class="donhin-btn donhin-btn--outline" data-quiz-next disabled>
+            <button type="button" class="donhin-btn donhin-btn--quiz-next" data-quiz-next disabled>
               Следующий
             </button>
           </div>
@@ -220,7 +231,7 @@ const cases = [
             </span>
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-          <button type="submit" class="donhin-btn donhin-btn--dark donhin-btn--wide">Отправить</button>
+          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide">Отправить</button>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -440,9 +451,19 @@ const cases = [
   }
 
   .donhin-hero__name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
     margin: 1rem 0 0;
     font-size: 1.125rem;
     font-weight: 700;
+  }
+
+  .donhin-hero__scales {
+    width: 2.75rem;
+    height: auto;
+    flex-shrink: 0;
   }
 
   .donhin-btn {
@@ -473,15 +494,27 @@ const cases = [
     outline-offset: 3px;
   }
 
-  .donhin-btn--dark {
-    background: #111;
+  .donhin-btn--hero {
     color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.72);
     margin-top: 1.75rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
   }
 
-  .donhin-btn--dark:hover {
-    background: #000;
+  .donhin-btn--hero:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+  }
+
+  .donhin-btn--brand {
+    background: #15477f;
+    color: #fff;
+    margin-top: 1.75rem;
+    box-shadow: 0 8px 24px rgba(21, 71, 127, 0.22);
+  }
+
+  .donhin-btn--brand:hover {
+    background: #123f72;
   }
 
   .donhin-btn--primary {
@@ -496,23 +529,26 @@ const cases = [
     margin-top: 1.25rem;
   }
 
-  .donhin-btn--outline {
-    background: transparent;
-    color: #5257de;
-    border: 1px solid #c8cbff;
+  .donhin-btn--quiz-next {
+    background: linear-gradient(0.25turn, #8689f2 0%, #5257de 100%);
+    color: #fff;
     border-radius: 0.375rem;
     width: 100%;
     margin-top: 1.5rem;
   }
 
-  .donhin-btn--outline:disabled {
+  .donhin-btn--quiz-next:disabled {
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
   }
 
+  .donhin-btn--quiz-next:not(:disabled):hover {
+    background: linear-gradient(0.25turn, #7579ed 0%, #4549c9 100%);
+  }
+
   .donhin-benefits {
-    background: #f0f0f0;
+    background: #eeeeee;
     padding: 3.75rem 0 4rem;
   }
 
@@ -549,11 +585,7 @@ const cases = [
 
   .donhin-benefit {
     text-align: center;
-    padding: 1.5rem 1rem 1.75rem;
-    background: #fff;
-    border-radius: 0.5rem;
-    border: 1px solid rgba(21, 71, 127, 0.08);
-    box-shadow: 0 4px 18px rgba(21, 71, 127, 0.06);
+    padding: 0 0.5rem 1rem;
     height: 100%;
   }
 
@@ -561,41 +593,41 @@ const cases = [
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 7.5rem;
-    height: 7.5rem;
+    width: 9.375rem;
+    height: 9.375rem;
     margin-inline: auto;
   }
 
   .donhin-benefit__icon {
-    width: 7.5rem;
-    height: 7.5rem;
+    width: 9.375rem;
+    height: 9.375rem;
     object-fit: contain;
   }
 
   .donhin-benefit__title {
-    margin: 1.25rem 0 0.625rem;
+    margin: 1rem 0 0.625rem;
     color: #15477f;
-    font-size: 1.1875rem;
+    font-size: clamp(1.125rem, 2.2vw, 1.75rem);
     font-weight: 700;
     line-height: 1.3;
   }
 
   .donhin-benefit__text {
     margin: 0;
-    color: #3d4f63;
-    font-size: 1rem;
-    line-height: 1.55;
-    max-width: 16rem;
+    color: #15477f;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.5;
+    max-width: 18rem;
     margin-inline: auto;
   }
 
   .donhin-form-section {
-    background: #111;
+    background: #fff;
     padding: 3.25rem 0 3.75rem;
   }
 
   .donhin-form-section__title {
-    color: #fff;
+    color: #15477f;
     text-align: center;
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
@@ -609,10 +641,11 @@ const cases = [
   }
 
   .donhin-form {
-    background: #f5f5f5;
+    background: #e6e6e6;
     border-radius: 0.5rem;
     padding: 1.5rem;
-    border: 1px solid rgba(21, 71, 127, 0.08);
+    border: none;
+    box-shadow: 0 30px 40px -10px rgba(21, 71, 127, 0.1);
   }
 
   .donhin-form--bottom {
