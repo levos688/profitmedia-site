@@ -26,14 +26,12 @@ const benefits = [
 
 const cases = [
   {
-    amount: '280 тыс ₪',
-    title: 'Ребёнок проглотил магниты',
-    text: 'Два с половиной года назад мальчик попал в больницу после того, как проглотил магнитные бусы. Несмотря на то, что бусы были видны на рентгене, персонал больницы решил не извлекать магниты. Потребовались операции и дополнительные вмешательства. В рамках мирового соглашения больница выплатила семье 280 000 ₪.',
+    title: 'Компенсация 280 тыс шекелей',
+    text: 'Ребенок проглотил магниты: история лечения и компенсации. Два с половиной года назад мальчик попал в больницу после того, как проглотил магнитные бусы. Несмотря на то, что бусы были видны на рентгене, персонал больницы решил не пытаться извлечь магниты. Магниты не вышли, и в итоге хирургам пришлось провести операцию. Впоследствии ребенку потребовалось еще два вмешательства. В рамках мирового соглашения больница выплатила семье мальчика 280 000 шекелей.',
   },
   {
-    amount: '233 тыс ₪',
-    title: 'Ошибки при стоматологическом протезировании',
-    text: 'Мужчина 50 лет обратился к врачу за протезированием. Съёмные протезы не подошли, затем были установлены 12 имплантатов — постоянный протез также не подошёл. Суд вынес решение в пользу пациента и присудил компенсацию 233 000 ₪.',
+    title: 'Компенсация 233 тыс шекелей',
+    text: 'Мужчина 50 лет обратился к врачу за стоматологическим протезированием. Изготовленные врачом съемные протезы не подошли пациенту. Врач предложил установить имплантаты и на них сделать постоянный протез. Врач имплантировал пациенту 12 имплантатов, но постоянный протез также не подошел. После многочисленных попыток исправить ситуацию, пациент подал в суд на врача. Суд вынес решение в пользу пациента и присудил ему компенсацию в размере 233 000 шекелей.',
   },
 ];
 ---
@@ -56,16 +54,18 @@ const cases = [
           <a href="#form-quiz" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
         </div>
         <div class="donhin-hero__photo-wrap">
-          <img
-            src="/images/donhin/hero.webp"
-            alt="Адвокат Саймон Донхин"
-            class="donhin-hero__photo"
-            width="397"
-            height="530"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-          />
+          <div class="donhin-hero__photo-plate">
+            <img
+              src="/images/donhin/hero-cutout.webp"
+              alt="Адвокат Саймон Донхин"
+              class="donhin-hero__photo"
+              width="397"
+              height="397"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </div>
           <p class="donhin-hero__name">
             <img
               src="/images/donhin/icon-scales.svg"
@@ -154,7 +154,7 @@ const cases = [
               </span>
             </label>
             <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-            <button type="submit" class="donhin-btn donhin-btn--quiz-action">Отправить</button>
+            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
           </div>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
@@ -163,12 +163,11 @@ const cases = [
 
     <section class="donhin-cases">
       <div class="donhin-container">
-        <h2 class="donhin-section-title donhin-section-title--light">Примеры кейсов</h2>
+        <h2 class="donhin-section-title">Примеры кейсов</h2>
         <div class="donhin-cases__grid">
           {
             cases.map((item) => (
               <article class="donhin-case">
-                <div class="donhin-case__badge">Компенсация {item.amount}</div>
                 <h3 class="donhin-case__title">{item.title}</h3>
                 <p class="donhin-case__text">{item.text}</p>
               </article>
@@ -181,11 +180,11 @@ const cases = [
     <section class="donhin-about">
       <div class="donhin-container donhin-about__grid">
         <img
-          src="/images/donhin/hero.webp"
+          src="/images/donhin/about-photo.svg"
           alt="Адвокат Саймон Донхин"
           class="donhin-about__photo"
-          width="280"
-          height="373"
+          width="240"
+          height="349"
           loading="lazy"
           decoding="async"
         />
@@ -398,7 +397,7 @@ const cases = [
   }
 
   .donhin-hero {
-    background: linear-gradient(145deg, #0f3d6e 0%, #15477f 52%, #1a5494 100%);
+    background: #0c457f;
     color: #fff;
     padding: 2.75rem 0 3.25rem;
   }
@@ -441,10 +440,16 @@ const cases = [
     text-align: center;
   }
 
+  .donhin-hero__photo-plate {
+    display: inline-block;
+    background: #0c457f;
+    max-width: 24.8125rem;
+    margin-inline: auto;
+  }
+
   .donhin-hero__photo {
-    width: min(100%, 22rem);
+    width: min(100%, 24.8125rem);
     height: auto;
-    border-radius: 0.375rem;
     display: block;
     margin-inline: auto;
   }
@@ -495,32 +500,37 @@ const cases = [
 
   .donhin-btn--hero {
     color: #fff;
-    background: #000;
+    background: #111111;
     border: none;
     margin-top: 1.75rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    border-radius: 3.1875rem;
   }
 
   .donhin-btn--hero:hover {
-    background: #111;
+    background: #000;
   }
 
   .donhin-btn--brand {
-    background: #15477f;
+    background: #144379;
     color: #fff;
-    margin-top: 1.75rem;
-    box-shadow: 0 8px 24px rgba(21, 71, 127, 0.22);
+    margin-top: 1.25rem;
+    border-radius: 1.875rem;
   }
 
   .donhin-btn--brand:hover {
-    background: #123f72;
+    background: #15477f;
   }
 
   .donhin-btn--primary {
-    background: #5257de;
+    background: linear-gradient(0.25turn, #8689f2 0%, #5257de 100%);
     color: #fff;
     width: 100%;
     margin-top: 1.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .donhin-btn--primary:hover {
+    background: linear-gradient(0.25turn, #7579ed 0%, #4549c9 100%);
   }
 
   .donhin-btn--wide {
@@ -529,9 +539,9 @@ const cases = [
   }
 
   .donhin-btn--quiz-action {
-    background: #fff;
-    color: #143c6f;
-    border-radius: 0.375rem;
+    background: linear-gradient(0.25turn, #8689f2 0%, #5257de 100%);
+    color: #fff;
+    border-radius: 0.25rem;
     width: 100%;
     margin-top: 1.5rem;
   }
@@ -543,16 +553,16 @@ const cases = [
   }
 
   .donhin-btn--quiz-action:not(:disabled):hover {
-    background: #f5f7fa;
+    background: linear-gradient(0.25turn, #7579ed 0%, #4549c9 100%);
   }
 
   .donhin-form-section {
-    background: #143c6f;
+    background: #fff;
     padding: 3.25rem 0 3.75rem;
   }
 
   .donhin-form-section__title {
-    color: #fff;
+    color: #15477f;
     text-align: center;
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
@@ -641,25 +651,31 @@ const cases = [
 
   .donhin-form {
     background: #e6e6e6;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     padding: 1.5rem;
-    border: none;
+    border: 1px solid #f0f0f0;
     box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.1);
   }
 
   .donhin-form--bottom {
-    background: #e6e6e6;
+    background: #e2e2e2;
+    border: 12px solid #144379;
+    border-radius: 0;
     box-shadow: none;
+    padding: 2rem 1.5rem;
   }
 
   .donhin-form--bottom .donhin-field input {
-    color: #143c6f;
-    font-weight: 600;
+    color: #000;
+    font-weight: 500;
+    border: 1px solid #144379;
+    border-radius: 0.625rem;
+    background: #fff;
   }
 
   .donhin-form--bottom .donhin-field input::placeholder {
-    color: #143c6f;
-    opacity: 0.72;
+    color: #000;
+    opacity: 0.5;
   }
 
   @media (min-width: 640px) {
@@ -697,9 +713,9 @@ const cases = [
     align-items: center;
     gap: 0.75rem;
     padding: 0.9375rem 1rem;
-    background: #fff;
-    border: 1px solid #e2e2e2;
-    border-radius: 0.375rem;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 0.25rem;
     cursor: pointer;
     font-weight: 600;
     color: #15477f;
@@ -738,12 +754,12 @@ const cases = [
     width: 100%;
     min-height: 48px;
     padding: 0.875rem 1rem;
-    border: 1px solid #e2e2e2;
-    border-radius: 0.375rem;
+    border: none;
+    border-radius: 0.25rem;
     font-size: 1rem;
     font-weight: 600;
     color: #15477f;
-    background: #fff;
+    background: #f5f5f5;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
@@ -801,13 +817,13 @@ const cases = [
   }
 
   .donhin-cases {
-    background: linear-gradient(160deg, #123f72 0%, #15477f 100%);
+    background: #fff;
     padding: 3.75rem 0 4rem;
   }
 
   .donhin-cases__grid {
     display: grid;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   @media (min-width: 900px) {
@@ -817,27 +833,13 @@ const cases = [
   }
 
   .donhin-case {
-    background: #fff;
-    border-radius: 0.625rem;
-    padding: 1.5rem 1.5rem 1.75rem;
-    border: 1px solid rgba(21, 71, 127, 0.1);
-    box-shadow: 0 10px 28px rgba(8, 28, 52, 0.12);
-  }
-
-  .donhin-case__badge {
-    display: inline-block;
-    padding: 0.4375rem 0.875rem;
-    background: #3d9a49;
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.9375rem;
-    border-radius: 0.25rem;
-    margin-bottom: 1rem;
+    text-align: center;
+    padding: 0 1rem;
   }
 
   .donhin-case__title {
-    margin: 0 0 0.875rem;
-    font-size: 1.375rem;
+    margin: 0 0 1rem;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
     font-weight: 700;
     color: #15477f;
     line-height: 1.35;
@@ -845,9 +847,11 @@ const cases = [
 
   .donhin-case__text {
     margin: 0;
-    font-size: 1.0625rem;
-    line-height: 1.65;
-    color: #3d4f63;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.55;
+    color: #15477f;
+    font-weight: 500;
+    text-align: left;
   }
 
   .donhin-about {
@@ -869,12 +873,10 @@ const cases = [
   }
 
   .donhin-about__photo {
-    width: min(100%, 17.5rem);
+    width: min(100%, 15rem);
     height: auto;
-    border-radius: 0.375rem;
     display: block;
     margin-inline: auto;
-    box-shadow: 0 12px 32px rgba(21, 71, 127, 0.14);
   }
 
   .donhin-about__title {
@@ -894,13 +896,13 @@ const cases = [
   }
 
   .donhin-bottom-form {
-    background: #eeeeee;
+    background: #fff;
     padding: 3.5rem 0 4rem;
   }
 
   .donhin-bottom-form__title {
     margin: 0 0 1.5rem;
-    color: #143c6f;
+    color: #15477f;
     text-align: center;
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
