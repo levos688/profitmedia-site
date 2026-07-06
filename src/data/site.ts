@@ -48,7 +48,7 @@ export const agencyStats = [
 export const campaignResults = [  {
     label: 'SKI Vip Travel :עדות לקוח',
     industry: 'תיירות ונסיעות עסקיות',
-    stat: '-46%',
+    statValue: -46,
     statLabel: 'ירידה בעלות לליד',
     story: 'קמפיין לידים בפייסבוק ואינסטגרם — אופטימיזציה שוטפת וטירגוט מדויק.',
     quote:
@@ -60,7 +60,7 @@ export const campaignResults = [  {
   {
     label: 'משרד עורכי דין בירושלים',
     industry: 'משפטים ושירותים מקצועיים',
-    stat: '-41%',
+    statValue: -41,
     statLabel: 'ירידה בעלות לליד',
     story: 'שאלונים חכמים, A/B טסטים ומעל 50 גרסאות מודעות — עד לתוצאה.',
     quote:

@@ -14,7 +14,7 @@ import { services } from '../data/site';
     <div class="services-grid grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
       {
         services.map((service, index) => (
-          <article class="service-card h-full" style={`--icon-delay: ${index * 0.35}s`}>
+          <article class="service-card h-full" style={`--card-delay: ${index * 0.08}s`}>
             <div class="service-card__icon-wrap">
               <img
                 src={service.icon}
@@ -41,8 +41,9 @@ import { services } from '../data/site';
     transition:
       opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
       transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.25s ease-out,
-      border-color 0.25s ease-out;
+      box-shadow 0.3s ease-out,
+      border-color 0.3s ease-out;
+    transition-delay: var(--card-delay, 0s);
   }
 
   #services.is-visible .services-grid .service-card {
@@ -50,60 +51,64 @@ import { services } from '../data/site';
     transform: translateY(0);
   }
 
-  #services.is-visible .services-grid .service-card:nth-child(1) {
-    transition-delay: 0.08s;
-  }
-  #services.is-visible .services-grid .service-card:nth-child(2) {
-    transition-delay: 0.16s;
-  }
-  #services.is-visible .services-grid .service-card:nth-child(3) {
-    transition-delay: 0.24s;
-  }
-  #services.is-visible .services-grid .service-card:nth-child(4) {
-    transition-delay: 0.32s;
-  }
-
   .service-card__icon-wrap {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 10.5rem;
+    height: 10.5rem;
     margin-bottom: 1.25rem;
-    animation: service-icon-float 4.5s ease-in-out infinite;
-    animation-delay: var(--icon-delay, 0s);
   }
 
-  .service-card:hover .service-card__icon-wrap {
-    animation: service-icon-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  .service-card__icon-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(101, 21, 97, 0.1) 0%, transparent 72%);
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+      opacity 0.45s ease,
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .service-card:hover .service-card__icon-wrap::before {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .service-card__icon {
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 0;
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.45s ease;
   }
 
   .service-card:hover .service-card__icon {
-    transform: scale(1.08) rotate(-2deg);
-    filter: drop-shadow(0 12px 24px rgba(101, 21, 97, 0.18));
+    transform: translateY(-5px);
+    filter: drop-shadow(0 10px 20px rgba(101, 21, 97, 0.12));
   }
 
-  @keyframes service-icon-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+  #services.is-visible .service-card__icon {
+    animation: service-icon-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--card-delay, 0s) + 0.15s);
   }
 
-  @keyframes service-icon-pop {
-    0% {
-      transform: scale(1) translateY(0);
+  @keyframes service-icon-reveal {
+    from {
+      opacity: 0.4;
+      transform: scale(0.94);
     }
-    40% {
-      transform: scale(1.12) translateY(-6px);
-    }
-    100% {
-      transform: scale(1) translateY(0);
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 
@@ -114,7 +119,7 @@ import { services } from '../data/site';
       transition: none;
     }
 
-    .service-card__icon-wrap {
+    #services.is-visible .service-card__icon {
       animation: none;
     }
   }

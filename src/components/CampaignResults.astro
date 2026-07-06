@@ -22,9 +22,14 @@ import { campaignResults } from '../data/site';
               <div class="case-card__content text-right">
                 <p class="case-card__industry">{item.industry}</p>
                 <p class="case-card__label">{item.label}</p>
-                <div class="case-card__metric" aria-label={`${item.stat} ${item.statLabel}`}>
-                  <span class="case-card__stat" dir="ltr">
-                    {item.stat}
+                <div class="case-card__metric" aria-label={`${item.statValue}% ${item.statLabel}`}>
+                  <span
+                    class="case-card__stat"
+                    data-case-stat
+                    data-target={item.statValue}
+                    dir="ltr"
+                  >
+                    0%
                   </span>
                   <span class="case-card__stat-label">{item.statLabel}</span>
                 </div>
@@ -53,6 +58,45 @@ import { campaignResults } from '../data/site';
     </div>
   </div>
 </section>
+
+<script>
+  const caseStats = document.querySelectorAll('[data-case-stat]');
+
+  const animateCaseStat = (el: HTMLElement) => {
+    const target = Number(el.dataset.target || 0);
+    const duration = 2200;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      const current = Math.round(target * eased);
+      el.textContent = `${current}%`;
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  };
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    caseStats.forEach((el) => {
+      const node = el as HTMLElement;
+      node.textContent = `${node.dataset.target}%`;
+    });
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          animateCaseStat(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.45 }
+    );
+    caseStats.forEach((el) => observer.observe(el));
+  }
+</script>
 
 <style>
   .case-card {
@@ -114,6 +158,7 @@ import { campaignResults } from '../data/site';
     font-weight: 900;
     line-height: 1;
     color: #fcc000;
+    font-variant-numeric: tabular-nums;
   }
 
   @media (min-width: 768px) {
