@@ -1,31 +1,36 @@
 ---
 import SectionTitle from './SectionTitle.astro';
+import Reveal from './Reveal.astro';
 import { services } from '../data/site';
 ---
 
 <section id="services" class="section-padding bg-white">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
-    <SectionTitle
-      title="שירותים עיקריים"
-      subtitle="פרסום ממוקד תוצאה — מקמפיין ועד דף נחיתה שממיר"
-      class="mb-12 md:mb-16"
-    />
+    <Reveal>
+      <SectionTitle
+        title="שירותים עיקריים"
+        subtitle="פרסום ממוקד תוצאה — מקמפיין ועד דף נחיתה שממיר"
+        class="mb-12 md:mb-16"
+      />
+    </Reveal>
 
     <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
       {
-        services.map((service) => (
-          <article class="service-card">
-            <img
-              src={service.icon}
-              alt=""
-              aria-hidden="true"
-              width="180"
-              height="180"
-              class="service-card__icon"
-              loading="lazy"
-            />
-            <h3 class="service-card__title">{service.title}</h3>
-          </article>
+        services.map((service, index) => (
+          <Reveal class="h-full" delay={index * 80}>
+            <article class="service-card h-full">
+              <img
+                src={service.icon}
+                alt=""
+                aria-hidden="true"
+                width="180"
+                height="180"
+                class="service-card__icon"
+                loading="lazy"
+              />
+              <h3 class="service-card__title">{service.title}</h3>
+            </article>
+          </Reveal>
         ))
       }
     </div>

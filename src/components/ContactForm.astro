@@ -2,6 +2,7 @@
 import SectionTitle from './SectionTitle.astro';
 import HorizontalCarousel from './HorizontalCarousel.astro';
 import CheckIcon from './icons/CheckIcon.astro';
+import Reveal from './Reveal.astro';
 ---
 
 <section id="contact" class="contact-section section-padding relative overflow-hidden">
@@ -21,6 +22,7 @@ import CheckIcon from './icons/CheckIcon.astro';
   </div>
 
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
     <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
       <div class="order-2 flex flex-col justify-center text-right text-white lg:order-none lg:min-h-[28rem]">
         <ul class="space-y-5 text-base text-white/90 md:text-lg lg:space-y-6 lg:text-xl" aria-label="יתרונות">
@@ -148,6 +150,7 @@ import CheckIcon from './icons/CheckIcon.astro';
         </form>
       </div>
     </div>
+    </Reveal>
   </div>
 </section>
 

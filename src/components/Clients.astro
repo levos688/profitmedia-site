@@ -1,14 +1,18 @@
 ---
 import SectionTitle from './SectionTitle.astro';
 import HorizontalCarousel from './HorizontalCarousel.astro';
+import Reveal from './Reveal.astro';
 import { clientLogos } from '../data/site';
 ---
 
 <section id="clients" class="section-padding bg-white">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
-    <SectionTitle title="לקוחות" class="mb-10 md:mb-16" />
+    <Reveal>
+      <SectionTitle title="לקוחות" class="mb-10 md:mb-16" />
+    </Reveal>
 
-    <HorizontalCarousel ariaLabel="לוגואים של לקוחות">
+    <Reveal delay={100}>
+      <HorizontalCarousel ariaLabel="לוגואים של לקוחות">
       {
         clientLogos.map((logo) => (
           <div class="carousel-item client-logo">
@@ -17,6 +21,7 @@ import { clientLogos } from '../data/site';
         ))
       }
     </HorizontalCarousel>
+    </Reveal>
   </div>
 </section>
 

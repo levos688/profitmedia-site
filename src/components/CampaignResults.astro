@@ -1,48 +1,178 @@
 ---
 import SectionTitle from './SectionTitle.astro';
+import Reveal from './Reveal.astro';
 import { campaignResults } from '../data/site';
 ---
 
 <section id="testimonials" class="section-padding bg-brand-gray">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
-    <SectionTitle
-      title="עדויות"
-      subtitle="תוצאות אמיתיות מקמפיינים שנהלנו"
-      class="mb-10 md:mb-14"
-    />
+    <Reveal>
+      <SectionTitle
+        title="עדויות"
+        subtitle="תוצאות אמיתיות מקמפיינים שנהלנו"
+        class="mb-10 md:mb-14"
+      />
+    </Reveal>
 
-    <div class="space-y-14 md:space-y-20">
+    <div class="space-y-10 md:space-y-14">
       {
-        campaignResults.map((item) => (
-          <article class="testimonial-card grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-            <div class="text-right">
-              <p class="text-xl font-bold text-gray-900 md:text-2xl">{item.label}</p>
-              <div class="stat-badge mt-4" aria-label={`${item.stat} ${item.statLabel}`}>
-                <span class="stat-badge__value">{item.stat}</span>
-                <span class="stat-badge__label">{item.statLabel}</span>
-              </div>
-              <blockquote class="mt-5 border-none p-0">
-                <p class="text-lg leading-relaxed font-bold text-gray-900 md:text-[25px]">
-                  "{item.quote}"
+        campaignResults.map((item, index) => (
+          <Reveal delay={index * 100}>
+            <article class="case-card grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+              <div class="case-card__content text-right">
+                <p class="case-card__industry">{item.industry}</p>
+                <p class="case-card__label">{item.label}</p>
+                <div class="case-card__metric" aria-label={`${item.stat} ${item.statLabel}`}>
+                  <span class="case-card__stat" dir="ltr">
+                    {item.stat}
+                  </span>
+                  <span class="case-card__stat-label">{item.statLabel}</span>
+                </div>
+                <p class="case-card__story">{item.story}</p>
+                <blockquote class="case-card__quote">
+                  <p>"{item.quote}"</p>
+                </blockquote>
+                <p class="case-card__author">
+                  <strong>{item.author}</strong>
                 </p>
-              </blockquote>
-              <p class="mt-4 text-base text-gray-700 md:text-xl">
-                <strong>{item.author}</strong>
-              </p>
-            </div>
-            <div class="overflow-hidden rounded-lg shadow-md">
-              <img
-                src={item.image}
-                alt={item.imageAlt}
-                class="h-auto w-full"
-                loading="lazy"
-                width="600"
-                height="400"
-              />
-            </div>
-          </article>
+              </div>
+              <div class="case-card__media overflow-hidden rounded-2xl">
+                <img
+                  src={item.image}
+                  alt={item.imageAlt}
+                  class="h-auto w-full"
+                  loading="lazy"
+                  width="600"
+                  height="400"
+                />
+              </div>
+            </article>
+          </Reveal>
         ))
       }
     </div>
   </div>
 </section>
+
+<style>
+  .case-card {
+    padding: 1.75rem;
+    border-radius: 1.25rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.08);
+    box-shadow: 0 8px 32px rgba(101, 21, 97, 0.08);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  @media (min-width: 768px) {
+    .case-card {
+      padding: 2.25rem;
+    }
+  }
+
+  .case-card:hover {
+    box-shadow: 0 16px 48px rgba(101, 21, 97, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .case-card__industry {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #c60691;
+    text-transform: uppercase;
+  }
+
+  .case-card__label {
+    margin-top: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__label {
+      font-size: 1.5rem;
+    }
+  }
+
+  .case-card__metric {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 1rem;
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #651561 0%, #5a1c73 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(101, 21, 97, 0.25);
+  }
+
+  .case-card__stat {
+    font-size: 2.75rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fcc000;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__stat {
+      font-size: 3.5rem;
+    }
+  }
+
+  .case-card__stat-label {
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .case-card__story {
+    margin-top: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.55;
+    font-weight: 600;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__story {
+      font-size: 1.125rem;
+    }
+  }
+
+  .case-card__quote {
+    margin-top: 1rem;
+    border: none;
+    padding: 0;
+  }
+
+  .case-card__quote p {
+    font-size: 1.125rem;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__quote p {
+      font-size: 1.375rem;
+    }
+  }
+
+  .case-card__author {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #374151;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__author {
+      font-size: 1.125rem;
+    }
+  }
+
+  .case-card__media {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  }
+</style>

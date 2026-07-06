@@ -1,0 +1,128 @@
+---
+import { agencyStats } from '../data/site';
+import Reveal from './Reveal.astro';
+---
+
+<section class="agency-stats section-padding" aria-label="מספרים על העסק">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <p class="agency-stats__eyebrow">המספרים מדברים בעד עצמם</p>
+      <h2 class="agency-stats__title">ניסיון מוכח. תוצאות מדידות.</h2>
+    </Reveal>
+
+    <div class="agency-stats__grid">
+      {
+        agencyStats.map((item, index) => (
+          <Reveal class="agency-stats__card" delay={index * 90}>
+            <p class="agency-stats__value" dir="ltr">
+              {item.value}
+            </p>
+            <p class="agency-stats__label">{item.label}</p>
+            {item.note && <p class="agency-stats__note">{item.note}</p>}
+          </Reveal>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .agency-stats {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, #f8f4fa 0%, #fff 45%, #faf8fc 100%);
+  }
+
+  .agency-stats::before {
+    content: '';
+    position: absolute;
+    inset-inline-end: -10%;
+    top: -30%;
+    width: 22rem;
+    height: 22rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(198, 6, 145, 0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .agency-stats__eyebrow {
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #c60691;
+  }
+
+  .agency-stats__title {
+    margin-top: 0.75rem;
+    text-align: center;
+    font-size: 1.875rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .agency-stats__title {
+      font-size: 2.5rem;
+    }
+  }
+
+  .agency-stats__grid {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .agency-stats__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+  }
+
+  .agency-stats__card {
+    position: relative;
+    padding: 1.75rem 1.5rem;
+    border-radius: 1.25rem;
+    text-align: center;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.08);
+    box-shadow: 0 8px 32px rgba(101, 21, 97, 0.08);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .agency-stats__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px rgba(101, 21, 97, 0.12);
+  }
+
+  .agency-stats__value {
+    font-size: 2.75rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #651561;
+  }
+
+  @media (min-width: 768px) {
+    .agency-stats__value {
+      font-size: 3.25rem;
+    }
+  }
+
+  .agency-stats__label {
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .agency-stats__note {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: #6b7280;
+  }
+</style>

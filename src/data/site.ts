@@ -1,13 +1,4 @@
-export const brand = {
-  purple: '#651561',
-  purpleDark: '#5a1c73',
-  pink: '#c60691',
-  yellow: '#fcc000',
-  gray: '#e7e7e7',
-};
-
-export const services = [
-  {
+export const services = [  {
     title: 'ניהול קמפיינים מדויק בפייסבוק, אינסטגרם וגוגל',
     icon: '/images/services/group_151.svg',
   },
@@ -25,11 +16,38 @@ export const services = [
   },
 ];
 
-export const campaignResults = [
+export const brand = {
+  purple: '#651561',
+  purpleDark: '#5a1c73',
+  pink: '#c60691',
+  yellow: '#fcc000',
+  gray: '#e7e7e7',
+};
+
+export const agencyStats = [
   {
+    value: '223+',
+    label: 'לקוחות ייחודיים',
+    note: 'ששירתנו לאורך השנים',
+  },
+  {
+    value: '900+',
+    label: 'חשבוניות ופרויקטים',
+    note: 'קמפיינים, דפי נחיתה ושירותים',
+  },
+  {
+    value: '₪6M+',
+    label: 'תקציבי פרסום מנוהלים',
+    note: 'סכום כולל מוערך — ומעלה',
+  },
+];
+
+export const campaignResults = [  {
     label: 'SKI Vip Travel :עדות לקוח',
+    industry: 'תיירות ונסיעות עסקיות',
     stat: '-46%',
     statLabel: 'ירידה בעלות לליד',
+    story: 'קמפיין לידים בפייסבוק ואינסטגרם — אופטימיזציה שוטפת וטירגוט מדויק.',
     quote:
       'ירדנו ב-46% בעלות לליד בזכות טירגוט חכם ושיפור מתמיד בקמפיינים. ממליץ לכל מי שרוצה יותר לקוחות בפחות כסף.',
     author: 'עמית שניידר — מנכ"ל SKI Vip Travel',
@@ -38,8 +56,10 @@ export const campaignResults = [
   },
   {
     label: 'משרד עורכי דין בירושלים',
+    industry: 'משפטים ושירותים מקצועיים',
     stat: '-41%',
     statLabel: 'ירידה בעלות לליד',
+    story: 'שאלונים חכמים, A/B טסטים ומעל 50 גרסאות מודעות — עד לתוצאה.',
     quote:
       'ירדנו ב-41% בעלות לליד בזכות שילוב שאלונים חכמים וביצוע A/B טסטים — מעל 50 גרסאות של מודעות.',
     author: 'משרד עורכי דין בירושלים',
@@ -47,7 +67,6 @@ export const campaignResults = [
     imageAlt: 'תוצאות קמפיין משרד עורכי דין',
   },
 ];
-
 export const videoTestimonials = [
   { youtubeId: '0eBz98WLrEE', title: 'עדות לקוח — וידאו 1' },
   { youtubeId: 'fY8xdzM2big', title: 'עדות לקוח — וידאו 2' },

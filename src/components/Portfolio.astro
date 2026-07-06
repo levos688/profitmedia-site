@@ -1,14 +1,18 @@
 ---
 import SectionTitle from './SectionTitle.astro';
 import HorizontalCarousel from './HorizontalCarousel.astro';
+import Reveal from './Reveal.astro';
 import { landings } from '../data/site';
 ---
 
 <section id="portfolio" class="section-padding bg-white">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
-    <SectionTitle title="דפי נחיתה ממירים במיוחד" class="mb-10 md:mb-14" />
+    <Reveal>
+      <SectionTitle title="דפי נחיתה ממירים במיוחד" class="mb-10 md:mb-14" />
+    </Reveal>
 
-    <HorizontalCarousel ariaLabel="גלריית דפי נחיתה">
+    <Reveal delay={100}>
+      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה">
       {
         landings.map((item) => (
           <article class="carousel-item landing-card">
@@ -29,6 +33,7 @@ import { landings } from '../data/site';
         ))
       }
     </HorizontalCarousel>
+    </Reveal>
   </div>
 
   <div
