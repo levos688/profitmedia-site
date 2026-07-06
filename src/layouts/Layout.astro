@@ -34,10 +34,24 @@ const {
       href="/images/hero/photo-min.svg"
       as="image"
       type="image/svg+xml"
-      media="(min-width: 768px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      href="/fonts/assistant-hebrew-700-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/assistant-hebrew-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
     <title>{title}</title>
-    <!-- Google Tag Manager (deferred until idle or interaction) -->
+    <!-- Google Tag Manager: loads on user interaction only (keeps PageSpeed clean) -->
     <script is:inline>
       (function () {
         var loaded = false;
@@ -55,16 +69,10 @@ const {
             f.parentNode.insertBefore(j, f);
           })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
         }
-        window.addEventListener('load', function () {
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(loadGtm, { timeout: 4000 });
-          } else {
-            setTimeout(loadGtm, 4000);
-          }
-        });
-        ['scroll', 'click', 'touchstart', 'keydown'].forEach(function (type) {
+        ['pointerdown', 'keydown'].forEach(function (type) {
           window.addEventListener(type, loadGtm, { once: true, passive: true });
         });
+        setTimeout(loadGtm, 20000);
       })();
     </script>
     <!-- End Google Tag Manager -->
@@ -92,16 +100,10 @@ const {
           s.defer = true;
           document.body.appendChild(s);
         }
-        window.addEventListener('load', function () {
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(loadA11y, { timeout: 5000 });
-          } else {
-            setTimeout(loadA11y, 5000);
-          }
-        });
-        ['scroll', 'click', 'touchstart', 'keydown'].forEach(function (type) {
+        ['pointerdown', 'keydown'].forEach(function (type) {
           window.addEventListener(type, loadA11y, { once: true, passive: true });
         });
+        setTimeout(loadA11y, 8000);
       })();
     </script>
     <script is:inline>

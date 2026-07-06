@@ -59,7 +59,10 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     const track = document.querySelector(`[data-carousel-track="${uid}"]`);
     const startBtn = document.querySelector(`[data-carousel-start="${uid}"]`);
     const endBtn = document.querySelector(`[data-carousel-end="${uid}"]`);
-    if (!track || !startBtn || !endBtn) return;
+    const outer = track?.closest('.carousel-outer');
+    if (!track || !startBtn || !endBtn || !outer) return;
+
+    let ready = false;
 
     const isRtl = () => getComputedStyle(track).direction === 'rtl';
     const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
@@ -96,15 +99,33 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       track.scrollBy({ left: delta, behavior: 'smooth' });
     };
 
-    startBtn.addEventListener('click', () => scrollByStep(true));
-    endBtn.addEventListener('click', () => scrollByStep(false));
-    track.addEventListener('scroll', updateArrows, { passive: true });
-    window.addEventListener('resize', () => {
+    const init = () => {
+      if (ready) return;
+      ready = true;
+      startBtn.addEventListener('click', () => scrollByStep(true));
+      endBtn.addEventListener('click', () => scrollByStep(false));
+      track.addEventListener('scroll', updateArrows, { passive: true });
+      window.addEventListener('resize', () => {
+        updateSnapPadding();
+        updateArrows();
+      });
       updateSnapPadding();
       updateArrows();
-    });
-    updateSnapPadding();
-    updateArrows();
+    };
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          init();
+          observer.disconnect();
+        },
+        { rootMargin: '200px 0px' }
+      );
+      observer.observe(outer);
+    } else {
+      init();
+    }
   })();
 </script>
 

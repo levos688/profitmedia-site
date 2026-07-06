@@ -9,6 +9,9 @@ export default defineConfig({
     '/accessibility': '/hatzara',
     '/privacy': '/prat',
   },
+  build: {
+    inlineStylesheets: 'always',
+  },
   vite: {
     plugins: [tailwindcss()]
   }
