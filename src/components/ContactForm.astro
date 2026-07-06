@@ -49,7 +49,15 @@ import CheckIcon from './icons/CheckIcon.astro';
           </h2>
         </div>
 
-        <form class="contact-form w-full" method="POST" action="#" id="contact-form" novalidate>
+        <form
+          class="contact-form w-full"
+          method="POST"
+          action="#"
+          id="contact-form"
+          novalidate
+          autocomplete="off"
+          data-bwignore
+        >
           <div class="space-y-3.5">
             <div class="field-group">
               <label for="name" class="sr-only">שם מלא</label>
@@ -58,37 +66,48 @@ import CheckIcon from './icons/CheckIcon.astro';
                 id="name"
                 name="name"
                 required
-                autocomplete="name"
-                placeholder="שם:"
+                autocomplete="off"
+                data-bwignore
+                data-1p-ignore
+                data-lpignore="true"
+                placeholder="שם מלא"
                 class="contact-input"
                 aria-describedby="name-error"
               />
               <p id="name-error" class="field-error hidden" role="alert"></p>
             </div>
             <div class="field-group">
-              <label for="phone" class="sr-only">טלפון</label>
+              <label for="phone" class="sr-only">סלולר</label>
               <input
                 type="tel"
                 id="phone"
                 name="phone"
                 required
-                autocomplete="tel"
-                placeholder="טלפון:"
+                autocomplete="off"
+                data-bwignore
+                data-1p-ignore
+                data-lpignore="true"
+                inputmode="tel"
+                placeholder="סלולר"
                 pattern="[0-9\-+() ]{9,15}"
-                class="contact-input"
+                class="contact-input contact-input--ltr"
                 aria-describedby="phone-error"
               />
               <p id="phone-error" class="field-error hidden" role="alert"></p>
             </div>
             <div class="field-group">
-              <label for="email" class="sr-only">אימייל</label>
+              <label for="email" class="sr-only">מייל</label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                autocomplete="email"
-                placeholder="מייל:"
-                class="contact-input"
+                autocomplete="off"
+                data-bwignore
+                data-1p-ignore
+                data-lpignore="true"
+                inputmode="email"
+                placeholder="מייל"
+                class="contact-input contact-input--ltr"
                 aria-describedby="email-error"
               />
               <p id="email-error" class="field-error hidden" role="alert"></p>
@@ -191,6 +210,11 @@ import CheckIcon from './icons/CheckIcon.astro';
     field.input?.addEventListener('input', () => {
       if (field.input?.getAttribute('aria-invalid') === 'true') validate();
     });
+  });
+
+  form?.querySelectorAll('.contact-input').forEach((input) => {
+    input.addEventListener('focus', () => input.classList.add('contact-input--active'));
+    input.addEventListener('blur', () => input.classList.remove('contact-input--active'));
   });
 
   form?.addEventListener('submit', async (e) => {

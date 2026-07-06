@@ -334,12 +334,12 @@ summary {
 
 .contact-input {
   width: 100%;
-  min-height: 44px;
+  min-height: 48px;
   border-radius: 9999px;
   border: 1.5px solid #e5e7eb;
   background: #fff;
-  padding: 0.875rem 1.375rem;
-  font-size: 1.0625rem;
+  padding: 0.9375rem 1.5rem;
+  font-size: 1.1875rem;
   font-weight: 700;
   color: #111827;
   text-align: right;
@@ -348,9 +348,18 @@ summary {
 
 @media (min-width: 768px) {
   .contact-input {
-    font-size: 1.125rem;
-    padding: 0.9375rem 1.5rem;
+    font-size: 1.25rem;
+    padding: 1rem 1.625rem;
   }
+}
+
+.contact-input--ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+.contact-input--ltr::placeholder {
+  text-align: left;
 }
 
 .contact-input::placeholder {
@@ -362,11 +371,18 @@ summary {
   border-color: #d1d5db;
 }
 
-.contact-input:focus {
+.contact-input:focus,
+.contact-input.contact-input--active {
   outline: none;
-  border-color: #fcc000;
+  border: 2px solid #fcc000;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(252, 192, 0, 0.35);
+  box-shadow: 0 0 0 4px rgba(252, 192, 0, 0.45);
+}
+
+.contact-input--error:focus,
+.contact-input--error.contact-input--active {
+  border-color: #f87171;
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.3);
 }
 
 .contact-checkbox {
@@ -395,12 +411,19 @@ summary {
 }
 
 .contact-submit {
-  padding: 0.9375rem 1.5rem;
-  font-size: 1.0625rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.1875rem;
   font-weight: 800;
-  min-height: 48px;
+  min-height: 52px;
   transition: transform 0.15s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease-out;
   box-shadow: 0 4px 20px rgba(252, 192, 0, 0.22);
+}
+
+@media (min-width: 768px) {
+  .contact-submit {
+    font-size: 1.25rem;
+    padding: 1.0625rem 1.75rem;
+  }
 }
 
 .contact-submit:disabled {
