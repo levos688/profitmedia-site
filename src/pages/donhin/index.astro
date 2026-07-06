@@ -3,22 +3,22 @@ import LandingLayout from '../../layouts/LandingLayout.astro';
 
 const benefits = [
   {
-    icon: '/images/donhin/icon-consult.svg',
+    icon: '/images/donhin/icon-consult.png',
     title: 'Бесплатная консультация',
     text: 'Оценка перспектив дела и помощь в сборе документов.',
   },
   {
-    icon: '/images/donhin/icon-payment.svg',
+    icon: '/images/donhin/icon-payment.png',
     title: 'Оплата по результатам — без риска',
     text: 'Платите только за результат, в котором вы уверены.',
   },
   {
-    icon: '/images/donhin/icon-compensation.svg',
+    icon: '/images/donhin/icon-compensation.png',
     title: 'Максимальная компенсация',
     text: 'Компенсация, которая покроет все расходы и моральную компенсацию.',
   },
   {
-    icon: '/images/donhin/icon-negotiation.svg',
+    icon: '/images/donhin/icon-negotiation.png',
     title: 'Ведение переговоров',
     text: 'Переговоры с врачом, больницей и страховой компанией.',
   },
@@ -54,18 +54,16 @@ const cases = [
           <a href="#form-quiz" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
         </div>
         <div class="donhin-hero__photo-wrap">
-          <div class="donhin-hero__photo-plate">
-            <img
-              src="/images/donhin/hero-cutout.webp"
-              alt="Адвокат Саймон Донхин"
-              class="donhin-hero__photo"
-              width="397"
-              height="397"
-              loading="eager"
-              decoding="async"
-              fetchpriority="high"
-            />
-          </div>
+          <img
+            src="/images/donhin/hero.png"
+            alt="Адвокат Саймон Донхин"
+            class="donhin-hero__photo"
+            width="397"
+            height="397"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
           <p class="donhin-hero__name">
             <img
               src="/images/donhin/icon-scales.svg"
@@ -440,13 +438,6 @@ const cases = [
     text-align: center;
   }
 
-  .donhin-hero__photo-plate {
-    display: inline-block;
-    background: #0c457f;
-    max-width: 24.8125rem;
-    margin-inline: auto;
-  }
-
   .donhin-hero__photo {
     width: min(100%, 24.8125rem);
     height: auto;
@@ -522,7 +513,7 @@ const cases = [
   }
 
   .donhin-btn--primary {
-    background: linear-gradient(0.25turn, #8689f2 0%, #5257de 100%);
+    background: #143c6f;
     color: #fff;
     width: 100%;
     margin-top: 1.25rem;
@@ -530,7 +521,7 @@ const cases = [
   }
 
   .donhin-btn--primary:hover {
-    background: linear-gradient(0.25turn, #7579ed 0%, #4549c9 100%);
+    background: #123a66;
   }
 
   .donhin-btn--wide {
@@ -539,7 +530,7 @@ const cases = [
   }
 
   .donhin-btn--quiz-action {
-    background: linear-gradient(0.25turn, #8689f2 0%, #5257de 100%);
+    background: #143c6f;
     color: #fff;
     border-radius: 0.25rem;
     width: 100%;
@@ -553,7 +544,7 @@ const cases = [
   }
 
   .donhin-btn--quiz-action:not(:disabled):hover {
-    background: linear-gradient(0.25turn, #7579ed 0%, #4549c9 100%);
+    background: #123a66;
   }
 
   .donhin-form-section {
@@ -659,9 +650,9 @@ const cases = [
 
   .donhin-form--bottom {
     background: #e2e2e2;
-    border: 12px solid #144379;
-    border-radius: 0;
-    box-shadow: none;
+    border: 2px solid #144379;
+    border-radius: 0.75rem;
+    box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.08);
     padding: 2rem 1.5rem;
   }
 
