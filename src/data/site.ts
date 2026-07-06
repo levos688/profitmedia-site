@@ -81,6 +81,3 @@ export const clientLogos = [
   { src: '/images/clients/13.svg', alt: 'לקוח' },
   { src: '/images/clients/14.svg', alt: 'לקוח' },
 ];
-
-/** Recommended size for new client logos: 240×100 px, PNG or SVG, transparent background */
-export const clientLogoRecommendedSize = '240×100 px';

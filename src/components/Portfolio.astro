@@ -44,28 +44,45 @@ import { landings } from '../data/site';
       <button type="button" class="lightbox__close" data-lightbox-close aria-label="סגור">
         ✕
       </button>
+      <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="דף נחיתה קודם">
+        ‹
+      </button>
+      <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="דף נחיתה הבא">
+        ›
+      </button>
       <img id="lightbox-image" src="" alt="" class="lightbox__image" />
       <p id="lightbox-title" class="lightbox__title"></p>
     </div>
   </div>
 </section>
 
-<script>
+<script define:vars={{ landings }}>
   const lightbox = document.getElementById('landing-lightbox');
-  const lightboxImg = document.getElementById('lightbox-image') as HTMLImageElement | null;
+  const lightboxImg = document.getElementById('lightbox-image');
   const lightboxTitle = document.getElementById('lightbox-title');
-  let lastFocus: HTMLElement | null = null;
+  const prevBtn = lightbox?.querySelector('[data-lightbox-prev]');
+  const nextBtn = lightbox?.querySelector('[data-lightbox-next]');
+  let lastFocus = null;
+  let currentIndex = 0;
+  let touchStartX = 0;
 
-  const openLightbox = (image: string, title: string, trigger: HTMLElement) => {
-    if (!lightbox || !lightboxImg || !lightboxTitle) return;
+  const showSlide = (index) => {
+    if (!lightboxImg || !lightboxTitle) return;
+    currentIndex = (index + landings.length) % landings.length;
+    const item = landings[currentIndex];
+    lightboxImg.src = item.image;
+    lightboxImg.alt = item.title;
+    lightboxTitle.textContent = item.title;
+  };
+
+  const openLightbox = (index, trigger) => {
+    if (!lightbox) return;
     lastFocus = trigger;
-    lightboxImg.src = image;
-    lightboxImg.alt = title;
-    lightboxTitle.textContent = title;
+    showSlide(index);
     lightbox.hidden = false;
     lightbox.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    lightbox.querySelector<HTMLElement>('.lightbox__close')?.focus();
+    lightbox.querySelector('.lightbox__close')?.focus();
   };
 
   const closeLightbox = () => {
@@ -77,10 +94,11 @@ import { landings } from '../data/site';
     lastFocus?.focus();
   };
 
-  document.querySelectorAll('[data-lightbox-trigger]').forEach((btn) => {
+  const step = (delta) => showSlide(currentIndex + delta);
+
+  document.querySelectorAll('[data-lightbox-trigger]').forEach((btn, index) => {
     btn.addEventListener('click', () => {
-      const el = btn as HTMLElement;
-      openLightbox(el.dataset.image ?? '', el.dataset.title ?? '', el);
+      openLightbox(index, btn);
     });
   });
 
@@ -88,8 +106,32 @@ import { landings } from '../data/site';
     el.addEventListener('click', closeLightbox);
   });
 
+  prevBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    step(-1);
+  });
+
+  nextBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    step(1);
+  });
+
+  lightbox?.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0]?.screenX ?? 0;
+  }, { passive: true });
+
+  lightbox?.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0]?.screenX ?? 0;
+    const delta = touchEndX - touchStartX;
+    if (Math.abs(delta) < 40) return;
+    step(delta < 0 ? 1 : -1);
+  }, { passive: true });
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && lightbox && !lightbox.hidden) closeLightbox();
+    if (!lightbox || lightbox.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
   });
 </script>
 
@@ -211,6 +253,51 @@ import { landings } from '../data/site';
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2;
+  }
+
+  .lightbox__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: none;
+    background: rgb(255 255 255 / 0.92);
+    color: #651561;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.25);
+    z-index: 2;
+  }
+
+  .lightbox__nav--prev {
+    inset-inline-start: -3.25rem;
+  }
+
+  .lightbox__nav--next {
+    inset-inline-end: -3.25rem;
+  }
+
+  .lightbox__nav:focus-visible,
+  .lightbox__close:focus-visible {
+    outline: 2px solid #fcc000;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    .lightbox__nav--prev {
+      inset-inline-start: 0.25rem;
+    }
+
+    .lightbox__nav--next {
+      inset-inline-end: 0.25rem;
+    }
   }
 
   .lightbox__image {

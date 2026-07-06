@@ -62,6 +62,18 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     if (!track || !startBtn || !endBtn) return;
 
     const isRtl = () => getComputedStyle(track).direction === 'rtl';
+    const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
+
+    const updateSnapPadding = () => {
+      if (!isMobile()) {
+        track.style.setProperty('--snap-pad', '0px');
+        return;
+      }
+      const item = track.querySelector('.carousel-item');
+      if (!item) return;
+      const pad = Math.max(0, (track.clientWidth - item.getBoundingClientRect().width) / 2);
+      track.style.setProperty('--snap-pad', `${pad}px`);
+    };
 
     const getStep = () => {
       const item = track.querySelector('.carousel-item');
@@ -87,7 +99,11 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     startBtn.addEventListener('click', () => scrollByStep(true));
     endBtn.addEventListener('click', () => scrollByStep(false));
     track.addEventListener('scroll', updateArrows, { passive: true });
-    window.addEventListener('resize', updateArrows);
+    window.addEventListener('resize', () => {
+      updateSnapPadding();
+      updateArrows();
+    });
+    updateSnapPadding();
     updateArrows();
   })();
 </script>
@@ -119,6 +135,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-block: 0.25rem;
+    --snap-pad: 0px;
   }
 
   .carousel-outer--wide .carousel-track {
@@ -132,6 +149,19 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   .carousel-track :global(.carousel-item) {
     flex: 0 0 auto;
     scroll-snap-align: start;
+  }
+
+  @media (max-width: 767px) {
+    .carousel-track::before,
+    .carousel-track::after {
+      content: '';
+      flex: 0 0 var(--snap-pad);
+      pointer-events: none;
+    }
+
+    .carousel-track :global(.carousel-item) {
+      scroll-snap-align: center;
+    }
   }
 
   .carousel-arrow {

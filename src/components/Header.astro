@@ -9,8 +9,8 @@ const nav = [
 ---
 
 <header class="site-header sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
-  <div class="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
-    <a href="/" class="block shrink-0" aria-label="Profit Media — דף הבית">
+  <div class="header-bar mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6 lg:flex-row">
+    <a href="/" class="header-logo block shrink-0" aria-label="Profit Media — דף הבית">
       <img src="/logo.svg" alt="Profit Media" class="h-10 w-auto md:h-[70px]" width="200" height="70" />
     </a>
 
@@ -31,7 +31,7 @@ const nav = [
     <button
       type="button"
       id="mobile-menu-btn"
-      class="mobile-menu-btn lg:hidden"
+      class="mobile-menu-btn ms-auto lg:hidden"
       aria-expanded="false"
       aria-controls="mobile-menu"
       aria-label="פתיחת תפריט"
@@ -118,3 +118,13 @@ const nav = [
   window.addEventListener('scroll', updateActiveNav, { passive: true });
   updateActiveNav();
 </script>
+
+<style>
+  @media (max-width: 1023px) {
+    .header-bar {
+      flex-direction: row;
+      direction: ltr;
+      justify-content: space-between;
+    }
+  }
+</style>
