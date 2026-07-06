@@ -1,3 +1,4 @@
+/* Only two font files on the critical path (400 + 700, both preloaded). */
 @font-face {
   font-family: 'Assistant';
   font-style: normal;
@@ -11,7 +12,7 @@
   font-style: normal;
   font-display: swap;
   font-weight: 600;
-  src: url('/fonts/assistant-hebrew-600-normal.woff2') format('woff2');
+  src: url('/fonts/assistant-hebrew-400-normal.woff2') format('woff2');
 }
 
 @font-face {
@@ -27,5 +28,13 @@
   font-style: normal;
   font-display: swap;
   font-weight: 800;
-  src: url('/fonts/assistant-hebrew-800-normal.woff2') format('woff2');
+  src: url('/fonts/assistant-hebrew-700-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Assistant';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 900;
+  src: url('/fonts/assistant-hebrew-700-normal.woff2') format('woff2');
 }
