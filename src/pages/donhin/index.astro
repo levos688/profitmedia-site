@@ -103,8 +103,9 @@ const cases = [
       <div class="donhin-container donhin-form-section__inner">
         <h2 class="donhin-form-section__title">Пройдите быстрый тест и узнайте свои шансы</h2>
 
-        <form class="donhin-form" id="donhin-quiz-form" data-donhin-form="quiz" novalidate>
-          <div class="donhin-form__step" data-step="1">
+        <form class="donhin-form donhin-form--quiz" id="donhin-quiz-form" data-donhin-form="quiz" novalidate>
+          <div class="donhin-form__viewport">
+          <div class="donhin-form__step is-active" data-step="1">
             <fieldset class="donhin-quiz">
               <legend class="donhin-quiz__question">
                 Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
@@ -125,7 +126,10 @@ const cases = [
             </button>
           </div>
 
-          <div class="donhin-form__step donhin-form__step--hidden" data-step="2" hidden>
+          <div class="donhin-form__step" data-step="2" hidden>
+            <button type="button" class="donhin-btn donhin-btn--quiz-back" data-quiz-back>
+              ← Назад к вопросу
+            </button>
             <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
             <label class="donhin-field">
               <span class="sr-only">Имя</span>
@@ -153,6 +157,7 @@ const cases = [
             </label>
             <p class="donhin-error hidden" data-privacy-error role="alert"></p>
             <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+          </div>
           </div>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
@@ -351,6 +356,40 @@ const cases = [
     const step1 = quizForm.querySelector('[data-step="1"]') as HTMLElement | null;
     const step2 = quizForm.querySelector('[data-step="2"]') as HTMLElement | null;
     const nextBtn = quizForm.querySelector('[data-quiz-next]') as HTMLButtonElement | null;
+    const backBtn = quizForm.querySelector('[data-quiz-back]') as HTMLButtonElement | null;
+    const viewport = quizForm.querySelector('.donhin-form__viewport') as HTMLElement | null;
+
+    const syncViewportHeight = () => {
+      if (!viewport) return;
+      const active = quizForm.querySelector('.donhin-form__step.is-active') as HTMLElement | null;
+      if (active) viewport.style.minHeight = `${active.offsetHeight}px`;
+    };
+
+    const goToStep = (from: HTMLElement, to: HTMLElement, direction: 'forward' | 'back') => {
+      const leaving = direction === 'forward' ? 'is-leaving-forward' : 'is-leaving-back';
+      const entering = direction === 'forward' ? 'is-entering-forward' : 'is-entering-back';
+
+      from.classList.remove('is-active');
+      from.classList.add(leaving);
+
+      window.setTimeout(() => {
+        from.classList.remove(leaving);
+        from.setAttribute('hidden', '');
+
+        to.removeAttribute('hidden');
+        to.classList.add(entering);
+        requestAnimationFrame(() => {
+          to.classList.remove(entering);
+          to.classList.add('is-active');
+          syncViewportHeight();
+          if (direction === 'forward') {
+            (quizForm.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
+          } else {
+            (quizForm.querySelector('input[name="quiz"]:checked') as HTMLInputElement | null)?.focus();
+          }
+        });
+      }, 280);
+    };
 
     quizForm.querySelectorAll('input[name="quiz"]').forEach((input) => {
       input.addEventListener('change', () => {
@@ -359,13 +398,17 @@ const cases = [
     });
 
     nextBtn?.addEventListener('click', () => {
-      if (!quizForm.querySelector('input[name="quiz"]:checked')) return;
-      step1?.classList.add('donhin-form__step--hidden');
-      step1?.setAttribute('hidden', '');
-      step2?.classList.remove('donhin-form__step--hidden');
-      step2?.removeAttribute('hidden');
-      (quizForm.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
+      if (!quizForm.querySelector('input[name="quiz"]:checked') || !step1 || !step2) return;
+      goToStep(step1, step2, 'forward');
     });
+
+    backBtn?.addEventListener('click', () => {
+      if (!step1 || !step2) return;
+      goToStep(step2, step1, 'back');
+    });
+
+    syncViewportHeight();
+    window.addEventListener('resize', syncViewportHeight);
 
     quizForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -648,6 +691,101 @@ const cases = [
     box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.1);
   }
 
+  .donhin-form--quiz {
+    background: #e6e6e6;
+    border: 2px solid #144379;
+    border-radius: 0.75rem;
+    box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.08);
+    padding: 2rem 1.5rem;
+  }
+
+  .donhin-form--quiz .donhin-radio {
+    background: #fff;
+    border: 1px solid rgba(20, 67, 121, 0.15);
+  }
+
+  .donhin-form--quiz .donhin-radio:hover {
+    border-color: #144379;
+    background: #fff;
+  }
+
+  .donhin-form--quiz .donhin-field input {
+    color: #000;
+    font-weight: 500;
+    border: 1px solid #144379;
+    border-radius: 0.625rem;
+    background: #fff;
+  }
+
+  .donhin-form--quiz .donhin-field input::placeholder {
+    color: #000;
+    opacity: 0.5;
+  }
+
+  .donhin-form--quiz .donhin-field input:focus {
+    border-color: #143c6f;
+    box-shadow: 0 0 0 3px rgba(20, 67, 121, 0.15);
+  }
+
+  .donhin-form__viewport {
+    position: relative;
+    overflow: hidden;
+    transition: min-height 0.28s ease;
+  }
+
+  .donhin-form__step {
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+
+  .donhin-form__step[hidden] {
+    display: none;
+  }
+
+  .donhin-form__step.is-active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .donhin-form__step.is-leaving-forward {
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+
+  .donhin-form__step.is-entering-forward {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+
+  .donhin-form__step.is-leaving-back {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+
+  .donhin-form__step.is-entering-back {
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+
+  .donhin-btn--quiz-back {
+    background: transparent;
+    color: #143c6f;
+    border: none;
+    padding: 0;
+    min-height: auto;
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  .donhin-btn--quiz-back:hover {
+    color: #144379;
+    transform: none;
+  }
+
   .donhin-form--bottom {
     background: #e2e2e2;
     border: 2px solid #144379;
@@ -670,13 +808,10 @@ const cases = [
   }
 
   @media (min-width: 640px) {
-    .donhin-form {
+    .donhin-form,
+    .donhin-form--quiz {
       padding: 2rem;
     }
-  }
-
-  .donhin-form__step--hidden {
-    display: none;
   }
 
   .donhin-quiz {
@@ -704,8 +839,8 @@ const cases = [
     align-items: center;
     gap: 0.75rem;
     padding: 0.9375rem 1rem;
-    background: #f5f5f5;
-    border: none;
+    background: #fff;
+    border: 1px solid rgba(20, 67, 121, 0.15);
     border-radius: 0.25rem;
     cursor: pointer;
     font-weight: 600;
@@ -714,8 +849,8 @@ const cases = [
   }
 
   .donhin-radio:hover {
-    border-color: #c8cbff;
-    background: #fafbff;
+    border-color: #144379;
+    background: #fff;
   }
 
   .donhin-radio input {
