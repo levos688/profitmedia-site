@@ -3,7 +3,7 @@ import SectionTitle from './SectionTitle.astro';
 import { services } from '../data/site';
 ---
 
-<section id="services" class="section-padding bg-white reveal" data-reveal>
+<section id="services" class="section-padding below-fold bg-white reveal" data-reveal>
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <SectionTitle
       title="שירותים עיקריים"
@@ -88,12 +88,12 @@ import { services } from '../data/site';
     margin-bottom: 0;
     transition:
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 0.45s ease;
+      box-shadow 0.45s ease;
   }
 
   .service-card:hover .service-card__icon {
     transform: translateY(-5px);
-    filter: drop-shadow(0 10px 20px rgba(101, 21, 97, 0.12));
+    box-shadow: 0 10px 20px rgba(101, 21, 97, 0.12);
   }
 
   #services.is-visible .service-card__icon {

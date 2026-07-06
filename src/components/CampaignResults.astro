@@ -1,10 +1,11 @@
 ---
 import SectionTitle from './SectionTitle.astro';
 import Reveal from './Reveal.astro';
+import OptimizedImage from './OptimizedImage.astro';
 import { campaignResults } from '../data/site';
 ---
 
-<section id="testimonials" class="section-padding bg-brand-gray">
+<section id="testimonials" class="section-padding below-fold bg-brand-gray">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <SectionTitle
@@ -42,13 +43,12 @@ import { campaignResults } from '../data/site';
                 </p>
               </div>
               <div class="case-card__media overflow-hidden rounded-2xl">
-                <img
+                <OptimizedImage
                   src={item.image}
                   alt={item.imageAlt}
                   class="h-auto w-full"
-                  loading="lazy"
-                  width="600"
-                  height="400"
+                  width={600}
+                  height={400}
                 />
               </div>
             </article>

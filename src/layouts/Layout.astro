@@ -29,41 +29,43 @@ const {
       )
     }
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
+      href="/images/hero/photo-min.svg"
+      as="image"
+      type="image/svg+xml"
+      media="(min-width: 768px)"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
-    <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
     <title>{title}</title>
-    <!-- Google Tag Manager (deferred) -->
+    <!-- Google Tag Manager (deferred until idle or interaction) -->
     <script is:inline>
-      window.addEventListener('load', function () {
-        (function (w, d, s, l, i) {
-          w[l] = w[l] || [];
-          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-          var f = d.getElementsByTagName(s)[0],
-            j = d.createElement(s),
-            dl = l != 'dataLayer' ? '&l=' + l : '';
-          j.async = true;
-          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-          f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
-      });
+      (function () {
+        var loaded = false;
+        function loadGtm() {
+          if (loaded) return;
+          loaded = true;
+          (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
+        }
+        window.addEventListener('load', function () {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadGtm, { timeout: 4000 });
+          } else {
+            setTimeout(loadGtm, 4000);
+          }
+        });
+        ['scroll', 'click', 'touchstart', 'keydown'].forEach(function (type) {
+          window.addEventListener(type, loadGtm, { once: true, passive: true });
+        });
+      })();
     </script>
     <!-- End Google Tag Manager -->
   </head>
@@ -79,10 +81,29 @@ const {
     <!-- End Google Tag Manager (noscript) -->
     <a href="#main-content" class="skip-link">דילוג לתוכן</a>
     <slot />
-    <script
-      src="https://profitmedia.co.il/a11y/v1/profitmedia.js?v=3.7.1"
-      defer
-    ></script>
+    <script is:inline>
+      (function () {
+        var loaded = false;
+        function loadA11y() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.src = 'https://profitmedia.co.il/a11y/v1/profitmedia.js?v=3.7.1';
+          s.defer = true;
+          document.body.appendChild(s);
+        }
+        window.addEventListener('load', function () {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadA11y, { timeout: 5000 });
+          } else {
+            setTimeout(loadA11y, 5000);
+          }
+        });
+        ['scroll', 'click', 'touchstart', 'keydown'].forEach(function (type) {
+          window.addEventListener(type, loadA11y, { once: true, passive: true });
+        });
+      })();
+    </script>
     <script is:inline>
       (function () {
         try {
