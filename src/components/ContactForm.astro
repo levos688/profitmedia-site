@@ -232,10 +232,48 @@ import Reveal from './Reveal.astro';
     if (submitBtn) submitBtn.disabled = true;
     if (submitLabel) submitLabel.textContent = 'שולח…';
 
+    const pageUrl = new URL(window.location.href);
+    const utmKeys = [
+      'utm_source',
+      'utm_medium',
+      'utm_campaign',
+      'utm_content',
+      'utm_term',
+      'gclid',
+      'fbclid',
+    ] as const;
+    const currentUtm: Record<string, string> = {};
+    utmKeys.forEach((key) => {
+      const value = pageUrl.searchParams.get(key);
+      if (value) currentUtm[key] = value;
+    });
+
+    let firstUtm: Record<string, string> = {};
+    try {
+      const stored = sessionStorage.getItem('pm_first_utm');
+      if (stored) firstUtm = JSON.parse(stored) as Record<string, string>;
+    } catch {
+      /* ignore */
+    }
+
+    const utm = { ...currentUtm, ...firstUtm };
+
+    let landingUrl = window.location.href;
+    try {
+      landingUrl = sessionStorage.getItem('pm_first_landing') || window.location.href;
+    } catch {
+      /* ignore */
+    }
+
     const payload = {
       name: fields.name.input?.value.trim(),
       phone: fields.phone.input?.value.trim(),
       email: (document.getElementById('email') as HTMLInputElement | null)?.value.trim() || '',
+      pageUrl: window.location.href,
+      landingUrl,
+      referrer: document.referrer || '',
+      utm,
+      language: navigator.language || '',
     };
 
     try {

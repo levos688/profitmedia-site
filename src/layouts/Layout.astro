@@ -32,23 +32,38 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
     <title>{title}</title>
-    <!-- Google Tag Manager -->
+    <!-- Google Tag Manager (deferred) -->
     <script is:inline>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != 'dataLayer' ? '&l=' + l : '';
-        j.async = true;
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
+      window.addEventListener('load', function () {
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true;
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
+      });
     </script>
     <!-- End Google Tag Manager -->
   </head>
@@ -70,6 +85,23 @@ const {
     ></script>
     <script is:inline>
       (function () {
+        try {
+          if (!sessionStorage.getItem('pm_first_landing')) {
+            sessionStorage.setItem('pm_first_landing', location.href);
+            var params = new URL(location.href).searchParams;
+            var utm = {};
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'].forEach(
+              function (key) {
+                var value = params.get(key);
+                if (value) utm[key] = value;
+              }
+            );
+            if (Object.keys(utm).length) {
+              sessionStorage.setItem('pm_first_utm', JSON.stringify(utm));
+            }
+          }
+        } catch (e) {}
+
         function initReveal() {
           var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           var revealEls = document.querySelectorAll('[data-reveal]');

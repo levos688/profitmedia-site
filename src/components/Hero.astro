@@ -57,8 +57,13 @@ import HeroIllustration from './HeroIllustration.astro';
     background-image: url('/images/hero/image_2_traced.svg');
     background-size: 280px auto;
     background-repeat: repeat;
-    animation: hero-pattern-scroll 50s linear infinite;
     pointer-events: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero-gradient__pattern {
+      animation: hero-pattern-scroll 50s linear infinite;
+    }
   }
 
   .hero-cta-group {
@@ -79,7 +84,12 @@ import HeroIllustration from './HeroIllustration.astro';
     background:
       radial-gradient(ellipse 75% 55% at 15% 25%, rgba(255, 255, 255, 0.1), transparent 55%),
       radial-gradient(ellipse 65% 50% at 85% 75%, rgba(198, 6, 145, 0.12), transparent 52%);
-    animation: hero-mesh-shift 16s ease-in-out infinite alternate;
+  }
+
+  @media (min-width: 768px) {
+    .hero-gradient__mesh {
+      animation: hero-mesh-shift 16s ease-in-out infinite alternate;
+    }
   }
 
   .hero-gradient__orb {
@@ -95,7 +105,22 @@ import HeroIllustration from './HeroIllustration.astro';
     width: 18rem;
     height: 18rem;
     background: rgba(255, 255, 255, 0.08);
-    animation: hero-orb-float 14s ease-in-out infinite;
+  }
+
+  @media (min-width: 768px) {
+    .hero-gradient__orb--soft {
+      animation: hero-orb-float 14s ease-in-out infinite;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero-gradient__orb {
+      display: none;
+    }
+
+    .hero-decoration {
+      display: none;
+    }
   }
 
   .hero-decoration {
@@ -106,12 +131,14 @@ import HeroIllustration from './HeroIllustration.astro';
     animation: hero-bg-drift-alt 26s ease-in-out infinite;
   }
 
-  .hero-content {
-    animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+  @media (min-width: 768px) {
+    .hero-content {
+      animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
 
-  .hero-visual {
-    animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    .hero-visual {
+      animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    }
   }
 
   .hero-cta {
@@ -176,11 +203,9 @@ import HeroIllustration from './HeroIllustration.astro';
 
   @keyframes hero-fade-up {
     from {
-      opacity: 0;
       transform: translateY(24px);
     }
     to {
-      opacity: 1;
       transform: translateY(0);
     }
   }

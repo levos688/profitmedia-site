@@ -6,10 +6,39 @@ interface Env {
   TELEGRAM_CHAT_ID?: string;
 }
 
+interface UtmParams {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
+  gclid?: string;
+  fbclid?: string;
+}
+
 interface ContactPayload {
   name?: string;
   phone?: string;
   email?: string;
+  pageUrl?: string;
+  landingUrl?: string;
+  referrer?: string;
+  utm?: UtmParams;
+  language?: string;
+}
+
+interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
+  email: string;
+  pageUrl: string;
+  landingUrl: string;
+  referrer: string;
+  utm: UtmParams;
+  language: string;
+  ip: string;
+  country: string;
+  userAgent: string;
+  refererHeader: string;
+  submittedAt: Date;
 }
 
 const json = (body: object, status = 200) =>
@@ -21,7 +50,48 @@ const json = (body: object, status = 200) =>
     },
   });
 
-async function sendEmail(env: Env, data: Required<Pick<ContactPayload, 'name' | 'phone'>> & ContactPayload) {
+function formatLeadDate(date: Date): string {
+  const tz = 'Asia/Jerusalem';
+  const day = date.toLocaleString('en-GB', { timeZone: tz, day: 'numeric' });
+  const month = date.toLocaleString('en-GB', { timeZone: tz, month: 'long' });
+  const year = date.toLocaleString('en-GB', { timeZone: tz, year: 'numeric' });
+  const time = date.toLocaleString('en-GB', {
+    timeZone: tz,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  return `${day} ${month} ${year}, ${time}`;
+}
+
+function formatUtm(utm: UtmParams): string {
+  const entries = Object.entries(utm).filter(([, v]) => v);
+  if (!entries.length) return '(none)';
+  return entries.map(([k, v]) => `${k}=${v}`).join('&');
+}
+
+function buildLeadText(lead: LeadData): string {
+  return [
+    'Name: ' + lead.name,
+    'Phone: ' + lead.phone,
+    'Mail: ' + (lead.email || '(not provided)'),
+    '',
+    'Date: ' + formatLeadDate(lead.submittedAt),
+    '',
+    'Page URL: ' + (lead.pageUrl || '(unknown)'),
+    'Landing URL: ' + (lead.landingUrl || lead.pageUrl || '(unknown)'),
+    'Referrer: ' + (lead.referrer || lead.refererHeader || '(direct)'),
+    'UTM: ' + formatUtm(lead.utm),
+    '',
+    'Additional:',
+    'Country: ' + (lead.country || '(unknown)'),
+    'IP: ' + (lead.ip || '(unknown)'),
+    'Language: ' + (lead.language || '(unknown)'),
+    'User-Agent: ' + (lead.userAgent || '(unknown)'),
+  ].join('\n');
+}
+
+async function sendEmail(env: Env, lead: LeadData) {
   const apiKey = env.RESEND_API_KEY;
   const to = env.CONTACT_EMAIL || 'lev@profitmedia.co.il';
   const from = env.FROM_EMAIL || 'Profit Media <onboarding@resend.dev>';
@@ -29,16 +99,6 @@ async function sendEmail(env: Env, data: Required<Pick<ContactPayload, 'name' | 
   if (!apiKey) {
     throw new Error('RESEND_API_KEY is not configured');
   }
-
-  const lines = [
-    'פנייה חדשה מאתר Profit Media',
-    '',
-    `שם: ${data.name}`,
-    `טלפון: ${data.phone}`,
-    data.email ? `מייל: ${data.email}` : 'מייל: (לא צוין)',
-    '',
-    `זמן: ${new Date().toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem' })}`,
-  ];
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -49,8 +109,8 @@ async function sendEmail(env: Env, data: Required<Pick<ContactPayload, 'name' | 
     body: JSON.stringify({
       from,
       to: [to],
-      subject: `ליד חדש: ${data.name}`,
-      text: lines.join('\n'),
+      subject: 'ProfitMedia Lead',
+      text: buildLeadText(lead),
     }),
   });
 
@@ -60,20 +120,30 @@ async function sendEmail(env: Env, data: Required<Pick<ContactPayload, 'name' | 
   }
 }
 
-async function sendTelegram(env: Env, data: Required<Pick<ContactPayload, 'name' | 'phone'>> & ContactPayload) {
+async function sendTelegram(env: Env, lead: LeadData) {
   const token = env.TELEGRAM_BOT_TOKEN;
   const chatId = env.TELEGRAM_CHAT_ID;
 
   if (!token || !chatId) return;
 
   const text = [
-    '📩 *ליד חדש — Profit Media*',
+    '📩 ProfitMedia Lead',
     '',
-    `👤 *שם:* ${data.name}`,
-    `📞 *טלפון:* ${data.phone}`,
-    data.email ? `📧 *מייל:* ${data.email}` : '',
+    `Name: ${lead.name}`,
+    `Phone: ${lead.phone}`,
+    `Mail: ${lead.email || '(not provided)'}`,
     '',
-    `🕐 ${new Date().toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem' })}`,
+    formatLeadDate(lead.submittedAt),
+    '',
+    `Page: ${lead.pageUrl || '(unknown)'}`,
+    lead.landingUrl && lead.landingUrl !== lead.pageUrl
+      ? `Landing: ${lead.landingUrl}`
+      : '',
+    lead.referrer || lead.refererHeader
+      ? `Referrer: ${lead.referrer || lead.refererHeader}`
+      : '',
+    Object.keys(lead.utm).length ? `UTM: ${formatUtm(lead.utm)}` : '',
+    lead.country ? `Country: ${lead.country}` : '',
   ]
     .filter(Boolean)
     .join('\n');
@@ -84,7 +154,6 @@ async function sendTelegram(env: Env, data: Required<Pick<ContactPayload, 'name'
     body: JSON.stringify({
       chat_id: chatId,
       text,
-      parse_mode: 'Markdown',
     }),
   });
 
@@ -92,6 +161,25 @@ async function sendTelegram(env: Env, data: Required<Pick<ContactPayload, 'name'
     const err = await res.text();
     console.error('Telegram failed:', err);
   }
+}
+
+function pickUtm(body: ContactPayload): UtmParams {
+  const utm = body.utm || {};
+  const out: UtmParams = {};
+  const keys: (keyof UtmParams)[] = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_content',
+    'utm_term',
+    'gclid',
+    'fbclid',
+  ];
+  for (const key of keys) {
+    const value = utm[key]?.trim();
+    if (value) out[key] = value.slice(0, 500);
+  }
+  return out;
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
@@ -124,7 +212,21 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     return json({ ok: false, error: 'Invalid email' }, 400);
   }
 
-  const lead = { name, phone, email };
+  const lead: LeadData = {
+    name,
+    phone,
+    email,
+    pageUrl: body.pageUrl?.trim().slice(0, 2000) || '',
+    landingUrl: body.landingUrl?.trim().slice(0, 2000) || '',
+    referrer: body.referrer?.trim().slice(0, 2000) || '',
+    utm: pickUtm(body),
+    language: body.language?.trim().slice(0, 32) || '',
+    ip: request.headers.get('CF-Connecting-IP') || '',
+    country: request.headers.get('CF-IPCountry') || '',
+    userAgent: request.headers.get('User-Agent') || '',
+    refererHeader: request.headers.get('Referer') || '',
+    submittedAt: new Date(),
+  };
 
   try {
     await sendEmail(env, lead);
