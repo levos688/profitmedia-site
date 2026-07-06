@@ -122,7 +122,7 @@ const cases = [
                 </label>
               </div>
             </fieldset>
-            <button type="button" class="donhin-btn donhin-btn--quiz-next" data-quiz-next disabled>
+            <button type="button" class="donhin-btn donhin-btn--quiz-action" data-quiz-next disabled>
               Следующий
             </button>
           </div>
@@ -154,7 +154,7 @@ const cases = [
               </span>
             </label>
             <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+            <button type="submit" class="donhin-btn donhin-btn--quiz-action">Отправить</button>
           </div>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
@@ -447,7 +447,6 @@ const cases = [
     border-radius: 0.375rem;
     display: block;
     margin-inline: auto;
-    box-shadow: 0 20px 48px rgba(8, 28, 52, 0.35);
   }
 
   .donhin-hero__name {
@@ -496,14 +495,14 @@ const cases = [
 
   .donhin-btn--hero {
     color: #fff;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: #000;
+    border: none;
     margin-top: 1.75rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
   }
 
   .donhin-btn--hero:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #fff;
+    background: #111;
   }
 
   .donhin-btn--brand {
@@ -529,22 +528,36 @@ const cases = [
     margin-top: 1.25rem;
   }
 
-  .donhin-btn--quiz-next {
-    background: linear-gradient(0.25turn, #8689f2 0%, #5257de 100%);
-    color: #fff;
+  .donhin-btn--quiz-action {
+    background: #fff;
+    color: #143c6f;
     border-radius: 0.375rem;
     width: 100%;
     margin-top: 1.5rem;
   }
 
-  .donhin-btn--quiz-next:disabled {
+  .donhin-btn--quiz-action:disabled {
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
   }
 
-  .donhin-btn--quiz-next:not(:disabled):hover {
-    background: linear-gradient(0.25turn, #7579ed 0%, #4549c9 100%);
+  .donhin-btn--quiz-action:not(:disabled):hover {
+    background: #f5f7fa;
+  }
+
+  .donhin-form-section {
+    background: #143c6f;
+    padding: 3.25rem 0 3.75rem;
+  }
+
+  .donhin-form-section__title {
+    color: #fff;
+    text-align: center;
+    font-size: clamp(1.375rem, 3vw, 2rem);
+    font-weight: 700;
+    margin: 0 0 1.5rem;
+    text-wrap: balance;
   }
 
   .donhin-benefits {
@@ -621,20 +634,6 @@ const cases = [
     margin-inline: auto;
   }
 
-  .donhin-form-section {
-    background: #fff;
-    padding: 3.25rem 0 3.75rem;
-  }
-
-  .donhin-form-section__title {
-    color: #15477f;
-    text-align: center;
-    font-size: clamp(1.375rem, 3vw, 2rem);
-    font-weight: 700;
-    margin: 0 0 1.5rem;
-    text-wrap: balance;
-  }
-
   .donhin-form-section__inner,
   .donhin-bottom-form__inner {
     max-width: 36rem;
@@ -645,12 +644,22 @@ const cases = [
     border-radius: 0.5rem;
     padding: 1.5rem;
     border: none;
-    box-shadow: 0 30px 40px -10px rgba(21, 71, 127, 0.1);
+    box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.1);
   }
 
   .donhin-form--bottom {
-    background: #fff;
-    box-shadow: 0 16px 40px rgba(8, 28, 52, 0.14);
+    background: #e6e6e6;
+    box-shadow: none;
+  }
+
+  .donhin-form--bottom .donhin-field input {
+    color: #143c6f;
+    font-weight: 600;
+  }
+
+  .donhin-form--bottom .donhin-field input::placeholder {
+    color: #143c6f;
+    opacity: 0.72;
   }
 
   @media (min-width: 640px) {
@@ -885,13 +894,13 @@ const cases = [
   }
 
   .donhin-bottom-form {
-    background: linear-gradient(145deg, #0f3d6e 0%, #15477f 100%);
+    background: #eeeeee;
     padding: 3.5rem 0 4rem;
   }
 
   .donhin-bottom-form__title {
     margin: 0 0 1.5rem;
-    color: #fff;
+    color: #143c6f;
     text-align: center;
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
