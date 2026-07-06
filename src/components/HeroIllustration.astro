@@ -1,0 +1,107 @@
+<div class="hero-illustration">
+  <div class="hero-illustration__glow" aria-hidden="true"></div>
+  <div class="hero-illustration__ring hero-illustration__ring--one" aria-hidden="true"></div>
+  <div class="hero-illustration__ring hero-illustration__ring--two" aria-hidden="true"></div>
+
+  <img
+    src="/images/hero/photo-min.svg"
+    alt="פרסום דיגיטלי — איור"
+    class="hero-illustration__img"
+    width="578"
+    height="385"
+    fetchpriority="high"
+  />
+</div>
+
+<style>
+  .hero-illustration {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 36rem;
+  }
+
+  .hero-illustration__glow {
+    position: absolute;
+    inset: 12% 8%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, transparent 68%);
+    animation: hero-glow-pulse 5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .hero-illustration__ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(252, 192, 0, 0.35);
+    pointer-events: none;
+  }
+
+  .hero-illustration__ring--one {
+    width: 4.5rem;
+    height: 4.5rem;
+    top: 18%;
+    inset-inline-start: 22%;
+    animation: hero-ring-spin 12s linear infinite;
+  }
+
+  .hero-illustration__ring--two {
+    width: 3rem;
+    height: 3rem;
+    top: 28%;
+    inset-inline-start: 30%;
+    border-color: rgba(255, 255, 255, 0.25);
+    animation: hero-ring-spin 9s linear infinite reverse;
+  }
+
+  .hero-illustration__img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.22));
+    animation: hero-illus-float 7s ease-in-out infinite;
+    transform-origin: center center;
+  }
+
+  @keyframes hero-illus-float {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-14px) scale(1.015);
+    }
+  }
+
+  @keyframes hero-glow-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.06);
+    }
+  }
+
+  @keyframes hero-ring-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-illustration__glow,
+    .hero-illustration__ring,
+    .hero-illustration__img {
+      animation: none;
+    }
+  }
+</style>

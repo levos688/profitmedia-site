@@ -6,51 +6,57 @@ import Reveal from './Reveal.astro';
 <section class="agency-stats section-padding" aria-label="מספרים על העסק">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
-      <p class="agency-stats__eyebrow">המספרים מדברים בעד עצמם</p>
-      <h2 class="agency-stats__title">ניסיון מוכח. תוצאות מדידות.</h2>
-    </Reveal>
+      <div class="agency-stats__panel">
+        <header class="agency-stats__header">
+          <p class="agency-stats__eyebrow">המספרים מדברים בעד עצמם</p>
+          <h2 class="agency-stats__title">ניסיון מוכח. תוצאות מדידות.</h2>
+        </header>
 
-    <div class="agency-stats__grid">
-      {
-        agencyStats.map((item, index) => (
-          <Reveal class="agency-stats__card" delay={index * 100}>
-            <div class="agency-stats__value-wrap">
-              <p
-                class="agency-stats__value"
-                data-stat-counter
-                data-count={item.count}
-                data-prefix={item.prefix}
-                data-suffix={item.suffix}
-              >
-                {item.prefix}
-                {item.count}
-                {item.suffix}
-              </p>
-            </div>
-            <p class="agency-stats__label">{item.label}</p>
-            {item.note && <p class="agency-stats__note">{item.note}</p>}
-          </Reveal>
-        ))
-      }
-    </div>
+        <div class="agency-stats__row" role="list">
+          {
+            agencyStats.map((item, index) => (
+              <>
+                {index > 0 && <div class="agency-stats__divider" aria-hidden="true" />}
+                <div class="agency-stats__item" role="listitem">
+                  <p
+                    class="agency-stats__value"
+                    data-stat-counter
+                    data-count={item.count}
+                    data-suffix={item.suffix}
+                  >
+                    <span dir="ltr">{item.count}{item.suffix}</span>
+                  </p>
+                  <p class="agency-stats__label">{item.label}</p>
+                  {item.note && <p class="agency-stats__note">{item.note}</p>}
+                </div>
+              </>
+            ))
+          }
+        </div>
+      </div>
+    </Reveal>
   </div>
 </section>
 
 <script>
   const counters = document.querySelectorAll('[data-stat-counter]');
 
+  const formatCount = (value: number, suffix: string) => `${value}${suffix}`;
+
   const animateCounter = (el: HTMLElement) => {
     const target = Number(el.dataset.count || 0);
-    const prefix = el.dataset.prefix || '';
     const suffix = el.dataset.suffix || '';
-    const duration = 1400;
+    const span = el.querySelector('span');
+    if (!span) return;
+
+    const duration = target > 1000 ? 1800 : 1400;
     const start = performance.now();
 
     const tick = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(target * eased);
-      el.textContent = `${prefix}${current}${suffix}`;
+      span.textContent = formatCount(current, suffix);
       if (progress < 1) requestAnimationFrame(tick);
     };
 
@@ -60,7 +66,8 @@ import Reveal from './Reveal.astro';
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     counters.forEach((el) => {
       const node = el as HTMLElement;
-      node.textContent = `${node.dataset.prefix || ''}${node.dataset.count || ''}${node.dataset.suffix || ''}`;
+      const span = node.querySelector('span');
+      if (span) span.textContent = formatCount(Number(node.dataset.count || 0), node.dataset.suffix || '');
     });
   } else {
     const observer = new IntersectionObserver(
@@ -79,25 +86,29 @@ import Reveal from './Reveal.astro';
 
 <style>
   .agency-stats {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(160deg, #f8f4fa 0%, #fff 45%, #faf8fc 100%);
+    background: linear-gradient(160deg, #f8f4fa 0%, #fff 50%, #faf8fc 100%);
   }
 
-  .agency-stats::before {
-    content: '';
-    position: absolute;
-    inset-inline-end: -10%;
-    top: -30%;
-    width: 22rem;
-    height: 22rem;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(101, 21, 97, 0.06), transparent 70%);
-    pointer-events: none;
+  .agency-stats__panel {
+    padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.08);
+    box-shadow: 0 12px 40px rgba(101, 21, 97, 0.08);
+  }
+
+  @media (min-width: 768px) {
+    .agency-stats__panel {
+      padding: 2.5rem 2rem;
+    }
+  }
+
+  .agency-stats__header {
+    text-align: center;
+    margin-bottom: 2rem;
   }
 
   .agency-stats__eyebrow {
-    text-align: center;
     font-size: 0.875rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -107,7 +118,6 @@ import Reveal from './Reveal.astro';
 
   .agency-stats__title {
     margin-top: 0.75rem;
-    text-align: center;
     font-size: 1.875rem;
     line-height: 1.2;
     font-weight: 800;
@@ -116,80 +126,92 @@ import Reveal from './Reveal.astro';
 
   @media (min-width: 768px) {
     .agency-stats__title {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
     }
   }
 
-  .agency-stats__grid {
+  .agency-stats__row {
     display: grid;
-    gap: 1.25rem;
-    margin-top: 2.5rem;
+    gap: 1.5rem;
+    align-items: stretch;
   }
 
   @media (min-width: 768px) {
-    .agency-stats__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      margin-top: 3rem;
+    .agency-stats__row {
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0;
     }
   }
 
-  .agency-stats__card {
+  .agency-stats__item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 11.5rem;
-    padding: 1.75rem 1.5rem;
-    border-radius: 1.25rem;
+    justify-content: flex-start;
     text-align: center;
-    background: #fff;
-    border: 1px solid rgba(101, 21, 97, 0.08);
-    box-shadow: 0 8px 32px rgba(101, 21, 97, 0.08);
-    transition: box-shadow 0.25s ease, transform 0.25s ease;
-  }
-
-  .reveal.agency-stats__card.is-visible:hover {
-    transform: translate3d(0, -3px, 0) scale(1);
-    box-shadow: 0 14px 40px rgba(101, 21, 97, 0.12);
-  }
-
-  .agency-stats__value-wrap {
-    display: flex;
-    min-height: 4rem;
     width: 100%;
-    align-items: center;
-    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+
+  .agency-stats__divider {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .agency-stats__divider {
+      display: block;
+      width: 1px;
+      align-self: stretch;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(101, 21, 97, 0.15) 20%,
+        rgba(101, 21, 97, 0.15) 80%,
+        transparent
+      );
+      margin-inline: 1rem;
+    }
   }
 
   .agency-stats__value {
     margin: 0;
-    font-size: clamp(2rem, 5vw, 2.75rem);
+    min-height: 3.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: clamp(2rem, 4.5vw, 2.5rem);
     font-weight: 900;
-    line-height: 1.15;
+    line-height: 1;
     color: #651561;
-    font-variant-numeric: tabular-nums;
-    text-align: center;
-    white-space: nowrap;
   }
 
-  @media (min-width: 768px) {
-    .agency-stats__value {
-      font-size: 2.5rem;
-    }
+  .agency-stats__value span {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
   }
 
   .agency-stats__label {
-    margin-top: 0.75rem;
+    margin: 0.75rem 0 0;
+    min-height: 3.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 14rem;
     font-size: 1.125rem;
     font-weight: 800;
+    line-height: 1.35;
     color: #111827;
+    text-align: center;
   }
 
   .agency-stats__note {
-    margin-top: 0.5rem;
-    max-width: 16rem;
+    margin: 0.5rem 0 0;
+    max-width: 14rem;
     font-size: 0.9375rem;
     line-height: 1.45;
     color: #6b7280;
+    text-align: center;
   }
 </style>

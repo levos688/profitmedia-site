@@ -13,8 +13,9 @@ import { services } from '../data/site';
 
     <div class="services-grid grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
       {
-        services.map((service) => (
-          <article class="service-card h-full">
+        services.map((service, index) => (
+          <article class="service-card h-full" style={`--icon-delay: ${index * 0.35}s`}>
+            <div class="service-card__icon-wrap">
               <img
                 src={service.icon}
                 alt=""
@@ -24,6 +25,7 @@ import { services } from '../data/site';
                 class="service-card__icon"
                 loading="lazy"
               />
+            </div>
             <h3 class="service-card__title">{service.title}</h3>
           </article>
         ))
@@ -61,11 +63,59 @@ import { services } from '../data/site';
     transition-delay: 0.32s;
   }
 
+  .service-card__icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    animation: service-icon-float 4.5s ease-in-out infinite;
+    animation-delay: var(--icon-delay, 0s);
+  }
+
+  .service-card:hover .service-card__icon-wrap {
+    animation: service-icon-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .service-card__icon {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+  }
+
+  .service-card:hover .service-card__icon {
+    transform: scale(1.08) rotate(-2deg);
+    filter: drop-shadow(0 12px 24px rgba(101, 21, 97, 0.18));
+  }
+
+  @keyframes service-icon-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes service-icon-pop {
+    0% {
+      transform: scale(1) translateY(0);
+    }
+    40% {
+      transform: scale(1.12) translateY(-6px);
+    }
+    100% {
+      transform: scale(1) translateY(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .services-grid .service-card {
       opacity: 1;
       transform: none;
       transition: none;
+    }
+
+    .service-card__icon-wrap {
+      animation: none;
     }
   }
 </style>
