@@ -24,17 +24,17 @@ import Reveal from './Reveal.astro';
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
     <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-      <div class="order-2 flex flex-col justify-center text-right text-white lg:order-none lg:min-h-[28rem]">
-        <ul class="space-y-5 text-base text-white/90 md:text-lg lg:space-y-6 lg:text-xl" aria-label="יתרונות">
-          <li class="flex items-center justify-start gap-3.5">
+      <div class="order-2 flex flex-col justify-center text-right text-white max-lg:items-center max-lg:text-center lg:order-none lg:min-h-[28rem]">
+        <ul class="contact-benefits space-y-5 text-lg text-white/90 md:text-xl lg:space-y-6 lg:text-2xl" aria-label="יתרונות">
+          <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
             <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
             <span>בדיקת הפרסום הנוכחי שלך</span>
           </li>
-          <li class="flex items-center justify-start gap-3.5">
+          <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
             <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
             <span>המלצות מעשיות לשיפור</span>
           </li>
-          <li class="flex items-center justify-start gap-3.5">
+          <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
             <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
             <span>מענה תוך 24 שעות</span>
           </li>
@@ -42,12 +42,12 @@ import Reveal from './Reveal.astro';
       </div>
 
       <div class="order-1 w-full max-w-lg justify-self-start lg:order-none lg:max-w-none">
-        <div class="mb-8 text-right text-white md:mb-10">
-          <p class="mb-3 text-sm font-semibold tracking-wide text-brand-yellow uppercase md:text-base">
+        <div class="contact-form-heading mb-8 w-full text-right text-white md:mb-10">
+          <p class="contact-form-eyebrow mb-3 font-semibold tracking-wide text-brand-yellow uppercase">
             ללא כל התחייבות
           </p>
-          <h2 class="text-3xl leading-tight font-black md:text-[42px] lg:text-[46px]">
-            השאר פרטים<br />וקבל אבחון חינם
+          <h2 class="contact-form-title w-full font-black leading-tight">
+            השאר פרטים וקבל אבחון חינם
           </h2>
         </div>
 
@@ -303,3 +303,25 @@ import Reveal from './Reveal.astro';
     }
   });
 </script>
+
+<style>
+  .contact-form-heading {
+    width: 100%;
+  }
+
+  .contact-form-eyebrow {
+    font-size: 1.0625rem;
+  }
+
+  @media (min-width: 768px) {
+    .contact-form-eyebrow {
+      font-size: 1.1875rem;
+    }
+  }
+
+  .contact-form-title {
+    width: 100%;
+    font-size: clamp(1.375rem, 4.6vw, 2.625rem);
+    white-space: nowrap;
+  }
+</style>

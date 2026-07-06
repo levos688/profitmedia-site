@@ -22,7 +22,7 @@ import HeroIllustration from './HeroIllustration.astro';
 
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
     <div class="grid items-center gap-10 py-6 md:gap-14 md:py-10 lg:grid-cols-2">
-      <div class="hero-content text-right text-white">
+      <div class="hero-content text-right text-white max-md:text-center">
         <h1 class="text-4xl leading-tight font-bold md:text-[52px] lg:text-[56px]">
           פרסום טוב לא עולה כסף - הוא מכניס כסף
         </h1>
@@ -120,6 +120,15 @@ import HeroIllustration from './HeroIllustration.astro';
 
     .hero-decoration {
       display: none;
+    }
+
+    .hero-cta-group {
+      width: 100%;
+    }
+
+    .hero-cta {
+      width: 100%;
+      justify-content: center;
     }
   }
 
