@@ -449,6 +449,21 @@ const cases = [
     align-items: center;
   }
 
+  @media (max-width: 899px) {
+    .donhin-hero__content {
+      text-align: center;
+    }
+
+    .donhin-hero__subtitle {
+      margin-inline: auto;
+    }
+
+    .donhin-btn--hero {
+      display: flex;
+      width: 100%;
+    }
+  }
+
   @media (min-width: 900px) {
     .donhin-hero {
       padding: 4rem 0 4.5rem;
@@ -989,6 +1004,18 @@ const cases = [
     display: grid;
     gap: 2rem;
     align-items: center;
+  }
+
+  @media (max-width: 767px) {
+    .donhin-about__content {
+      text-align: center;
+    }
+
+    .donhin-about__list {
+      padding-inline-start: 0;
+      list-style-position: inside;
+      text-align: center;
+    }
   }
 
   @media (min-width: 768px) {
