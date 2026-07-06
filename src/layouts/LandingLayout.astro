@@ -1,0 +1,33 @@
+---
+import Layout from './Layout.astro';
+import DonhinFooter from '../components/donhin/DonhinFooter.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+  dir?: 'ltr' | 'rtl';
+}
+
+const { title, description, lang = 'ru', dir = 'ltr' } = Astro.props;
+---
+
+<Layout title={title} description={description}>
+  <div class="landing-page" lang={lang} dir={dir}>
+    <slot />
+    <DonhinFooter />
+  </div>
+</Layout>
+
+<style>
+  .landing-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: Assistant, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  .landing-page :global(main) {
+    flex: 1;
+  }
+</style>

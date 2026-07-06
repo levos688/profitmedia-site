@@ -25,6 +25,8 @@ interface ContactPayload {
   referrer?: string;
   utm?: UtmParams;
   language?: string;
+  client?: string;
+  quizAnswer?: string;
 }
 
 interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
@@ -34,6 +36,8 @@ interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
   referrer: string;
   utm: UtmParams;
   language: string;
+  client: string;
+  quizAnswer: string;
   ip: string;
   country: string;
   userAgent: string;
@@ -72,6 +76,8 @@ function formatUtm(utm: UtmParams): string {
 
 function buildLeadText(lead: LeadData): string {
   return [
+    lead.client ? 'Client: ' + lead.client : '',
+    lead.quizAnswer ? 'Quiz: ' + lead.quizAnswer : '',
     'Name: ' + lead.name,
     'Phone: ' + lead.phone,
     'Mail: ' + (lead.email || '(not provided)'),
@@ -88,7 +94,9 @@ function buildLeadText(lead: LeadData): string {
     'IP: ' + (lead.ip || '(unknown)'),
     'Language: ' + (lead.language || '(unknown)'),
     'User-Agent: ' + (lead.userAgent || '(unknown)'),
-  ].join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 async function sendEmail(env: Env, lead: LeadData) {
@@ -109,7 +117,7 @@ async function sendEmail(env: Env, lead: LeadData) {
     body: JSON.stringify({
       from,
       to: [to],
-      subject: 'ProfitMedia Lead',
+      subject: lead.client ? `ProfitMedia Lead — ${lead.client}` : 'ProfitMedia Lead',
       text: buildLeadText(lead),
     }),
   });
@@ -127,8 +135,9 @@ async function sendTelegram(env: Env, lead: LeadData) {
   if (!token || !chatId) return;
 
   const text = [
-    '📩 ProfitMedia Lead',
+    lead.client ? `📩 ProfitMedia Lead — ${lead.client}` : '📩 ProfitMedia Lead',
     '',
+    lead.quizAnswer ? `Quiz: ${lead.quizAnswer}` : '',
     `Name: ${lead.name}`,
     `Phone: ${lead.phone}`,
     `Mail: ${lead.email || '(not provided)'}`,
@@ -221,6 +230,8 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     referrer: body.referrer?.trim().slice(0, 2000) || '',
     utm: pickUtm(body),
     language: body.language?.trim().slice(0, 32) || '',
+    client: body.client?.trim().slice(0, 64) || '',
+    quizAnswer: body.quizAnswer?.trim().slice(0, 32) || '',
     ip: request.headers.get('CF-Connecting-IP') || '',
     country: request.headers.get('CF-IPCountry') || '',
     userAgent: request.headers.get('User-Agent') || '',
