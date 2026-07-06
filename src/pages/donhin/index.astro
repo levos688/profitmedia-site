@@ -15,7 +15,7 @@ const benefits = [
   {
     icon: '/images/donhin/icon-compensation.svg',
     title: 'Максимальная компенсация',
-    text: 'Компенсация, которая покроет все расходы и моральный ущерб.',
+    text: 'Компенсация, которая покроет все расходы и моральную компенсацию.',
   },
   {
     icon: '/images/donhin/icon-negotiation.svg',
@@ -26,16 +26,14 @@ const benefits = [
 
 const cases = [
   {
-    amount: '280 тыс шекелей',
-    image: '/images/donhin/case-magnets.svg',
-    title: 'Ребенок проглотил магниты: история лечения и компенсации',
-    text: 'Два с половиной года назад мальчик попал в больницу после того, как проглотил магнитные бусы. Несмотря на то, что бусы были видны на рентгене, персонал больницы решил не пытаться извлечь магниты. Магниты не вышли, и в итоге хирургам пришлось провести операцию. Впоследствии ребенку потребовалось еще два вмешательства. В рамках мирового соглашения больница выплатила семье мальчика 280 000 шекелей.',
+    amount: '280 тыс ₪',
+    title: 'Ребёнок проглотил магниты',
+    text: 'Два с половиной года назад мальчик попал в больницу после того, как проглотил магнитные бусы. Несмотря на то, что бусы были видны на рентгене, персонал больницы решил не извлекать магниты. Потребовались операции и дополнительные вмешательства. В рамках мирового соглашения больница выплатила семье 280 000 ₪.',
   },
   {
-    amount: '233 тыс шекелей',
-    image: '/images/donhin/case-dental.svg',
-    title: 'Стоматологическое протезирование с ошибками',
-    text: 'Мужчина 50 лет обратился к врачу за стоматологическим протезированием. Изготовленные врачом съемные протезы не подошли пациенту. Врач предложил установить имплантаты и на них сделать постоянный протез. Врач имплантировал пациенту 12 имплантатов, но постоянный протез также не подошел. После многочисленных попыток исправить ситуацию, пациент подал в суд на врача. Суд вынес решение в пользу пациента и присудил ему компенсацию в размере 233 000 шекелей.',
+    amount: '233 тыс ₪',
+    title: 'Ошибки при стоматологическом протезировании',
+    text: 'Мужчина 50 лет обратился к врачу за протезированием. Съёмные протезы не подошли, затем были установлены 12 имплантатов — постоянный протез также не подошёл. Суд вынес решение в пользу пациента и присудил компенсацию 233 000 ₪.',
   },
 ];
 ---
@@ -45,79 +43,81 @@ const cases = [
   description="Получите положенную вам компенсацию за халатность стоматолога. Бесплатная консультация адвоката Саймона Донхина."
 >
   <main id="main-content">
-  <section class="donhin-hero">
-    <div class="donhin-container donhin-hero__grid">
-      <div class="donhin-hero__content">
-        <h1 class="donhin-hero__title">
-          Получите положенную вам компенсацию за халатность стоматолога
-        </h1>
-        <p class="donhin-hero__subtitle">
-          За последние 15 лет мои клиенты получили более 20 миллионов шекелей
-        </p>
-        <a href="#form" class="donhin-btn donhin-btn--dark">Запишитесь на бесплатную консультацию</a>
-      </div>
-      <div class="donhin-hero__photo-wrap">
-        <img
-          src="/images/donhin/hero.webp"
-          alt="Адвокат Саймон Донхин"
-          class="donhin-hero__photo"
-          width="397"
-          height="530"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-        />
-        <p class="donhin-hero__name">Адвокат Саймон Донхин</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="donhin-benefits">
-    <div class="donhin-container">
-      <h2 class="donhin-section-title">Почему стоит обратиться к адвокату Саймону?</h2>
-      <div class="donhin-benefits__grid">
-        {
-          benefits.map((item) => (
-            <article class="donhin-benefit">
-              <img src={item.icon} alt="" width="80" height="80" class="donhin-benefit__icon" loading="lazy" decoding="async" />
-              <h3 class="donhin-benefit__title">{item.title}</h3>
-              <p class="donhin-benefit__text">{item.text}</p>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section id="form" class="donhin-form-section">
-    <div class="donhin-container donhin-form-section__inner">
-      <h2 class="donhin-form-section__title">Пройдите быстрый тест и узнайте свои шансы</h2>
-
-      <form class="donhin-form" id="donhin-form" novalidate>
-        <div class="donhin-form__step" data-step="1">
-          <fieldset class="donhin-quiz">
-            <legend class="donhin-quiz__question">
-              Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
-            </legend>
-            <div class="donhin-quiz__options">
-              <label class="donhin-radio">
-                <input type="radio" name="quiz" value="Да" required />
-                <span>Да</span>
-              </label>
-              <label class="donhin-radio">
-                <input type="radio" name="quiz" value="Нет" />
-                <span>Нет</span>
-              </label>
-            </div>
-          </fieldset>
-          <button type="button" class="donhin-btn donhin-btn--outline" id="donhin-next" disabled>
-            Следующий
-          </button>
+    <section class="donhin-hero">
+      <div class="donhin-container donhin-hero__grid">
+        <div class="donhin-hero__content">
+          <p class="donhin-eyebrow">Медицинская халатность</p>
+          <h1 class="donhin-hero__title">
+            Получите положенную вам компенсацию за халатность стоматолога
+          </h1>
+          <p class="donhin-hero__subtitle">
+            За последние 15 лет мои клиенты получили более 20 миллионов шекелей
+          </p>
+          <a href="#form-quiz" class="donhin-btn donhin-btn--dark">Запишитесь на бесплатную консультацию</a>
         </div>
+        <div class="donhin-hero__photo-wrap">
+          <img
+            src="/images/donhin/hero.webp"
+            alt="Адвокат Саймон Донхин"
+            class="donhin-hero__photo"
+            width="397"
+            height="530"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+          <p class="donhin-hero__name">Адвокат Саймон Донхин</p>
+        </div>
+      </div>
+    </section>
 
-        <div class="donhin-form__step donhin-form__step--hidden" data-step="2" hidden>
-          <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
-          <div class="donhin-fields">
+    <section class="donhin-benefits">
+      <div class="donhin-container">
+        <h2 class="donhin-section-title">Почему стоит обратиться к адвокату Саймону?</h2>
+        <div class="donhin-benefits__grid">
+          {
+            benefits.map((item) => (
+              <article class="donhin-benefit">
+                <div class="donhin-benefit__icon-wrap">
+                  <img src={item.icon} alt="" width="120" height="120" class="donhin-benefit__icon" loading="lazy" decoding="async" />
+                </div>
+                <h3 class="donhin-benefit__title">{item.title}</h3>
+                <p class="donhin-benefit__text">{item.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="form-quiz" class="donhin-form-section">
+      <div class="donhin-container donhin-form-section__inner">
+        <h2 class="donhin-form-section__title">Пройдите быстрый тест и узнайте свои шансы</h2>
+
+        <form class="donhin-form" id="donhin-quiz-form" data-donhin-form="quiz" novalidate>
+          <div class="donhin-form__step" data-step="1">
+            <fieldset class="donhin-quiz">
+              <legend class="donhin-quiz__question">
+                Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
+              </legend>
+              <div class="donhin-quiz__options">
+                <label class="donhin-radio">
+                  <input type="radio" name="quiz" value="да" required />
+                  <span>Да</span>
+                </label>
+                <label class="donhin-radio">
+                  <input type="radio" name="quiz" value="нет" />
+                  <span>Нет</span>
+                </label>
+              </div>
+            </fieldset>
+            <button type="button" class="donhin-btn donhin-btn--outline" data-quiz-next disabled>
+              Следующий
+            </button>
+          </div>
+
+          <div class="donhin-form__step donhin-form__step--hidden" data-step="2" hidden>
+            <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
             <label class="donhin-field">
               <span class="sr-only">Имя</span>
               <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
@@ -131,114 +131,146 @@ const cases = [
                 required
                 autocomplete="tel"
                 inputmode="tel"
-                pattern="[0-9\-+() ]{9,15}"
+                pattern="[0-9\-+() ]{9,18}"
               />
             </label>
+            <label class="donhin-privacy">
+              <input type="checkbox" name="privacy" required />
+              <span>
+                Я ознакомлен(а) с{' '}
+                <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+                {' '}и согласен(а) на обработку моих данных (обязательно)
+              </span>
+            </label>
+            <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
           </div>
+          <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
 
+    <section class="donhin-cases">
+      <div class="donhin-container">
+        <h2 class="donhin-section-title donhin-section-title--light">Примеры кейсов</h2>
+        <div class="donhin-cases__grid">
+          {
+            cases.map((item) => (
+              <article class="donhin-case">
+                <div class="donhin-case__badge">Компенсация {item.amount}</div>
+                <h3 class="donhin-case__title">{item.title}</h3>
+                <p class="donhin-case__text">{item.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="donhin-about">
+      <div class="donhin-container donhin-about__grid">
+        <img
+          src="/images/donhin/hero.webp"
+          alt="Адвокат Саймон Донхин"
+          class="donhin-about__photo"
+          width="280"
+          height="373"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="donhin-about__content">
+          <h2 class="donhin-about__title">Адвокат Саймон Донхин</h2>
+          <ul class="donhin-about__list">
+            <li>Опытный адвокат с более чем 15-летним стажем работы</li>
+            <li>Первая степень по юриспруденции — Кирьят Оно</li>
+            <li>Вторая степень по криминологии — Еврейский университет</li>
+            <li>Специализация по медицинской халатности</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="form-bottom" class="donhin-bottom-form">
+      <div class="donhin-container donhin-bottom-form__inner">
+        <h2 class="donhin-bottom-form__title">Оставьте заявку для бесплатной консультации</h2>
+
+        <form class="donhin-form donhin-form--bottom" id="donhin-bottom-form" data-donhin-form="simple" novalidate>
+          <label class="donhin-field">
+            <span class="sr-only">Имя</span>
+            <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+          </label>
+          <label class="donhin-field">
+            <span class="sr-only">Телефон</span>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Номер телефона"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+              pattern="[0-9\-+() ]{9,18}"
+            />
+          </label>
           <label class="donhin-privacy">
             <input type="checkbox" name="privacy" required />
             <span>
               Я ознакомлен(а) с{' '}
               <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
-              {' '}и согласен(а) на обработку моих данных для связи по моему обращению (обязательно)
+              {' '}и согласен(а) на обработку моих данных (обязательно)
             </span>
           </label>
-          <p id="donhin-privacy-error" class="donhin-error hidden" role="alert"></p>
-
-          <button type="submit" class="donhin-btn donhin-btn--primary" id="donhin-submit">Отправить</button>
-          <p id="donhin-status" class="donhin-status hidden" role="status" aria-live="polite"></p>
-        </div>
-      </form>
-    </div>
-  </section>
-
-  <section class="donhin-cases">
-    <div class="donhin-container">
-      <h2 class="donhin-section-title donhin-section-title--light">Примеры кейсов</h2>
-      <div class="donhin-cases__grid">
-        {
-          cases.map((item) => (
-            <article class="donhin-case">
-              <div class="donhin-case__badge">Компенсация {item.amount}</div>
-              <img src={item.image} alt="" class="donhin-case__img" width="560" height="320" loading="lazy" decoding="async" />
-              <h3 class="donhin-case__title">{item.title}</h3>
-              <p class="donhin-case__text">{item.text}</p>
-            </article>
-          ))
-        }
+          <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+          <button type="submit" class="donhin-btn donhin-btn--dark donhin-btn--wide">Отправить</button>
+          <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+        </form>
       </div>
-    </div>
-  </section>
-
-  <section class="donhin-about">
-    <div class="donhin-container donhin-about__grid">
-      <img
-        src="/images/donhin/hero.webp"
-        alt="Адвокат Саймон Донхин"
-        class="donhin-about__photo"
-        width="280"
-        height="373"
-        loading="lazy"
-        decoding="async"
-      />
-      <div class="donhin-about__content">
-        <h2 class="donhin-about__title">Адвокат Саймон Донхин</h2>
-        <ul class="donhin-about__list">
-          <li>Опытный адвокат с более чем 15-летним стажем работы</li>
-          <li>Первая степень по юриспруденции — Кирьят Оно</li>
-          <li>Вторая степень по криминологии — Еврейский университет</li>
-          <li>Специализация по медицинской халатности</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="donhin-cta">
-    <div class="donhin-container">
-      <h2 class="donhin-cta__title">Оставьте заявку для бесплатной консультации</h2>
-      <a href="#form" class="donhin-btn donhin-btn--dark">Отправить</a>
-    </div>
-  </section>
+    </section>
   </main>
 </LandingLayout>
 
 <script>
-  const form = document.getElementById('donhin-form') as HTMLFormElement | null;
-  const step1 = form?.querySelector('[data-step="1"]') as HTMLElement | null;
-  const step2 = form?.querySelector('[data-step="2"]') as HTMLElement | null;
-  const nextBtn = document.getElementById('donhin-next') as HTMLButtonElement | null;
-  const submitBtn = document.getElementById('donhin-submit') as HTMLButtonElement | null;
-  const status = document.getElementById('donhin-status');
-  const privacyError = document.getElementById('donhin-privacy-error');
-  const quizInputs = form?.querySelectorAll<HTMLInputElement>('input[name="quiz"]');
+  function readCookie(name: string) {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : '';
+  }
 
-  quizInputs?.forEach((input) => {
-    input.addEventListener('change', () => {
-      if (nextBtn) nextBtn.disabled = !form?.querySelector('input[name="quiz"]:checked');
+  function collectTracking() {
+    const url = new URL(window.location.href);
+    const tracking: Record<string, string> = {};
+    url.searchParams.forEach((value, key) => {
+      tracking[key] = value;
     });
-  });
+    const fbc = readCookie('_fbc');
+    const fbp = readCookie('_fbp');
+    if (fbc) tracking.fbc = fbc;
+    if (fbp) tracking.fbp = fbp;
+    return tracking;
+  }
 
-  nextBtn?.addEventListener('click', () => {
-    if (!form?.querySelector('input[name="quiz"]:checked')) return;
-    step1?.classList.add('donhin-form__step--hidden');
-    step1?.setAttribute('hidden', '');
-    step2?.classList.remove('donhin-form__step--hidden');
-    step2?.removeAttribute('hidden');
-    (form?.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
-  });
+  function collectUtm() {
+    const url = new URL(window.location.href);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'] as const;
+    const utm: Record<string, string> = {};
+    keys.forEach((key) => {
+      const value = url.searchParams.get(key);
+      if (value) utm[key] = value;
+    });
+    return utm;
+  }
 
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  async function submitDonhinLead(form: HTMLFormElement, formType: string) {
+    const status = form.querySelector('[data-status]') as HTMLElement | null;
+    const privacyError = form.querySelector('[data-privacy-error]') as HTMLElement | null;
     status?.classList.add('hidden');
     privacyError?.classList.add('hidden');
 
-    const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement;
-    const phoneInput = form.querySelector('input[name="phone"]') as HTMLInputElement;
-    const privacyInput = form.querySelector('input[name="privacy"]') as HTMLInputElement;
+    const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement | null;
+    const phoneInput = form.querySelector('input[name="phone"]') as HTMLInputElement | null;
+    const privacyInput = form.querySelector('input[name="privacy"]') as HTMLInputElement | null;
     const quizInput = form.querySelector('input[name="quiz"]:checked') as HTMLInputElement | null;
+    const submitBtn = form.querySelector('[type="submit"]') as HTMLButtonElement | null;
 
-    if (!privacyInput.checked) {
+    if (!privacyInput?.checked) {
       if (privacyError) {
         privacyError.textContent = 'Необходимо согласие с политикой конфиденциальности';
         privacyError.classList.remove('hidden');
@@ -246,20 +278,15 @@ const cases = [
       return;
     }
 
-    const name = nameInput.value.trim();
-    const phone = phoneInput.value.trim();
-    if (!name || name.length < 2 || !phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) return;
+    const name = nameInput?.value.trim() || '';
+    const phone = phoneInput?.value.trim() || '';
+    if (!name || name.length < 2 || !phone || !/^[0-9\-+() ]{9,18}$/.test(phone)) return;
 
-    if (submitBtn) submitBtn.disabled = true;
-    if (submitBtn) submitBtn.textContent = 'Отправка…';
-
-    const pageUrl = new URL(window.location.href);
-    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'] as const;
-    const utm: Record<string, string> = {};
-    utmKeys.forEach((key) => {
-      const value = pageUrl.searchParams.get(key);
-      if (value) utm[key] = value;
-    });
+    const originalLabel = submitBtn?.textContent || 'Отправить';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка…';
+    }
 
     let landingUrl = window.location.href;
     try {
@@ -267,6 +294,10 @@ const cases = [
     } catch {
       /* ignore */
     }
+
+    const lang = [navigator.language, (navigator as Navigator & { userLanguage?: string }).userLanguage]
+      .filter(Boolean)
+      .join(' ');
 
     try {
       const res = await fetch('/api/contact', {
@@ -276,12 +307,14 @@ const cases = [
           name,
           phone,
           client: 'donhin',
+          formType,
           quizAnswer: quizInput?.value || '',
           pageUrl: window.location.href,
           landingUrl,
           referrer: document.referrer || '',
-          utm,
-          language: navigator.language || 'ru',
+          utm: collectUtm(),
+          tracking: { ...collectUtm(), ...collectTracking() },
+          language: lang,
         }),
       });
 
@@ -291,16 +324,50 @@ const cases = [
       window.location.href = '/donhin/thank-you';
     } catch {
       if (status) {
-        status.textContent = 'Ошибка отправки. Попробуйте ещё раз или позвоните нам.';
+        status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
         status.classList.remove('hidden');
         status.setAttribute('role', 'alert');
       }
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Отправить';
+        submitBtn.textContent = originalLabel;
       }
     }
+  }
+
+  const quizForm = document.getElementById('donhin-quiz-form') as HTMLFormElement | null;
+  const bottomForm = document.getElementById('donhin-bottom-form') as HTMLFormElement | null;
+
+  if (quizForm) {
+    const step1 = quizForm.querySelector('[data-step="1"]') as HTMLElement | null;
+    const step2 = quizForm.querySelector('[data-step="2"]') as HTMLElement | null;
+    const nextBtn = quizForm.querySelector('[data-quiz-next]') as HTMLButtonElement | null;
+
+    quizForm.querySelectorAll('input[name="quiz"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (nextBtn) nextBtn.disabled = !quizForm.querySelector('input[name="quiz"]:checked');
+      });
+    });
+
+    nextBtn?.addEventListener('click', () => {
+      if (!quizForm.querySelector('input[name="quiz"]:checked')) return;
+      step1?.classList.add('donhin-form__step--hidden');
+      step1?.setAttribute('hidden', '');
+      step2?.classList.remove('donhin-form__step--hidden');
+      step2?.removeAttribute('hidden');
+      (quizForm.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
+    });
+
+    quizForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitDonhinLead(quizForm, 'quiz');
+    });
+  }
+
+  bottomForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitDonhinLead(bottomForm, 'simple');
   });
 </script>
 
@@ -310,10 +377,19 @@ const cases = [
     margin-inline: auto;
   }
 
+  .donhin-eyebrow {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
   .donhin-hero {
-    background: #15477f;
+    background: linear-gradient(145deg, #0f3d6e 0%, #15477f 52%, #1a5494 100%);
     color: #fff;
-    padding: 2.5rem 0 3rem;
+    padding: 2.75rem 0 3.25rem;
   }
 
   .donhin-hero__grid {
@@ -324,27 +400,30 @@ const cases = [
 
   @media (min-width: 900px) {
     .donhin-hero {
-      padding: 3.5rem 0 4rem;
+      padding: 4rem 0 4.5rem;
     }
 
     .donhin-hero__grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 3rem;
     }
   }
 
   .donhin-hero__title {
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    line-height: 1.15;
+    font-size: clamp(1.875rem, 4.2vw, 2.875rem);
+    line-height: 1.12;
     font-weight: 700;
     margin: 0;
+    text-wrap: balance;
   }
 
   .donhin-hero__subtitle {
     margin: 1.25rem 0 0;
-    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-    line-height: 1.4;
+    max-width: 34rem;
+    font-size: clamp(1.0625rem, 2.2vw, 1.4375rem);
+    line-height: 1.45;
     font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
   }
 
   .donhin-hero__photo-wrap {
@@ -352,11 +431,12 @@ const cases = [
   }
 
   .donhin-hero__photo {
-    width: min(100%, 24rem);
+    width: min(100%, 22rem);
     height: auto;
-    border-radius: 0.25rem;
+    border-radius: 0.375rem;
     display: block;
     margin-inline: auto;
+    box-shadow: 0 20px 48px rgba(8, 28, 52, 0.35);
   }
 
   .donhin-hero__name {
@@ -377,22 +457,31 @@ const cases = [
     text-decoration: none;
     border: none;
     cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   }
 
   .donhin-btn:hover {
     transform: translateY(-1px);
   }
 
+  .donhin-btn:active {
+    transform: translateY(0);
+  }
+
   .donhin-btn:focus-visible {
-    outline: 2px solid #5257de;
+    outline: 2px solid #7579ed;
     outline-offset: 3px;
   }
 
   .donhin-btn--dark {
-    background: #000;
+    background: #111;
     color: #fff;
     margin-top: 1.75rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  }
+
+  .donhin-btn--dark:hover {
+    background: #000;
   }
 
   .donhin-btn--primary {
@@ -402,11 +491,16 @@ const cases = [
     margin-top: 1.25rem;
   }
 
+  .donhin-btn--wide {
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+
   .donhin-btn--outline {
     background: transparent;
-    color: #7579ed;
-    border: 1px solid #dddfff;
-    border-radius: 4px;
+    color: #5257de;
+    border: 1px solid #c8cbff;
+    border-radius: 0.375rem;
     width: 100%;
     margin-top: 1.5rem;
   }
@@ -418,16 +512,17 @@ const cases = [
   }
 
   .donhin-benefits {
-    background: #fff;
-    padding: 3.5rem 0;
+    background: #f0f0f0;
+    padding: 3.75rem 0 4rem;
   }
 
   .donhin-section-title {
     text-align: center;
     color: #15477f;
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-size: clamp(1.5rem, 3vw, 2.125rem);
     font-weight: 700;
-    margin: 0 0 2.5rem;
+    margin: 0 0 2.75rem;
+    text-wrap: balance;
   }
 
   .donhin-section-title--light {
@@ -436,7 +531,7 @@ const cases = [
 
   .donhin-benefits__grid {
     display: grid;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   @media (min-width: 640px) {
@@ -448,37 +543,55 @@ const cases = [
   @media (min-width: 1024px) {
     .donhin-benefits__grid {
       grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
     }
   }
 
   .donhin-benefit {
     text-align: center;
+    padding: 1.5rem 1rem 1.75rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(21, 71, 127, 0.08);
+    box-shadow: 0 4px 18px rgba(21, 71, 127, 0.06);
+    height: 100%;
   }
 
-  .donhin-benefit__icon {
-    width: 5rem;
-    height: 5rem;
+  .donhin-benefit__icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 7.5rem;
+    height: 7.5rem;
     margin-inline: auto;
   }
 
+  .donhin-benefit__icon {
+    width: 7.5rem;
+    height: 7.5rem;
+    object-fit: contain;
+  }
+
   .donhin-benefit__title {
-    margin: 1rem 0 0.5rem;
+    margin: 1.25rem 0 0.625rem;
     color: #15477f;
-    font-size: 1.125rem;
+    font-size: 1.1875rem;
     font-weight: 700;
     line-height: 1.3;
   }
 
   .donhin-benefit__text {
     margin: 0;
-    color: #333;
-    font-size: 0.9375rem;
-    line-height: 1.5;
+    color: #3d4f63;
+    font-size: 1rem;
+    line-height: 1.55;
+    max-width: 16rem;
+    margin-inline: auto;
   }
 
   .donhin-form-section {
-    background: #000;
-    padding: 3rem 0 3.5rem;
+    background: #111;
+    padding: 3.25rem 0 3.75rem;
   }
 
   .donhin-form-section__title {
@@ -487,9 +600,11 @@ const cases = [
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
     margin: 0 0 1.5rem;
+    text-wrap: balance;
   }
 
-  .donhin-form-section__inner {
+  .donhin-form-section__inner,
+  .donhin-bottom-form__inner {
     max-width: 36rem;
   }
 
@@ -497,6 +612,12 @@ const cases = [
     background: #f5f5f5;
     border-radius: 0.5rem;
     padding: 1.5rem;
+    border: 1px solid rgba(21, 71, 127, 0.08);
+  }
+
+  .donhin-form--bottom {
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(8, 28, 52, 0.14);
   }
 
   @media (min-width: 640px) {
@@ -516,7 +637,7 @@ const cases = [
   }
 
   .donhin-quiz__question {
-    font-size: 1.125rem;
+    font-size: 1.1875rem;
     font-weight: 700;
     color: #15477f;
     line-height: 1.4;
@@ -533,13 +654,19 @@ const cases = [
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.875rem 1rem;
+    padding: 0.9375rem 1rem;
     background: #fff;
     border: 1px solid #e2e2e2;
-    border-radius: 0.25rem;
+    border-radius: 0.375rem;
     cursor: pointer;
     font-weight: 600;
     color: #15477f;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .donhin-radio:hover {
+    border-color: #c8cbff;
+    background: #fafbff;
   }
 
   .donhin-radio input {
@@ -550,14 +677,19 @@ const cases = [
 
   .donhin-form__heading {
     margin: 0 0 1rem;
-    font-size: 1.25rem;
+    font-size: 1.3125rem;
     font-weight: 700;
     color: #15477f;
   }
 
-  .donhin-fields {
-    display: grid;
-    gap: 0.75rem;
+  .donhin-form__heading--light {
+    color: #fff;
+    text-align: center;
+  }
+
+  .donhin-field {
+    display: block;
+    margin-bottom: 0.75rem;
   }
 
   .donhin-field input {
@@ -565,28 +697,37 @@ const cases = [
     min-height: 48px;
     padding: 0.875rem 1rem;
     border: 1px solid #e2e2e2;
-    border-radius: 0.25rem;
+    border-radius: 0.375rem;
     font-size: 1rem;
     font-weight: 600;
     color: #15477f;
     background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .donhin-field input:focus {
     outline: none;
     border-color: #5257de;
-    box-shadow: 0 0 0 3px rgba(82, 87, 222, 0.25);
+    box-shadow: 0 0 0 3px rgba(82, 87, 222, 0.2);
   }
 
   .donhin-privacy {
     display: flex;
     align-items: flex-start;
     gap: 0.625rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-size: 0.875rem;
     line-height: 1.45;
-    color: #333;
+    color: #3d4f63;
     cursor: pointer;
+  }
+
+  .donhin-privacy--light {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .donhin-privacy--light a {
+    color: #fff;
   }
 
   .donhin-privacy input {
@@ -618,13 +759,13 @@ const cases = [
   }
 
   .donhin-cases {
-    background: #15477f;
-    padding: 3.5rem 0;
+    background: linear-gradient(160deg, #123f72 0%, #15477f 100%);
+    padding: 3.75rem 0 4rem;
   }
 
   .donhin-cases__grid {
     display: grid;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   @media (min-width: 900px) {
@@ -635,47 +776,41 @@ const cases = [
 
   .donhin-case {
     background: #fff;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    padding-bottom: 1.25rem;
+    border-radius: 0.625rem;
+    padding: 1.5rem 1.5rem 1.75rem;
+    border: 1px solid rgba(21, 71, 127, 0.1);
+    box-shadow: 0 10px 28px rgba(8, 28, 52, 0.12);
   }
 
   .donhin-case__badge {
-    margin: 1rem 1rem 0;
     display: inline-block;
-    padding: 0.375rem 0.875rem;
-    background: #4caf50;
+    padding: 0.4375rem 0.875rem;
+    background: #3d9a49;
     color: #fff;
     font-weight: 700;
     font-size: 0.9375rem;
     border-radius: 0.25rem;
-  }
-
-  .donhin-case__img {
-    width: 100%;
-    height: auto;
-    display: block;
-    margin-top: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .donhin-case__title {
-    margin: 1rem 1.25rem 0.5rem;
-    font-size: 1.125rem;
+    margin: 0 0 0.875rem;
+    font-size: 1.375rem;
     font-weight: 700;
     color: #15477f;
     line-height: 1.35;
   }
 
   .donhin-case__text {
-    margin: 0 1.25rem;
-    font-size: 0.9375rem;
-    line-height: 1.55;
-    color: #333;
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #3d4f63;
   }
 
   .donhin-about {
     background: #f5f5f5;
-    padding: 3.5rem 0;
+    padding: 3.75rem 0;
   }
 
   .donhin-about__grid {
@@ -694,9 +829,10 @@ const cases = [
   .donhin-about__photo {
     width: min(100%, 17.5rem);
     height: auto;
-    border-radius: 0.25rem;
+    border-radius: 0.375rem;
     display: block;
     margin-inline: auto;
+    box-shadow: 0 12px 32px rgba(21, 71, 127, 0.14);
   }
 
   .donhin-about__title {
@@ -710,21 +846,22 @@ const cases = [
     margin: 0;
     padding-inline-start: 1.25rem;
     color: #15477f;
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.7;
     font-weight: 600;
   }
 
-  .donhin-cta {
-    background: #15477f;
-    padding: 3rem 0;
-    text-align: center;
+  .donhin-bottom-form {
+    background: linear-gradient(145deg, #0f3d6e 0%, #15477f 100%);
+    padding: 3.5rem 0 4rem;
   }
 
-  .donhin-cta__title {
+  .donhin-bottom-form__title {
     margin: 0 0 1.5rem;
     color: #fff;
+    text-align: center;
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
+    text-wrap: balance;
   }
 </style>

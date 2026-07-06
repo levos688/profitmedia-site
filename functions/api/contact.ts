@@ -1,49 +1,5 @@
-interface Env {
-  RESEND_API_KEY?: string;
-  CONTACT_EMAIL?: string;
-  FROM_EMAIL?: string;
-  TELEGRAM_BOT_TOKEN?: string;
-  TELEGRAM_CHAT_ID?: string;
-}
-
-interface UtmParams {
-  utm_source?: string;
-  utm_medium?: string;
-  utm_campaign?: string;
-  utm_content?: string;
-  utm_term?: string;
-  gclid?: string;
-  fbclid?: string;
-}
-
-interface ContactPayload {
-  name?: string;
-  phone?: string;
-  email?: string;
-  pageUrl?: string;
-  landingUrl?: string;
-  referrer?: string;
-  utm?: UtmParams;
-  language?: string;
-  client?: string;
-  quizAnswer?: string;
-}
-
-interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
-  email: string;
-  pageUrl: string;
-  landingUrl: string;
-  referrer: string;
-  utm: UtmParams;
-  language: string;
-  client: string;
-  quizAnswer: string;
-  ip: string;
-  country: string;
-  userAgent: string;
-  refererHeader: string;
-  submittedAt: Date;
-}
+import type { ContactPayload, Env, LeadData, UtmParams } from './contact-types';
+import { buildDonhinLeadText, getDonhinRecipients } from './donhin-lead';
 
 const json = (body: object, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -74,9 +30,10 @@ function formatUtm(utm: UtmParams): string {
   return entries.map(([k, v]) => `${k}=${v}`).join('&');
 }
 
-function buildLeadText(lead: LeadData): string {
+function buildDefaultLeadText(lead: LeadData): string {
   return [
     lead.client ? 'Client: ' + lead.client : '',
+    lead.formType ? 'Form: ' + lead.formType : '',
     lead.quizAnswer ? 'Quiz: ' + lead.quizAnswer : '',
     'Name: ' + lead.name,
     'Phone: ' + lead.phone,
@@ -99,9 +56,23 @@ function buildLeadText(lead: LeadData): string {
     .join('\n');
 }
 
+function buildLeadText(lead: LeadData): string {
+  if (lead.client === 'donhin') return buildDonhinLeadText(lead);
+  return buildDefaultLeadText(lead);
+}
+
+function getRecipients(env: Env, lead: LeadData): string[] {
+  if (lead.client === 'donhin') return getDonhinRecipients(env);
+  return [env.CONTACT_EMAIL || 'lev@profitmedia.co.il'];
+}
+
+function getSubject(lead: LeadData): string {
+  if (lead.client === 'donhin') return 'New Lead Donhin';
+  return lead.client ? `ProfitMedia Lead — ${lead.client}` : 'ProfitMedia Lead';
+}
+
 async function sendEmail(env: Env, lead: LeadData) {
   const apiKey = env.RESEND_API_KEY;
-  const to = env.CONTACT_EMAIL || 'lev@profitmedia.co.il';
   const from = env.FROM_EMAIL || 'Profit Media <onboarding@resend.dev>';
 
   if (!apiKey) {
@@ -116,8 +87,8 @@ async function sendEmail(env: Env, lead: LeadData) {
     },
     body: JSON.stringify({
       from,
-      to: [to],
-      subject: lead.client ? `ProfitMedia Lead — ${lead.client}` : 'ProfitMedia Lead',
+      to: getRecipients(env, lead),
+      subject: getSubject(lead),
       text: buildLeadText(lead),
     }),
   });
@@ -135,7 +106,7 @@ async function sendTelegram(env: Env, lead: LeadData) {
   if (!token || !chatId) return;
 
   const text = [
-    lead.client ? `📩 ProfitMedia Lead — ${lead.client}` : '📩 ProfitMedia Lead',
+    lead.client === 'donhin' ? '📩 New Lead Donhin' : lead.client ? `📩 ProfitMedia Lead — ${lead.client}` : '📩 ProfitMedia Lead',
     '',
     lead.quizAnswer ? `Quiz: ${lead.quizAnswer}` : '',
     `Name: ${lead.name}`,
@@ -175,7 +146,7 @@ async function sendTelegram(env: Env, lead: LeadData) {
 function pickUtm(body: ContactPayload): UtmParams {
   const utm = body.utm || {};
   const out: UtmParams = {};
-  const keys: (keyof UtmParams)[] = [
+  const keys = [
     'utm_source',
     'utm_medium',
     'utm_campaign',
@@ -183,10 +154,20 @@ function pickUtm(body: ContactPayload): UtmParams {
     'utm_term',
     'gclid',
     'fbclid',
-  ];
+  ] as const;
   for (const key of keys) {
     const value = utm[key]?.trim();
     if (value) out[key] = value.slice(0, 500);
+  }
+  return out;
+}
+
+function pickTracking(body: ContactPayload): Record<string, string> {
+  const tracking = body.tracking || {};
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(tracking)) {
+    const trimmed = value?.trim();
+    if (trimmed) out[key.slice(0, 64)] = trimmed.slice(0, 500);
   }
   return out;
 }
@@ -213,7 +194,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     return json({ ok: false, error: 'Name required' }, 400);
   }
 
-  if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) {
+  if (!phone || !/^[0-9\-+() ]{9,18}$/.test(phone)) {
     return json({ ok: false, error: 'Valid phone required' }, 400);
   }
 
@@ -229,9 +210,11 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     landingUrl: body.landingUrl?.trim().slice(0, 2000) || '',
     referrer: body.referrer?.trim().slice(0, 2000) || '',
     utm: pickUtm(body),
-    language: body.language?.trim().slice(0, 32) || '',
+    tracking: pickTracking(body),
+    language: body.language?.trim().slice(0, 64) || '',
     client: body.client?.trim().slice(0, 64) || '',
-    quizAnswer: body.quizAnswer?.trim().slice(0, 32) || '',
+    quizAnswer: body.quizAnswer?.trim().slice(0, 64) || '',
+    formType: body.formType?.trim().slice(0, 32) || '',
     ip: request.headers.get('CF-Connecting-IP') || '',
     country: request.headers.get('CF-IPCountry') || '',
     userAgent: request.headers.get('User-Agent') || '',
