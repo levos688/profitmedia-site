@@ -68,25 +68,43 @@ const {
       src="https://levos688.github.io/profitmedia/accessibility-widget.js"
       defer
     ></script>
-    <script>
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const revealEls = document.querySelectorAll('[data-reveal]');
+    <script is:inline>
+      (function () {
+        function initReveal() {
+          var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var revealEls = document.querySelectorAll('[data-reveal]');
 
-      if (reduceMotion) {
-        revealEls.forEach((el) => el.classList.add('is-visible'));
-      } else {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
+          if (!revealEls.length) return;
+
+          if (reduceMotion) {
+            revealEls.forEach(function (el) {
+              el.classList.add('is-visible');
             });
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -48px 0px' }
-        );
-        revealEls.forEach((el) => observer.observe(el));
-      }
+            return;
+          }
+
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              });
+            },
+            { threshold: 0.08, rootMargin: '0px 0px -8% 0px' }
+          );
+
+          revealEls.forEach(function (el) {
+            observer.observe(el);
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initReveal);
+        } else {
+          initReveal();
+        }
+      })();
     </script>
   </body>
 </html>

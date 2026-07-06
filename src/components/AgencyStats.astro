@@ -13,10 +13,20 @@ import Reveal from './Reveal.astro';
     <div class="agency-stats__grid">
       {
         agencyStats.map((item, index) => (
-          <Reveal class="agency-stats__card" delay={index * 90}>
-            <p class="agency-stats__value" dir="ltr">
-              {item.value}
-            </p>
+          <Reveal class="agency-stats__card" delay={index * 100}>
+            <div class="agency-stats__value-wrap">
+              <p
+                class="agency-stats__value"
+                data-stat-counter
+                data-count={item.count}
+                data-prefix={item.prefix}
+                data-suffix={item.suffix}
+              >
+                {item.prefix}
+                {item.count}
+                {item.suffix}
+              </p>
+            </div>
             <p class="agency-stats__label">{item.label}</p>
             {item.note && <p class="agency-stats__note">{item.note}</p>}
           </Reveal>
@@ -25,6 +35,47 @@ import Reveal from './Reveal.astro';
     </div>
   </div>
 </section>
+
+<script>
+  const counters = document.querySelectorAll('[data-stat-counter]');
+
+  const animateCounter = (el: HTMLElement) => {
+    const target = Number(el.dataset.count || 0);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const duration = 1400;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(target * eased);
+      el.textContent = `${prefix}${current}${suffix}`;
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  };
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    counters.forEach((el) => {
+      const node = el as HTMLElement;
+      node.textContent = `${node.dataset.prefix || ''}${node.dataset.count || ''}${node.dataset.suffix || ''}`;
+    });
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          animateCounter(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.35 }
+    );
+    counters.forEach((el) => observer.observe(el));
+  }
+</script>
 
 <style>
   .agency-stats {
@@ -41,7 +92,7 @@ import Reveal from './Reveal.astro';
     width: 22rem;
     height: 22rem;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(198, 6, 145, 0.08), transparent 70%);
+    background: radial-gradient(circle, rgba(101, 21, 97, 0.06), transparent 70%);
     pointer-events: none;
   }
 
@@ -84,7 +135,10 @@ import Reveal from './Reveal.astro';
   }
 
   .agency-stats__card {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 11.5rem;
     padding: 1.75rem 1.5rem;
     border-radius: 1.25rem;
     text-align: center;
@@ -94,21 +148,33 @@ import Reveal from './Reveal.astro';
     transition: box-shadow 0.25s ease, transform 0.25s ease;
   }
 
-  .agency-stats__card:hover {
-    transform: translateY(-3px);
+  .reveal.agency-stats__card.is-visible:hover {
+    transform: translate3d(0, -3px, 0) scale(1);
     box-shadow: 0 14px 40px rgba(101, 21, 97, 0.12);
   }
 
+  .agency-stats__value-wrap {
+    display: flex;
+    min-height: 4rem;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
   .agency-stats__value {
-    font-size: 2.75rem;
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 2.75rem);
     font-weight: 900;
-    line-height: 1;
+    line-height: 1.15;
     color: #651561;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    white-space: nowrap;
   }
 
   @media (min-width: 768px) {
     .agency-stats__value {
-      font-size: 3.25rem;
+      font-size: 2.5rem;
     }
   }
 
@@ -121,6 +187,7 @@ import Reveal from './Reveal.astro';
 
   .agency-stats__note {
     margin-top: 0.5rem;
+    max-width: 16rem;
     font-size: 0.9375rem;
     line-height: 1.45;
     color: #6b7280;

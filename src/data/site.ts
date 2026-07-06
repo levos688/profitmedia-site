@@ -26,17 +26,23 @@ export const brand = {
 
 export const agencyStats = [
   {
-    value: '223+',
+    prefix: '',
+    count: 223,
+    suffix: '+',
     label: 'לקוחות ייחודיים',
     note: 'ששירתנו לאורך השנים',
   },
   {
-    value: '900+',
+    prefix: '',
+    count: 900,
+    suffix: '+',
     label: 'חשבוניות ופרויקטים',
     note: 'קמפיינים, דפי נחיתה ושירותים',
   },
   {
-    value: '₪6M+',
+    prefix: 'מעל ',
+    count: 6,
+    suffix: ' מיליון ₪',
     label: 'תקציבי פרסום מנוהלים',
     note: 'סכום כולל מוערך — ומעלה',
   },
