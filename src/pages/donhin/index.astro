@@ -588,21 +588,23 @@ const cases = [
   }
 
   .donhin-btn--quiz-action {
-    background: #143c6f;
-    color: #fff;
+    background: #fff;
+    color: #143c6f;
     border-radius: 0.25rem;
     width: 100%;
     margin-top: 1.5rem;
   }
 
   .donhin-btn--quiz-action:disabled {
-    opacity: 0.45;
+    background: #e6e6e6;
+    color: #143c6f;
+    opacity: 0.7;
     cursor: not-allowed;
     transform: none;
   }
 
   .donhin-btn--quiz-action:not(:disabled):hover {
-    background: #123a66;
+    background: #f0f0f0;
   }
 
   .donhin-form-section {
@@ -707,11 +709,44 @@ const cases = [
   }
 
   .donhin-form--quiz {
-    background: #e6e6e6;
-    border: 2px solid #144379;
+    background: #143c6f;
+    border: 2px solid #143c6f;
     border-radius: 0.75rem;
     box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.08);
     padding: 2rem 1.5rem;
+  }
+
+  .donhin-form--quiz .donhin-quiz__question {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-form__heading {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-btn--quiz-back {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .donhin-form--quiz .donhin-btn--quiz-back:hover {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-privacy {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .donhin-form--quiz .donhin-privacy a {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-btn--primary {
+    background: #fff;
+    color: #143c6f;
+  }
+
+  .donhin-form--quiz .donhin-btn--primary:hover {
+    background: #f0f0f0;
   }
 
   .donhin-form--quiz .donhin-radio {
