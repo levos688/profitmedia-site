@@ -7,7 +7,11 @@ export function buildDonhinLeadText(lead: LeadData): string {
   lines.push('Phone', lead.phone, '');
 
   if (lead.quizAnswer) {
-    lines.push('Была ли оказана помощь в последние 7 лет', lead.quizAnswer.toLowerCase(), '');
+    lines.push(
+      'Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?',
+      lead.quizAnswer.toLowerCase(),
+      '',
+    );
   }
 
   lines.push('Date', lead.submittedAt.toISOString(), '');
@@ -52,7 +56,11 @@ export function buildDonhinLeadText(lead: LeadData): string {
 export function getDonhinRecipients(env: {
   CONTACT_EMAIL?: string;
   DONHIN_EMAIL?: string;
+  DONHIN_TEST_EMAIL?: string;
 }): string[] {
+  // Temporary: set DONHIN_TEST_EMAIL in Cloudflare to route all Donhin leads to one inbox while testing.
+  if (env.DONHIN_TEST_EMAIL) return [env.DONHIN_TEST_EMAIL];
+
   const primary = env.CONTACT_EMAIL || 'lev@profitmedia.co.il';
   const lawyer = env.DONHIN_EMAIL || 'simon@donhin.co.il';
   return [...new Set([primary, lawyer])];

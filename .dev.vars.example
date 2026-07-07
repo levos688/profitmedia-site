@@ -3,6 +3,7 @@
 
 RESEND_API_KEY=re_xxxxxxxx
 CONTACT_EMAIL=lev@profitmedia.co.il
+# DONHIN_TEST_EMAIL=lev688@gmail.com
 FROM_EMAIL=Profit Media <noreply@profitmedia.co.il>
 
 TELEGRAM_BOT_TOKEN=123456:ABC-DEF...

@@ -2,6 +2,7 @@ export interface Env {
   RESEND_API_KEY?: string;
   CONTACT_EMAIL?: string;
   DONHIN_EMAIL?: string;
+  DONHIN_TEST_EMAIL?: string;
   FROM_EMAIL?: string;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
