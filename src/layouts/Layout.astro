@@ -5,12 +5,14 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  preloadImage?: string | false;
 }
 
 const {
   title = 'פרסום באינטרנט | פרסום שמביא רווחים | Profit Media',
   description = 'פרסום באינטרנט | פרסום בגוגל | פרסום בפייסבוק | פרסום באינסטגרם | הקמה דפי נחיתה',
   noindex = false,
+  preloadImage = '/images/hero/photo-min.svg',
 } = Astro.props;
 ---
 
@@ -33,13 +35,17 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3" />
     <meta name="theme-color" content="#651561" />
-    <link
-      rel="preload"
-      href="/images/hero/photo-min.svg"
-      as="image"
-      type="image/svg+xml"
-      fetchpriority="high"
-    />
+    {
+      preloadImage && (
+        <link
+          rel="preload"
+          href={preloadImage}
+          as="image"
+          type={preloadImage.endsWith('.webp') ? 'image/webp' : 'image/svg+xml'}
+          fetchpriority="high"
+        />
+      )
+    }
     <link
       rel="preload"
       href="/fonts/assistant-hebrew-700-normal.woff2"
