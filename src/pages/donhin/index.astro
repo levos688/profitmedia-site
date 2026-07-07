@@ -3,22 +3,22 @@ import LandingLayout from '../../layouts/LandingLayout.astro';
 
 const benefits = [
   {
-    icon: '/images/donhin/icon-consult.svg',
+    icon: '/images/donhin/icon-consult.png',
     title: 'Бесплатная консультация',
     text: 'Оценка перспектив дела и помощь в сборе документов.',
   },
   {
-    icon: '/images/donhin/icon-payment.svg',
+    icon: '/images/donhin/icon-payment.png',
     title: 'Оплата по результатам — без риска',
     text: 'Платите только за результат, в котором вы уверены.',
   },
   {
-    icon: '/images/donhin/icon-compensation.svg',
+    icon: '/images/donhin/icon-compensation.png',
     title: 'Максимальная компенсация',
     text: 'Компенсация, которая покроет все расходы и моральную компенсацию.',
   },
   {
-    icon: '/images/donhin/icon-negotiation.svg',
+    icon: '/images/donhin/icon-negotiation.png',
     title: 'Ведение переговоров',
     text: 'Переговоры с врачом, больницей и страховой компанией.',
   },
@@ -581,7 +581,7 @@ const cases = [
     color: #143c6f;
     border-radius: 0.25rem;
     width: 100%;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 
   .donhin-btn--quiz-action:disabled {
@@ -672,7 +672,7 @@ const cases = [
     color: #15477f;
     font-size: clamp(1.125rem, 2.2vw, 1.75rem);
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.25;
   }
 
   .donhin-benefit__text {
@@ -682,6 +682,37 @@ const cases = [
     line-height: 1.5;
     max-width: 18rem;
     margin-inline: auto;
+  }
+
+  @media (max-width: 639px) {
+    .donhin-benefits {
+      padding: 3rem 0 3.25rem;
+    }
+
+    .donhin-benefits__grid {
+      gap: 2rem;
+    }
+
+    .donhin-benefit__icon-wrap,
+    .donhin-benefit__icon {
+      width: 8.125rem;
+      height: 8.125rem;
+    }
+
+    .donhin-benefit__title {
+      font-size: clamp(1.0625rem, 4.2vw, 1.375rem);
+      line-height: 1.15;
+      max-width: 100%;
+      margin-inline: auto;
+      padding-inline: 0.125rem;
+      text-wrap: balance;
+    }
+
+    .donhin-benefit__text {
+      font-size: 1.0625rem;
+      line-height: 1.45;
+      max-width: 21rem;
+    }
   }
 
   .donhin-form-section__inner,
@@ -702,7 +733,13 @@ const cases = [
     border: 2px solid #143c6f;
     border-radius: 0.75rem;
     box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.08);
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .donhin-form--quiz {
+      padding: 2rem 1.5rem;
+    }
   }
 
   .donhin-form--quiz .donhin-quiz__question {
@@ -769,13 +806,6 @@ const cases = [
   .donhin-form__viewport {
     position: relative;
     overflow: hidden;
-    min-height: 28rem;
-  }
-
-  @media (min-width: 640px) {
-    .donhin-form__viewport {
-      min-height: 24rem;
-    }
   }
 
   .donhin-form__step {
