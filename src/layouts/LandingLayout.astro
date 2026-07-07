@@ -12,7 +12,7 @@ interface Props {
 const { title, description, lang = 'ru', dir = 'ltr' } = Astro.props;
 ---
 
-<Layout title={title} description={description} preloadImage="/images/donhin/hero.webp">
+<Layout title={title} description={description} preloadImage="/images/donhin/hero.webp" noindex>
   <div class="landing-page" lang={lang} dir={dir}>
     <slot />
     <DonhinFooter />
