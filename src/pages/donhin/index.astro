@@ -334,9 +334,7 @@ const cases = [
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
 
-      window.setTimeout(() => {
-        window.location.href = '/donhin/thank-you';
-      }, 400);
+      window.location.href = '/donhin/thank-you';
     } catch {
       if (status) {
         status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';

@@ -15,8 +15,6 @@ const { title, description, lang = 'ru', dir = 'ltr', metaPixelLead = false } = 
 ---
 
 <Layout title={title} description={description} preloadImage="/images/donhin/hero.webp" noindex enableGtm={false}>
-  <link slot="head" rel="preconnect" href="https://connect.facebook.net" crossorigin />
-  <link slot="head" rel="dns-prefetch" href="https://www.facebook.com" />
   <MetaPixel slot="head" trackLead={metaPixelLead} />
 
   <div class="landing-page" lang={lang} dir={dir}>
