@@ -7,7 +7,6 @@ interface Props {
   noindex?: boolean;
   preloadImage?: string | false;
   enableGtm?: boolean;
-  gtmImmediate?: boolean;
   metaPixelId?: string;
   metaPixelLead?: boolean;
 }
@@ -18,7 +17,6 @@ const {
   noindex = false,
   preloadImage = '/images/hero/photo-min.svg',
   enableGtm = true,
-  gtmImmediate = false,
   metaPixelId,
   metaPixelLead = false,
 } = Astro.props;
@@ -28,7 +26,7 @@ const {
 <html lang="he" dir="rtl">
   <head>
     {
-      enableGtm && gtmImmediate && (
+      enableGtm && (
         <>
           {/* Google Tag Manager */}
           <script is:inline>
@@ -149,36 +147,6 @@ const {
       )
     }
     <slot name="head" />
-    {
-      enableGtm && !gtmImmediate && (
-        <>
-          {/* Google Tag Manager: loads on user interaction only (keeps PageSpeed clean) */}
-          <script is:inline>
-      (function () {
-        var loaded = false;
-        function loadGtm() {
-          if (loaded) return;
-          loaded = true;
-          (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0],
-              j = d.createElement(s),
-              dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-          })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
-        }
-        ['pointerdown', 'keydown'].forEach(function (type) {
-          window.addEventListener(type, loadGtm, { once: true, passive: true });
-        });
-        setTimeout(loadGtm, 20000);
-      })();
-          </script>
-        </>
-      )
-    }
   </head>
   <body class="bg-white text-gray-900 antialiased">
     {
