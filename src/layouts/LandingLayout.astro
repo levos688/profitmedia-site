@@ -11,36 +11,19 @@ interface Props {
 }
 
 const { title, description, lang = 'ru', dir = 'ltr', metaPixelLead = false } = Astro.props;
+
+const META_PIXEL_ID = '517991158551582';
 ---
 
-<Layout title={title} description={description} preloadImage="/images/donhin/hero.webp" noindex enableGtm={false}>
-  <Fragment slot="head-early">
-    {
-      metaPixelLead ? (
-        <>
-          <!-- DONHIN ONLY | Meta Pixel ID: 517991158551582 | Page: /donhin/thank-you/ | Events: PageView, Lead -->
-          <meta name="facebook-pixel" content="517991158551582;page=/donhin/thank-you/;events=PageView,Lead" />
-          <script is:inline src="/scripts/donhin-fb-517991158551582-lead.js"></script>
-        </>
-      ) : (
-        <>
-          <!-- DONHIN ONLY | Meta Pixel ID: 517991158551582 | Page: /donhin/ | Events: PageView -->
-          <meta name="facebook-pixel" content="517991158551582;page=/donhin/;events=PageView" />
-          <script is:inline src="/scripts/donhin-fb-517991158551582-pageview.js"></script>
-        </>
-      )
-    }
-    <noscript>
-      <img
-        height="1"
-        width="1"
-        style="display:none"
-        src="https://www.facebook.com/tr?id=517991158551582&ev=PageView&noscript=1"
-        alt=""
-      />
-    </noscript>
-  </Fragment>
-
+<Layout
+  title={title}
+  description={description}
+  preloadImage="/images/donhin/hero.webp"
+  noindex
+  enableGtm={false}
+  metaPixelId={META_PIXEL_ID}
+  metaPixelLead={metaPixelLead}
+>
   <div class="landing-page" lang={lang} dir={dir}>
     <slot />
     <DonhinFooter />
