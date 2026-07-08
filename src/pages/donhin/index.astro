@@ -334,14 +334,15 @@ const cases = [
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
 
-      window.location.href = '/donhin/thank-you';
+      window.setTimeout(() => {
+        window.location.href = '/donhin/thank-you';
+      }, 400);
     } catch {
       if (status) {
         status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
         status.classList.remove('hidden');
         status.setAttribute('role', 'alert');
       }
-    } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalLabel;
