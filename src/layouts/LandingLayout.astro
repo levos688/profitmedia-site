@@ -1,25 +1,22 @@
 ---
 import Layout from './Layout.astro';
 import DonhinFooter from '../components/donhin/DonhinFooter.astro';
+import MetaPixel from '../components/donhin/MetaPixel.astro';
 
 interface Props {
   title: string;
   description: string;
   lang?: string;
   dir?: 'ltr' | 'rtl';
+  metaPixelLead?: boolean;
 }
 
-const { title, description, lang = 'ru', dir = 'ltr' } = Astro.props;
+const { title, description, lang = 'ru', dir = 'ltr', metaPixelLead = false } = Astro.props;
 ---
 
-<Layout
-  title={title}
-  description={description}
-  preloadImage="/images/donhin/hero.webp"
-  noindex
-  enableGtm={true}
-  gtmImmediate={true}
->
+<Layout title={title} description={description} preloadImage="/images/donhin/hero.webp" noindex enableGtm={false}>
+  <MetaPixel slot="head" trackLead={metaPixelLead} />
+
   <div class="landing-page" lang={lang} dir={dir}>
     <slot />
     <DonhinFooter />
