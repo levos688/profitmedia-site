@@ -8,14 +8,16 @@ interface Props {
   description: string;
   lang?: string;
   dir?: 'ltr' | 'rtl';
-  metaPixelLead?: boolean;
 }
 
-const { title, description, lang = 'ru', dir = 'ltr', metaPixelLead = false } = Astro.props;
+const { title, description, lang = 'ru', dir = 'ltr' } = Astro.props;
 ---
 
 <Layout title={title} description={description} preloadImage="/images/donhin/hero.webp" noindex enableGtm={false}>
-  <MetaPixel slot="head" trackLead={metaPixelLead} />
+  <Fragment slot="head">
+    <slot name="head" />
+    {!Astro.slots.has('head') && <MetaPixel />}
+  </Fragment>
 
   <div class="landing-page" lang={lang} dir={dir}>
     <slot />
