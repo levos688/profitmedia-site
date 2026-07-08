@@ -7,10 +7,18 @@ interface Props {
   description: string;
   lang?: string;
   dir?: 'ltr' | 'rtl';
+  metaPixelPageView?: boolean;
   metaPixelLead?: boolean;
 }
 
-const { title, description, lang = 'ru', dir = 'ltr', metaPixelLead = false } = Astro.props;
+const {
+  title,
+  description,
+  lang = 'ru',
+  dir = 'ltr',
+  metaPixelPageView = true,
+  metaPixelLead = false,
+} = Astro.props;
 
 const META_PIXEL_ID = '517991158551582';
 ---
@@ -20,7 +28,9 @@ const META_PIXEL_ID = '517991158551582';
   description={description}
   preloadImage="/images/donhin/hero.webp"
   noindex
+  enableGtm={false}
   metaPixelId={META_PIXEL_ID}
+  metaPixelPageView={metaPixelPageView}
   metaPixelLead={metaPixelLead}
 >
   <div class="landing-page" lang={lang} dir={dir}>

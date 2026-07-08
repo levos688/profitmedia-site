@@ -7,7 +7,9 @@ interface Props {
   noindex?: boolean;
   preloadImage?: string | false;
   metaPixelId?: string;
+  metaPixelPageView?: boolean;
   metaPixelLead?: boolean;
+  enableGtm?: boolean;
 }
 
 const {
@@ -16,7 +18,9 @@ const {
   noindex = false,
   preloadImage = '/images/hero/photo-min.svg',
   metaPixelId,
+  metaPixelPageView = true,
   metaPixelLead = false,
+  enableGtm = true,
 } = Astro.props;
 ---
 
@@ -68,7 +72,10 @@ const {
     {
       metaPixelId && (
         <>
-          <script is:inline define:vars={{ metaPixelId, metaPixelLead }}>
+          <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
+          <link rel="dns-prefetch" href="https://www.facebook.com" />
+          <link rel="preload" href="https://connect.facebook.net/en_US/fbevents.js" as="script" />
+          <script is:inline define:vars={{ metaPixelId, metaPixelPageView, metaPixelLead }}>
             !(function (f, b, e, v, n, t, s) {
               if (f.fbq) return;
               n = f.fbq = function () {
@@ -86,23 +93,43 @@ const {
               s.parentNode.insertBefore(t, s);
             })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', metaPixelId);
-            fbq('track', 'PageView');
+            if (metaPixelPageView) fbq('track', 'PageView');
             if (metaPixelLead) fbq('track', 'Lead');
           </script>
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style="display:none"
-              src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
-              alt=""
-            />
-          </noscript>
+          {
+            metaPixelPageView && (
+              <noscript>
+                <img
+                  height="1"
+                  width="1"
+                  style="display:none"
+                  src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
+                  alt=""
+                />
+              </noscript>
+            )
+          }
+          {
+            metaPixelLead && (
+              <noscript>
+                <img
+                  height="1"
+                  width="1"
+                  style="display:none"
+                  src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=Lead&noscript=1`}
+                  alt=""
+                />
+              </noscript>
+            )
+          }
         </>
       )
     }
-    <!-- Google Tag Manager: loads on user interaction only (keeps PageSpeed clean) -->
-    <script is:inline>
+    {
+      enableGtm && (
+        <>
+          {/* Google Tag Manager: loads on user interaction only (keeps PageSpeed clean) */}
+          <script is:inline>
       (function () {
         var loaded = false;
         function loadGtm() {
@@ -124,19 +151,24 @@ const {
         });
         setTimeout(loadGtm, 20000);
       })();
-    </script>
-    <!-- End Google Tag Manager -->
+          </script>
+        </>
+      )
+    }
   </head>
   <body class="bg-white text-gray-900 antialiased">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-57J48TC"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"></iframe></noscript
-    >
-    <!-- End Google Tag Manager (noscript) -->
+    {
+      enableGtm && (
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-57J48TC"
+            height="0"
+            width="0"
+            style="display:none;visibility:hidden"
+          />
+        </noscript>
+      )
+    }
     <a href="#main-content" class="skip-link">דילוג לתוכן</a>
     <slot />
     <script is:inline>
