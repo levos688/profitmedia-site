@@ -34,6 +34,7 @@ const cases = [
     text: 'Мужчина 50 лет обратился к врачу за стоматологическим протезированием. Изготовленные врачом съемные протезы не подошли пациенту. Врач предложил установить имплантаты и на них сделать постоянный протез. Врач имплантировал пациенту 12 имплантатов, но постоянный протез также не подошел. После многочисленных попыток исправить ситуацию, пациент подал в суд на врача. Суд вынес решение в пользу пациента и присудил ему компенсацию в размере 233 000 шекелей.',
   },
 ];
+const quizFormTitle = 'Ответьте на вопрос — получите бесплатную консультацию адвоката';
 ---
 
 <LandingLayout
@@ -101,7 +102,7 @@ const cases = [
 
     <section id="form-quiz" class="donhin-form-section">
       <div class="donhin-container donhin-form-section__inner">
-        <h2 class="donhin-form-section__title">Пройдите быстрый тест и узнайте свои шансы</h2>
+        <h2 class="donhin-form-section__title">{quizFormTitle}</h2>
 
         <form class="donhin-form donhin-form--quiz" id="donhin-quiz-form" data-donhin-form="quiz" novalidate>
           <div class="donhin-form__viewport">
@@ -246,7 +247,7 @@ const cases = [
     <div class="donhin-popup__backdrop" data-popup-close></div>
     <div class="donhin-popup__panel">
       <button type="button" class="donhin-popup__close" data-popup-close aria-label="Закрыть">×</button>
-      <h2 id="donhin-popup-title" class="donhin-popup__title">Пройдите быстрый тест и узнайте свои шансы</h2>
+      <h2 id="donhin-popup-title" class="donhin-popup__title">{quizFormTitle}</h2>
 
       <form class="donhin-form donhin-form--quiz" id="donhin-popup-quiz-form" data-donhin-form="popup-quiz" novalidate>
         <div class="donhin-form__viewport">
