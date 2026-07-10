@@ -56,8 +56,8 @@ function buildDefaultLeadText(lead: LeadData): string {
     .join('\n');
 }
 
-function buildLeadText(lead: LeadData): string {
-  if (lead.client === 'donhin') return buildDonhinLeadText(lead);
+function buildLeadText(lead: LeadData, recipients?: string[]): string {
+  if (lead.client === 'donhin') return buildDonhinLeadText(lead, recipients);
   return buildDefaultLeadText(lead);
 }
 
@@ -79,6 +79,8 @@ async function sendEmail(env: Env, lead: LeadData) {
     throw new Error('RESEND_API_KEY is not configured');
   }
 
+  const recipients = getRecipients(env, lead);
+
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -87,9 +89,9 @@ async function sendEmail(env: Env, lead: LeadData) {
     },
     body: JSON.stringify({
       from,
-      to: getRecipients(env, lead),
+      to: recipients,
       subject: getSubject(lead),
-      text: buildLeadText(lead),
+      text: buildLeadText(lead, recipients),
     }),
   });
 
@@ -105,8 +107,12 @@ async function sendTelegram(env: Env, lead: LeadData) {
 
   if (!token || !chatId) return;
 
+  const recipients =
+    lead.client === 'donhin' ? getDonhinRecipients(env) : [env.CONTACT_EMAIL || 'lev@profitmedia.co.il'];
+
   const text = [
     lead.client === 'donhin' ? '📩 New Lead Donhin' : lead.client ? `📩 ProfitMedia Lead — ${lead.client}` : '📩 ProfitMedia Lead',
+    lead.client === 'donhin' ? `Sent to: ${recipients.join(', ')}` : '',
     '',
     lead.quizAnswer ? `Quiz: ${lead.quizAnswer}` : '',
     `Name: ${lead.name}`,

@@ -1,7 +1,11 @@
 import type { LeadData, UtmParams } from './contact-types';
 
-export function buildDonhinLeadText(lead: LeadData): string {
+export function buildDonhinLeadText(lead: LeadData, recipients?: string[]): string {
   const lines: string[] = [];
+
+  if (recipients?.length) {
+    lines.push('Sent to', recipients.join(', '), '');
+  }
 
   lines.push('Name', lead.name, '');
   lines.push('Phone', lead.phone, '');
