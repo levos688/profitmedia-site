@@ -238,7 +238,76 @@ const cases = [
         </form>
       </div>
     </section>
+
+    <div id="donhin-scroll-sentinel" class="donhin-scroll-sentinel" aria-hidden="true"></div>
   </main>
+
+  <div id="donhin-popup" class="donhin-popup hidden" hidden role="dialog" aria-modal="true" aria-labelledby="donhin-popup-title">
+    <div class="donhin-popup__backdrop" data-popup-close></div>
+    <div class="donhin-popup__panel">
+      <button type="button" class="donhin-popup__close" data-popup-close aria-label="Закрыть">×</button>
+      <h2 id="donhin-popup-title" class="donhin-popup__title">Пройдите быстрый тест и узнайте свои шансы</h2>
+
+      <form class="donhin-form donhin-form--quiz" id="donhin-popup-quiz-form" data-donhin-form="popup-quiz" novalidate>
+        <div class="donhin-form__viewport">
+          <div class="donhin-form__step is-active" data-step="1">
+            <fieldset class="donhin-quiz">
+              <legend class="donhin-quiz__question">
+                Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
+              </legend>
+              <div class="donhin-quiz__options">
+                <label class="donhin-radio">
+                  <input type="radio" name="popup_quiz" value="да" required />
+                  <span>Да</span>
+                </label>
+                <label class="donhin-radio">
+                  <input type="radio" name="popup_quiz" value="нет" />
+                  <span>Нет</span>
+                </label>
+              </div>
+            </fieldset>
+            <button type="button" class="donhin-btn donhin-btn--quiz-action" data-quiz-next disabled>
+              Следующий
+            </button>
+          </div>
+
+          <div class="donhin-form__step" data-step="2" hidden>
+            <button type="button" class="donhin-btn donhin-btn--quiz-back" data-quiz-back>
+              ← Назад к вопросу
+            </button>
+            <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
+            <label class="donhin-field">
+              <span class="sr-only">Имя</span>
+              <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+            </label>
+            <label class="donhin-field">
+              <span class="sr-only">Телефон</span>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Номер телефона"
+                required
+                autocomplete="tel"
+                inputmode="tel"
+                pattern="[0-9\-+() ]{9,18}"
+              />
+            </label>
+            <label class="donhin-privacy">
+              <input type="checkbox" name="privacy" required />
+              <span>
+                Я ознакомлен(а) с{' '}
+                <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+                {' '}и согласен(а) на обработку моих данных (обязательно)
+              </span>
+            </label>
+            <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+          </div>
+        </div>
+        <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
 </LandingLayout>
 
 <script>
@@ -280,7 +349,8 @@ const cases = [
     const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement | null;
     const phoneInput = form.querySelector('input[name="phone"]') as HTMLInputElement | null;
     const privacyInput = form.querySelector('input[name="privacy"]') as HTMLInputElement | null;
-    const quizInput = form.querySelector('input[name="quiz"]:checked') as HTMLInputElement | null;
+    const quizInput =
+      form.querySelector('.donhin-quiz input[type="radio"]:checked') as HTMLInputElement | null;
     const submitBtn = form.querySelector('[type="submit"]') as HTMLButtonElement | null;
 
     if (!privacyInput?.checked) {
@@ -348,10 +418,7 @@ const cases = [
     }
   }
 
-  const quizForm = document.getElementById('donhin-quiz-form') as HTMLFormElement | null;
-  const bottomForm = document.getElementById('donhin-bottom-form') as HTMLFormElement | null;
-
-  if (quizForm) {
+  function initQuizForm(quizForm: HTMLFormElement) {
     const step1 = quizForm.querySelector('[data-step="1"]') as HTMLElement | null;
     const step2 = quizForm.querySelector('[data-step="2"]') as HTMLElement | null;
     const nextBtn = quizForm.querySelector('[data-quiz-next]') as HTMLButtonElement | null;
@@ -376,20 +443,20 @@ const cases = [
           if (direction === 'forward') {
             (quizForm.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
           } else {
-            (quizForm.querySelector('input[name="quiz"]:checked') as HTMLInputElement | null)?.focus();
+            (quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') as HTMLInputElement | null)?.focus();
           }
         });
       }, 280);
     };
 
-    quizForm.querySelectorAll('input[name="quiz"]').forEach((input) => {
+    quizForm.querySelectorAll('.donhin-quiz input[type="radio"]').forEach((input) => {
       input.addEventListener('change', () => {
-        if (nextBtn) nextBtn.disabled = !quizForm.querySelector('input[name="quiz"]:checked');
+        if (nextBtn) nextBtn.disabled = !quizForm.querySelector('.donhin-quiz input[type="radio"]:checked');
       });
     });
 
     nextBtn?.addEventListener('click', () => {
-      if (!quizForm.querySelector('input[name="quiz"]:checked') || !step1 || !step2) return;
+      if (!quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') || !step1 || !step2) return;
       goToStep(step1, step2, 'forward');
     });
 
@@ -400,9 +467,81 @@ const cases = [
 
     quizForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      submitDonhinLead(quizForm, 'quiz');
+      const formType = quizForm.dataset.donhinForm || 'quiz';
+      submitDonhinLead(quizForm, formType);
     });
   }
+
+  function initDonhinPopup() {
+    const popup = document.getElementById('donhin-popup');
+    if (!popup) return;
+
+    const popupForm = document.getElementById('donhin-popup-quiz-form') as HTMLFormElement | null;
+    const storageKey = 'donhin_popup_seen';
+    let opened = false;
+
+    const isSeen = () => {
+      try {
+        return sessionStorage.getItem(storageKey) === '1';
+      } catch {
+        return false;
+      }
+    };
+
+    const markSeen = () => {
+      try {
+        sessionStorage.setItem(storageKey, '1');
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const openPopup = () => {
+      if (opened || isSeen() || popup.classList.contains('is-open')) return;
+      opened = true;
+      markSeen();
+      popup.hidden = false;
+      popup.classList.remove('hidden');
+      popup.classList.add('is-open');
+      document.body.classList.add('donhin-popup-open');
+    };
+
+    const closePopup = () => {
+      popup.classList.remove('is-open');
+      popup.hidden = true;
+      popup.classList.add('hidden');
+      document.body.classList.remove('donhin-popup-open');
+    };
+
+    popup.querySelectorAll('[data-popup-close]').forEach((el) => {
+      el.addEventListener('click', closePopup);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && popup.classList.contains('is-open')) closePopup();
+    });
+
+    window.setTimeout(() => openPopup(), 15000);
+
+    const sentinel = document.getElementById('donhin-scroll-sentinel');
+    if (sentinel) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) openPopup();
+        },
+        { threshold: 0 },
+      );
+      observer.observe(sentinel);
+    }
+
+    if (popupForm) initQuizForm(popupForm);
+  }
+
+  const quizForm = document.getElementById('donhin-quiz-form') as HTMLFormElement | null;
+  const bottomForm = document.getElementById('donhin-bottom-form') as HTMLFormElement | null;
+
+  if (quizForm) initQuizForm(quizForm);
+  initDonhinPopup();
 
   bottomForm?.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1123,5 +1262,94 @@ const cases = [
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
     text-wrap: balance;
+  }
+
+  .donhin-scroll-sentinel {
+    width: 100%;
+    height: 1px;
+  }
+
+  :global(body.donhin-popup-open) {
+    overflow: hidden;
+  }
+
+  .donhin-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .donhin-popup.hidden {
+    display: none;
+  }
+
+  .donhin-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 69, 127, 0.55);
+    backdrop-filter: blur(2px);
+  }
+
+  .donhin-popup__panel {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 36rem);
+    max-height: min(92vh, 44rem);
+    overflow: auto;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.25rem 1.5rem;
+    background: #143c6f;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+  }
+
+  @media (min-width: 640px) {
+    .donhin-popup__panel {
+      padding: 1.5rem 1.75rem 1.75rem;
+    }
+  }
+
+  .donhin-popup__close {
+    position: absolute;
+    top: 0.625rem;
+    inset-inline-end: 0.625rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .donhin-popup__close:hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  .donhin-popup__close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .donhin-popup__title {
+    margin: 0 2rem 1.25rem 0;
+    color: #fff;
+    text-align: center;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .donhin-popup .donhin-form--quiz {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
   }
 </style>
