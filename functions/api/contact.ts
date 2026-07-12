@@ -1,5 +1,6 @@
 import type { ContactPayload, Env, LeadData, UtmParams } from './contact-types';
 import { buildDonhinLeadText, getDonhinRecipients } from './donhin-lead';
+import { sendMetaLeadEvent } from './meta-capi';
 
 const json = (body: object, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -233,6 +234,14 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   } catch (err) {
     console.error(err);
     return json({ ok: false, error: 'Email delivery failed' }, 502);
+  }
+
+  if (lead.client === 'donhin') {
+    try {
+      await sendMetaLeadEvent(env, lead, body.eventId?.trim());
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   try {

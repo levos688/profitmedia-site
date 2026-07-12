@@ -6,6 +6,7 @@ export interface Env {
   FROM_EMAIL?: string;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
+  META_CAPI_ACCESS_TOKEN?: string;
 }
 
 export interface UtmParams {
@@ -32,6 +33,7 @@ export interface ContactPayload {
   client?: string;
   quizAnswer?: string;
   formType?: string;
+  eventId?: string;
 }
 
 export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {

@@ -1,0 +1,1371 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+
+interface Props {
+  basePath?: string;
+}
+
+const { basePath = '/donhin' } = Astro.props;
+
+const benefits = [
+  {
+    icon: '/images/donhin/icon-consult.png',
+    title: 'Бесплатная консультация',
+    text: 'Оценка перспектив дела и помощь в сборе документов.',
+  },
+  {
+    icon: '/images/donhin/icon-payment.png',
+    title: 'Оплата по результатам — без риска',
+    text: 'Платите только за результат, в котором вы уверены.',
+  },
+  {
+    icon: '/images/donhin/icon-compensation.png',
+    title: 'Максимальная компенсация',
+    text: 'Компенсация, которая покроет все расходы и моральную компенсацию.',
+  },
+  {
+    icon: '/images/donhin/icon-negotiation.png',
+    title: 'Ведение переговоров',
+    text: 'Переговоры с врачом, больницей и страховой компанией.',
+  },
+];
+
+const cases = [
+  {
+    title: 'Компенсация в размере 115 000 шекелей за неудачное восстановление зубов',
+    text: 'Женщина проходила стоматологическое лечение у двух врачей последовательно. Однако оба специалиста лишь ухудшили её состояние, и после многочисленных попыток восстановительное лечение полностью провалилось. В рамках судебного иска стороны пришли к соглашению, согласно которому женщина получит компенсацию в размере 115 000 шекелей.',
+  },
+  {
+    title: 'Компенсация 233 тыс шекелей',
+    text: 'Мужчина 50 лет обратился к врачу за стоматологическим протезированием. Изготовленные врачом съемные протезы не подошли пациенту. Врач предложил установить имплантаты и на них сделать постоянный протез. Врач имплантировал пациенту 12 имплантатов, но постоянный протез также не подошел. После многочисленных попыток исправить ситуацию, пациент подал в суд на врача. Суд вынес решение в пользу пациента и присудил ему компенсацию в размере 233 000 шекелей.',
+  },
+];
+const quizFormTitle = 'Ответьте на вопрос — получите бесплатную консультацию адвоката';
+---
+
+<LandingLayout
+  title="Медицинская халатность в стоматологии | Адвокат Саймон Донхин"
+  description="Получите положенную вам компенсацию за халатность стоматолога. Бесплатная консультация адвоката Саймона Донхина."
+>
+  <main id="main-content" data-donhin-base-path={basePath}>
+    <section class="donhin-hero">
+      <div class="donhin-container donhin-hero__grid">
+        <div class="donhin-hero__content">
+          <p class="donhin-eyebrow">Медицинская халатность</p>
+          <h1 class="donhin-hero__title">
+            Получите положенную вам компенсацию за халатность стоматолога
+          </h1>
+          <p class="donhin-hero__subtitle">
+            За последние 15 лет мои клиенты получили более 20 миллионов шекелей
+          </p>
+          <a href="#form-quiz" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
+        </div>
+        <div class="donhin-hero__photo-wrap">
+          <img
+            src="/images/donhin/hero.webp"
+            alt="Адвокат Саймон Донхин"
+            class="donhin-hero__photo"
+            width="397"
+            height="397"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+          <p class="donhin-hero__name">
+            <img
+              src="/images/donhin/icon-scales.svg"
+              alt=""
+              width="47"
+              height="33"
+              class="donhin-hero__scales"
+              loading="lazy"
+              decoding="async"
+            />
+            <span>Адвокат Саймон Донхин</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="donhin-benefits">
+      <div class="donhin-container">
+        <h2 class="donhin-section-title">Почему стоит обратиться к адвокату Саймону?</h2>
+        <div class="donhin-benefits__grid">
+          {
+            benefits.map((item) => (
+              <article class="donhin-benefit">
+                <div class="donhin-benefit__icon-wrap">
+                  <img src={item.icon} alt="" width="150" height="150" class="donhin-benefit__icon" loading="lazy" decoding="async" />
+                </div>
+                <h3 class="donhin-benefit__title">{item.title}</h3>
+                <p class="donhin-benefit__text">{item.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="form-quiz" class="donhin-form-section">
+      <div class="donhin-container donhin-form-section__inner">
+        <h2 class="donhin-form-section__title">{quizFormTitle}</h2>
+
+        <form class="donhin-form donhin-form--quiz" id="donhin-quiz-form" data-donhin-form="quiz" novalidate>
+          <div class="donhin-form__viewport">
+          <div class="donhin-form__step is-active" data-step="1">
+            <fieldset class="donhin-quiz">
+              <legend class="donhin-quiz__question">
+                Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
+              </legend>
+              <div class="donhin-quiz__options">
+                <label class="donhin-radio">
+                  <input type="radio" name="quiz" value="да" required />
+                  <span>Да</span>
+                </label>
+                <label class="donhin-radio">
+                  <input type="radio" name="quiz" value="нет" />
+                  <span>Нет</span>
+                </label>
+              </div>
+            </fieldset>
+            <button type="button" class="donhin-btn donhin-btn--quiz-action" data-quiz-next disabled>
+              Следующий
+            </button>
+          </div>
+
+          <div class="donhin-form__step" data-step="2" hidden>
+            <button type="button" class="donhin-btn donhin-btn--quiz-back" data-quiz-back>
+              ← Назад к вопросу
+            </button>
+            <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
+            <label class="donhin-field">
+              <span class="sr-only">Имя</span>
+              <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+            </label>
+            <label class="donhin-field">
+              <span class="sr-only">Телефон</span>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Номер телефона"
+                required
+                autocomplete="tel"
+                inputmode="tel"
+                pattern="[0-9\-+() ]{9,18}"
+              />
+            </label>
+            <label class="donhin-privacy">
+              <input type="checkbox" name="privacy" required />
+              <span>
+                Я ознакомлен(а) с{' '}
+                <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+                {' '}и согласен(а) на обработку моих данных (обязательно)
+              </span>
+            </label>
+            <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+          </div>
+          </div>
+          <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="donhin-cases">
+      <div class="donhin-container">
+        <h2 class="donhin-section-title">Примеры кейсов</h2>
+        <div class="donhin-cases__grid">
+          {
+            cases.map((item) => (
+              <article class="donhin-case">
+                <h3 class="donhin-case__title">{item.title}</h3>
+                <p class="donhin-case__text">{item.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="donhin-about">
+      <div class="donhin-container donhin-about__grid">
+        <img
+          src="/images/donhin/about-photo.webp"
+          alt="Адвокат Саймон Донхин"
+          class="donhin-about__photo"
+          width="240"
+          height="349"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="donhin-about__content">
+          <h2 class="donhin-about__title">Адвокат Саймон Донхин</h2>
+          <ul class="donhin-about__list">
+            <li>Опытный адвокат с более чем 15-летним стажем работы</li>
+            <li>Первая степень по юриспруденции — Кирьят Оно</li>
+            <li>Вторая степень по криминологии — Еврейский университет</li>
+            <li>Специализация по медицинской халатности</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="form-bottom" class="donhin-bottom-form">
+      <div class="donhin-container donhin-bottom-form__inner">
+        <h2 class="donhin-bottom-form__title">Оставьте заявку для бесплатной консультации</h2>
+
+        <form class="donhin-form donhin-form--bottom" id="donhin-bottom-form" data-donhin-form="simple" novalidate>
+          <label class="donhin-field">
+            <span class="sr-only">Имя</span>
+            <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+          </label>
+          <label class="donhin-field">
+            <span class="sr-only">Телефон</span>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Номер телефона"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+              pattern="[0-9\-+() ]{9,18}"
+            />
+          </label>
+          <label class="donhin-privacy">
+            <input type="checkbox" name="privacy" required />
+            <span>
+              Я ознакомлен(а) с{' '}
+              <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+              {' '}и согласен(а) на обработку моих данных (обязательно)
+            </span>
+          </label>
+          <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide">Отправить</button>
+          <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <div id="donhin-scroll-sentinel" class="donhin-scroll-sentinel" aria-hidden="true"></div>
+  </main>
+
+  <div id="donhin-popup" class="donhin-popup hidden" hidden role="dialog" aria-modal="true" aria-labelledby="donhin-popup-title">
+    <div class="donhin-popup__backdrop" data-popup-close></div>
+    <div class="donhin-popup__panel">
+      <button type="button" class="donhin-popup__close" data-popup-close aria-label="Закрыть">×</button>
+      <h2 id="donhin-popup-title" class="donhin-popup__title">{quizFormTitle}</h2>
+
+      <form class="donhin-form donhin-form--quiz" id="donhin-popup-quiz-form" data-donhin-form="popup-quiz" novalidate>
+        <div class="donhin-form__viewport">
+          <div class="donhin-form__step is-active" data-step="1">
+            <fieldset class="donhin-quiz">
+              <legend class="donhin-quiz__question">
+                Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
+              </legend>
+              <div class="donhin-quiz__options">
+                <label class="donhin-radio">
+                  <input type="radio" name="popup_quiz" value="да" required />
+                  <span>Да</span>
+                </label>
+                <label class="donhin-radio">
+                  <input type="radio" name="popup_quiz" value="нет" />
+                  <span>Нет</span>
+                </label>
+              </div>
+            </fieldset>
+            <button type="button" class="donhin-btn donhin-btn--quiz-action" data-quiz-next disabled>
+              Следующий
+            </button>
+          </div>
+
+          <div class="donhin-form__step" data-step="2" hidden>
+            <button type="button" class="donhin-btn donhin-btn--quiz-back" data-quiz-back>
+              ← Назад к вопросу
+            </button>
+            <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
+            <label class="donhin-field">
+              <span class="sr-only">Имя</span>
+              <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+            </label>
+            <label class="donhin-field">
+              <span class="sr-only">Телефон</span>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Номер телефона"
+                required
+                autocomplete="tel"
+                inputmode="tel"
+                pattern="[0-9\-+() ]{9,18}"
+              />
+            </label>
+            <label class="donhin-privacy">
+              <input type="checkbox" name="privacy" required />
+              <span>
+                Я ознакомлен(а) с{' '}
+                <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+                {' '}и согласен(а) на обработку моих данных (обязательно)
+              </span>
+            </label>
+            <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+          </div>
+        </div>
+        <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</LandingLayout>
+
+<script>
+  function readCookie(name: string) {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : '';
+  }
+
+  function collectTracking() {
+    const url = new URL(window.location.href);
+    const tracking: Record<string, string> = {};
+    url.searchParams.forEach((value, key) => {
+      tracking[key] = value;
+    });
+    const fbc = readCookie('_fbc');
+    const fbp = readCookie('_fbp');
+    if (fbc) tracking.fbc = fbc;
+    if (fbp) tracking.fbp = fbp;
+    return tracking;
+  }
+
+  function collectUtm() {
+    const url = new URL(window.location.href);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'] as const;
+    const utm: Record<string, string> = {};
+    keys.forEach((key) => {
+      const value = url.searchParams.get(key);
+      if (value) utm[key] = value;
+    });
+    return utm;
+  }
+
+  async function submitDonhinLead(form: HTMLFormElement, formType: string) {
+    const status = form.querySelector('[data-status]') as HTMLElement | null;
+    const privacyError = form.querySelector('[data-privacy-error]') as HTMLElement | null;
+    status?.classList.add('hidden');
+    privacyError?.classList.add('hidden');
+
+    const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement | null;
+    const phoneInput = form.querySelector('input[name="phone"]') as HTMLInputElement | null;
+    const privacyInput = form.querySelector('input[name="privacy"]') as HTMLInputElement | null;
+    const quizInput =
+      form.querySelector('.donhin-quiz input[type="radio"]:checked') as HTMLInputElement | null;
+    const submitBtn = form.querySelector('[type="submit"]') as HTMLButtonElement | null;
+
+    if (!privacyInput?.checked) {
+      if (privacyError) {
+        privacyError.textContent = 'Необходимо согласие с политикой конфиденциальности';
+        privacyError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    const name = nameInput?.value.trim() || '';
+    const phone = phoneInput?.value.trim() || '';
+    if (!name || name.length < 2 || !phone || !/^[0-9\-+() ]{9,18}$/.test(phone)) return;
+
+    const eventId = crypto.randomUUID();
+
+    const originalLabel = submitBtn?.textContent || 'Отправить';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка…';
+    }
+
+    let landingUrl = window.location.href;
+    try {
+      landingUrl = sessionStorage.getItem('pm_first_landing') || window.location.href;
+    } catch {
+      /* ignore */
+    }
+
+    const lang = [navigator.language, (navigator as Navigator & { userLanguage?: string }).userLanguage]
+      .filter(Boolean)
+      .join(' ');
+
+    try {
+      sessionStorage.setItem('donhin_lead_event_id', eventId);
+    } catch {
+      /* ignore */
+    }
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          client: 'donhin',
+          formType,
+          quizAnswer: quizInput?.value || '',
+          pageUrl: window.location.href,
+          landingUrl,
+          referrer: document.referrer || '',
+          utm: collectUtm(),
+          tracking: { ...collectUtm(), ...collectTracking() },
+          language: lang,
+          eventId,
+        }),
+      });
+
+      const data = (await res.json()) as { ok?: boolean };
+      if (!res.ok || !data.ok) throw new Error('submit failed');
+
+      window.location.href = `${document.getElementById('main-content')?.dataset.donhinBasePath || '/donhin'}/thank-you`;
+    } catch {
+      if (status) {
+        status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
+        status.classList.remove('hidden');
+        status.setAttribute('role', 'alert');
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
+    }
+  }
+
+  function initQuizForm(quizForm: HTMLFormElement) {
+    const step1 = quizForm.querySelector('[data-step="1"]') as HTMLElement | null;
+    const step2 = quizForm.querySelector('[data-step="2"]') as HTMLElement | null;
+    const nextBtn = quizForm.querySelector('[data-quiz-next]') as HTMLButtonElement | null;
+    const backBtn = quizForm.querySelector('[data-quiz-back]') as HTMLButtonElement | null;
+
+    const goToStep = (from: HTMLElement, to: HTMLElement, direction: 'forward' | 'back') => {
+      const leaving = direction === 'forward' ? 'is-leaving-forward' : 'is-leaving-back';
+      const entering = direction === 'forward' ? 'is-entering-forward' : 'is-entering-back';
+
+      from.classList.remove('is-active');
+      from.classList.add(leaving);
+
+      window.setTimeout(() => {
+        from.classList.remove(leaving);
+        from.setAttribute('hidden', '');
+
+        to.removeAttribute('hidden');
+        to.classList.add(entering);
+        requestAnimationFrame(() => {
+          to.classList.remove(entering);
+          to.classList.add('is-active');
+          if (direction === 'forward') {
+            (quizForm.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
+          } else {
+            (quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') as HTMLInputElement | null)?.focus();
+          }
+        });
+      }, 280);
+    };
+
+    quizForm.querySelectorAll('.donhin-quiz input[type="radio"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (nextBtn) nextBtn.disabled = !quizForm.querySelector('.donhin-quiz input[type="radio"]:checked');
+      });
+    });
+
+    nextBtn?.addEventListener('click', () => {
+      if (!quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') || !step1 || !step2) return;
+      goToStep(step1, step2, 'forward');
+    });
+
+    backBtn?.addEventListener('click', () => {
+      if (!step1 || !step2) return;
+      goToStep(step2, step1, 'back');
+    });
+
+    quizForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formType = quizForm.dataset.donhinForm || 'quiz';
+      submitDonhinLead(quizForm, formType);
+    });
+  }
+
+  function initDonhinPopup() {
+    const popup = document.getElementById('donhin-popup');
+    if (!popup) return;
+
+    const popupForm = document.getElementById('donhin-popup-quiz-form') as HTMLFormElement | null;
+    const storageKey = 'donhin_popup_seen';
+    let opened = false;
+
+    const isSeen = () => {
+      try {
+        return sessionStorage.getItem(storageKey) === '1';
+      } catch {
+        return false;
+      }
+    };
+
+    const markSeen = () => {
+      try {
+        sessionStorage.setItem(storageKey, '1');
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const openPopup = () => {
+      if (opened || isSeen() || popup.classList.contains('is-open')) return;
+      opened = true;
+      markSeen();
+      popup.hidden = false;
+      popup.classList.remove('hidden');
+      popup.classList.add('is-open');
+      document.body.classList.add('donhin-popup-open');
+    };
+
+    const closePopup = () => {
+      popup.classList.remove('is-open');
+      popup.hidden = true;
+      popup.classList.add('hidden');
+      document.body.classList.remove('donhin-popup-open');
+    };
+
+    popup.querySelectorAll('[data-popup-close]').forEach((el) => {
+      el.addEventListener('click', closePopup);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && popup.classList.contains('is-open')) closePopup();
+    });
+
+    window.setTimeout(() => openPopup(), 15000);
+
+    const sentinel = document.getElementById('donhin-scroll-sentinel');
+    if (sentinel) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) openPopup();
+        },
+        { threshold: 0 },
+      );
+      observer.observe(sentinel);
+    }
+
+    if (popupForm) initQuizForm(popupForm);
+  }
+
+  const quizForm = document.getElementById('donhin-quiz-form') as HTMLFormElement | null;
+  const bottomForm = document.getElementById('donhin-bottom-form') as HTMLFormElement | null;
+
+  if (quizForm) initQuizForm(quizForm);
+  initDonhinPopup();
+
+  bottomForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitDonhinLead(bottomForm, 'simple');
+  });
+</script>
+
+<style>
+  .donhin-container {
+    width: min(100% - 2rem, 72rem);
+    margin-inline: auto;
+  }
+
+  .donhin-eyebrow {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .donhin-hero {
+    background: #0c457f;
+    color: #fff;
+    padding: 2.75rem 0 3.25rem;
+  }
+
+  .donhin-hero__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (max-width: 899px) {
+    .donhin-hero__content {
+      text-align: center;
+    }
+
+    .donhin-hero__subtitle {
+      margin-inline: auto;
+    }
+
+    .donhin-btn--hero {
+      display: flex;
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .donhin-hero {
+      padding: 4rem 0 4.5rem;
+    }
+
+    .donhin-hero__grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3rem;
+    }
+  }
+
+  .donhin-hero__title {
+    font-size: clamp(1.875rem, 4.2vw, 2.875rem);
+    line-height: 1.12;
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .donhin-hero__subtitle {
+    margin: 1.25rem 0 0;
+    max-width: 34rem;
+    font-size: clamp(1.0625rem, 2.2vw, 1.4375rem);
+    line-height: 1.45;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .donhin-hero__photo-wrap {
+    text-align: center;
+  }
+
+  .donhin-hero__photo {
+    width: min(100%, 24.8125rem);
+    height: auto;
+    display: block;
+    margin-inline: auto;
+  }
+
+  .donhin-hero__name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    margin: 1rem 0 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .donhin-hero__scales {
+    width: 2.75rem;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .donhin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.875rem 1.75rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .donhin-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .donhin-btn:active {
+    transform: translateY(0);
+  }
+
+  .donhin-btn:focus-visible {
+    outline: 2px solid #7579ed;
+    outline-offset: 3px;
+  }
+
+  .donhin-btn--hero {
+    color: #fff;
+    background: #111111;
+    border: none;
+    margin-top: 1.75rem;
+    border-radius: 3.1875rem;
+  }
+
+  .donhin-btn--hero:hover {
+    background: #000;
+  }
+
+  .donhin-btn--brand {
+    background: #144379;
+    color: #fff;
+    margin-top: 1.25rem;
+    border-radius: 1.875rem;
+  }
+
+  .donhin-btn--brand:hover {
+    background: #15477f;
+  }
+
+  .donhin-btn--primary {
+    background: #143c6f;
+    color: #fff;
+    width: 100%;
+    margin-top: 1.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .donhin-btn--primary:hover {
+    background: #123a66;
+  }
+
+  .donhin-btn--wide {
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+
+  .donhin-btn--quiz-action {
+    background: #fff;
+    color: #143c6f;
+    border-radius: 0.25rem;
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+
+  .donhin-btn--quiz-action:disabled {
+    background: #e6e6e6;
+    color: #143c6f;
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .donhin-btn--quiz-action:not(:disabled):hover {
+    background: #f0f0f0;
+  }
+
+  .donhin-form-section {
+    background: #fff;
+    padding: 3.25rem 0 3.75rem;
+  }
+
+  .donhin-form-section__title {
+    color: #15477f;
+    text-align: center;
+    font-size: clamp(1.375rem, 3vw, 2rem);
+    font-weight: 700;
+    margin: 0 0 1.5rem;
+    text-wrap: balance;
+  }
+
+  .donhin-benefits {
+    background: #eeeeee;
+    padding: 3.75rem 0 4rem;
+  }
+
+  .donhin-section-title {
+    text-align: center;
+    color: #15477f;
+    font-size: clamp(1.5rem, 3vw, 2.125rem);
+    font-weight: 700;
+    margin: 0 0 2.75rem;
+    text-wrap: balance;
+  }
+
+  .donhin-section-title--light {
+    color: #fff;
+  }
+
+  .donhin-benefits__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .donhin-benefits__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .donhin-benefits__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+  }
+
+  .donhin-benefit {
+    text-align: center;
+    padding: 0 0.5rem 1rem;
+    height: 100%;
+  }
+
+  .donhin-benefit__icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 9.375rem;
+    height: 9.375rem;
+    margin-inline: auto;
+  }
+
+  .donhin-benefit__icon {
+    width: 9.375rem;
+    height: 9.375rem;
+    object-fit: contain;
+  }
+
+  .donhin-benefit__title {
+    margin: 1rem 0 0.625rem;
+    color: #15477f;
+    font-size: clamp(1.125rem, 2.2vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .donhin-benefit__text {
+    margin: 0;
+    color: #15477f;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.5;
+    max-width: 18rem;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 639px) {
+    .donhin-benefits {
+      padding: 3rem 0 3.25rem;
+    }
+
+    .donhin-benefits__grid {
+      gap: 2rem;
+    }
+
+    .donhin-benefit__icon-wrap,
+    .donhin-benefit__icon {
+      width: 8.125rem;
+      height: 8.125rem;
+    }
+
+    .donhin-benefit__title {
+      font-size: clamp(1.0625rem, 4.2vw, 1.375rem);
+      line-height: 1.15;
+      max-width: 100%;
+      margin-inline: auto;
+      padding-inline: 0.125rem;
+      text-wrap: balance;
+    }
+
+    .donhin-benefit__text {
+      font-size: 1.0625rem;
+      line-height: 1.45;
+      max-width: 21rem;
+    }
+  }
+
+  .donhin-form-section__inner,
+  .donhin-bottom-form__inner {
+    max-width: 36rem;
+  }
+
+  .donhin-form {
+    background: #e6e6e6;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.1);
+  }
+
+  .donhin-form--quiz {
+    background: #143c6f;
+    border: 2px solid #143c6f;
+    border-radius: 0.75rem;
+    box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .donhin-form--quiz {
+      padding: 2rem 1.5rem;
+    }
+  }
+
+  .donhin-form--quiz .donhin-quiz__question {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-form__heading {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-btn--quiz-back {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .donhin-form--quiz .donhin-btn--quiz-back:hover {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-privacy {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .donhin-form--quiz .donhin-privacy a {
+    color: #fff;
+  }
+
+  .donhin-form--quiz .donhin-btn--primary {
+    background: #fff;
+    color: #143c6f;
+  }
+
+  .donhin-form--quiz .donhin-btn--primary:hover {
+    background: #f0f0f0;
+  }
+
+  .donhin-form--quiz .donhin-radio {
+    background: #fff;
+    border: 1px solid rgba(20, 67, 121, 0.15);
+  }
+
+  .donhin-form--quiz .donhin-radio:hover {
+    border-color: #144379;
+    background: #fff;
+  }
+
+  .donhin-form--quiz .donhin-field input {
+    color: #000;
+    font-weight: 500;
+    border: 1px solid #144379;
+    border-radius: 0.625rem;
+    background: #fff;
+  }
+
+  .donhin-form--quiz .donhin-field input::placeholder {
+    color: #000;
+    opacity: 0.5;
+  }
+
+  .donhin-form--quiz .donhin-field input:focus {
+    border-color: #143c6f;
+    box-shadow: 0 0 0 3px rgba(20, 67, 121, 0.15);
+  }
+
+  .donhin-form__viewport {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .donhin-form__step {
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+
+  .donhin-form__step[hidden] {
+    display: none;
+  }
+
+  .donhin-form__step.is-active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .donhin-form__step.is-leaving-forward {
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+
+  .donhin-form__step.is-entering-forward {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+
+  .donhin-form__step.is-leaving-back {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+
+  .donhin-form__step.is-entering-back {
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+
+  .donhin-btn--quiz-back {
+    background: transparent;
+    color: #143c6f;
+    border: none;
+    padding: 0;
+    min-height: auto;
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  .donhin-btn--quiz-back:hover {
+    color: #144379;
+    transform: none;
+  }
+
+  .donhin-form--bottom {
+    background: #e2e2e2;
+    border: 2px solid #144379;
+    border-radius: 0.75rem;
+    box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.08);
+    padding: 2rem 1.5rem;
+  }
+
+  .donhin-form--bottom .donhin-field input {
+    color: #000;
+    font-weight: 500;
+    border: 1px solid #144379;
+    border-radius: 0.625rem;
+    background: #fff;
+  }
+
+  .donhin-form--bottom .donhin-field input::placeholder {
+    color: #000;
+    opacity: 0.5;
+  }
+
+  @media (min-width: 640px) {
+    .donhin-form,
+    .donhin-form--quiz {
+      padding: 2rem;
+    }
+  }
+
+  .donhin-quiz {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .donhin-quiz__question {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    color: #15477f;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    padding: 0;
+  }
+
+  .donhin-quiz__options {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .donhin-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9375rem 1rem;
+    background: #fff;
+    border: 1px solid rgba(20, 67, 121, 0.15);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #15477f;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .donhin-radio:hover {
+    border-color: #144379;
+    background: #fff;
+  }
+
+  .donhin-radio input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: #5257de;
+  }
+
+  .donhin-form__heading {
+    margin: 0 0 1rem;
+    font-size: 1.3125rem;
+    font-weight: 700;
+    color: #15477f;
+  }
+
+  .donhin-form__heading--light {
+    color: #fff;
+    text-align: center;
+  }
+
+  .donhin-field {
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .donhin-field input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.875rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #15477f;
+    background: #f5f5f5;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .donhin-field input:focus {
+    outline: none;
+    border-color: #5257de;
+    box-shadow: 0 0 0 3px rgba(82, 87, 222, 0.2);
+  }
+
+  .donhin-privacy {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: #3d4f63;
+    cursor: pointer;
+  }
+
+  .donhin-privacy--light {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .donhin-privacy--light a {
+    color: #fff;
+  }
+
+  .donhin-privacy input {
+    margin-top: 0.2rem;
+    accent-color: #5257de;
+    flex-shrink: 0;
+  }
+
+  .donhin-privacy a {
+    color: #143c6f;
+    text-decoration: underline;
+  }
+
+  .donhin-form--bottom .donhin-privacy a {
+    color: #0f3460;
+  }
+
+  .donhin-error,
+  .donhin-status {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b91c1c;
+  }
+
+  .donhin-status {
+    color: #15477f;
+    text-align: center;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .donhin-cases {
+    background: #fff;
+    padding: 3.75rem 0 4rem;
+  }
+
+  .donhin-cases__grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .donhin-cases__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .donhin-case {
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .donhin-case__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    font-weight: 700;
+    color: #15477f;
+    line-height: 1.35;
+  }
+
+  .donhin-case__text {
+    margin: 0;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.55;
+    color: #15477f;
+    font-weight: 500;
+    text-align: left;
+  }
+
+  .donhin-about {
+    background: #f5f5f5;
+    padding: 3.75rem 0;
+  }
+
+  .donhin-about__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (max-width: 767px) {
+    .donhin-about__content {
+      text-align: center;
+    }
+
+    .donhin-about__list {
+      padding-inline-start: 0;
+      list-style-position: inside;
+      text-align: center;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .donhin-about__grid {
+      grid-template-columns: auto 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .donhin-about__photo {
+    width: min(100%, 15rem);
+    height: auto;
+    display: block;
+    margin-inline: auto;
+  }
+
+  .donhin-about__title {
+    margin: 0 0 1rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #15477f;
+  }
+
+  .donhin-about__list {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+    color: #15477f;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    font-weight: 600;
+  }
+
+  .donhin-bottom-form {
+    background: #fff;
+    padding: 3.5rem 0 4rem;
+  }
+
+  .donhin-bottom-form__title {
+    margin: 0 0 1.5rem;
+    color: #15477f;
+    text-align: center;
+    font-size: clamp(1.375rem, 3vw, 2rem);
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  .donhin-scroll-sentinel {
+    width: 100%;
+    height: 1px;
+  }
+
+  :global(body.donhin-popup-open) {
+    overflow: hidden;
+  }
+
+  .donhin-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .donhin-popup.hidden {
+    display: none;
+  }
+
+  .donhin-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 69, 127, 0.55);
+    backdrop-filter: blur(2px);
+  }
+
+  .donhin-popup__panel {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 36rem);
+    max-height: min(92vh, 44rem);
+    overflow: auto;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.25rem 1.5rem;
+    background: #143c6f;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+  }
+
+  @media (min-width: 640px) {
+    .donhin-popup__panel {
+      padding: 1.5rem 1.75rem 1.75rem;
+    }
+  }
+
+  .donhin-popup__close {
+    position: absolute;
+    top: 0.625rem;
+    inset-inline-end: 0.625rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .donhin-popup__close:hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  .donhin-popup__close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .donhin-popup__title {
+    margin: 0 2rem 1.25rem 0;
+    color: #fff;
+    text-align: center;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .donhin-popup .donhin-form--quiz {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+</style>

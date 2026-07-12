@@ -5,68 +5,82 @@ User-agent: Googlebot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: Google-Extended
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: GPTBot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: ChatGPT-User
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: anthropic-ai
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: ClaudeBot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: Claude-Web
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: Bytespider
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: CCBot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: cohere-ai
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: Diffbot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: Amazonbot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: PerplexityBot
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/
 
 User-agent: Applebot-Extended
 Disallow: /prat/
 Disallow: /hatzara/
 Disallow: /donhin/
+Disallow: /adv_lp3/

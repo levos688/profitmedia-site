@@ -131,7 +131,16 @@ const {
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '517991158551582');
             fbq('track', 'PageView');
-            fbq('track', 'Lead');
+            var leadEventId = '';
+            try {
+              leadEventId = sessionStorage.getItem('donhin_lead_event_id') || '';
+              sessionStorage.removeItem('donhin_lead_event_id');
+            } catch (e) {}
+            if (leadEventId) {
+              fbq('track', 'Lead', {}, { eventID: leadEventId });
+            } else {
+              fbq('track', 'Lead');
+            }
           </script>
           <noscript>
             <img
