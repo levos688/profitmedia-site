@@ -508,9 +508,19 @@ summary {
 
 /* תוסף נגישות — 20% отступ от низа экрана на всех страницах */
 #pm-a11y-widget-root .pm-fab {
-  bottom: 20% !important;
+  bottom: 20vh !important;
 }
 
 #pm-a11y-widget-root .pm-panel {
-  bottom: calc(20% + 4rem) !important;
+  bottom: calc(20vh + 4rem) !important;
+}
+
+@media (max-width: 480px) {
+  #pm-a11y-widget-root .pm-fab {
+    bottom: 20vh !important;
+  }
+
+  #pm-a11y-widget-root .pm-panel {
+    bottom: calc(20vh + 4rem) !important;
+  }
 }

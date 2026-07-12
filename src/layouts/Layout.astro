@@ -101,6 +101,22 @@ const {
       type="font/woff2"
       crossorigin
     />
+    <style is:inline id="pm-a11y-site-offset">
+      #pm-a11y-widget-root .pm-fab {
+        bottom: 20vh !important;
+      }
+      #pm-a11y-widget-root .pm-panel {
+        bottom: calc(20vh + 4rem) !important;
+      }
+      @media (max-width: 480px) {
+        #pm-a11y-widget-root .pm-fab {
+          bottom: 20vh !important;
+        }
+        #pm-a11y-widget-root .pm-panel {
+          bottom: calc(20vh + 4rem) !important;
+        }
+      }
+    </style>
     <link
       rel="preload"
       href="/fonts/assistant-hebrew-400-normal.woff2"
@@ -250,23 +266,48 @@ const {
     </script>
     <script is:inline>
       (function () {
+        var FAB_BOTTOM = '20vh';
+        var PANEL_BOTTOM = 'calc(20vh + 4rem)';
+
+        function ensureOffsetStyleLast() {
+          var style = document.getElementById('pm-a11y-site-offset');
+          if (!style) return;
+          document.head.appendChild(style);
+        }
+
         function positionA11yWidget() {
           var root = document.getElementById('pm-a11y-widget-root');
-          if (!root) return;
+          if (!root) return false;
           var fab = root.querySelector('.pm-fab');
           var panel = root.querySelector('.pm-panel');
-          if (fab) fab.style.setProperty('bottom', '20%', 'important');
-          if (panel) panel.style.setProperty('bottom', 'calc(20% + 4rem)', 'important');
+          if (fab) fab.style.setProperty('bottom', FAB_BOTTOM, 'important');
+          if (panel) panel.style.setProperty('bottom', PANEL_BOTTOM, 'important');
+          return true;
         }
 
-        if (typeof MutationObserver !== 'undefined') {
-          var a11yObserver = new MutationObserver(positionA11yWidget);
-          a11yObserver.observe(document.body, { childList: true, subtree: true });
+        function startWatcher() {
+          ensureOffsetStyleLast();
+
+          if (typeof MutationObserver !== 'undefined') {
+            new MutationObserver(function () {
+              ensureOffsetStyleLast();
+              positionA11yWidget();
+            }).observe(document.documentElement, { childList: true, subtree: true });
+          }
+
+          var ticks = 0;
+          var timer = window.setInterval(function () {
+            positionA11yWidget();
+            ticks += 1;
+            if (ticks >= 24) window.clearInterval(timer);
+          }, 1500);
         }
 
-        [1000, 3000, 6000, 9000, 12000].forEach(function (ms) {
-          window.setTimeout(positionA11yWidget, ms);
-        });
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', startWatcher);
+        } else {
+          startWatcher();
+        }
       })();
     </script>
     <script is:inline>
