@@ -7,6 +7,7 @@ export interface Env {
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
   META_CAPI_ACCESS_TOKEN?: string;
+  META_CAPI_DATASET_ID?: string;
 }
 
 export interface UtmParams {

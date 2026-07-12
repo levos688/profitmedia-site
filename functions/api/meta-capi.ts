@@ -1,7 +1,5 @@
 import type { LeadData } from './contact-types';
 
-const PIXEL_ID = '517991158551582';
-
 export interface MetaEventContext {
   eventId: string;
   pageUrl: string;
@@ -67,12 +65,13 @@ async function hashUserData(userData: Record<string, string | string[]>): Promis
 }
 
 async function sendMetaEvent(
-  env: { META_CAPI_ACCESS_TOKEN?: string },
+  env: { META_CAPI_ACCESS_TOKEN?: string; META_CAPI_DATASET_ID?: string },
   eventName: 'PageView' | 'Lead',
   ctx: MetaEventContext,
   extra?: { phone?: string; name?: string },
 ): Promise<boolean> {
   const accessToken = env.META_CAPI_ACCESS_TOKEN;
+  const datasetId = env.META_CAPI_DATASET_ID || '2253228458374300';
   if (!accessToken || !ctx.eventId) return false;
 
   const userData = await hashUserData(buildUserData(ctx, extra));
@@ -92,7 +91,7 @@ async function sendMetaEvent(
     access_token: accessToken,
   };
 
-  const res = await fetch(`https://graph.facebook.com/v21.0/${PIXEL_ID}/events`, {
+  const res = await fetch(`https://graph.facebook.com/v21.0/${datasetId}/events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -108,14 +107,14 @@ async function sendMetaEvent(
 }
 
 export async function sendMetaPageViewEvent(
-  env: { META_CAPI_ACCESS_TOKEN?: string },
+  env: { META_CAPI_ACCESS_TOKEN?: string; META_CAPI_DATASET_ID?: string },
   ctx: MetaEventContext,
 ): Promise<boolean> {
   return sendMetaEvent(env, 'PageView', ctx);
 }
 
 export async function sendMetaLeadEvent(
-  env: { META_CAPI_ACCESS_TOKEN?: string },
+  env: { META_CAPI_ACCESS_TOKEN?: string; META_CAPI_DATASET_ID?: string },
   lead: LeadData,
   eventId?: string,
 ): Promise<boolean> {
