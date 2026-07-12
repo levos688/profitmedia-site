@@ -10,6 +10,8 @@ interface Props {
   enableGtm?: boolean;
   metaPixelId?: string;
   metaPixelLead?: boolean;
+  lang?: string;
+  dir?: 'ltr' | 'rtl';
 }
 
 const {
@@ -21,11 +23,13 @@ const {
   enableGtm = true,
   metaPixelId,
   metaPixelLead = false,
+  lang = 'he',
+  dir = 'rtl',
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang={lang} dir={dir}>
   <head>
     {
       enableGtm && (
