@@ -250,15 +250,24 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </main>
 
   <div id="donhin-sticky-cta" class="donhin-sticky-cta hidden" hidden>
-    <a href="#form-quiz" id="donhin-sticky-cta-btn" class="donhin-sticky-cta__btn"></a>
+    <button type="button" id="donhin-sticky-cta-btn" class="donhin-sticky-cta__btn"></button>
   </div>
 
-  <div id="donhin-popup" class="donhin-popup hidden" hidden role="dialog" aria-modal="true" aria-labelledby="donhin-popup-title">
+  <div
+    id="donhin-popup"
+    class="donhin-popup hidden"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="donhin-popup-title"
+    data-quiz-title={quizFormTitle}
+  >
     <div class="donhin-popup__backdrop" data-popup-close></div>
     <div class="donhin-popup__panel">
       <button type="button" class="donhin-popup__close" data-popup-close aria-label="Закрыть">×</button>
       <h2 id="donhin-popup-title" class="donhin-popup__title">{quizFormTitle}</h2>
 
+      <div id="donhin-popup-quiz-wrap">
       <form class="donhin-form donhin-form--quiz" id="donhin-popup-quiz-form" data-donhin-form="popup-quiz" novalidate>
         <div class="donhin-form__viewport">
           <div class="donhin-form__step is-active" data-step="1">
@@ -317,55 +326,87 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
         </div>
         <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
       </form>
+      </div>
+
+      <div id="donhin-popup-simple-wrap" class="donhin-popup__simple" hidden>
+        <form class="donhin-form donhin-form--quiz donhin-form--popup-simple" id="donhin-popup-simple-form" data-donhin-form="popup-simple" novalidate>
+          <label class="donhin-field">
+            <span class="sr-only">Имя</span>
+            <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+          </label>
+          <label class="donhin-field">
+            <span class="sr-only">Телефон</span>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Номер телефона"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+              pattern="[0-9\-+() ]{9,18}"
+            />
+          </label>
+          <label class="donhin-privacy">
+            <input type="checkbox" name="privacy" required />
+            <span>
+              Я ознакомлен(а) с{' '}
+              <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+              {' '}и согласен(а) на обработку моих данных (обязательно)
+            </span>
+          </label>
+          <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+          <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+          <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
+        </form>
+      </div>
     </div>
   </div>
-</LandingLayout>
 
+  <Fragment slot="scripts">
 <script is:inline src="/scripts/donhin-ab.js"></script>
-<script>
-  function readCookie(name: string) {
-    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+<script is:inline>
+  function readCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
     return match ? decodeURIComponent(match[1]) : '';
   }
 
   function collectTracking() {
-    const url = new URL(window.location.href);
-    const tracking: Record<string, string> = {};
-    url.searchParams.forEach((value, key) => {
+    var url = new URL(window.location.href);
+    var tracking = {};
+    url.searchParams.forEach(function (value, key) {
       tracking[key] = value;
     });
-    const fbc = readCookie('_fbc');
-    const fbp = readCookie('_fbp');
+    var fbc = readCookie('_fbc');
+    var fbp = readCookie('_fbp');
     if (fbc) tracking.fbc = fbc;
     if (fbp) tracking.fbp = fbp;
     return tracking;
   }
 
   function collectUtm() {
-    const url = new URL(window.location.href);
-    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'] as const;
-    const utm: Record<string, string> = {};
-    keys.forEach((key) => {
-      const value = url.searchParams.get(key);
+    var url = new URL(window.location.href);
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'];
+    var utm = {};
+    keys.forEach(function (key) {
+      var value = url.searchParams.get(key);
       if (value) utm[key] = value;
     });
     return utm;
   }
 
-  async function submitDonhinLead(form: HTMLFormElement, formType: string) {
-    const status = form.querySelector('[data-status]') as HTMLElement | null;
-    const privacyError = form.querySelector('[data-privacy-error]') as HTMLElement | null;
-    status?.classList.add('hidden');
-    privacyError?.classList.add('hidden');
+  async function submitDonhinLead(form, formType) {
+    var status = form.querySelector('[data-status]');
+    var privacyError = form.querySelector('[data-privacy-error]');
+    if (status) status.classList.add('hidden');
+    if (privacyError) privacyError.classList.add('hidden');
 
-    const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement | null;
-    const phoneInput = form.querySelector('input[name="phone"]') as HTMLInputElement | null;
-    const privacyInput = form.querySelector('input[name="privacy"]') as HTMLInputElement | null;
-    const quizInput =
-      form.querySelector('.donhin-quiz input[type="radio"]:checked') as HTMLInputElement | null;
-    const submitBtn = form.querySelector('[type="submit"]') as HTMLButtonElement | null;
+    var nameInput = form.querySelector('input[name="name"]');
+    var phoneInput = form.querySelector('input[name="phone"]');
+    var privacyInput = form.querySelector('input[name="privacy"]');
+    var quizInput = form.querySelector('.donhin-quiz input[type="radio"]:checked');
+    var submitBtn = form.querySelector('[type="submit"]');
 
-    if (!privacyInput?.checked) {
+    if (!privacyInput || !privacyInput.checked) {
       if (privacyError) {
         privacyError.textContent = 'Необходимо согласие с политикой конфиденциальности';
         privacyError.classList.remove('hidden');
@@ -373,62 +414,57 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       return;
     }
 
-    const name = nameInput?.value.trim() || '';
-    const phone = phoneInput?.value.trim() || '';
+    var name = nameInput && nameInput.value.trim ? nameInput.value.trim() : '';
+    var phone = phoneInput && phoneInput.value.trim ? phoneInput.value.trim() : '';
     if (!name || name.length < 2 || !phone || !/^[0-9\-+() ]{9,18}$/.test(phone)) return;
 
-    const eventId = crypto.randomUUID();
-
-    const originalLabel = submitBtn?.textContent || 'Отправить';
+    var eventId = crypto.randomUUID();
+    var originalLabel = submitBtn ? submitBtn.textContent : 'Отправить';
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Отправка…';
     }
 
-    let landingUrl = window.location.href;
+    var landingUrl = window.location.href;
     try {
       landingUrl = sessionStorage.getItem('pm_first_landing') || window.location.href;
-    } catch {
-      /* ignore */
-    }
+    } catch (e) {}
 
-    const lang = [navigator.language, (navigator as Navigator & { userLanguage?: string }).userLanguage]
-      .filter(Boolean)
-      .join(' ');
+    var lang = [navigator.language, navigator.userLanguage].filter(Boolean).join(' ');
 
     try {
       sessionStorage.setItem('donhin_lead_event_id', eventId);
-    } catch {
-      /* ignore */
-    }
+    } catch (e) {}
 
     try {
-      const res = await fetch('/api/contact', {
+      var res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name,
-          phone,
+          name: name,
+          phone: phone,
           client: 'donhin',
-          formType,
-          quizAnswer: quizInput?.value || '',
+          formType: formType,
+          quizAnswer: quizInput ? quizInput.value : '',
           pageUrl: window.location.href,
-          landingUrl,
+          landingUrl: landingUrl,
           referrer: document.referrer || '',
           utm: collectUtm(),
-          tracking: { ...collectUtm(), ...collectTracking() },
+          tracking: Object.assign({}, collectUtm(), collectTracking()),
           language: lang,
-          eventId,
+          eventId: eventId,
         }),
       });
 
-      const data = (await res.json()) as { ok?: boolean };
+      var data = await res.json();
       if (!res.ok || !data.ok) throw new Error('submit failed');
 
-      (window as Window & { donhinAb?: { trackConversion: () => void } }).donhinAb?.trackConversion();
+      if (window.donhinAb && window.donhinAb.trackConversion) window.donhinAb.trackConversion();
 
-      window.location.href = `${document.getElementById('main-content')?.dataset.donhinBasePath || '/donhin'}/thank-you`;
-    } catch {
+      var main = document.getElementById('main-content');
+      var basePath = main && main.dataset.donhinBasePath ? main.dataset.donhinBasePath : '/donhin';
+      window.location.href = basePath + '/thank-you';
+    } catch (e) {
       if (status) {
         status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
         status.classList.remove('hidden');
@@ -441,140 +477,213 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     }
   }
 
-  function initQuizForm(quizForm: HTMLFormElement) {
-    const step1 = quizForm.querySelector('[data-step="1"]') as HTMLElement | null;
-    const step2 = quizForm.querySelector('[data-step="2"]') as HTMLElement | null;
-    const nextBtn = quizForm.querySelector('[data-quiz-next]') as HTMLButtonElement | null;
-    const backBtn = quizForm.querySelector('[data-quiz-back]') as HTMLButtonElement | null;
+  function initQuizForm(quizForm) {
+    var step1 = quizForm.querySelector('[data-step="1"]');
+    var step2 = quizForm.querySelector('[data-step="2"]');
+    var nextBtn = quizForm.querySelector('[data-quiz-next]');
+    var backBtn = quizForm.querySelector('[data-quiz-back]');
 
-    const goToStep = (from: HTMLElement, to: HTMLElement, direction: 'forward' | 'back') => {
-      const leaving = direction === 'forward' ? 'is-leaving-forward' : 'is-leaving-back';
-      const entering = direction === 'forward' ? 'is-entering-forward' : 'is-entering-back';
+    function goToStep(from, to, direction) {
+      var leaving = direction === 'forward' ? 'is-leaving-forward' : 'is-leaving-back';
+      var entering = direction === 'forward' ? 'is-entering-forward' : 'is-entering-back';
 
       from.classList.remove('is-active');
       from.classList.add(leaving);
 
-      window.setTimeout(() => {
+      window.setTimeout(function () {
         from.classList.remove(leaving);
         from.setAttribute('hidden', '');
 
         to.removeAttribute('hidden');
         to.classList.add(entering);
-        requestAnimationFrame(() => {
+        requestAnimationFrame(function () {
           to.classList.remove(entering);
           to.classList.add('is-active');
           if (direction === 'forward') {
-            (quizForm.querySelector('input[name="name"]') as HTMLInputElement | null)?.focus();
+            var nameField = quizForm.querySelector('input[name="name"]');
+            if (nameField) nameField.focus();
           } else {
-            (quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') as HTMLInputElement | null)?.focus();
+            var checked = quizForm.querySelector('.donhin-quiz input[type="radio"]:checked');
+            if (checked) checked.focus();
           }
         });
       }, 280);
-    };
+    }
 
-    quizForm.querySelectorAll('.donhin-quiz input[type="radio"]').forEach((input) => {
-      input.addEventListener('change', () => {
+    quizForm.querySelectorAll('.donhin-quiz input[type="radio"]').forEach(function (input) {
+      input.addEventListener('change', function () {
         if (nextBtn) nextBtn.disabled = !quizForm.querySelector('.donhin-quiz input[type="radio"]:checked');
       });
     });
 
-    nextBtn?.addEventListener('click', () => {
-      if (!quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') || !step1 || !step2) return;
-      goToStep(step1, step2, 'forward');
-    });
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        if (!quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') || !step1 || !step2) return;
+        goToStep(step1, step2, 'forward');
+      });
+    }
 
-    backBtn?.addEventListener('click', () => {
-      if (!step1 || !step2) return;
-      goToStep(step2, step1, 'back');
-    });
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        if (!step1 || !step2) return;
+        goToStep(step2, step1, 'back');
+      });
+    }
 
-    quizForm.addEventListener('submit', (e) => {
+    quizForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      const formType = quizForm.dataset.donhinForm || 'quiz';
-      submitDonhinLead(quizForm, formType);
+      submitDonhinLead(quizForm, quizForm.dataset.donhinForm || 'quiz');
     });
   }
 
   function initDonhinPopup() {
-    const popup = document.getElementById('donhin-popup');
+    var popup = document.getElementById('donhin-popup');
     if (!popup) return;
 
-    const popupForm = document.getElementById('donhin-popup-quiz-form') as HTMLFormElement | null;
-    const ab = (window as Window & {
-      donhinAb?: {
-        getAssignments: () => Record<string, string>;
-        initStickyCta: (assignments: Record<string, string>) => void;
-        initPopup: (assignments: Record<string, string>, open: (trigger: string) => void) => void;
-        trackPopupImpression: (assignments: Record<string, string>) => void;
-      };
-    }).donhinAb;
-
+    var ab = window.donhinAb;
     if (!ab) return;
 
-    const assignments = ab.getAssignments();
-    ab.initStickyCta(assignments);
+    var popupQuizForm = document.getElementById('donhin-popup-quiz-form');
+    var popupSimpleForm = document.getElementById('donhin-popup-simple-form');
+    var quizWrap = document.getElementById('donhin-popup-quiz-wrap');
+    var simpleWrap = document.getElementById('donhin-popup-simple-wrap');
+    var title = document.getElementById('donhin-popup-title');
+    var quizTitle = popup.dataset.quizTitle || 'Ответьте на вопрос — получите бесплатную консультацию адвоката';
+    var assignments = ab.getAssignments();
+    var autoSeenKey = 'donhin_popup_auto_seen';
 
-    const storageKey = 'donhin_popup_seen';
-    let opened = false;
-
-    const isSeen = () => {
+    function isAutoSeen() {
       try {
-        return sessionStorage.getItem(storageKey) === '1';
-      } catch {
+        return sessionStorage.getItem(autoSeenKey) === '1';
+      } catch (e) {
         return false;
       }
-    };
+    }
 
-    const markSeen = () => {
+    function markAutoSeen() {
       try {
-        sessionStorage.setItem(storageKey, '1');
-      } catch {
-        /* ignore */
-      }
-    };
+        sessionStorage.setItem(autoSeenKey, '1');
+      } catch (e) {}
+    }
 
-    const openPopup = (_trigger: string) => {
-      if (opened || isSeen() || popup.classList.contains('is-open')) return;
-      opened = true;
-      markSeen();
-      ab.trackPopupImpression(assignments);
+    function setPopupMode(mode) {
+      if (mode === 'simple') {
+        if (quizWrap) quizWrap.setAttribute('hidden', '');
+        if (simpleWrap) simpleWrap.removeAttribute('hidden');
+        if (title) title.textContent = 'Оставьте заявку для бесплатной консультации';
+      } else {
+        if (simpleWrap) simpleWrap.setAttribute('hidden', '');
+        if (quizWrap) quizWrap.removeAttribute('hidden');
+        if (title) title.textContent = quizTitle;
+      }
+    }
+
+    function showPopupShell() {
       popup.hidden = false;
       popup.classList.remove('hidden');
       popup.classList.add('is-open');
       document.body.classList.add('donhin-popup-open');
-    };
+    }
 
-    const closePopup = () => {
+    function openPopup(trigger, options) {
+      options = options || {};
+      var force = options.force === true;
+      var mode = options.mode || 'quiz';
+      var isAuto = trigger === 'timer' || trigger === 'scroll';
+
+      if (isAuto && !force && isAutoSeen()) return;
+      if (popup.classList.contains('is-open') && !force) return;
+
+      if (isAuto) markAutoSeen();
+
+      setPopupMode(mode);
+      showPopupShell();
+
+      if (isAuto) ab.trackPopupImpression(assignments);
+    }
+
+    function closePopup() {
       popup.classList.remove('is-open');
       popup.hidden = true;
       popup.classList.add('hidden');
       document.body.classList.remove('donhin-popup-open');
-    };
+    }
 
-    popup.querySelectorAll('[data-popup-close]').forEach((el) => {
+    popup.querySelectorAll('[data-popup-close]').forEach(function (el) {
       el.addEventListener('click', closePopup);
     });
 
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && popup.classList.contains('is-open')) closePopup();
     });
 
-    ab.initPopup(assignments, openPopup);
+    ab.initStickyCta(assignments, function () {
+      openPopup('sticky', { force: true, mode: 'simple' });
+    });
 
-    if (popupForm) initQuizForm(popupForm);
+    ab.initPopup(assignments, function (trigger) {
+      openPopup(trigger, { mode: 'quiz' });
+    });
+
+    if (popupQuizForm) initQuizForm(popupQuizForm);
+    if (popupSimpleForm) {
+      popupSimpleForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        submitDonhinLead(popupSimpleForm, 'popup-simple');
+      });
+    }
   }
 
-  const quizForm = document.getElementById('donhin-quiz-form') as HTMLFormElement | null;
-  const bottomForm = document.getElementById('donhin-bottom-form') as HTMLFormElement | null;
+  function bootDonhinPage() {
+    var quizForm = document.getElementById('donhin-quiz-form');
+    var bottomForm = document.getElementById('donhin-bottom-form');
 
-  if (quizForm) initQuizForm(quizForm);
-  initDonhinPopup();
+    if (quizForm) initQuizForm(quizForm);
+    initDonhinPopup();
 
-  bottomForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    submitDonhinLead(bottomForm, 'simple');
-  });
+    if (bottomForm) {
+      bottomForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        submitDonhinLead(bottomForm, 'simple');
+      });
+    }
+
+    function liftAccessibilityWidget() {
+      if (!document.body.classList.contains('donhin-has-sticky')) return;
+      var root = document.getElementById('pm-a11y-widget-root');
+      if (!root) return;
+      var fab = root.querySelector('.pm-fab');
+      var panel = root.querySelector('.pm-panel');
+      var fabBottom = 'calc(5.75rem + env(safe-area-inset-bottom, 0px))';
+      var panelBottom = 'calc(10.5rem + env(safe-area-inset-bottom, 0px))';
+      if (fab) {
+        fab.style.setProperty('bottom', fabBottom, 'important');
+        fab.style.setProperty('left', '12px', 'important');
+      }
+      if (panel) {
+        panel.style.setProperty('bottom', panelBottom, 'important');
+        panel.style.setProperty('left', '12px', 'important');
+      }
+    }
+
+    liftAccessibilityWidget();
+    if (typeof MutationObserver !== 'undefined') {
+      var a11yObserver = new MutationObserver(liftAccessibilityWidget);
+      a11yObserver.observe(document.body, { childList: true, subtree: true });
+    }
+    [1000, 3000, 6000, 9000, 12000].forEach(function (ms) {
+      window.setTimeout(liftAccessibilityWidget, ms);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootDonhinPage);
+  } else {
+    bootDonhinPage();
+  }
 </script>
+  </Fragment>
+</LandingLayout>
 
 <style>
   .donhin-container {
@@ -1320,12 +1429,13 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     margin-inline: auto;
     padding: 0.875rem 1.5rem;
     border-radius: 9999px;
+    border: none;
     background: #111;
     color: #fff;
     font-size: 1rem;
     font-weight: 700;
     text-align: center;
-    text-decoration: none;
+    cursor: pointer;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
   }
 
@@ -1339,7 +1449,18 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   }
 
   :global(body.donhin-has-sticky) {
-    padding-bottom: 5.5rem;
+    padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* תוסף נגישות — выше sticky-кнопки, чтобы не перекрывать CTA на мобильном */
+  :global(body.donhin-has-sticky #pm-a11y-widget-root .pm-fab) {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+  }
+
+  :global(body.donhin-has-sticky #pm-a11y-widget-root .pm-panel) {
+    bottom: calc(10.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
   }
 
   :global(body.donhin-popup-open) {
@@ -1420,6 +1541,13 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   }
 
   .donhin-popup .donhin-form--quiz {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .donhin-popup__simple .donhin-form--popup-simple {
     padding: 0;
     border: none;
     box-shadow: none;

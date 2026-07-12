@@ -1,4 +1,4 @@
-import type { AbMetric } from './ab-stats-core';
+import type { AbChannel, AbMetric } from './ab-stats-core';
 import { incrementAbMetric } from './ab-stats-core';
 
 interface Env {
@@ -18,6 +18,7 @@ interface TrackPayload {
   experiment?: string;
   variant?: string;
   metric?: AbMetric;
+  channel?: AbChannel;
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
@@ -41,13 +42,17 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   const experiment = body.experiment?.trim() || '';
   const variant = body.variant?.trim() || '';
   const metric = body.metric;
+  const channel: AbChannel = body.channel === 'fb_ads' ? 'fb_ads' : 'all';
 
   if (!experiment || !variant || !metric || !['impression', 'click', 'conversion'].includes(metric)) {
     return json({ ok: false, error: 'Invalid payload' }, 400);
   }
 
   try {
-    await incrementAbMetric(env.DONHIN_AB_STATS, experiment, variant, metric);
+    await incrementAbMetric(env.DONHIN_AB_STATS, experiment, variant, metric, 'all');
+    if (channel === 'fb_ads') {
+      await incrementAbMetric(env.DONHIN_AB_STATS, experiment, variant, metric, 'fb_ads');
+    }
     return json({ ok: true });
   } catch (err) {
     console.error(err);

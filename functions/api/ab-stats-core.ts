@@ -1,5 +1,7 @@
 export type AbMetric = 'impression' | 'click' | 'conversion';
 
+export type AbChannel = 'all' | 'fb_ads';
+
 export type AbVariantStats = {
   impression: number;
   click: number;
@@ -14,7 +16,10 @@ export const AB_EXPERIMENTS = {
   popup_scroll: ['80pct', '60pct'],
 } as const;
 
-const STATS_KEY = 'donhin_ab_stats_v1';
+const STATS_KEYS: Record<AbChannel, string> = {
+  all: 'donhin_ab_stats_v1',
+  fb_ads: 'donhin_ab_stats_v1_fb',
+};
 
 export function emptyStats(): AbStatsStore {
   const store: AbStatsStore = {};
@@ -46,9 +51,14 @@ export function normalizeStats(raw: AbStatsStore | null): AbStatsStore {
   return base;
 }
 
-export async function readAbStats(kv: KVNamespace): Promise<AbStatsStore> {
-  const raw = await kv.get<AbStatsStore>(STATS_KEY, 'json');
+export async function readAbStats(kv: KVNamespace, channel: AbChannel = 'all'): Promise<AbStatsStore> {
+  const raw = await kv.get<AbStatsStore>(STATS_KEYS[channel], 'json');
   return normalizeStats(raw);
+}
+
+export async function readAllAbStats(kv: KVNamespace): Promise<Record<AbChannel, AbStatsStore>> {
+  const [all, fb_ads] = await Promise.all([readAbStats(kv, 'all'), readAbStats(kv, 'fb_ads')]);
+  return { all, fb_ads };
 }
 
 export async function incrementAbMetric(
@@ -56,6 +66,7 @@ export async function incrementAbMetric(
   experiment: string,
   variant: string,
   metric: AbMetric,
+  channel: AbChannel = 'all',
 ): Promise<AbStatsStore> {
   if (!(experiment in AB_EXPERIMENTS)) {
     throw new Error('Unknown experiment');
@@ -64,9 +75,9 @@ export async function incrementAbMetric(
     throw new Error('Unknown variant');
   }
 
-  const stats = await readAbStats(kv);
+  const stats = await readAbStats(kv, channel);
   stats[experiment][variant][metric] += 1;
-  await kv.put(STATS_KEY, JSON.stringify(stats));
+  await kv.put(STATS_KEYS[channel], JSON.stringify(stats));
   return stats;
 }
 

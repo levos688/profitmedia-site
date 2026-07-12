@@ -1,21 +1,43 @@
 ---
-import LandingLayout from '../../layouts/LandingLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 ---
 
-<LandingLayout
+<Layout
   title="Donhin A/B Stats"
   description="Internal Donhin experiment dashboard"
+  noindex
+  blockAiCrawlers
+  preloadImage={false}
+  enableGtm={false}
 >
   <main id="main-content" class="ab-stats">
     <div class="ab-stats__panel">
-      <h1>Donhin A/B тесты</h1>
-      <p class="ab-stats__hint">Добавьте <code>?token=ВАШ_ТОКЕН</code> в URL этой страницы.</p>
+      <header class="ab-stats__header">
+        <h1>Donhin A/B тесты</h1>
+        <p class="ab-stats__subtitle">Внутренняя статистика экспериментов</p>
+      </header>
+
+      <div class="ab-stats__switcher">
+        <p class="ab-stats__switcher-label">Источник данных</p>
+        <div class="ab-stats__tabs" role="tablist" aria-label="Источник трафика">
+          <button type="button" class="ab-stats__tab is-active" data-channel="fb_ads" role="tab" aria-selected="true">
+            Только Facebook реклама
+          </button>
+          <button type="button" class="ab-stats__tab" data-channel="all" role="tab" aria-selected="false">
+            Все визиты (включая тесты)
+          </button>
+        </div>
+        <p id="ab-stats-channel-note" class="ab-stats__channel-note">
+          Показана статистика только с переходов из Facebook Ads (fbclid, utm_source=ri_XX и т.п.).
+        </p>
+      </div>
+
       <p id="ab-stats-status" class="ab-stats__status">Загрузка…</p>
-      <div id="ab-stats-root"></div>
+      <div id="ab-stats-root" class="ab-stats__root"></div>
       <p class="ab-stats__updated" id="ab-stats-updated"></p>
     </div>
   </main>
-</LandingLayout>
+</Layout>
 
 <script>
   const params = new URLSearchParams(window.location.search);
@@ -24,6 +46,31 @@ import LandingLayout from '../../layouts/LandingLayout.astro';
   const statusEl = document.getElementById('ab-stats-status');
   const rootEl = document.getElementById('ab-stats-root');
   const updatedEl = document.getElementById('ab-stats-updated');
+  const channelNoteEl = document.getElementById('ab-stats-channel-note');
+  const tabButtons = Array.from(document.querySelectorAll('.ab-stats__tab'));
+
+  const channelFromUrl = params.get('channel');
+  let activeChannel = channelFromUrl === 'all' ? 'all' : 'fb_ads';
+  let cachedData: {
+    updatedAt?: string;
+    channels?: Record<
+      string,
+      {
+        label: string;
+        experiments: Array<{
+          experiment: string;
+          variants: Array<{
+            variant: string;
+            impression: number;
+            click: number;
+            conversion: number;
+            ctr: number;
+            cvr: number;
+          }>;
+        }>;
+      }
+    >;
+  } | null = null;
 
   const labels: Record<string, Record<string, string>> = {
     sticky_cta: {
@@ -47,62 +94,55 @@ import LandingLayout from '../../layouts/LandingLayout.astro';
     popup_scroll: 'Скролл popup',
   };
 
-  async function loadStats() {
-    if (!token) {
-      if (statusEl) statusEl.textContent = 'Укажите token в URL.';
+  const channelNotes: Record<string, string> = {
+    fb_ads: 'Показана статистика только с переходов из Facebook Ads (fbclid, utm_source=ri_XX и т.п.).',
+    all: 'Показана вся статистика, включая ваши тестовые визиты без рекламы.',
+  };
+
+  function setActiveChannel(channel: string) {
+    activeChannel = channel === 'all' ? 'all' : 'fb_ads';
+    tabButtons.forEach((tab) => {
+      const isActive = tab.getAttribute('data-channel') === activeChannel;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    if (channelNoteEl) channelNoteEl.textContent = channelNotes[activeChannel];
+
+    const nextParams = new URLSearchParams(window.location.search);
+    nextParams.set('channel', activeChannel);
+    if (token) nextParams.set('token', token);
+    const nextUrl = `${window.location.pathname}?${nextParams.toString()}`;
+    window.history.replaceState(null, '', nextUrl);
+  }
+
+  function renderChannel() {
+    if (!rootEl || !cachedData?.channels) return;
+
+    const channel = cachedData.channels[activeChannel];
+    if (!channel) {
+      rootEl.innerHTML = '<p class="ab-stats__empty">Нет данных для выбранного источника.</p>';
       return;
     }
 
-    try {
-      const res = await fetch(`/api/ab-stats?token=${encodeURIComponent(token)}`);
-      const data = (await res.json()) as {
-        ok?: boolean;
-        updatedAt?: string;
-        experiments?: Array<{
-          experiment: string;
-          variants: Array<{
-            variant: string;
-            impression: number;
-            click: number;
-            conversion: number;
-            ctr: number;
-            cvr: number;
-          }>;
-        }>;
-        error?: string;
-      };
+    rootEl.innerHTML = channel.experiments
+      .map((experiment) => {
+        const rows = experiment.variants
+          .map((variant) => {
+            const name = labels[experiment.experiment]?.[variant.variant] || variant.variant;
+            return `<tr>
+              <td class="ab-stats__variant">${name}</td>
+              <td class="ab-stats__num">${variant.impression}</td>
+              <td class="ab-stats__num">${variant.click}</td>
+              <td class="ab-stats__num">${variant.conversion}</td>
+              <td class="ab-stats__num">${variant.ctr}%</td>
+              <td class="ab-stats__num">${variant.cvr}%</td>
+            </tr>`;
+          })
+          .join('');
 
-      if (!res.ok || !data.ok || !data.experiments) {
-        if (statusEl) statusEl.textContent = data.error || 'Не удалось загрузить статистику';
-        return;
-      }
-
-      if (statusEl) statusEl.textContent = '';
-      if (updatedEl && data.updatedAt) {
-        updatedEl.textContent = `Обновлено: ${new Date(data.updatedAt).toLocaleString('ru-RU')}`;
-      }
-
-      if (!rootEl) return;
-
-      rootEl.innerHTML = data.experiments
-        .map((experiment) => {
-          const rows = experiment.variants
-            .map((variant) => {
-              const name =
-                labels[experiment.experiment]?.[variant.variant] || variant.variant;
-              return `<tr>
-                <td>${name}</td>
-                <td>${variant.impression}</td>
-                <td>${variant.click}</td>
-                <td>${variant.conversion}</td>
-                <td>${variant.ctr}%</td>
-                <td>${variant.cvr}%</td>
-              </tr>`;
-            })
-            .join('');
-
-          return `<section class="ab-stats__block">
-            <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
+        return `<section class="ab-stats__block">
+          <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
+          <div class="ab-stats__table-wrap">
             <table>
               <thead>
                 <tr>
@@ -116,76 +156,262 @@ import LandingLayout from '../../layouts/LandingLayout.astro';
               </thead>
               <tbody>${rows}</tbody>
             </table>
-          </section>`;
-        })
-        .join('');
+          </div>
+        </section>`;
+      })
+      .join('');
+  }
+
+  async function loadStats() {
+    try {
+      const query = token ? `?token=${encodeURIComponent(token)}` : '';
+      const res = await fetch(`/api/ab-stats${query}`, { credentials: 'same-origin' });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        updatedAt?: string;
+        channels?: typeof cachedData extends null ? never : NonNullable<typeof cachedData>['channels'];
+        error?: string;
+      };
+
+      if (!res.ok || !data.ok || !data.channels) {
+        if (statusEl) statusEl.textContent = data.error || 'Не удалось загрузить статистику';
+        return;
+      }
+
+      cachedData = data;
+      if (statusEl) statusEl.textContent = '';
+      if (updatedEl && data.updatedAt) {
+        updatedEl.textContent = `Обновлено: ${new Date(data.updatedAt).toLocaleString('ru-RU')}`;
+      }
+
+      renderChannel();
     } catch {
       if (statusEl) statusEl.textContent = 'Ошибка загрузки статистики';
     }
   }
 
+  tabButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      setActiveChannel(button.getAttribute('data-channel') || 'fb_ads');
+      renderChannel();
+    });
+  });
+
+  setActiveChannel(activeChannel);
   loadStats();
   window.setInterval(loadStats, 30000);
 </script>
 
 <style>
   .ab-stats {
+    min-height: 100vh;
     padding: 2rem 1rem 4rem;
-    background: #f5f5f5;
+    background: #eef2f7;
+    font-family: Assistant, system-ui, -apple-system, 'Segoe UI', sans-serif;
   }
 
   .ab-stats__panel {
-    width: min(100%, 56rem);
+    width: min(100%, 64rem);
     margin-inline: auto;
     background: #fff;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    box-shadow: 0 8px 32px rgba(21, 71, 127, 0.08);
+    border-radius: 1rem;
+    padding: 1.75rem 1.5rem 2rem;
+    box-shadow: 0 12px 40px rgba(21, 71, 127, 0.1);
+  }
+
+  .ab-stats__header {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   .ab-stats h1 {
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.35rem;
     color: #15477f;
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    line-height: 1.2;
   }
 
-  .ab-stats__hint {
-    margin: 0 0 1rem;
-    color: #4b5563;
+  .ab-stats__subtitle {
+    margin: 0;
+    color: #6b7280;
     font-size: 0.9375rem;
   }
 
+  .ab-stats__switcher {
+    margin-bottom: 1.75rem;
+    padding: 1.25rem 1.5rem;
+    border: 2px solid #d6e0ee;
+    border-radius: 0.75rem;
+    background: #f7f9fc;
+  }
+
+  .ab-stats__switcher-label {
+    margin: 0 0 0.75rem;
+    color: #15477f;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ab-stats__tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .ab-stats__tab {
+    border: 2px solid #c5d0df;
+    border-radius: 0.625rem;
+    background: #fff;
+    color: #374151;
+    padding: 0.875rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .ab-stats__tab:hover {
+    border-color: #15477f;
+    color: #15477f;
+  }
+
+  .ab-stats__tab.is-active {
+    border-color: #15477f;
+    background: #15477f;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(21, 71, 127, 0.28);
+  }
+
+  .ab-stats__channel-note {
+    margin: 0;
+    color: #4b5563;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
   .ab-stats__status,
-  .ab-stats__updated {
+  .ab-stats__updated,
+  .ab-stats__empty {
     color: #4b5563;
     font-size: 0.875rem;
   }
 
+  .ab-stats__updated {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .ab-stats__root {
+    display: grid;
+    gap: 2rem;
+  }
+
   .ab-stats__block {
-    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.75rem;
+    background: #fff;
   }
 
   .ab-stats__block h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 1.25rem;
     color: #15477f;
     font-size: 1.125rem;
+    line-height: 1.3;
+  }
+
+  .ab-stats__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .ab-stats table {
     width: 100%;
+    min-width: 40rem;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    border: 2px solid #9ca3af;
+    font-size: 0.9375rem;
+    background: #fff;
   }
 
   .ab-stats th,
   .ab-stats td {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0.625rem 0.5rem;
+    padding: 1rem 1.125rem;
     text-align: left;
+    vertical-align: middle;
+    border: 1px solid #9ca3af;
+    line-height: 1.5;
   }
 
-  .ab-stats th {
+  .ab-stats thead th {
+    background: #e8eef5;
     color: #15477f;
     font-weight: 700;
+    white-space: nowrap;
+    border-bottom-width: 2px;
+  }
+
+  .ab-stats tbody tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .ab-stats tbody tr:hover td {
+    background: #eef4fb;
+  }
+
+  .ab-stats__variant {
+    min-width: 15rem;
+    max-width: 24rem;
+    white-space: normal;
+    word-break: break-word;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .ab-stats__num {
+    min-width: 6rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: #374151;
+  }
+
+  .ab-stats th:not(:first-child) {
+    text-align: right;
+  }
+
+  @media (max-width: 640px) {
+    .ab-stats__panel {
+      padding: 1.25rem 1rem 1.5rem;
+    }
+
+    .ab-stats__switcher {
+      padding: 1rem;
+    }
+
+    .ab-stats__tabs {
+      grid-template-columns: 1fr;
+    }
+
+    .ab-stats__block {
+      padding: 1rem;
+    }
+
+    .ab-stats th,
+    .ab-stats td {
+      padding: 0.875rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .ab-stats__variant {
+      min-width: 12rem;
+    }
   }
 </style>

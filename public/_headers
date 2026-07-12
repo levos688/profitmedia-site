@@ -42,3 +42,7 @@
 
 /*.png
   Cache-Control: public, max-age=31536000, immutable
+
+/donhin/ab-stats*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  Cache-Control: private, no-store

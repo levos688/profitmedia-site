@@ -55,19 +55,59 @@
     return assignments;
   }
 
+  function readCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : '';
+  }
+
+  function isFacebookAdTraffic() {
+    try {
+      if (sessionStorage.getItem('donhin_fb_ad') === '1') return true;
+
+      var url = new URL(window.location.href);
+      if (url.searchParams.get('fbclid')) return true;
+
+      var utmSource = (url.searchParams.get('utm_source') || '').toLowerCase();
+      if (/^ri_\d+$/i.test(utmSource)) return true;
+
+      var utmMedium = (url.searchParams.get('utm_medium') || '').toLowerCase();
+      if (
+        (utmSource === 'facebook' || utmSource === 'fb' || utmSource === 'meta' || utmSource === 'instagram' || utmSource === 'ig') &&
+        (utmMedium === 'paid' || utmMedium === 'cpc' || utmMedium === 'ppc')
+      ) {
+        return true;
+      }
+
+      if (readCookie('_fbc')) return true;
+    } catch (e) {}
+
+    return false;
+  }
+
+  function markFacebookAdTraffic() {
+    if (!isFacebookAdTraffic()) return;
+    try {
+      sessionStorage.setItem('donhin_fb_ad', '1');
+    } catch (e) {}
+  }
+
+  markFacebookAdTraffic();
+
+  function getTrackingChannel() {
+    return isFacebookAdTraffic() ? 'fb_ads' : 'all';
+  }
+
   function track(experiment, variant, metric) {
     fetch('/api/ab-track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ experiment: experiment, variant: variant, metric: metric }),
+      body: JSON.stringify({
+        experiment: experiment,
+        variant: variant,
+        metric: metric,
+        channel: getTrackingChannel(),
+      }),
     }).catch(function () {});
-  }
-
-  function trackAll(metric) {
-    var assignments = getAssignments();
-    track('sticky_cta', assignments.sticky_cta, metric);
-    track('popup_delay', assignments.popup_delay, metric);
-    track('popup_scroll', assignments.popup_scroll, metric);
   }
 
   function stickyLabel(id) {
@@ -91,7 +131,13 @@
     return 0.8;
   }
 
-  function initStickyCta(assignments) {
+  function getScrollDepth() {
+    var doc = document.documentElement;
+    var total = Math.max(doc.scrollHeight - window.innerHeight, 1);
+    return window.scrollY / total;
+  }
+
+  function initStickyCta(assignments, openPopupFromSticky) {
     var bar = document.getElementById('donhin-sticky-cta');
     var btn = document.getElementById('donhin-sticky-cta-btn');
     if (!bar || !btn) return;
@@ -102,31 +148,32 @@
     document.body.classList.add('donhin-has-sticky');
     track('sticky_cta', assignments.sticky_cta, 'impression');
 
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
       track('sticky_cta', assignments.sticky_cta, 'click');
+      if (typeof openPopupFromSticky === 'function') openPopupFromSticky();
     });
   }
 
   function initPopup(assignments, openPopup) {
     var delay = delayMs(assignments.popup_delay);
     var ratio = scrollRatio(assignments.popup_scroll);
-    var openedByScroll = false;
+    var scrollTriggered = false;
 
     window.setTimeout(function () {
       openPopup('timer');
     }, delay);
 
     function onScroll() {
-      var doc = document.documentElement;
-      var total = Math.max(doc.scrollHeight - window.innerHeight, 1);
-      var depth = window.scrollY / total;
-      if (!openedByScroll && depth >= ratio) {
-        openedByScroll = true;
+      if (scrollTriggered) return;
+      if (getScrollDepth() >= ratio) {
+        scrollTriggered = true;
         openPopup('scroll');
       }
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     onScroll();
   }
 
