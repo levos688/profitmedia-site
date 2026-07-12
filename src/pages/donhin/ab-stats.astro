@@ -1,0 +1,191 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+---
+
+<LandingLayout
+  title="Donhin A/B Stats"
+  description="Internal Donhin experiment dashboard"
+>
+  <main id="main-content" class="ab-stats">
+    <div class="ab-stats__panel">
+      <h1>Donhin A/B тесты</h1>
+      <p class="ab-stats__hint">Добавьте <code>?token=ВАШ_ТОКЕН</code> в URL этой страницы.</p>
+      <p id="ab-stats-status" class="ab-stats__status">Загрузка…</p>
+      <div id="ab-stats-root"></div>
+      <p class="ab-stats__updated" id="ab-stats-updated"></p>
+    </div>
+  </main>
+</LandingLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token') || '';
+
+  const statusEl = document.getElementById('ab-stats-status');
+  const rootEl = document.getElementById('ab-stats-root');
+  const updatedEl = document.getElementById('ab-stats-updated');
+
+  const labels: Record<string, Record<string, string>> = {
+    sticky_cta: {
+      get_consult: 'Получить бесплатную консультацию',
+      free_consult: 'Бесплатная консультация',
+    },
+    popup_delay: {
+      '15s': '15 секунд',
+      '18s': '18 секунд',
+      '22s': '22 секунды',
+    },
+    popup_scroll: {
+      '80pct': 'Скролл 80%',
+      '60pct': 'Скролл 60%',
+    },
+  };
+
+  const titles: Record<string, string> = {
+    sticky_cta: 'Кнопка внизу экрана',
+    popup_delay: 'Таймер popup',
+    popup_scroll: 'Скролл popup',
+  };
+
+  async function loadStats() {
+    if (!token) {
+      if (statusEl) statusEl.textContent = 'Укажите token в URL.';
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/ab-stats?token=${encodeURIComponent(token)}`);
+      const data = (await res.json()) as {
+        ok?: boolean;
+        updatedAt?: string;
+        experiments?: Array<{
+          experiment: string;
+          variants: Array<{
+            variant: string;
+            impression: number;
+            click: number;
+            conversion: number;
+            ctr: number;
+            cvr: number;
+          }>;
+        }>;
+        error?: string;
+      };
+
+      if (!res.ok || !data.ok || !data.experiments) {
+        if (statusEl) statusEl.textContent = data.error || 'Не удалось загрузить статистику';
+        return;
+      }
+
+      if (statusEl) statusEl.textContent = '';
+      if (updatedEl && data.updatedAt) {
+        updatedEl.textContent = `Обновлено: ${new Date(data.updatedAt).toLocaleString('ru-RU')}`;
+      }
+
+      if (!rootEl) return;
+
+      rootEl.innerHTML = data.experiments
+        .map((experiment) => {
+          const rows = experiment.variants
+            .map((variant) => {
+              const name =
+                labels[experiment.experiment]?.[variant.variant] || variant.variant;
+              return `<tr>
+                <td>${name}</td>
+                <td>${variant.impression}</td>
+                <td>${variant.click}</td>
+                <td>${variant.conversion}</td>
+                <td>${variant.ctr}%</td>
+                <td>${variant.cvr}%</td>
+              </tr>`;
+            })
+            .join('');
+
+          return `<section class="ab-stats__block">
+            <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Вариант</th>
+                  <th>Показы</th>
+                  <th>Клики</th>
+                  <th>Конверсии</th>
+                  <th>CTR</th>
+                  <th>CVR</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </section>`;
+        })
+        .join('');
+    } catch {
+      if (statusEl) statusEl.textContent = 'Ошибка загрузки статистики';
+    }
+  }
+
+  loadStats();
+  window.setInterval(loadStats, 30000);
+</script>
+
+<style>
+  .ab-stats {
+    padding: 2rem 1rem 4rem;
+    background: #f5f5f5;
+  }
+
+  .ab-stats__panel {
+    width: min(100%, 56rem);
+    margin-inline: auto;
+    background: #fff;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(21, 71, 127, 0.08);
+  }
+
+  .ab-stats h1 {
+    margin: 0 0 0.5rem;
+    color: #15477f;
+    font-size: 1.75rem;
+  }
+
+  .ab-stats__hint {
+    margin: 0 0 1rem;
+    color: #4b5563;
+    font-size: 0.9375rem;
+  }
+
+  .ab-stats__status,
+  .ab-stats__updated {
+    color: #4b5563;
+    font-size: 0.875rem;
+  }
+
+  .ab-stats__block {
+    margin-top: 1.5rem;
+  }
+
+  .ab-stats__block h2 {
+    margin: 0 0 0.75rem;
+    color: #15477f;
+    font-size: 1.125rem;
+  }
+
+  .ab-stats table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .ab-stats th,
+  .ab-stats td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.625rem 0.5rem;
+    text-align: left;
+  }
+
+  .ab-stats th {
+    color: #15477f;
+    font-weight: 700;
+  }
+</style>

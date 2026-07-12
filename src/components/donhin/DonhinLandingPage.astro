@@ -249,6 +249,10 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     <div id="donhin-scroll-sentinel" class="donhin-scroll-sentinel" aria-hidden="true"></div>
   </main>
 
+  <div id="donhin-sticky-cta" class="donhin-sticky-cta hidden" hidden>
+    <a href="#form-quiz" id="donhin-sticky-cta-btn" class="donhin-sticky-cta__btn"></a>
+  </div>
+
   <div id="donhin-popup" class="donhin-popup hidden" hidden role="dialog" aria-modal="true" aria-labelledby="donhin-popup-title">
     <div class="donhin-popup__backdrop" data-popup-close></div>
     <div class="donhin-popup__panel">
@@ -317,6 +321,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 </LandingLayout>
 
+<script is:inline src="/scripts/donhin-ab.js"></script>
 <script>
   function readCookie(name: string) {
     const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -420,6 +425,8 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
 
+      (window as Window & { donhinAb?: { trackConversion: () => void } }).donhinAb?.trackConversion();
+
       window.location.href = `${document.getElementById('main-content')?.dataset.donhinBasePath || '/donhin'}/thank-you`;
     } catch {
       if (status) {
@@ -493,6 +500,20 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     if (!popup) return;
 
     const popupForm = document.getElementById('donhin-popup-quiz-form') as HTMLFormElement | null;
+    const ab = (window as Window & {
+      donhinAb?: {
+        getAssignments: () => Record<string, string>;
+        initStickyCta: (assignments: Record<string, string>) => void;
+        initPopup: (assignments: Record<string, string>, open: (trigger: string) => void) => void;
+        trackPopupImpression: (assignments: Record<string, string>) => void;
+      };
+    }).donhinAb;
+
+    if (!ab) return;
+
+    const assignments = ab.getAssignments();
+    ab.initStickyCta(assignments);
+
     const storageKey = 'donhin_popup_seen';
     let opened = false;
 
@@ -512,10 +533,11 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       }
     };
 
-    const openPopup = () => {
+    const openPopup = (_trigger: string) => {
       if (opened || isSeen() || popup.classList.contains('is-open')) return;
       opened = true;
       markSeen();
+      ab.trackPopupImpression(assignments);
       popup.hidden = false;
       popup.classList.remove('hidden');
       popup.classList.add('is-open');
@@ -537,18 +559,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       if (event.key === 'Escape' && popup.classList.contains('is-open')) closePopup();
     });
 
-    window.setTimeout(() => openPopup(), 15000);
-
-    const sentinel = document.getElementById('donhin-scroll-sentinel');
-    if (sentinel) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((entry) => entry.isIntersecting)) openPopup();
-        },
-        { threshold: 0 },
-      );
-      observer.observe(sentinel);
-    }
+    ab.initPopup(assignments, openPopup);
 
     if (popupForm) initQuizForm(popupForm);
   }
@@ -1283,6 +1294,52 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   .donhin-scroll-sentinel {
     width: 100%;
     height: 1px;
+  }
+
+  .donhin-sticky-cta {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 900;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.96) 35%);
+    pointer-events: none;
+  }
+
+  .donhin-sticky-cta.hidden {
+    display: none;
+  }
+
+  .donhin-sticky-cta__btn {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 36rem);
+    min-height: 52px;
+    margin-inline: auto;
+    padding: 0.875rem 1.5rem;
+    border-radius: 9999px;
+    background: #111;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  }
+
+  .donhin-sticky-cta__btn:hover {
+    background: #000;
+  }
+
+  .donhin-sticky-cta__btn:focus-visible {
+    outline: 2px solid #7579ed;
+    outline-offset: 3px;
+  }
+
+  :global(body.donhin-has-sticky) {
+    padding-bottom: 5.5rem;
   }
 
   :global(body.donhin-popup-open) {
