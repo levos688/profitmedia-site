@@ -2,6 +2,15 @@ import type { LeadData } from './contact-types';
 
 const PIXEL_ID = '517991158551582';
 
+export interface MetaEventContext {
+  eventId: string;
+  pageUrl: string;
+  ip: string;
+  userAgent: string;
+  tracking?: Record<string, string>;
+  eventTime?: Date;
+}
+
 async function sha256(value: string): Promise<string> {
   const data = new TextEncoder().encode(value);
   const hash = await crypto.subtle.digest('SHA-256', data);
@@ -21,36 +30,62 @@ function normalizeName(name: string): string {
   return name.trim().toLowerCase();
 }
 
-export async function sendMetaLeadEvent(
-  env: { META_CAPI_ACCESS_TOKEN?: string },
-  lead: LeadData,
-  eventId?: string,
-): Promise<void> {
-  const accessToken = env.META_CAPI_ACCESS_TOKEN;
-  if (!accessToken || !eventId) return;
-
+function buildUserData(
+  ctx: MetaEventContext,
+  extra?: { phone?: string; name?: string },
+): Record<string, string | string[]> {
   const userData: Record<string, string | string[]> = {
-    client_ip_address: lead.ip,
-    client_user_agent: lead.userAgent,
+    client_ip_address: ctx.ip,
+    client_user_agent: ctx.userAgent,
   };
 
-  if (lead.tracking.fbc) userData.fbc = lead.tracking.fbc;
-  if (lead.tracking.fbp) userData.fbp = lead.tracking.fbp;
+  const tracking = ctx.tracking || {};
+  if (tracking.fbc) userData.fbc = tracking.fbc;
+  if (tracking.fbp) userData.fbp = tracking.fbp;
 
-  const phone = normalizePhone(lead.phone);
-  if (phone) userData.ph = [await sha256(phone)];
+  if (extra?.phone) {
+    const phone = normalizePhone(extra.phone);
+    if (phone) userData.ph = [phone]; // hashed below
+  }
+  if (extra?.name) {
+    const firstName = normalizeName(extra.name).split(/\s+/)[0];
+    if (firstName) userData.fn = [firstName]; // hashed below
+  }
 
-  const firstName = normalizeName(lead.name).split(/\s+/)[0];
-  if (firstName) userData.fn = [await sha256(firstName)];
+  return userData;
+}
+
+async function hashUserData(userData: Record<string, string | string[]>): Promise<Record<string, string | string[]>> {
+  const out: Record<string, string | string[]> = { ...userData };
+  if (Array.isArray(out.ph) && typeof out.ph[0] === 'string') {
+    out.ph = [await sha256(out.ph[0])];
+  }
+  if (Array.isArray(out.fn) && typeof out.fn[0] === 'string') {
+    out.fn = [await sha256(out.fn[0])];
+  }
+  return out;
+}
+
+async function sendMetaEvent(
+  env: { META_CAPI_ACCESS_TOKEN?: string },
+  eventName: 'PageView' | 'Lead',
+  ctx: MetaEventContext,
+  extra?: { phone?: string; name?: string },
+): Promise<boolean> {
+  const accessToken = env.META_CAPI_ACCESS_TOKEN;
+  if (!accessToken || !ctx.eventId) return false;
+
+  const userData = await hashUserData(buildUserData(ctx, extra));
+  const eventTime = ctx.eventTime || new Date();
 
   const payload = {
     data: [
       {
-        event_name: 'Lead',
-        event_time: Math.floor(lead.submittedAt.getTime() / 1000),
-        event_id: eventId,
+        event_name: eventName,
+        event_time: Math.floor(eventTime.getTime() / 1000),
+        event_id: ctx.eventId,
         action_source: 'website',
-        event_source_url: lead.pageUrl || lead.landingUrl,
+        event_source_url: ctx.pageUrl,
         user_data: userData,
       },
     ],
@@ -65,6 +100,38 @@ export async function sendMetaLeadEvent(
 
   if (!res.ok) {
     const err = await res.text();
-    console.error('Meta CAPI Lead failed:', err);
+    console.error(`Meta CAPI ${eventName} failed:`, err);
+    return false;
   }
+
+  return true;
+}
+
+export async function sendMetaPageViewEvent(
+  env: { META_CAPI_ACCESS_TOKEN?: string },
+  ctx: MetaEventContext,
+): Promise<boolean> {
+  return sendMetaEvent(env, 'PageView', ctx);
+}
+
+export async function sendMetaLeadEvent(
+  env: { META_CAPI_ACCESS_TOKEN?: string },
+  lead: LeadData,
+  eventId?: string,
+): Promise<boolean> {
+  if (!eventId) return false;
+
+  return sendMetaEvent(
+    env,
+    'Lead',
+    {
+      eventId,
+      pageUrl: lead.pageUrl || lead.landingUrl,
+      ip: lead.ip,
+      userAgent: lead.userAgent,
+      tracking: lead.tracking,
+      eventTime: lead.submittedAt,
+    },
+    { phone: lead.phone, name: lead.name },
+  );
 }

@@ -101,7 +101,25 @@ const {
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '517991158551582');
-            fbq('track', 'PageView');
+            var pageViewEventId = '';
+            try { pageViewEventId = crypto.randomUUID(); } catch (e) { pageViewEventId = String(Date.now()); }
+            fbq('track', 'PageView', {}, { eventID: pageViewEventId });
+            (function () {
+              function readCookie(name) {
+                var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+                return match ? decodeURIComponent(match[1]) : '';
+              }
+              fetch('/api/meta-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  event: 'PageView',
+                  eventId: pageViewEventId,
+                  pageUrl: location.href,
+                  tracking: { fbp: readCookie('_fbp'), fbc: readCookie('_fbc') },
+                }),
+              }).catch(function () {});
+            })();
           </script>
           <noscript>
             <img
@@ -130,7 +148,25 @@ const {
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '517991158551582');
-            fbq('track', 'PageView');
+            var pageViewEventId = '';
+            try { pageViewEventId = crypto.randomUUID(); } catch (e) { pageViewEventId = String(Date.now()); }
+            fbq('track', 'PageView', {}, { eventID: pageViewEventId });
+            (function () {
+              function readCookie(name) {
+                var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+                return match ? decodeURIComponent(match[1]) : '';
+              }
+              fetch('/api/meta-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  event: 'PageView',
+                  eventId: pageViewEventId,
+                  pageUrl: location.href,
+                  tracking: { fbp: readCookie('_fbp'), fbc: readCookie('_fbc') },
+                }),
+              }).catch(function () {});
+            })();
             var leadEventId = '';
             try {
               leadEventId = sessionStorage.getItem('donhin_lead_event_id') || '';
