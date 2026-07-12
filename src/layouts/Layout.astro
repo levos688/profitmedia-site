@@ -269,12 +269,6 @@ const {
         var FAB_BOTTOM = '20vh';
         var PANEL_BOTTOM = 'calc(20vh + 4rem)';
 
-        function ensureOffsetStyleLast() {
-          var style = document.getElementById('pm-a11y-site-offset');
-          if (!style) return;
-          document.head.appendChild(style);
-        }
-
         function positionA11yWidget() {
           var root = document.getElementById('pm-a11y-widget-root');
           if (!root) return false;
@@ -285,29 +279,12 @@ const {
           return true;
         }
 
-        function startWatcher() {
-          ensureOffsetStyleLast();
-
-          if (typeof MutationObserver !== 'undefined') {
-            new MutationObserver(function () {
-              ensureOffsetStyleLast();
-              positionA11yWidget();
-            }).observe(document.documentElement, { childList: true, subtree: true });
-          }
-
-          var ticks = 0;
-          var timer = window.setInterval(function () {
-            positionA11yWidget();
-            ticks += 1;
-            if (ticks >= 24) window.clearInterval(timer);
-          }, 1500);
-        }
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', startWatcher);
-        } else {
-          startWatcher();
-        }
+        var ticks = 0;
+        var timer = window.setInterval(function () {
+          positionA11yWidget();
+          ticks += 1;
+          if (ticks >= 12) window.clearInterval(timer);
+        }, 1000);
       })();
     </script>
     <script is:inline>
