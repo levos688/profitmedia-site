@@ -250,6 +250,27 @@ const {
     </script>
     <script is:inline>
       (function () {
+        function positionA11yWidget() {
+          var root = document.getElementById('pm-a11y-widget-root');
+          if (!root) return;
+          var fab = root.querySelector('.pm-fab');
+          var panel = root.querySelector('.pm-panel');
+          if (fab) fab.style.setProperty('bottom', '20%', 'important');
+          if (panel) panel.style.setProperty('bottom', 'calc(20% + 4rem)', 'important');
+        }
+
+        if (typeof MutationObserver !== 'undefined') {
+          var a11yObserver = new MutationObserver(positionA11yWidget);
+          a11yObserver.observe(document.body, { childList: true, subtree: true });
+        }
+
+        [1000, 3000, 6000, 9000, 12000].forEach(function (ms) {
+          window.setTimeout(positionA11yWidget, ms);
+        });
+      })();
+    </script>
+    <script is:inline>
+      (function () {
         try {
           if (!sessionStorage.getItem('pm_first_landing')) {
             sessionStorage.setItem('pm_first_landing', location.href);

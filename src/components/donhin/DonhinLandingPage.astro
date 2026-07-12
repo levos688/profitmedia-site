@@ -647,33 +647,6 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
         submitDonhinLead(bottomForm, 'simple');
       });
     }
-
-    function liftAccessibilityWidget() {
-      if (!document.body.classList.contains('donhin-has-sticky')) return;
-      var root = document.getElementById('pm-a11y-widget-root');
-      if (!root) return;
-      var fab = root.querySelector('.pm-fab');
-      var panel = root.querySelector('.pm-panel');
-      var fabBottom = 'calc(5.75rem + env(safe-area-inset-bottom, 0px))';
-      var panelBottom = 'calc(10.5rem + env(safe-area-inset-bottom, 0px))';
-      if (fab) {
-        fab.style.setProperty('bottom', fabBottom, 'important');
-        fab.style.setProperty('left', '12px', 'important');
-      }
-      if (panel) {
-        panel.style.setProperty('bottom', panelBottom, 'important');
-        panel.style.setProperty('left', '12px', 'important');
-      }
-    }
-
-    liftAccessibilityWidget();
-    if (typeof MutationObserver !== 'undefined') {
-      var a11yObserver = new MutationObserver(liftAccessibilityWidget);
-      a11yObserver.observe(document.body, { childList: true, subtree: true });
-    }
-    [1000, 3000, 6000, 9000, 12000].forEach(function (ms) {
-      window.setTimeout(liftAccessibilityWidget, ms);
-    });
   }
 
   if (document.readyState === 'loading') {
@@ -1450,17 +1423,6 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
   :global(body.donhin-has-sticky) {
     padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* תוסף נגישות — выше sticky-кнопки, чтобы не перекрывать CTA на мобильном */
-  :global(body.donhin-has-sticky #pm-a11y-widget-root .pm-fab) {
-    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px)) !important;
-    left: 12px !important;
-  }
-
-  :global(body.donhin-has-sticky #pm-a11y-widget-root .pm-panel) {
-    bottom: calc(10.5rem + env(safe-area-inset-bottom, 0px)) !important;
-    left: 12px !important;
   }
 
   :global(body.donhin-popup-open) {

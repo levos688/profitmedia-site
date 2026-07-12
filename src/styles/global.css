@@ -505,3 +505,12 @@ summary {
   outline: 2px solid #651561;
   outline-offset: 2px;
 }
+
+/* תוסף נגישות — 20% отступ от низа экрана на всех страницах */
+#pm-a11y-widget-root .pm-fab {
+  bottom: 20% !important;
+}
+
+#pm-a11y-widget-root .pm-panel {
+  bottom: calc(20% + 4rem) !important;
+}
