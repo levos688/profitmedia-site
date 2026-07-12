@@ -4,6 +4,8 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  canonical?: string;
+  ogImage?: string;
   noindex?: boolean;
   blockAiCrawlers?: boolean;
   preloadImage?: string | false;
@@ -17,6 +19,8 @@ interface Props {
 const {
   title = 'פרסום באינטרנט | פרסום שמביא רווחים | Profit Media',
   description = 'פרסום באינטרנט | פרסום בגוגל | פרסום בפייסבוק | פרסום באינסטגרם | הקמה דפי נחיתה',
+  canonical,
+  ogImage = 'https://profitmedia.co.il/icons/site-icon.png',
   noindex = false,
   blockAiCrawlers = false,
   preloadImage = '/images/hero/photo-min.svg',
@@ -26,6 +30,8 @@ const {
   lang = 'he',
   dir = 'rtl',
 } = Astro.props;
+
+const canonicalUrl = canonical ?? Astro.url.href;
 ---
 
 <!doctype html>
@@ -54,6 +60,19 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site context" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="he_IL" />
+    <meta property="og:site_name" content="Profit Media" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     {
       noindex && (
         <>

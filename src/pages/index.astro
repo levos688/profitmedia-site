@@ -2,7 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import HomeJsonLd from '../components/HomeJsonLd.astro';
 import AgencyStats from '../components/AgencyStats.astro';
+import TargetAudience from '../components/TargetAudience.astro';
+import HowItWorks from '../components/HowItWorks.astro';
 import Services from '../components/Services.astro';
 import CampaignResults from '../components/CampaignResults.astro';
 import VideoTestimonials from '../components/VideoTestimonials.astro';
@@ -10,13 +13,21 @@ import Portfolio from '../components/Portfolio.astro';
 import Clients from '../components/Clients.astro';
 import ContactForm from '../components/ContactForm.astro';
 import Footer from '../components/Footer.astro';
+import { homeSeo } from '../data/site';
 ---
 
-<Layout>
+<Layout
+  title={homeSeo.title}
+  description={homeSeo.description}
+  canonical={homeSeo.canonical}
+>
+  <HomeJsonLd slot="head" />
   <Header />
   <main id="main-content">
     <Hero />
     <AgencyStats />
+    <TargetAudience />
+    <HowItWorks />
     <Services />
     <CampaignResults />
     <VideoTestimonials />

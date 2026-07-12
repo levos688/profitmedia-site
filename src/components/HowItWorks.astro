@@ -1,0 +1,147 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import { processSteps } from '../data/site';
+---
+
+<section
+  id="how-it-works"
+  class="how-it-works section-padding below-fold reveal"
+  data-reveal
+  aria-labelledby="how-it-works-title"
+>
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <SectionTitle
+      id="how-it-works-title"
+      title={processSteps.title}
+      subtitle={processSteps.subtitle}
+      class="mb-12 md:mb-14"
+    />
+
+    <ol class="process-steps" role="list">
+      {
+        processSteps.steps.map((step, index) => (
+          <li class="process-step" style={`--step-delay: ${index * 0.08}s`}>
+            <div class="process-step__marker" aria-hidden="true">
+              <span class="process-step__number">{index + 1}</span>
+            </div>
+            <div class="process-step__content">
+              <h3 class="process-step__title">{step.title}</h3>
+              <p class="process-step__description">{step.description}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how-it-works {
+    background: linear-gradient(160deg, #f8f4fa 0%, #fff 50%, #faf8fc 100%);
+  }
+
+  .process-steps {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 1024px) {
+    .process-steps {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  .process-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(101, 21, 97, 0.06);
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s ease-out,
+      border-color 0.3s ease-out;
+    transition-delay: var(--step-delay, 0s);
+  }
+
+  #how-it-works.is-visible .process-step {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .process-step:hover {
+    border-color: rgba(101, 21, 97, 0.2);
+    box-shadow: 0 14px 32px rgba(101, 21, 97, 0.1);
+  }
+
+  @media (min-width: 1024px) {
+    .process-step {
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 100%;
+      padding: 1.5rem 1.25rem;
+    }
+  }
+
+  .process-step__marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #651561 0%, #5a1c73 100%);
+    box-shadow: 0 8px 20px rgba(101, 21, 97, 0.22);
+  }
+
+  .process-step__number {
+    font-size: 1.125rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+  }
+
+  .process-step__content {
+    text-align: right;
+  }
+
+  .process-step__title {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.35;
+    font-weight: 800;
+    color: #651561;
+  }
+
+  @media (min-width: 768px) {
+    .process-step__title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .process-step__description {
+    margin: 0.625rem 0 0;
+    font-size: 0.975rem;
+    line-height: 1.55;
+    color: #374151;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .process-step {
+      opacity: 1;
+      transform: none;
+      transition: box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+    }
+  }
+</style>

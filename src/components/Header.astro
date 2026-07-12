@@ -1,5 +1,7 @@
 ---
 const nav = [
+  { href: '#for-whom', label: 'למי זה מתאים' },
+  { href: '#how-it-works', label: 'איך זה עובד' },
   { href: '#services', label: 'שירותים' },
   { href: '#testimonials', label: 'עדויות' },
   { href: '#portfolio', label: 'דפי נחיתה' },
@@ -101,7 +103,7 @@ const nav = [
 
   const siteHeader = document.getElementById('site-header');
 
-  const sectionIds = ['services', 'testimonials', 'portfolio', 'clients', 'contact'];
+  const sectionIds = ['for-whom', 'how-it-works', 'services', 'testimonials', 'portfolio', 'clients', 'contact'];
   const navLinks = document.querySelectorAll('[data-nav-link]');
   const sectionTops = new Map<string, number>();
 

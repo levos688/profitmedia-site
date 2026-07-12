@@ -2,6 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /donhin/ab-stats
 
+# LLM context: https://profitmedia.co.il/llms.txt
+
 User-agent: Googlebot
 Disallow: /prat/
 Disallow: /hatzara/

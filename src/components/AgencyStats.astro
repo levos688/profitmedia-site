@@ -23,8 +23,9 @@ import Reveal from './Reveal.astro';
                     data-stat-counter
                     data-count={item.count}
                     data-suffix={item.suffix}
+                    data-prefix={item.prefix ?? ''}
                   >
-                    <span dir="ltr">{item.count}{item.suffix}</span>
+                    <span dir="ltr">{item.prefix ?? ''}{item.count}{item.suffix}</span>
                   </p>
                   <p class="agency-stats__label">{item.label}</p>
                   {item.note && <p class="agency-stats__note">{item.note}</p>}
@@ -41,11 +42,12 @@ import Reveal from './Reveal.astro';
 <script>
   const counters = document.querySelectorAll('[data-stat-counter]');
 
-  const formatCount = (value: number, suffix: string) => `${value}${suffix}`;
+  const formatCount = (value: number, prefix: string, suffix: string) => `${prefix}${value}${suffix}`;
 
   const animateCounter = (el: HTMLElement) => {
     const target = Number(el.dataset.count || 0);
     const suffix = el.dataset.suffix || '';
+    const prefix = el.dataset.prefix || '';
     const span = el.querySelector('span');
     if (!span) return;
 
@@ -56,7 +58,7 @@ import Reveal from './Reveal.astro';
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(target * eased);
-      span.textContent = formatCount(current, suffix);
+      span.textContent = formatCount(current, prefix, suffix);
       if (progress < 1) requestAnimationFrame(tick);
     };
 
@@ -67,7 +69,13 @@ import Reveal from './Reveal.astro';
     counters.forEach((el) => {
       const node = el as HTMLElement;
       const span = node.querySelector('span');
-      if (span) span.textContent = formatCount(Number(node.dataset.count || 0), node.dataset.suffix || '');
+      if (span) {
+        span.textContent = formatCount(
+          Number(node.dataset.count || 0),
+          node.dataset.prefix || '',
+          node.dataset.suffix || ''
+        );
+      }
     });
   } else {
     const observer = new IntersectionObserver(

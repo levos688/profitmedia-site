@@ -1,0 +1,125 @@
+---
+import { targetAudience, processSteps, hero, homeSeo } from '../data/site';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://profitmedia.co.il/#organization',
+  name: 'Profit Media',
+  url: 'https://profitmedia.co.il/',
+  description: homeSeo.description,
+  areaServed: {
+    '@type': 'Country',
+    name: 'Israel',
+  },
+  serviceType: [
+    'ניהול קמפיינים בפייסבוק',
+    'ניהול קמפיינים בגוגל',
+    'בניית דפי נחיתה',
+    'יצירת לידים לעסקאות גבוהות',
+  ],
+  knowsAbout: [
+    'Facebook Ads',
+    'Google Ads',
+    'Instagram Ads',
+    'Landing pages',
+    'Lead generation',
+    'A/B testing',
+    'Interactive quizzes',
+  ],
+  audience: {
+    '@type': 'BusinessAudience',
+    audienceType: 'עסקים עם עסקאות גבוהות שנמכרים בשיחה, בוואטסאפ או בפגישה',
+  },
+};
+
+const audienceListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  '@id': 'https://profitmedia.co.il/#for-whom',
+  name: targetAudience.title,
+  description: targetAudience.subtitle,
+  itemListElement: targetAudience.items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.title,
+    description: `${item.situation} ${item.outcome}`,
+  })),
+};
+
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': 'https://profitmedia.co.il/#how-it-works',
+  name: 'איך Profit Media מביאה עסקאות מהפרסום',
+  description: processSteps.subtitle,
+  step: processSteps.steps.map((step, index) => ({
+    '@type': 'HowToStep',
+    position: index + 1,
+    name: step.title,
+    text: step.description,
+  })),
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://profitmedia.co.il/#website',
+  url: 'https://profitmedia.co.il/',
+  name: 'Profit Media',
+  description: homeSeo.description,
+  inLanguage: 'he-IL',
+  publisher: {
+    '@id': 'https://profitmedia.co.il/#organization',
+  },
+};
+
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://profitmedia.co.il/#webpage',
+  url: homeSeo.canonical,
+  name: homeSeo.title,
+  description: homeSeo.description,
+  inLanguage: 'he-IL',
+  isPartOf: {
+    '@id': 'https://profitmedia.co.il/#website',
+  },
+  about: {
+    '@id': 'https://profitmedia.co.il/#organization',
+  },
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: 'https://profitmedia.co.il/images/hero/photo-min.svg',
+  },
+};
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: hero.title,
+  description: hero.subtitle,
+  provider: {
+    '@id': 'https://profitmedia.co.il/#organization',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'Israel',
+  },
+  serviceType: 'ניהול קמפיינים ולידים לעסקים עם עסקאות גבוהות',
+};
+
+const schemaGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    organizationSchema,
+    websiteSchema,
+    webPageSchema,
+    serviceSchema,
+    audienceListSchema,
+    howToSchema,
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schemaGraph)} />

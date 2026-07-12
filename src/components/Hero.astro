@@ -1,8 +1,12 @@
 ---
 import HeroIllustration from './HeroIllustration.astro';
+import { hero } from '../data/site';
 ---
 
-<section class="hero-gradient relative overflow-hidden pb-10 pt-4 md:pb-16 md:pt-6">
+<section
+  class="hero-gradient relative overflow-hidden pb-10 pt-4 md:pb-16 md:pt-6"
+  aria-labelledby="hero-title"
+>
   <div class="hero-gradient__pattern" aria-hidden="true"></div>
   <div class="hero-gradient__mesh" aria-hidden="true"></div>
 
@@ -22,21 +26,24 @@ import HeroIllustration from './HeroIllustration.astro';
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
     <div class="grid items-center gap-10 py-6 md:gap-14 md:py-10 lg:grid-cols-2">
       <div class="hero-content text-right text-white max-md:text-center">
-        <h1 class="text-4xl leading-tight font-bold md:text-[52px] lg:text-[56px]">
-          פרסום טוב לא עולה כסף - הוא מכניס כסף
-        </h1>
-        <p class="mt-7 text-xl leading-relaxed md:text-[30px] lg:mt-8">
-          כשהקמפיין בנוי נכון, כל שקל שנכנס מביא שלושה בחזרה.
+        <p class="hero-eyebrow text-sm font-bold tracking-wide text-white/90 md:text-base">
+          {hero.eyebrow}
         </p>
-        <div class="hero-cta-group mt-10 md:mt-12">
+        <h1 id="hero-title" class="mt-4 text-4xl leading-tight font-bold md:text-[52px] lg:text-[56px]">
+          {hero.title}
+        </h1>
+        <p class="hero-subtitle mt-6 text-lg leading-relaxed text-white/95 md:text-2xl lg:mt-7">
+          {hero.subtitle}
+        </p>
+        <div class="hero-cta-group mt-8 md:mt-10">
           <a
             href="#contact"
             class="btn-yellow hero-cta rounded-full px-8 py-3.5 text-lg font-bold shadow-lg md:px-10 md:py-4 md:text-xl"
           >
-            השאר פרטים וקבל אבחון חינם
+            {hero.cta}
           </a>
           <p class="hero-cta-note text-sm text-white/80 md:text-base">
-            ללא התחייבות • מענה תוך 24 שעות
+            {hero.ctaNote}
           </p>
         </div>
       </div>
@@ -69,6 +76,21 @@ import HeroIllustration from './HeroIllustration.astro';
     }
   }
 
+  .hero-eyebrow {
+    letter-spacing: 0.02em;
+  }
+
+  .hero-subtitle {
+    max-width: 36rem;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-subtitle {
+      margin-inline-start: 0;
+      margin-inline-end: auto;
+    }
+  }
+
   .hero-cta-group {
     display: inline-flex;
     flex-direction: column;
@@ -98,6 +120,10 @@ import HeroIllustration from './HeroIllustration.astro';
       width: 100%;
       justify-content: center;
     }
+
+    .hero-subtitle {
+      margin-inline: auto;
+    }
   }
 
   @media (min-width: 768px) {
@@ -107,6 +133,14 @@ import HeroIllustration from './HeroIllustration.astro';
 
     .hero-visual {
       animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    }
+
+    .hero-cta-group {
+      align-items: flex-start;
+    }
+
+    .hero-cta-note {
+      text-align: right;
     }
   }
 
