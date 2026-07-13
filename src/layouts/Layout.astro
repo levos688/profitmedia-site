@@ -24,7 +24,7 @@ const {
   noindex = false,
   blockAiCrawlers = false,
   preloadImage = '/images/hero/photo-min.svg',
-  enableGtm = true,
+  enableGtm = false,
   metaPixelId,
   metaPixelLead = false,
   lang = 'he',
@@ -142,7 +142,6 @@ const canonicalUrl = canonical ?? Astro.url.href;
               ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
                 w.addEventListener(type, loadGtm, { once: true, passive: true });
               });
-              w.addEventListener('scroll', loadGtm, { once: true, passive: true });
             }
             scheduleGtm();
           })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
@@ -223,7 +222,6 @@ const canonicalUrl = canonical ?? Astro.url.href;
                 ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
                   window.addEventListener(type, loadPixel, { once: true, passive: true });
                 });
-                window.addEventListener('scroll', loadPixel, { once: true, passive: true });
               }
 
               schedulePixel();
@@ -270,10 +268,9 @@ const canonicalUrl = canonical ?? Astro.url.href;
           s.defer = true;
           document.body.appendChild(s);
         }
-        ['pointerdown', 'keydown'].forEach(function (type) {
+        ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
           window.addEventListener(type, loadA11y, { once: true, passive: true });
         });
-        setTimeout(loadA11y, 8000);
       })();
     </script>
     <script is:inline>
