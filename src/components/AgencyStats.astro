@@ -12,28 +12,25 @@ import Reveal from './Reveal.astro';
           <h2 class="agency-stats__title">ניסיון ותוצאות במספרים</h2>
         </header>
 
-        <div class="agency-stats__row" role="list">
+        <ul class="agency-stats__row">
           {
-            agencyStats.map((item, index) => (
-              <>
-                {index > 0 && <div class="agency-stats__divider" aria-hidden="true" />}
-                <div class="agency-stats__item" role="listitem">
-                  <p
-                    class="agency-stats__value"
-                    data-stat-counter
-                    data-count={item.count}
-                    data-suffix={item.suffix}
-                    data-prefix={item.prefix ?? ''}
-                  >
-                    <span dir="ltr">{item.prefix ?? ''}{item.count}{item.suffix}</span>
-                  </p>
-                  <p class="agency-stats__label">{item.label}</p>
-                  {item.note && <p class="agency-stats__note">{item.note}</p>}
-                </div>
-              </>
+            agencyStats.map((item) => (
+              <li class="agency-stats__item">
+                <p
+                  class="agency-stats__value"
+                  data-stat-counter
+                  data-count={item.count}
+                  data-suffix={item.suffix}
+                  data-prefix={item.prefix ?? ''}
+                >
+                  <span dir="ltr">{item.prefix ?? ''}{item.count}{item.suffix}</span>
+                </p>
+                <p class="agency-stats__label">{item.label}</p>
+                {item.note && <p class="agency-stats__note">{item.note}</p>}
+              </li>
             ))
           }
-        </div>
+        </ul>
       </div>
     </Reveal>
   </div>
@@ -142,11 +139,14 @@ import Reveal from './Reveal.astro';
     display: grid;
     gap: 1.5rem;
     align-items: stretch;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   @media (min-width: 768px) {
     .agency-stats__row {
-      grid-template-columns: 1fr auto 1fr auto 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0;
     }
   }
@@ -161,23 +161,11 @@ import Reveal from './Reveal.astro';
     padding-inline: 0.5rem;
   }
 
-  .agency-stats__divider {
-    display: none;
-  }
-
   @media (min-width: 768px) {
-    .agency-stats__divider {
-      display: block;
-      width: 1px;
-      align-self: stretch;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(101, 21, 97, 0.15) 20%,
-        rgba(101, 21, 97, 0.15) 80%,
-        transparent
-      );
-      margin-inline: 1rem;
+    .agency-stats__item + .agency-stats__item {
+      border-inline-start: 1px solid rgba(101, 21, 97, 0.15);
+      padding-inline-start: 1rem;
+      margin-inline-start: 1rem;
     }
   }
 

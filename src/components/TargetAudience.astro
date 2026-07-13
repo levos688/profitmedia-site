@@ -12,23 +12,29 @@ import { targetAudience } from '../data/site';
       class="mb-12 md:mb-14"
     />
 
-    <div class="target-audience__grid grid gap-5 sm:grid-cols-2" role="list">
+    <ul class="target-audience__grid grid gap-5 sm:grid-cols-2">
       {
         targetAudience.items.map((item, index) => (
-          <article class="audience-card" style={`--card-delay: ${index * 0.08}s`} role="listitem">
+          <li class="audience-card" style={`--card-delay: ${index * 0.08}s`}>
             <h3 class="audience-card__title">{item.title}</h3>
             <p class="audience-card__situation">{item.situation}</p>
             <p class="audience-card__outcome">
               <strong class="audience-card__outcome-label">התוצאה:</strong> {item.outcome}
             </p>
-          </article>
+          </li>
         ))
       }
-    </div>
+    </ul>
   </div>
 </section>
 
 <style>
+  .target-audience__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   .target-audience__grid .audience-card {
     opacity: 0;
     transform: translateY(24px);

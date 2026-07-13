@@ -1,8 +1,8 @@
-/* Only two font files on the critical path (400 + 700, both preloaded). */
+/* Critical path: 700 only (preloaded). 400 loads with optional display after first paint. */
 @font-face {
   font-family: 'Assistant';
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-weight: 400;
   src: url('/fonts/assistant-hebrew-400-normal.woff2') format('woff2');
 }
@@ -10,7 +10,7 @@
 @font-face {
   font-family: 'Assistant';
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-weight: 600;
   src: url('/fonts/assistant-hebrew-400-normal.woff2') format('woff2');
 }

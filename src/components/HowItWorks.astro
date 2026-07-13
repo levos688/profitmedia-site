@@ -17,7 +17,7 @@ import { processSteps } from '../data/site';
       class="mb-12 md:mb-14"
     />
 
-    <ol class="process-steps" role="list">
+    <ol class="process-steps">
       {
         processSteps.steps.map((step, index) => (
           <li class="process-step" style={`--step-delay: ${index * 0.08}s`}>

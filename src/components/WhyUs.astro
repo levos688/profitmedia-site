@@ -15,21 +15,19 @@ import { whyUs } from '../data/site';
       />
     </Reveal>
 
-    <div class="why-us__grid" role="list">
+    <ul class="why-us__grid">
       {
         whyUs.items.map((item, index) => (
-          <Reveal delay={index * 80}>
-            <article class="why-us__card" role="listitem">
-              <span class="why-us__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </div>
-            </article>
-          </Reveal>
+          <li class="why-us__card reveal" data-reveal style={`--reveal-delay: ${index * 80}ms`}>
+            <span class="why-us__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </li>
         ))
       }
-    </div>
+    </ul>
   </div>
 </section>
 
@@ -55,6 +53,9 @@ import { whyUs } from '../data/site';
     position: relative;
     display: grid;
     gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   @media (min-width: 768px) {

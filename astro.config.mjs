@@ -10,7 +10,7 @@ export default defineConfig({
     '/privacy': '/prat',
   },
   build: {
-    inlineStylesheets: 'auto',
+    inlineStylesheets: 'always',
   },
   vite: {
     plugins: [tailwindcss()],
