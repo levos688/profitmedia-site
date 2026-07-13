@@ -3,7 +3,9 @@ import SectionTitle from './SectionTitle.astro';
 import HorizontalCarousel from './HorizontalCarousel.astro';
 import Reveal from './Reveal.astro';
 import OptimizedImage from './OptimizedImage.astro';
-import { landings } from '../data/site';
+import { getPortfolioLandings } from '../data/site';
+
+const portfolioLandings = getPortfolioLandings();
 ---
 
 <section id="portfolio" class="section-padding below-fold bg-white">
@@ -13,9 +15,9 @@ import { landings } from '../data/site';
     </Reveal>
 
     <Reveal delay={100}>
-      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה">
+      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה" shuffle>
       {
-        landings.map((item) => (
+        portfolioLandings.map((item) => (
           <article class="carousel-item landing-card">
             <button
               type="button"
@@ -62,33 +64,40 @@ import { landings } from '../data/site';
   </div>
 </section>
 
-<script define:vars={{ landings }}>
+<script>
   const lightbox = document.getElementById('landing-lightbox');
   const lightboxImg = document.getElementById('lightbox-image');
   const lightboxTitle = document.getElementById('lightbox-title');
   const prevBtn = lightbox?.querySelector('[data-lightbox-prev]');
   const nextBtn = lightbox?.querySelector('[data-lightbox-next]');
-  let lastFocus = null;
+  let lastFocus: HTMLElement | null = null;
   let currentIndex = 0;
   let touchStartX = 0;
 
-  const showSlide = (index) => {
-    if (!lightboxImg || !lightboxTitle) return;
-    currentIndex = (index + landings.length) % landings.length;
-    const item = landings[currentIndex];
+  const getSlides = () =>
+    [...document.querySelectorAll('#portfolio [data-lightbox-trigger]')].map((btn) => ({
+      image: (btn as HTMLElement).dataset.image || '',
+      title: (btn as HTMLElement).dataset.title || '',
+    }));
+
+  const showSlide = (index: number) => {
+    const slides = getSlides();
+    if (!lightboxImg || !lightboxTitle || !slides.length) return;
+    currentIndex = (index + slides.length) % slides.length;
+    const item = slides[currentIndex];
     lightboxImg.src = item.image;
     lightboxImg.alt = item.title;
     lightboxTitle.textContent = item.title;
   };
 
-  const openLightbox = (index, trigger) => {
+  const openLightbox = (index: number, trigger: HTMLElement) => {
     if (!lightbox) return;
     lastFocus = trigger;
     showSlide(index);
     lightbox.hidden = false;
     lightbox.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    lightbox.querySelector('.lightbox__close')?.focus();
+    lightbox.querySelector<HTMLElement>('.lightbox__close')?.focus();
   };
 
   const closeLightbox = () => {
@@ -100,11 +109,13 @@ import { landings } from '../data/site';
     lastFocus?.focus();
   };
 
-  const step = (delta) => showSlide(currentIndex + delta);
+  const step = (delta: number) => showSlide(currentIndex + delta);
 
-  document.querySelectorAll('[data-lightbox-trigger]').forEach((btn, index) => {
+  document.querySelectorAll('#portfolio [data-lightbox-trigger]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      openLightbox(index, btn);
+      const triggers = [...document.querySelectorAll('#portfolio [data-lightbox-trigger]')];
+      const index = triggers.indexOf(btn);
+      openLightbox(index, btn as HTMLElement);
     });
   });
 

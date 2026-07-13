@@ -2,9 +2,10 @@
 interface Props {
   ariaLabel: string;
   gap?: 'normal' | 'wide';
+  shuffle?: boolean;
 }
 
-const { ariaLabel, gap = 'normal' } = Astro.props;
+const { ariaLabel, gap = 'normal', shuffle = false } = Astro.props;
 const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -54,13 +55,24 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   </button>
 </div>
 
-<script define:vars={{ uid }}>
+<script define:vars={{ uid, shuffle }}>
   (() => {
     const track = document.querySelector(`[data-carousel-track="${uid}"]`);
     const startBtn = document.querySelector(`[data-carousel-start="${uid}"]`);
     const endBtn = document.querySelector(`[data-carousel-end="${uid}"]`);
     const outer = track?.closest('.carousel-outer');
     if (!track || !startBtn || !endBtn || !outer) return;
+
+    const shuffleTrackItems = () => {
+      const items = Array.from(track.querySelectorAll(':scope > .carousel-item'));
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+      items.forEach((item) => track.appendChild(item));
+    };
+
+    if (shuffle) shuffleTrackItems();
 
     let ready = false;
 

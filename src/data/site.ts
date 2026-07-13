@@ -270,19 +270,45 @@ export const videoTestimonials = [
   { youtubeId: 'fY8xdzM2big', title: 'עדות לקוח — וידאו 2' },
 ];
 
+/**
+ * Portfolio landing screenshots — upload spec for `public/images/landings/`:
+ * - Aspect ratio: 2:3 portrait (matches carousel cards)
+ * - Recommended size: 1400×2100 px (minimum 1000×1500)
+ * - Format: JPG or WebP, sRGB
+ * - File weight: up to ~500 KB per image
+ * - Crop from the top of the page; important content in the upper half
+ */
+export const portfolioImageSpec = {
+  aspectRatio: '2:3',
+  recommendedWidth: 1400,
+  recommendedHeight: 2100,
+  minWidth: 1000,
+  minHeight: 1500,
+  maxFileSizeKb: 500,
+  formats: ['jpg', 'jpeg', 'webp'] as const,
+  directory: 'public/images/landings/',
+};
+
 export const landings = [
   { title: 'קורסים מקצועיים', image: '/images/landings/frame10.jpg' },
   { title: 'חנות ספרים', image: '/images/landings/10dak.jpg' },
   { title: 'דף נחיתה ממיר לחברת נדל״ן', image: '/images/landings/frame_42.jpg' },
   { title: 'פרסום קונטקט', image: '/images/landings/frame_16.jpg' },
   { title: 'דף נחיתה לחנות אופטיקה', image: '/images/landings/multi.jpg' },
-  { title: 'דף נחיתה ימי הולדת', image: '/images/landings/roboland.jpg' },
   { title: 'דף נחיתה למאמן אישי ועסקי', image: '/images/landings/eliran.jpg' },
   { title: 'דף נחיתה הלוואות לעסקים', image: '/images/landings/upgrade.jpg' },
   { title: 'דף נחיתה מקצועי לקליניקה', image: '/images/landings/frame_43.jpg' },
   { title: 'דף נחיתה לחברת ייעוץ משכנתאות', image: '/images/landings/frame_33.jpg' },
   { title: 'דף נחיתה לעבודות גבס', image: '/images/landings/frame_27.jpg' },
 ];
+
+export function getPortfolioLandings() {
+  return landings.map((item) =>
+    item.title === 'קורסים מקצועיים'
+      ? { ...item, title: 'דף נחיתה לקורסים מקצועיים - IGL' }
+      : item
+  );
+}
 
 export const clientLogos = [
   { src: '/images/clients/02.svg', alt: 'לקוח' },

@@ -3,13 +3,9 @@ import SectionTitle from '../SectionTitle.astro';
 import HorizontalCarousel from '../HorizontalCarousel.astro';
 import Reveal from '../Reveal.astro';
 import OptimizedImage from '../OptimizedImage.astro';
-import { landings } from '../../data/site';
+import { getPortfolioLandings } from '../../data/site';
 
-const portfolioLandings = landings.map((item) =>
-  item.title === 'קורסים מקצועיים'
-    ? { ...item, title: 'דף נחיתה לקורסים מקצועיים - IGL' }
-    : item
-);
+const portfolioLandings = getPortfolioLandings();
 ---
 
 <section id="portfolio" class="section-padding below-fold bg-white">
@@ -23,7 +19,7 @@ const portfolioLandings = landings.map((item) =>
     </Reveal>
 
     <Reveal delay={100}>
-      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה">
+      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה" shuffle>
         {
           portfolioLandings.map((item) => (
             <article class="carousel-item landing-card">
