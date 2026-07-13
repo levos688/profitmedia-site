@@ -12,10 +12,10 @@ import Reveal from './Reveal.astro';
           <h2 class="agency-stats__title">ניסיון ותוצאות במספרים</h2>
         </header>
 
-        <ul class="agency-stats__row">
+        <div class="agency-stats__row">
           {
             agencyStats.map((item) => (
-              <li class="agency-stats__item">
+              <div class="agency-stats__item">
                 <p
                   class="agency-stats__value"
                   data-stat-counter
@@ -27,10 +27,10 @@ import Reveal from './Reveal.astro';
                 </p>
                 <p class="agency-stats__label">{item.label}</p>
                 {item.note && <p class="agency-stats__note">{item.note}</p>}
-              </li>
+              </div>
             ))
           }
-        </ul>
+        </div>
       </div>
     </Reveal>
   </div>
@@ -139,9 +139,6 @@ import Reveal from './Reveal.astro';
     display: grid;
     gap: 1.5rem;
     align-items: stretch;
-    list-style: none;
-    margin: 0;
-    padding: 0;
   }
 
   @media (min-width: 768px) {
