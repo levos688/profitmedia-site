@@ -33,6 +33,8 @@ export interface ContactPayload {
   language?: string;
   client?: string;
   quizAnswer?: string;
+  vertical?: string;
+  source?: string;
   formType?: string;
   eventId?: string;
 }
@@ -48,6 +50,8 @@ export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'
   client: string;
   quizAnswer: string;
   formType: string;
+  vertical: string;
+  source: string;
   ip: string;
   country: string;
   userAgent: string;

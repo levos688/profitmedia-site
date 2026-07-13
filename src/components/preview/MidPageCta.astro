@@ -1,0 +1,16 @@
+---
+import PremiumAtmosphere from './PremiumAtmosphere.astro';
+import { midPageCta } from '../../data/site';
+---
+
+<section class="mid-page-cta-section" role="region" aria-label="הזמנה לאבחון">
+  <PremiumAtmosphere variant="contact" />
+  <div class="mid-page-cta-section__inner">
+    <p class="mid-page-cta-section__eyebrow">אבחון חינם · ללא התחייבות</p>
+    <h2 class="mid-page-cta-section__title">{midPageCta.title}</h2>
+    <p class="mid-page-cta-section__subtitle">{midPageCta.subtitle}</p>
+    <button type="button" class="btn-yellow mid-page-cta-section__btn" data-lead-modal-open>
+      {midPageCta.button}
+    </button>
+  </div>
+</section>

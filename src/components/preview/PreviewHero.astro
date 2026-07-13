@@ -1,0 +1,140 @@
+---
+import HeroIllustration from '../HeroIllustration.astro';
+import PremiumAtmosphere from './PremiumAtmosphere.astro';
+import { hero, homeCta } from '../../data/site';
+---
+
+<section
+  class="preview-depth-section hero-gradient relative overflow-hidden pb-10 pt-4 md:pb-16 md:pt-6"
+  aria-labelledby="hero-title"
+>
+  <div class="hero-gradient__mesh" aria-hidden="true"></div>
+  <PremiumAtmosphere variant="hero" />
+
+  <div class="relative mx-auto max-w-6xl px-4 md:px-6">
+    <div class="grid items-center gap-10 py-6 md:gap-14 md:py-10 lg:grid-cols-2">
+      <div class="hero-content text-right text-white max-md:text-center">
+        <p class="hero-eyebrow text-sm font-bold tracking-wide text-white/90 md:text-base">
+          {hero.eyebrow}
+        </p>
+        <h1 id="hero-title" class="mt-4 text-4xl leading-tight font-bold md:text-[52px] lg:text-[56px]">
+          {hero.title}
+        </h1>
+        <p class="hero-subtitle mt-6 text-lg leading-relaxed text-white/95 md:text-2xl lg:mt-7">
+          {hero.subtitle}
+        </p>
+
+        <p class="hero-proof-chip max-md:mx-auto">
+          <strong>₪200K+</strong> במכירות שדווחו בחודש · לקוח בתחום המטבחים
+        </p>
+
+        <div class="hero-cta-group mt-8 md:mt-10">
+          <button
+            type="button"
+            class="btn-yellow hero-cta rounded-full px-8 py-3.5 text-lg font-bold shadow-lg md:px-10 md:py-4 md:text-xl"
+            data-lead-modal-open
+          >
+            {homeCta}
+          </button>
+          <p class="hero-cta-note text-sm text-white/80 md:text-base">
+            {hero.ctaNote}
+          </p>
+        </div>
+      </div>
+
+      <div class="hero-visual flex justify-center lg:justify-start">
+        <HeroIllustration />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-eyebrow {
+    letter-spacing: 0.02em;
+  }
+
+  .hero-subtitle {
+    max-width: 36rem;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-subtitle {
+      margin-inline-start: 0;
+      margin-inline-end: auto;
+    }
+  }
+
+  .hero-cta-group {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-cta-note {
+    width: 100%;
+    text-align: center;
+  }
+
+  @media (max-width: 767px) {
+    .hero-cta-group {
+      width: 100%;
+    }
+
+    .hero-cta {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .hero-subtitle {
+      margin-inline: auto;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-content {
+      animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .hero-visual {
+      animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    }
+
+    .hero-cta-group {
+      align-items: flex-start;
+    }
+
+    .hero-cta-note {
+      text-align: right;
+    }
+  }
+
+  .hero-cta {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  }
+
+  @keyframes hero-fade-up {
+    from {
+      transform: translateY(24px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-content,
+    .hero-visual {
+      animation: none;
+    }
+  }
+</style>

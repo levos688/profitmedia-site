@@ -9,8 +9,8 @@ import { campaignResults } from '../data/site';
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <SectionTitle
-        title="עדויות"
-        subtitle="תוצאות אמיתיות מקמפיינים שנהלנו"
+        title="תוצאות מתועדות מהשטח"
+        subtitle="מכירות שדווחו על ידי לקוחות ושיפורים מדידים בביצועי הקמפיינים"
         class="mb-10 md:mb-14"
       />
     </Reveal>
@@ -23,34 +23,56 @@ import { campaignResults } from '../data/site';
               <div class="case-card__content text-right">
                 <p class="case-card__industry">{item.industry}</p>
                 <p class="case-card__label">{item.label}</p>
-                <div class="case-card__metric" aria-label={`${item.statValue}% ${item.statLabel}`}>
+                <div class="case-card__metric" aria-label={item.statAria}>
                   <span
                     class="case-card__stat"
                     data-case-stat
                     data-target={item.statValue}
+                    data-prefix={item.statPrefix}
+                    data-suffix={item.statSuffix}
                     dir="ltr"
                   >
-                    0%
+                    {item.statPrefix}0{item.statSuffix}
                   </span>
                   <span class="case-card__stat-label">{item.statLabel}</span>
                 </div>
                 <p class="case-card__story">{item.story}</p>
-                <blockquote class="case-card__quote">
-                  <p>"{item.quote}"</p>
-                </blockquote>
-                <p class="case-card__author">
-                  <strong>{item.author}</strong>
-                </p>
+                {
+                  item.quote && (
+                    <blockquote class="case-card__quote">
+                      <p>"{item.quote}"</p>
+                    </blockquote>
+                  )
+                }
+                {
+                  item.author && (
+                    <p class="case-card__author">
+                      <strong>{item.author}</strong>
+                    </p>
+                  )
+                }
+                {item.source && <p class="case-card__source">{item.source}</p>}
               </div>
-              <div class="case-card__media overflow-hidden rounded-2xl">
-                <OptimizedImage
-                  src={item.image}
-                  alt={item.imageAlt}
-                  class="h-auto w-full"
-                  width={600}
-                  height={400}
-                />
-              </div>
+              {
+                item.image ? (
+                  <div class="case-card__media overflow-hidden rounded-2xl">
+                    <OptimizedImage
+                      src={item.image}
+                      alt={item.imageAlt}
+                      class="h-auto w-full"
+                      width={600}
+                      height={400}
+                    />
+                  </div>
+                ) : (
+                  <div class="case-card__proof">
+                    <p class="case-card__proof-eyebrow">מקרה מתועד</p>
+                    <p class="case-card__proof-title">2 חודשים</p>
+                    <p class="case-card__proof-subtitle">רצופים עם יותר מ־₪200K במכירות שדווחו</p>
+                    <p class="case-card__proof-note">פרטי הלקוח והנתונים המדויקים נשמרים חסויים</p>
+                  </div>
+                )
+              }
             </article>
           </Reveal>
         ))
@@ -64,6 +86,9 @@ import { campaignResults } from '../data/site';
 
   const animateCaseStat = (el: HTMLElement) => {
     const target = Number(el.dataset.target || 0);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const formatter = new Intl.NumberFormat('he-IL');
     const duration = 2200;
     const start = performance.now();
 
@@ -71,7 +96,7 @@ import { campaignResults } from '../data/site';
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 4);
       const current = Math.round(target * eased);
-      el.textContent = `${current}%`;
+      el.textContent = `${prefix}${formatter.format(current)}${suffix}`;
       if (progress < 1) requestAnimationFrame(tick);
     };
 
@@ -81,7 +106,8 @@ import { campaignResults } from '../data/site';
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     caseStats.forEach((el) => {
       const node = el as HTMLElement;
-      node.textContent = `${node.dataset.target}%`;
+      const formatter = new Intl.NumberFormat('he-IL');
+      node.textContent = `${node.dataset.prefix || ''}${formatter.format(Number(node.dataset.target || 0))}${node.dataset.suffix || ''}`;
     });
   } else {
     const observer = new IntersectionObserver(
@@ -211,6 +237,13 @@ import { campaignResults } from '../data/site';
     color: #374151;
   }
 
+  .case-card__source {
+    margin-top: 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+
   @media (min-width: 768px) {
     .case-card__author {
       font-size: 1.125rem;
@@ -219,5 +252,65 @@ import { campaignResults } from '../data/site';
 
   .case-card__media {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  .case-card__proof {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(252, 192, 0, 0.2), transparent 32%),
+      linear-gradient(145deg, #651561 0%, #4a1247 100%);
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 12px 34px rgba(101, 21, 97, 0.24);
+  }
+
+  .case-card__proof::after {
+    content: '';
+    position: absolute;
+    width: 11rem;
+    height: 11rem;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    inset-inline-end: -4rem;
+    bottom: -5rem;
+  }
+
+  .case-card__proof-eyebrow {
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #fcc000;
+  }
+
+  .case-card__proof-title {
+    margin-top: 0.5rem;
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #fcc000;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .case-card__proof-subtitle {
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+
+  .case-card__proof-note {
+    position: relative;
+    z-index: 1;
+    margin-top: 1.75rem;
+    padding: 1rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.82);
   }
 </style>

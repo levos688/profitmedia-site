@@ -1,5 +1,5 @@
 ---
-import { targetAudience, processSteps, hero, homeSeo } from '../data/site';
+import { targetAudience, processSteps, hero, homeSeo, faqs } from '../data/site';
 
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -109,6 +109,20 @@ const serviceSchema = {
   serviceType: 'ניהול קמפיינים ולידים לעסקים עם עסקאות גבוהות',
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': 'https://profitmedia.co.il/#faq',
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+
 const schemaGraph = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -118,6 +132,7 @@ const schemaGraph = {
     serviceSchema,
     audienceListSchema,
     howToSchema,
+    faqSchema,
   ],
 };
 ---

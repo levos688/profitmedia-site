@@ -1,0 +1,164 @@
+---
+import SectionTitle from '../SectionTitle.astro';
+import Reveal from '../Reveal.astro';
+import { faqs } from '../../data/site';
+---
+
+<section id="faq" class="faq section-padding below-fold" aria-labelledby="faq-title">
+  <div class="mx-auto max-w-4xl px-4 md:px-6">
+    <Reveal>
+      <SectionTitle
+        id="faq-title"
+        title="שאלות נפוצות"
+        subtitle="תשובות ברורות לפני שמתחילים"
+        class="mb-10 md:mb-12"
+      />
+    </Reveal>
+
+    <div class="faq__list">
+      {
+        faqs.map((item, index) => (
+          <Reveal delay={Math.min(index * 60, 240)}>
+            <details class="faq__item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+              <summary itemprop="name">
+                <span>{item.question}</span>
+                <span class="faq__icon" aria-hidden="true"></span>
+              </summary>
+              <div
+                class="faq__answer"
+                itemscope
+                itemprop="acceptedAnswer"
+                itemtype="https://schema.org/Answer"
+              >
+                <p itemprop="text">{item.answer}</p>
+              </div>
+            </details>
+          </Reveal>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    background: #f7f5f8;
+  }
+
+  .faq__list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .faq__item {
+    overflow: hidden;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(101, 21, 97, 0.05);
+  }
+
+  .faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    min-height: 4.5rem;
+    padding: 1.15rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    color: #29102c;
+    font-size: 1.075rem;
+    line-height: 1.45;
+    font-weight: 800;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__item summary:hover {
+    background: rgba(101, 21, 97, 0.035);
+    color: #651561;
+  }
+
+  .faq__item summary:focus-visible {
+    outline: 3px solid #fcc000;
+    outline-offset: -3px;
+  }
+
+  .faq__icon {
+    position: relative;
+    flex: 0 0 2.75rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: rgba(101, 21, 97, 0.08);
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 2px;
+    border-radius: 999px;
+    background: #651561;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease;
+  }
+
+  .faq__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .faq__item[open] .faq__icon {
+    background: #651561;
+  }
+
+  .faq__item[open] .faq__icon::before,
+  .faq__item[open] .faq__icon::after {
+    background: #fff;
+  }
+
+  .faq__item[open] .faq__icon::after {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+
+  .faq__answer {
+    padding: 0 1.25rem 1.35rem;
+  }
+
+  .faq__answer p {
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(101, 21, 97, 0.09);
+    color: #4b5563;
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  @media (min-width: 768px) {
+    .faq__item summary {
+      padding: 1.25rem 1.5rem;
+      font-size: 1.175rem;
+    }
+
+    .faq__answer {
+      padding: 0 1.5rem 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__item summary,
+    .faq__icon::before,
+    .faq__icon::after {
+      transition: none;
+    }
+  }
+</style>

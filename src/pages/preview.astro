@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import '../styles/preview.css';
-import Header from '../components/Header.astro';
+import PreviewBanner from '../components/preview/PreviewBanner.astro';
+import PreviewHeader from '../components/preview/PreviewHeader.astro';
 import PreviewHero from '../components/preview/PreviewHero.astro';
-import HomeJsonLd from '../components/HomeJsonLd.astro';
+import PreviewJsonLd from '../components/preview/PreviewJsonLd.astro';
 import AgencyStats from '../components/AgencyStats.astro';
 import TargetAudience from '../components/TargetAudience.astro';
 import PreviewCampaignResults from '../components/preview/PreviewCampaignResults.astro';
@@ -18,17 +19,20 @@ import PreviewContactForm from '../components/preview/PreviewContactForm.astro';
 import LeadCaptureModal from '../components/preview/LeadCaptureModal.astro';
 import StickyMobileCta from '../components/preview/StickyMobileCta.astro';
 import Footer from '../components/Footer.astro';
-import { homeSeo } from '../data/site';
+import { previewSeo } from '../data/preview';
 ---
 
 <Layout
-  title={homeSeo.title}
-  description={homeSeo.description}
-  canonical={homeSeo.canonical}
+  title={previewSeo.title}
+  description={previewSeo.description}
+  canonical={previewSeo.canonical}
+  noindex={true}
+  enableGtm={false}
 >
-  <HomeJsonLd slot="head" />
+  <PreviewJsonLd slot="head" />
   <div class="preview-page">
-    <Header />
+    <PreviewBanner />
+    <PreviewHeader />
     <main id="main-content">
       <PreviewHero />
       <AgencyStats />

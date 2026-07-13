@@ -1,0 +1,319 @@
+---
+import SectionTitle from '../SectionTitle.astro';
+import Reveal from '../Reveal.astro';
+import OptimizedImage from '../OptimizedImage.astro';
+import MidPageCta from './MidPageCta.astro';
+import { campaignResults } from '../../data/site';
+---
+
+<section id="testimonials" class="section-padding below-fold bg-brand-gray">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <SectionTitle
+        title="תוצאות מתועדות מהשטח"
+        subtitle="מכירות שדווחו על ידי לקוחות ושיפורים מדידים בביצועי הקמפיינים"
+        class="mb-10 md:mb-14"
+      />
+    </Reveal>
+
+    <div class="space-y-10 md:space-y-14">
+      {
+        campaignResults.map((item, index) => (
+          <>
+            <Reveal delay={index * 100}>
+              <article class="case-card grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                <div class="case-card__content text-right">
+                  <p class="case-card__industry">{item.industry}</p>
+                  <p class="case-card__label">{item.label}</p>
+                  <div class="case-card__metric" aria-label={item.statAria}>
+                    <span
+                      class="case-card__stat"
+                      data-case-stat
+                      data-target={item.statValue}
+                      data-prefix={item.statPrefix}
+                      data-suffix={item.statSuffix}
+                      dir="ltr"
+                    >
+                      {item.statPrefix}0{item.statSuffix}
+                    </span>
+                    <span class="case-card__stat-label">{item.statLabel}</span>
+                  </div>
+                  <p class="case-card__story">{item.story}</p>
+                  {
+                    item.quote && (
+                      <blockquote class="case-card__quote">
+                        <p>"{item.quote}"</p>
+                      </blockquote>
+                    )
+                  }
+                  {
+                    item.author && (
+                      <p class="case-card__author">
+                        <strong>{item.author}</strong>
+                      </p>
+                    )
+                  }
+                  {item.source && <p class="case-card__source">{item.source}</p>}
+                </div>
+                {
+                  item.image ? (
+                    <div class="case-card__media overflow-hidden rounded-2xl">
+                      <OptimizedImage
+                        src={item.image}
+                        alt={item.imageAlt}
+                        class="h-auto w-full"
+                        width={600}
+                        height={400}
+                      />
+                    </div>
+                  ) : (
+                    <div class="case-card__proof">
+                      <p class="case-card__proof-eyebrow">מקרה מתועד</p>
+                      <p class="case-card__proof-title">2 חודשים</p>
+                      <p class="case-card__proof-subtitle">רצופים עם יותר מ־₪200K במכירות שדווחו</p>
+                      <p class="case-card__proof-note">פרטי הלקוח והנתונים המדויקים נשמרים חסויים</p>
+                    </div>
+                  )
+                }
+              </article>
+            </Reveal>
+            {index === 0 && <MidPageCta />}
+          </>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const caseStats = document.querySelectorAll('[data-case-stat]');
+
+  const animateCaseStat = (el: HTMLElement) => {
+    const target = Number(el.dataset.target || 0);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const formatter = new Intl.NumberFormat('he-IL');
+    const duration = 2200;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      const current = Math.round(target * eased);
+      el.textContent = `${prefix}${formatter.format(current)}${suffix}`;
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  };
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    caseStats.forEach((el) => {
+      const node = el as HTMLElement;
+      const formatter = new Intl.NumberFormat('he-IL');
+      node.textContent = `${node.dataset.prefix || ''}${formatter.format(Number(node.dataset.target || 0))}${node.dataset.suffix || ''}`;
+    });
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          animateCaseStat(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.45 }
+    );
+    caseStats.forEach((el) => observer.observe(el));
+  }
+</script>
+
+<style>
+  .case-card {
+    padding: 1.75rem;
+    border-radius: 1.25rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.08);
+    box-shadow: 0 8px 32px rgba(101, 21, 97, 0.08);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  @media (min-width: 768px) {
+    .case-card {
+      padding: 2.25rem;
+    }
+  }
+
+  .case-card:hover {
+    box-shadow: 0 16px 48px rgba(101, 21, 97, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .case-card__industry {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #651561;
+  }
+
+  .case-card__label {
+    margin-top: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__label {
+      font-size: 1.5rem;
+    }
+  }
+
+  .case-card__metric {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 1rem;
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #651561 0%, #5a1c73 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(101, 21, 97, 0.25);
+  }
+
+  .case-card__stat {
+    font-size: 2.75rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__stat {
+      font-size: 3.5rem;
+    }
+  }
+
+  .case-card__stat-label {
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .case-card__story {
+    margin-top: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.55;
+    font-weight: 600;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__story {
+      font-size: 1.125rem;
+    }
+  }
+
+  .case-card__quote {
+    margin-top: 1rem;
+    border: none;
+    padding: 0;
+  }
+
+  .case-card__quote p {
+    font-size: 1.125rem;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__quote p {
+      font-size: 1.375rem;
+    }
+  }
+
+  .case-card__author {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #374151;
+  }
+
+  .case-card__source {
+    margin-top: 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  @media (min-width: 768px) {
+    .case-card__author {
+      font-size: 1.125rem;
+    }
+  }
+
+  .case-card__media {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  .case-card__proof {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    background: #f7f5f8;
+    color: #111827;
+    text-align: center;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    box-shadow: 0 8px 28px rgba(101, 21, 97, 0.08);
+  }
+
+  .case-card__proof::after {
+    content: '';
+    position: absolute;
+    width: 11rem;
+    height: 11rem;
+    border: 2px solid rgba(101, 21, 97, 0.06);
+    border-radius: 50%;
+    inset-inline-end: -4rem;
+    bottom: -5rem;
+  }
+
+  .case-card__proof-eyebrow {
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #651561;
+  }
+
+  .case-card__proof-title {
+    margin-top: 0.5rem;
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #651561;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .case-card__proof-subtitle {
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .case-card__proof-note {
+    position: relative;
+    z-index: 1;
+    margin-top: 1.75rem;
+    padding: 1rem 0.75rem;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 0.75rem;
+    background: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #4b5563;
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+import { previewFaqs, previewSeo } from '../../data/preview';
+import { processSteps } from '../../data/site';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://profitmedia.co.il/#organization',
+  name: 'Profit Media',
+  url: 'https://profitmedia.co.il/',
+  description: previewSeo.description,
+  areaServed: { '@type': 'Country', name: 'Israel' },
+  serviceType: [
+    'ניהול קמפיינים בפייסבוק',
+    'ניהול קמפיינים בגוגל',
+    'בניית דפי נחיתה',
+    'יצירת לידים לעסקאות גבוהות',
+  ],
+  knowsAbout: [
+    'Facebook Ads',
+    'Google Ads',
+    'Instagram Ads',
+    'Landing pages',
+    'Lead generation',
+    'A/B testing',
+    'High-ticket sales',
+    'Kitchen marketing Israel',
+    'Tourism marketing Israel',
+  ],
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': 'https://profitmedia.co.il/preview#faq',
+  mainEntity: previewFaqs.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+    keywords: item.keywords?.join(', '),
+  })),
+};
+
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://profitmedia.co.il/preview#webpage',
+  url: previewSeo.canonical,
+  name: previewSeo.title,
+  description: previewSeo.description,
+  inLanguage: 'he-IL',
+  isPartOf: { '@id': 'https://profitmedia.co.il/#website' },
+  about: { '@id': 'https://profitmedia.co.il/#organization' },
+};
+
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'איך Profit Media מביאה עסקאות מהפרסום',
+  description: processSteps.subtitle,
+  step: processSteps.steps.map((step, index) => ({
+    '@type': 'HowToStep',
+    position: index + 1,
+    name: step.title,
+    text: step.description,
+  })),
+};
+
+const schemaGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [organizationSchema, webPageSchema, howToSchema, faqSchema],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schemaGraph)} />

@@ -1,0 +1,231 @@
+---
+import SectionTitle from '../SectionTitle.astro';
+import HorizontalCarousel from '../HorizontalCarousel.astro';
+import Reveal from '../Reveal.astro';
+import OptimizedImage from '../OptimizedImage.astro';
+import { landings } from '../../data/site';
+
+const portfolioLandings = landings.map((item) =>
+  item.title === 'קורסים מקצועיים'
+    ? { ...item, title: 'דף נחיתה לקורסים מקצועיים - IGL' }
+    : item
+);
+---
+
+<section id="portfolio" class="section-padding below-fold bg-white">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <SectionTitle
+        title="דפי נחיתה ממירים במיוחד"
+        subtitle="מבחר דפי נחיתה שבנינו לקמפיינים בתחומים שונים"
+        class="mb-10 md:mb-14"
+      />
+    </Reveal>
+
+    <Reveal delay={100}>
+      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה">
+        {
+          portfolioLandings.map((item) => (
+            <article class="carousel-item landing-card">
+              <button
+                type="button"
+                class="landing-card__btn"
+                data-lightbox-trigger
+                data-image={item.image}
+                data-title={item.title}
+                aria-label={`הגדל — ${item.title}`}
+              >
+                <div class="landing-card__frame">
+                  <OptimizedImage src={item.image} alt={item.title} width={700} height={1050} />
+                </div>
+                <p class="landing-card__caption">{item.title}</p>
+              </button>
+            </article>
+          ))
+        }
+      </HorizontalCarousel>
+    </Reveal>
+  </div>
+
+  <div
+    id="landing-lightbox"
+    class="lightbox hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lightbox-title"
+    hidden
+  >
+    <div class="lightbox__backdrop" data-lightbox-close></div>
+    <div class="lightbox__panel">
+      <button type="button" class="lightbox__close" data-lightbox-close aria-label="סגור">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <p id="lightbox-title" class="lightbox__title"></p>
+      <img id="lightbox-image" class="lightbox__image" src="" alt="" />
+    </div>
+  </div>
+</section>
+
+<script>
+  const lightbox = document.getElementById('landing-lightbox');
+  const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement | null;
+  const lightboxTitle = document.getElementById('lightbox-title');
+  let lastFocus: HTMLElement | null = null;
+
+  const openLightbox = (image: string, title: string) => {
+    if (!lightbox || !lightboxImage || !lightboxTitle) return;
+    lastFocus = document.activeElement as HTMLElement;
+    lightboxImage.src = image;
+    lightboxImage.alt = title;
+    lightboxTitle.textContent = title;
+    lightbox.hidden = false;
+    lightbox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    lightbox.querySelector<HTMLElement>('[data-lightbox-close]')?.focus();
+  };
+
+  const closeLightbox = () => {
+    if (!lightbox) return;
+    lightbox.hidden = true;
+    lightbox.classList.add('hidden');
+    document.body.style.overflow = '';
+    lastFocus?.focus();
+  };
+
+  document.querySelectorAll('[data-lightbox-trigger]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const image = (btn as HTMLElement).dataset.image || '';
+      const title = (btn as HTMLElement).dataset.title || '';
+      openLightbox(image, title);
+    });
+  });
+
+  lightbox?.querySelectorAll('[data-lightbox-close]').forEach((el) => {
+    el.addEventListener('click', closeLightbox);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox && !lightbox.hidden) closeLightbox();
+  });
+</script>
+
+<style>
+  .landing-card {
+    width: min(72vw, 280px);
+  }
+
+  @media (min-width: 768px) {
+    .landing-card {
+      width: calc((min(100vw, 72rem) - 8rem) / 3);
+      max-width: 340px;
+    }
+  }
+
+  .landing-card__btn {
+    display: block;
+    width: 100%;
+    cursor: zoom-in;
+    text-align: center;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .landing-card__frame {
+    aspect-ratio: 2 / 3;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .landing-card__btn:hover .landing-card__frame {
+    box-shadow: 0 8px 24px rgb(101 21 97 / 0.18);
+    transform: translateY(-2px);
+  }
+
+  .landing-card__frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  .landing-card__caption {
+    margin-top: 0.625rem;
+    padding-inline: 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #1f2937;
+    line-height: 1.4;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .lightbox.hidden {
+    display: none;
+  }
+
+  .lightbox__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 0.82);
+    cursor: pointer;
+  }
+
+  .lightbox__panel {
+    position: relative;
+    z-index: 1;
+    max-width: min(92vw, 520px);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: -2.75rem;
+    inset-inline-end: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    color: #651561;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .lightbox__image {
+    max-width: 100%;
+    max-height: calc(92vh - 4rem);
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
+  }
+
+  .lightbox__title {
+    margin-top: 1rem;
+    text-align: center;
+    color: #fff;
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+</style>

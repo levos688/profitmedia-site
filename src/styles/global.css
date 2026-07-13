@@ -97,7 +97,9 @@ textarea {
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
-  transition: color 0.2s ease-out, background-color 0.2s ease-out;
+  transition:
+    color 0.2s ease-out,
+    background-color 0.2s ease-out;
 }
 
 .nav-link:hover {
@@ -155,7 +157,9 @@ textarea {
   font-size: 1rem;
   font-weight: 500;
   color: #1f2937;
-  transition: background-color 0.2s ease-out, color 0.2s ease-out;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
 }
 
 .mobile-nav-link:hover {
@@ -202,20 +206,28 @@ textarea {
 
 .service-card__icon {
   width: 100%;
-  max-width: 180px;
+  max-width: 92px;
   height: auto;
+  object-fit: contain;
 }
 
 .service-card__title {
   font-size: 1.125rem;
   line-height: 1.35;
-  font-weight: 700;
+  font-weight: 800;
   color: #111827;
+}
+
+.service-card__description {
+  margin-top: 0.75rem;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: #4b5563;
 }
 
 @media (min-width: 768px) {
   .service-card__title {
-    font-size: 1.625rem;
+    font-size: 1.35rem;
   }
 }
 
@@ -264,7 +276,6 @@ textarea {
   display: block;
 }
 
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -305,7 +316,10 @@ summary {
   background-color: #fcc000;
   color: #651561;
   min-height: 44px;
-  transition: background-color 0.2s ease-out, transform 0.15s ease-out, box-shadow 0.2s ease-out;
+  transition:
+    background-color 0.2s ease-out,
+    transform 0.15s ease-out,
+    box-shadow 0.2s ease-out;
 }
 
 .btn-yellow:hover {
@@ -368,7 +382,9 @@ summary {
   font-weight: 700;
   color: #111827;
   text-align: right;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 @media (min-width: 768px) {
@@ -409,7 +425,9 @@ summary {
   border-radius: 0.25rem;
   background: transparent;
   cursor: pointer;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 }
 
 .contact-checkbox:checked {
@@ -431,7 +449,10 @@ summary {
   font-size: 1.1875rem;
   font-weight: 800;
   min-height: 52px;
-  transition: transform 0.15s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease-out;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.2s ease-out,
+    opacity 0.2s ease-out;
   box-shadow: 0 4px 20px rgba(252, 192, 0, 0.22);
 }
 

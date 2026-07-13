@@ -1,0 +1,209 @@
+---
+import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
+---
+
+<div
+  id="lead-modal"
+  class="lead-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="lead-modal-title"
+  hidden
+>
+  <div class="lead-modal__backdrop" data-lead-modal-close></div>
+  <div class="lead-modal__panel">
+    <button type="button" class="lead-modal__close" data-lead-modal-close aria-label="סגור">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+    </button>
+
+    <div class="lead-modal__step">
+      <h2 id="lead-modal-title" class="lead-modal__title">{modalConfig.step2Title}</h2>
+      <p class="lead-modal__subtitle">{modalConfig.step2Subtitle}</p>
+
+      <form id="lead-modal-form" novalidate>
+        <div class="lead-modal__field">
+          <label for="lead-modal-name" class="lead-modal__label">{formLabels.name}</label>
+          <input
+            type="text"
+            id="lead-modal-name"
+            name="name"
+            class="lead-modal__input"
+            required
+            autocomplete="name"
+            placeholder={formPlaceholders.name}
+          />
+          <p id="lead-modal-name-error" class="lead-modal__error" hidden role="alert"></p>
+        </div>
+
+        <div class="lead-modal__field">
+          <label for="lead-modal-phone" class="lead-modal__label">{formLabels.phone}</label>
+          <input
+            type="tel"
+            id="lead-modal-phone"
+            name="phone"
+            class="lead-modal__input"
+            required
+            inputmode="tel"
+            autocomplete="tel"
+            placeholder={formPlaceholders.phone}
+          />
+          <p id="lead-modal-phone-error" class="lead-modal__error" hidden role="alert"></p>
+        </div>
+
+        <div class="lead-modal__field">
+          <label for="lead-modal-vertical" class="lead-modal__label">{formLabels.vertical}</label>
+          <input
+            type="text"
+            id="lead-modal-vertical"
+            name="vertical"
+            class="lead-modal__input"
+            required
+            autocomplete="organization-title"
+            placeholder={formPlaceholders.vertical}
+          />
+          <p id="lead-modal-vertical-error" class="lead-modal__error" hidden role="alert"></p>
+        </div>
+
+        <label class="lead-modal__privacy">
+          <input type="checkbox" id="lead-modal-privacy" name="privacy" required class="mt-1 shrink-0" />
+          <span>
+            קראתי ואני מאשר/ת את{' '}
+            <a href="/prat" target="_blank" rel="noopener">מדיניות הפרטיות</a>
+            , ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)
+          </span>
+        </label>
+        <p id="lead-modal-privacy-error" class="lead-modal__error" hidden role="alert"></p>
+
+        <button type="submit" id="lead-modal-submit" class="btn-yellow lead-modal__submit">
+          {modalConfig.submit}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('lead-modal');
+  const form = document.getElementById('lead-modal-form') as HTMLFormElement | null;
+  const verticalInput = document.getElementById('lead-modal-vertical') as HTMLInputElement | null;
+  const submitBtn = document.getElementById('lead-modal-submit') as HTMLButtonElement | null;
+  let lastFocus: HTMLElement | null = null;
+
+  const openModal = () => {
+    if (!modal) return;
+    lastFocus = document.activeElement as HTMLElement;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      modal.classList.add('lead-modal--open');
+      document.getElementById('lead-modal-name')?.focus();
+    });
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+    modal.classList.remove('lead-modal--open');
+    window.setTimeout(() => {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      lastFocus?.focus();
+    }, 300);
+  };
+
+  document.querySelectorAll('[data-lead-modal-open]').forEach((trigger) => {
+    trigger.addEventListener('click', openModal);
+  });
+
+  modal?.querySelectorAll('[data-lead-modal-close]').forEach((el) => {
+    el.addEventListener('click', closeModal);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hidden) closeModal();
+  });
+
+  const setError = (id: string, message: string, show: boolean) => {
+    const input = document.getElementById(id) as HTMLInputElement | null;
+    const error = document.getElementById(`${id}-error`);
+    input?.classList.toggle('lead-modal__input--error', show);
+    if (error) {
+      error.textContent = show ? message : '';
+      error.hidden = !show;
+    }
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    const name = (document.getElementById('lead-modal-name') as HTMLInputElement).value.trim();
+    const phone = (document.getElementById('lead-modal-phone') as HTMLInputElement).value.trim();
+    const vertical = verticalInput?.value.trim() || '';
+    const privacy = (document.getElementById('lead-modal-privacy') as HTMLInputElement).checked;
+
+    if (!name) {
+      setError('lead-modal-name', 'נא להזין שם מלא', true);
+      valid = false;
+    } else setError('lead-modal-name', '', false);
+
+    if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) {
+      setError('lead-modal-phone', 'נא להזין מספר טלפון תקין', true);
+      valid = false;
+    } else setError('lead-modal-phone', '', false);
+
+    if (!vertical) {
+      setError('lead-modal-vertical', 'נא להזין את תחום העסק', true);
+      valid = false;
+    } else setError('lead-modal-vertical', '', false);
+
+    const privacyError = document.getElementById('lead-modal-privacy-error');
+    if (!privacy) {
+      if (privacyError) {
+        privacyError.textContent = 'יש לאשר את מדיניות הפרטיות';
+        privacyError.hidden = false;
+      }
+      valid = false;
+    } else if (privacyError) {
+      privacyError.hidden = true;
+    }
+
+    if (!valid) return;
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'שולח…';
+    }
+
+    const payload = {
+      name,
+      phone,
+      email: '',
+      vertical,
+      verticalLabel: vertical,
+      pageUrl: window.location.href,
+      source: 'homepage-lead-modal',
+      referrer: document.referrer || '',
+      language: navigator.language || '',
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json()) as { ok?: boolean };
+      if (!res.ok || !data.ok) throw new Error('submit failed');
+      window.location.href = '/thank-you';
+    } catch {
+      alert('שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'כן, שלחו לי אבחון חינם';
+      }
+    }
+  });
+</script>
