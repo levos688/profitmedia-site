@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="geometricPrecision">
+  <title>דף נחיתה עם קריאה לפעולה</title>
+  <rect x="15" y="20" width="90" height="80" rx="15" fill="#f4eef5"/>
+  <rect x="28" y="33" width="64" height="10" rx="5" fill="#651561"/>
+  <rect x="28" y="52" width="43" height="8" rx="4" fill="#651561"/>
+  <rect x="28" y="72" width="38" height="14" rx="7" fill="#fcc000"/>
+  <circle cx="85" cy="79" r="13" fill="#651561"/>
+  <circle cx="85" cy="79" r="5" fill="#fff"/>
+</svg>

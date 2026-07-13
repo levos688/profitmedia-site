@@ -3,9 +3,10 @@ interface Props {
   ariaLabel: string;
   gap?: 'normal' | 'wide';
   shuffle?: boolean;
+  loop?: boolean;
 }
 
-const { ariaLabel, gap = 'normal', shuffle = false } = Astro.props;
+const { ariaLabel, gap = 'normal', shuffle = false, loop = true } = Astro.props;
 const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -55,7 +56,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   </button>
 </div>
 
-<script define:vars={{ uid, shuffle }}>
+<script define:vars={{ uid, shuffle, loop }}>
   (() => {
     const track = document.querySelector(`[data-carousel-track="${uid}"]`);
     const startBtn = document.querySelector(`[data-carousel-start="${uid}"]`);
@@ -63,8 +64,10 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     const outer = track?.closest('.carousel-outer');
     if (!track || !startBtn || !endBtn || !outer) return;
 
+    const getItems = () => [...track.querySelectorAll(':scope > .carousel-item:not([data-carousel-clone])')];
+
     const shuffleTrackItems = () => {
-      const items = Array.from(track.querySelectorAll(':scope > .carousel-item'));
+      const items = getItems();
       for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [items[i], items[j]] = [items[j], items[i]];
@@ -74,9 +77,12 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
     if (shuffle) shuffleTrackItems();
 
+    let loopEnabled = false;
+    let setWidth = 0;
+    let loopAnchor = 0;
+    let isAdjusting = false;
     let ready = false;
 
-    const isRtl = () => getComputedStyle(track).direction === 'rtl';
     const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
 
     const updateSnapPadding = () => {
@@ -84,14 +90,95 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
         track.style.setProperty('--snap-pad', '0px');
         return;
       }
-      const item = track.querySelector('.carousel-item');
+      const item = getItems()[0];
       if (!item) return;
       const pad = Math.max(0, (track.clientWidth - item.getBoundingClientRect().width) / 2);
       track.style.setProperty('--snap-pad', `${pad}px`);
     };
 
+    const measureSetWidth = () => {
+      const items = getItems();
+      if (!items.length) return 0;
+      if (items.length === 1) return items[0].getBoundingClientRect().width;
+      const first = items[0];
+      const last = items[items.length - 1];
+      return last.offsetLeft + last.offsetWidth - first.offsetLeft;
+    };
+
+    const setupLoop = () => {
+      const items = getItems();
+      if (!loop || items.length < 2) {
+        loopEnabled = false;
+        return;
+      }
+
+      const before = document.createDocumentFragment();
+      const after = document.createDocumentFragment();
+
+      items.forEach((item) => {
+        const cloneBefore = item.cloneNode(true);
+        const cloneAfter = item.cloneNode(true);
+        cloneBefore.setAttribute('data-carousel-clone', '');
+        cloneAfter.setAttribute('data-carousel-clone', '');
+        cloneBefore.setAttribute('aria-hidden', 'true');
+        cloneAfter.setAttribute('aria-hidden', 'true');
+        [cloneBefore, cloneAfter].forEach((clone) => {
+          clone.querySelectorAll('button, a, input, select, textarea').forEach((el) => {
+            el.setAttribute('tabindex', '-1');
+          });
+        });
+        before.appendChild(cloneBefore);
+        after.appendChild(cloneAfter);
+      });
+
+      track.insertBefore(before, track.firstChild);
+      track.appendChild(after);
+
+      loopEnabled = true;
+    };
+
+    const measureLayout = () => {
+      setWidth = measureSetWidth();
+      const items = getItems();
+      loopAnchor = items[0]?.offsetLeft ?? 0;
+    };
+
+    const applyLayout = () => {
+      updateSnapPadding();
+      measureLayout();
+      if (loopEnabled) {
+        isAdjusting = true;
+        track.scrollLeft = loopAnchor;
+        isAdjusting = false;
+      }
+      updateArrows();
+    };
+
+    const scheduleLayout = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(applyLayout);
+      });
+    };
+
+    const correctLoopPosition = () => {
+      if (!loopEnabled || isAdjusting || setWidth <= 0) return;
+
+      const scroll = track.scrollLeft;
+      const edge = Math.max(8, setWidth * 0.02);
+
+      if (scroll < loopAnchor - edge) {
+        isAdjusting = true;
+        track.scrollLeft = scroll + setWidth;
+        isAdjusting = false;
+      } else if (scroll >= loopAnchor + setWidth - edge) {
+        isAdjusting = true;
+        track.scrollLeft = scroll - setWidth;
+        isAdjusting = false;
+      }
+    };
+
     const getStep = () => {
-      const item = track.querySelector('.carousel-item');
+      const item = getItems()[0] || track.querySelector('.carousel-item');
       if (!item) return 320;
       const gap = parseFloat(getComputedStyle(track).gap) || 24;
       return item.getBoundingClientRect().width + gap;
@@ -100,6 +187,11 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
 
     const updateArrows = () => {
+      if (loopEnabled) {
+        startBtn.disabled = false;
+        endBtn.disabled = false;
+        return;
+      }
       const overflow = maxScroll() > 1;
       startBtn.disabled = !overflow;
       endBtn.disabled = !overflow;
@@ -107,22 +199,30 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
     const scrollByStep = (forward) => {
       const step = getStep();
-      const delta = isRtl() ? (forward ? -step : step) : forward ? step : -step;
+      const delta = forward ? step : -step;
       track.scrollBy({ left: delta, behavior: 'smooth' });
     };
 
     const init = () => {
       if (ready) return;
       ready = true;
+
+      setupLoop();
+      scheduleLayout();
+
       startBtn.addEventListener('click', () => scrollByStep(true));
       endBtn.addEventListener('click', () => scrollByStep(false));
-      track.addEventListener('scroll', updateArrows, { passive: true });
+      track.addEventListener(
+        'scroll',
+        () => {
+          correctLoopPosition();
+          updateArrows();
+        },
+        { passive: true }
+      );
       window.addEventListener('resize', () => {
-        updateSnapPadding();
-        updateArrows();
+        scheduleLayout();
       });
-      updateSnapPadding();
-      updateArrows();
     };
 
     if ('IntersectionObserver' in window) {
@@ -161,6 +261,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
   .carousel-track {
     display: flex;
+    direction: ltr;
     gap: 1.5rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;

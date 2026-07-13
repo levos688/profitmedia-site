@@ -246,6 +246,13 @@ const { variant = 'hero' } = Astro.props;
       width: min(72vw, 22rem);
       top: -6%;
       height: 112%;
+      will-change: auto;
+      animation: none;
+    }
+
+    .blueprint-sketch__layer,
+    .blueprint-sketch__node {
+      animation: none;
     }
 
     .blueprint-sketch__cluster--left {

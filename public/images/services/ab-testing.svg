@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="geometricPrecision">
+  <title>בדיקת A/B והשוואת גרסאות</title>
+  <rect x="16" y="23" width="39" height="74" rx="12" fill="#f4eef5"/>
+  <rect x="65" y="23" width="39" height="74" rx="12" fill="#651561"/>
+  <rect x="26" y="38" width="19" height="7" rx="3.5" fill="#651561"/>
+  <rect x="75" y="38" width="19" height="7" rx="3.5" fill="#fff"/>
+  <circle cx="85" cy="75" r="14" fill="#fcc000"/>
+  <path d="M78 75 83 80 92 70" fill="none" stroke="#651561" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run images:webp && astro build",
     "images:webp": "node scripts/convert-webp.mjs",
     "preview": "astro preview",
     "preview:cf": "npm run build && wrangler pages dev dist --port 8788",

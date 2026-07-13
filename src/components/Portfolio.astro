@@ -75,7 +75,11 @@ const portfolioLandings = getPortfolioLandings();
   let touchStartX = 0;
 
   const getSlides = () =>
-    [...document.querySelectorAll('#portfolio [data-lightbox-trigger]')].map((btn) => ({
+    [
+      ...document.querySelectorAll(
+        '#portfolio .carousel-item:not([data-carousel-clone]) [data-lightbox-trigger]'
+      ),
+    ].map((btn) => ({
       image: (btn as HTMLElement).dataset.image || '',
       title: (btn as HTMLElement).dataset.title || '',
     }));
@@ -111,12 +115,17 @@ const portfolioLandings = getPortfolioLandings();
 
   const step = (delta: number) => showSlide(currentIndex + delta);
 
-  document.querySelectorAll('#portfolio [data-lightbox-trigger]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const triggers = [...document.querySelectorAll('#portfolio [data-lightbox-trigger]')];
-      const index = triggers.indexOf(btn);
-      openLightbox(index, btn as HTMLElement);
-    });
+  document.getElementById('portfolio')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-lightbox-trigger]');
+    if (!btn || btn.closest('[data-carousel-clone]')) return;
+    const triggers = [
+      ...document.querySelectorAll(
+        '#portfolio .carousel-item:not([data-carousel-clone]) [data-lightbox-trigger]'
+      ),
+    ];
+    const index = triggers.indexOf(btn);
+    if (index === -1) return;
+    openLightbox(index, btn as HTMLElement);
   });
 
   lightbox?.querySelectorAll('[data-lightbox-close]').forEach((el) => {

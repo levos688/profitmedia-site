@@ -37,26 +37,6 @@ const canonicalUrl = canonical ?? Astro.url.href;
 <!doctype html>
 <html lang={lang} dir={dir}>
   <head>
-    {
-      enableGtm && (
-        <>
-          {/* Google Tag Manager */}
-          <script is:inline>
-            (function (w, d, s, l, i) {
-              w[l] = w[l] || [];
-              w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-              var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-              j.async = true;
-              j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-              f.parentNode.insertBefore(j, f);
-            })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
-          </script>
-          {/* End Google Tag Manager */}
-        </>
-      )
-    }
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
@@ -140,115 +120,124 @@ const canonicalUrl = canonical ?? Astro.url.href;
         }
       }
     </style>
-    <link
-      rel="preload"
-      href="/fonts/assistant-hebrew-400-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <title>{title}</title>
     {
-      metaPixelId && !metaPixelLead && (
-        <>
-          <!-- Meta Pixel Code -->
-          <script is:inline>
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '517991158551582');
-            var pageViewEventId = '';
-            try { pageViewEventId = crypto.randomUUID(); } catch (e) { pageViewEventId = String(Date.now()); }
-            fbq('track', 'PageView', {}, { eventID: pageViewEventId });
-            (function () {
-              function readCookie(name) {
-                var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-                return match ? decodeURIComponent(match[1]) : '';
-              }
-              fetch('/api/meta-event', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  event: 'PageView',
-                  eventId: pageViewEventId,
-                  pageUrl: location.href,
-                  tracking: { fbp: readCookie('_fbp'), fbc: readCookie('_fbc') },
-                }),
-              }).catch(function () {});
-            })();
-          </script>
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style="display:none"
-              src="https://www.facebook.com/tr?id=517991158551582&ev=PageView&noscript=1"
-              alt=""
-            />
-          </noscript>
-          <!-- End Meta Pixel Code -->
-        </>
+      enableGtm && (
+        <script is:inline>
+          (function (w, d, s, l, i) {
+            var loaded = false;
+            function loadGtm() {
+              if (loaded) return;
+              loaded = true;
+              w[l] = w[l] || [];
+              w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+              var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+              j.async = true;
+              j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+              f.parentNode.insertBefore(j, f);
+            }
+            function scheduleGtm() {
+              ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
+                w.addEventListener(type, loadGtm, { once: true, passive: true });
+              });
+              w.addEventListener('scroll', loadGtm, { once: true, passive: true });
+            }
+            scheduleGtm();
+          })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
+        </script>
       )
     }
     {
-      metaPixelId && metaPixelLead && (
+      metaPixelId && (
         <>
-          <!-- Meta Pixel Code -->
-          <script is:inline>
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '517991158551582');
-            var pageViewEventId = '';
-            try { pageViewEventId = crypto.randomUUID(); } catch (e) { pageViewEventId = String(Date.now()); }
-            fbq('track', 'PageView', {}, { eventID: pageViewEventId });
-            (function () {
+          <script is:inline define:vars={{ metaPixelId, metaPixelLead }}>
+            (function (pixelId, fireLead) {
+              var loaded = false;
+
               function readCookie(name) {
                 var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
                 return match ? decodeURIComponent(match[1]) : '';
               }
-              fetch('/api/meta-event', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  event: 'PageView',
-                  eventId: pageViewEventId,
-                  pageUrl: location.href,
-                  tracking: { fbp: readCookie('_fbp'), fbc: readCookie('_fbc') },
-                }),
-              }).catch(function () {});
-            })();
-            var leadEventId = '';
-            try {
-              leadEventId = sessionStorage.getItem('donhin_lead_event_id') || '';
-              sessionStorage.removeItem('donhin_lead_event_id');
-            } catch (e) {}
-            if (leadEventId) {
-              fbq('track', 'Lead', {}, { eventID: leadEventId });
-            } else {
-              fbq('track', 'Lead');
-            }
+
+              function sendCapi(event, eventId) {
+                fetch('/api/meta-event', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    event: event,
+                    eventId: eventId,
+                    pageUrl: location.href,
+                    tracking: { fbp: readCookie('_fbp'), fbc: readCookie('_fbc') },
+                  }),
+                }).catch(function () {});
+              }
+
+              function loadPixel() {
+                if (loaded) return;
+                loaded = true;
+
+                !function (f, b, e, v, n, t, s) {
+                  if (f.fbq) return;
+                  n = f.fbq = function () {
+                    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+                  };
+                  if (!f._fbq) f._fbq = n;
+                  n.push = n;
+                  n.loaded = !0;
+                  n.version = '2.0';
+                  n.queue = [];
+                  t = b.createElement(e);
+                  t.async = !0;
+                  t.src = v;
+                  s = b.getElementsByTagName(e)[0];
+                  s.parentNode.insertBefore(t, s);
+                }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+                fbq('init', pixelId);
+                var pageViewEventId = '';
+                try {
+                  pageViewEventId = crypto.randomUUID();
+                } catch (e) {
+                  pageViewEventId = String(Date.now());
+                }
+                fbq('track', 'PageView', {}, { eventID: pageViewEventId });
+                sendCapi('PageView', pageViewEventId);
+
+                if (!fireLead) return;
+
+                var leadEventId = '';
+                try {
+                  leadEventId = sessionStorage.getItem('donhin_lead_event_id') || '';
+                  sessionStorage.removeItem('donhin_lead_event_id');
+                } catch (e) {}
+                if (leadEventId) {
+                  fbq('track', 'Lead', {}, { eventID: leadEventId });
+                } else {
+                  fbq('track', 'Lead');
+                }
+              }
+
+              function schedulePixel() {
+                ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
+                  window.addEventListener(type, loadPixel, { once: true, passive: true });
+                });
+                window.addEventListener('scroll', loadPixel, { once: true, passive: true });
+              }
+
+              schedulePixel();
+            })(metaPixelId, metaPixelLead);
           </script>
           <noscript>
             <img
               height="1"
               width="1"
               style="display:none"
-              src="https://www.facebook.com/tr?id=517991158551582&ev=PageView&noscript=1"
+              src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
               alt=""
             />
           </noscript>
-          <!-- End Meta Pixel Code -->
         </>
       )
     }

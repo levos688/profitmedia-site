@@ -149,10 +149,20 @@ import { homeNav, homeCta } from '../data/site';
     requestAnimationFrame(onHeaderScroll);
   };
 
-  measureSections();
+  let measureTicking = false;
+  const queueMeasureSections = () => {
+    if (measureTicking) return;
+    measureTicking = true;
+    requestAnimationFrame(() => {
+      measureSections();
+      measureTicking = false;
+    });
+  };
+
+  requestAnimationFrame(measureSections);
   window.addEventListener('scroll', queueActiveNav, { passive: true });
   window.addEventListener('scroll', queueHeaderScroll, { passive: true });
-  window.addEventListener('resize', measureSections, { passive: true });
+  window.addEventListener('resize', queueMeasureSections, { passive: true });
   updateActiveNav();
   onHeaderScroll();
 </script>

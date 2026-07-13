@@ -90,12 +90,13 @@ const portfolioLandings = getPortfolioLandings();
     lastFocus?.focus();
   };
 
-  document.querySelectorAll('[data-lightbox-trigger]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const image = (btn as HTMLElement).dataset.image || '';
-      const title = (btn as HTMLElement).dataset.title || '';
-      openLightbox(image, title);
-    });
+  document.getElementById('portfolio')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-lightbox-trigger]');
+    if (!btn) return;
+    if (btn.closest('[data-carousel-clone]')) return;
+    const image = (btn as HTMLElement).dataset.image || '';
+    const title = (btn as HTMLElement).dataset.title || '';
+    openLightbox(image, title);
   });
 
   lightbox?.querySelectorAll('[data-lightbox-close]').forEach((el) => {

@@ -65,22 +65,22 @@ export const services = [
   {
     title: 'אסטרטגיה וניהול קמפיינים',
     description: 'קמפיינים בפייסבוק, אינסטגרם וגוגל שמנוהלים לפי יעדים עסקיים.',
-    icon: '/images/services/strategy-campaigns.png',
+    icon: '/images/services/campaign-management.svg',
   },
   {
     title: 'בדיקות ושיפור מתמיד',
     description: 'בודקים מסרים, מודעות, קהלים ודפי נחיתה כדי לשפר את הביצועים.',
-    icon: '/images/services/ab-testing.png',
+    icon: '/images/services/ab-testing.svg',
   },
   {
     title: 'סינון ותיעדוף פניות',
     description: 'שאלון חכם שאוסף מידע ומסייע לזהות את הפניות המתאימות יותר.',
-    icon: '/images/services/lead-qualification.png',
+    icon: '/images/services/lead-qualification.svg',
   },
   {
     title: 'דפי נחיתה שמניעים לפעולה',
     description: 'דפים שמחברים בין המסר במודעה, הצורך של הלקוח והפעולה הרצויה.',
-    icon: '/images/services/landing-page.png',
+    icon: '/images/services/landing-page.svg',
   },
 ];
 

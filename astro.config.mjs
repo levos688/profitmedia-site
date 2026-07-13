@@ -10,9 +10,12 @@ export default defineConfig({
     '/privacy': '/prat',
   },
   build: {
-    inlineStylesheets: 'always',
+    inlineStylesheets: 'auto',
   },
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+    build: {
+      target: 'es2022',
+    },
+  },
 });
