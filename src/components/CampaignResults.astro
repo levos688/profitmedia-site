@@ -32,7 +32,7 @@ import { campaignResults } from '../data/site';
                     data-suffix={item.statSuffix}
                     dir="ltr"
                   >
-                    {item.statPrefix}0{item.statSuffix}
+                    {item.statPrefix}{item.statValue}{item.statSuffix}
                   </span>
                   <span class="case-card__stat-label">{item.statLabel}</span>
                 </div>
@@ -91,6 +91,9 @@ import { campaignResults } from '../data/site';
     const formatter = new Intl.NumberFormat('he-IL');
     const duration = 2200;
     const start = performance.now();
+
+    // HTML ships the final value for crawlers; animation restarts from 0 for sighted users.
+    el.textContent = `${prefix}${formatter.format(0)}${suffix}`;
 
     const tick = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);

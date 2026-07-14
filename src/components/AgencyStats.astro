@@ -51,6 +51,9 @@ import Reveal from './Reveal.astro';
     const duration = target > 1000 ? 1800 : 1400;
     const start = performance.now();
 
+    // Final value is already in the SSR HTML for crawlers; animate from 0 when visible.
+    span.textContent = formatCount(0, prefix, suffix);
+
     const tick = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
