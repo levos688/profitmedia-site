@@ -14,6 +14,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   class:list={['carousel-outer', gap === 'wide' && 'carousel-outer--wide']}
   role="region"
   aria-label={ariaLabel}
+  data-carousel-root={uid}
 >
   <!-- RTL: first = right edge, arrow → scrolls forward -->
   <button
@@ -58,57 +59,125 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
 <script define:vars={{ uid, shuffle, loop }}>
   (() => {
+    const root = document.querySelector(`[data-carousel-root="${uid}"]`);
     const track = document.querySelector(`[data-carousel-track="${uid}"]`);
     const startBtn = document.querySelector(`[data-carousel-start="${uid}"]`);
     const endBtn = document.querySelector(`[data-carousel-end="${uid}"]`);
-    const outer = track?.closest('.carousel-outer');
-    if (!track || !startBtn || !endBtn || !outer) return;
+    if (!root || !track || !startBtn || !endBtn) return;
 
-    const getItems = () => [...track.querySelectorAll(':scope > .carousel-item:not([data-carousel-clone])')];
+    const getRealItems = () =>
+      [...track.querySelectorAll(':scope > .carousel-item:not([data-carousel-clone])')];
+    const getAllItems = () => [...track.querySelectorAll(':scope > .carousel-item')];
 
-    const shuffleTrackItems = () => {
-      const items = getItems();
+    if (shuffle) {
+      const items = getRealItems();
       for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [items[i], items[j]] = [items[j], items[i]];
       }
       items.forEach((item) => track.appendChild(item));
-    };
-
-    if (shuffle) shuffleTrackItems();
+    }
 
     let loopEnabled = false;
-    let setWidth = 0;
-    let loopAnchor = 0;
-    let isAdjusting = false;
+    let realCount = 0;
+    let index = 0;
+    let busy = false;
+    let settleTimer = 0;
     let ready = false;
 
+    const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
 
-    const updateSnapPadding = () => {
-      if (!isMobile()) {
-        track.style.setProperty('--snap-pad', '0px');
-        return;
-      }
-      const item = getItems()[0];
-      if (!item) return;
-      const pad = Math.max(0, (track.clientWidth - item.getBoundingClientRect().width) / 2);
-      track.style.setProperty('--snap-pad', `${pad}px`);
+    const targetLeftFor = (item) => {
+      if (!item) return 0;
+      const left = isMobile()
+        ? item.offsetLeft - (track.clientWidth - item.offsetWidth) / 2
+        : item.offsetLeft;
+      const max = Math.max(0, track.scrollWidth - track.clientWidth);
+      return Math.min(max, Math.max(0, left));
     };
 
-    const measureSetWidth = () => {
-      const items = getItems();
+    const syncIndexFromScroll = () => {
+      const items = getAllItems();
       if (!items.length) return 0;
-      if (items.length === 1) return items[0].getBoundingClientRect().width;
-      const first = items[0];
-      const last = items[items.length - 1];
-      return last.offsetLeft + last.offsetWidth - first.offsetLeft;
+      const focus = isMobile()
+        ? track.scrollLeft + track.clientWidth / 2
+        : track.scrollLeft + Math.min(24, track.clientWidth * 0.1);
+      let best = 0;
+      let bestDist = Infinity;
+      items.forEach((item, i) => {
+        const point = isMobile()
+          ? item.offsetLeft + item.offsetWidth / 2
+          : item.offsetLeft;
+        const dist = Math.abs(point - focus);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      });
+      index = best;
+      return best;
+    };
+
+    const jumpToIndex = (nextIndex) => {
+      const items = getAllItems();
+      const item = items[nextIndex];
+      if (!item) return;
+      index = nextIndex;
+      track.scrollLeft = targetLeftFor(item);
+    };
+
+    const goToIndex = (nextIndex, smooth) => {
+      const items = getAllItems();
+      if (!items[nextIndex] || busy) return;
+
+      busy = true;
+      window.clearTimeout(settleTimer);
+      index = nextIndex;
+
+      const useSmooth = smooth && !reduceMotion();
+      track.scrollTo({ left: targetLeftFor(items[nextIndex]), behavior: useSmooth ? 'smooth' : 'auto' });
+
+      const finish = () => {
+        window.clearTimeout(settleTimer);
+        if (loopEnabled && realCount > 0) {
+          if (index < realCount) {
+            jumpToIndex(index + realCount);
+          } else if (index >= realCount * 2) {
+            jumpToIndex(index - realCount);
+          } else {
+            // Re-align in case snap / subpixel drift left a half card
+            jumpToIndex(index);
+          }
+        }
+        busy = false;
+        updateArrows();
+      };
+
+      if (!useSmooth) {
+        finish();
+        return;
+      }
+
+      settleTimer = window.setTimeout(finish, 380);
+    };
+
+    const step = (delta) => {
+      if (!ready) init();
+      if (busy) return;
+      syncIndexFromScroll();
+      const next = index + delta;
+      const items = getAllItems();
+      if (next < 0 || next >= items.length) return;
+      goToIndex(next, true);
     };
 
     const setupLoop = () => {
-      const items = getItems();
-      if (!loop || items.length < 2) {
+      const items = getRealItems();
+      realCount = items.length;
+      if (!loop || realCount < 2) {
         loopEnabled = false;
+        index = 0;
         return;
       }
 
@@ -118,11 +187,9 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       items.forEach((item) => {
         const cloneBefore = item.cloneNode(true);
         const cloneAfter = item.cloneNode(true);
-        cloneBefore.setAttribute('data-carousel-clone', '');
-        cloneAfter.setAttribute('data-carousel-clone', '');
-        cloneBefore.setAttribute('aria-hidden', 'true');
-        cloneAfter.setAttribute('aria-hidden', 'true');
         [cloneBefore, cloneAfter].forEach((clone) => {
+          clone.setAttribute('data-carousel-clone', '');
+          clone.setAttribute('aria-hidden', 'true');
           clone.querySelectorAll('button, a, input, select, textarea').forEach((el) => {
             el.setAttribute('tabindex', '-1');
           });
@@ -133,58 +200,9 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
       track.insertBefore(before, track.firstChild);
       track.appendChild(after);
-
       loopEnabled = true;
+      index = realCount;
     };
-
-    const measureLayout = () => {
-      setWidth = measureSetWidth();
-      const items = getItems();
-      loopAnchor = items[0]?.offsetLeft ?? 0;
-    };
-
-    const applyLayout = () => {
-      updateSnapPadding();
-      measureLayout();
-      if (loopEnabled) {
-        isAdjusting = true;
-        track.scrollLeft = loopAnchor;
-        isAdjusting = false;
-      }
-      updateArrows();
-    };
-
-    const scheduleLayout = () => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(applyLayout);
-      });
-    };
-
-    const correctLoopPosition = () => {
-      if (!loopEnabled || isAdjusting || setWidth <= 0) return;
-
-      const scroll = track.scrollLeft;
-      const edge = Math.max(8, setWidth * 0.02);
-
-      if (scroll < loopAnchor - edge) {
-        isAdjusting = true;
-        track.scrollLeft = scroll + setWidth;
-        isAdjusting = false;
-      } else if (scroll >= loopAnchor + setWidth - edge) {
-        isAdjusting = true;
-        track.scrollLeft = scroll - setWidth;
-        isAdjusting = false;
-      }
-    };
-
-    const getStep = () => {
-      const item = getItems()[0] || track.querySelector('.carousel-item');
-      if (!item) return 320;
-      const gap = parseFloat(getComputedStyle(track).gap) || 24;
-      return item.getBoundingClientRect().width + gap;
-    };
-
-    const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
 
     const updateArrows = () => {
       if (loopEnabled) {
@@ -192,37 +210,75 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
         endBtn.disabled = false;
         return;
       }
-      const overflow = maxScroll() > 1;
-      startBtn.disabled = !overflow;
-      endBtn.disabled = !overflow;
+      const max = Math.max(0, track.scrollWidth - track.clientWidth);
+      startBtn.disabled = max <= 1;
+      endBtn.disabled = max <= 1;
     };
 
-    const scrollByStep = (forward) => {
-      const step = getStep();
-      const delta = forward ? step : -step;
-      track.scrollBy({ left: delta, behavior: 'smooth' });
+    const applyLayout = () => {
+      if (loopEnabled) {
+        jumpToIndex(Math.min(Math.max(index, realCount), realCount * 2 - 1) || realCount);
+      } else {
+        jumpToIndex(Math.min(index, Math.max(0, getAllItems().length - 1)));
+      }
+      updateArrows();
     };
 
     const init = () => {
       if (ready) return;
       ready = true;
-
       setupLoop();
-      scheduleLayout();
-
-      startBtn.addEventListener('click', () => scrollByStep(true));
-      endBtn.addEventListener('click', () => scrollByStep(false));
-      track.addEventListener(
-        'scroll',
-        () => {
-          correctLoopPosition();
-          updateArrows();
-        },
-        { passive: true }
-      );
-      window.addEventListener('resize', () => {
-        scheduleLayout();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(applyLayout);
       });
+    };
+
+    startBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      step(1);
+    });
+    endBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      step(-1);
+    });
+
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (busy) return;
+        window.clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(() => {
+          syncIndexFromScroll();
+          if (!loopEnabled) {
+            updateArrows();
+            return;
+          }
+          if (index < realCount) {
+            jumpToIndex(index + realCount);
+          } else if (index >= realCount * 2) {
+            jumpToIndex(index - realCount);
+          }
+          updateArrows();
+        }, 120);
+      },
+      { passive: true }
+    );
+
+    window.addEventListener('resize', () => {
+      if (!ready) return;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        syncIndexFromScroll();
+        applyLayout();
+      }, 100);
+    });
+
+    // Init as soon as the carousel is near the viewport, or immediately if already visible
+    const boot = () => {
+      const rect = root.getBoundingClientRect();
+      const near =
+        rect.bottom > -240 && rect.top < (window.innerHeight || 800) + 240;
+      if (near) init();
     };
 
     if ('IntersectionObserver' in window) {
@@ -232,9 +288,14 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
           init();
           observer.disconnect();
         },
-        { rootMargin: '200px 0px' }
+        { rootMargin: '320px 0px' }
       );
-      observer.observe(outer);
+      observer.observe(root);
+      boot();
+      // Fallback if IO never fires (hash jump above/below)
+      window.setTimeout(() => {
+        if (!ready) init();
+      }, 1200);
     } else {
       init();
     }
@@ -264,12 +325,11 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     direction: ltr;
     gap: 1.5rem;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-block: 0.25rem;
-    --snap-pad: 0px;
   }
 
   .carousel-outer--wide .carousel-track {
@@ -282,20 +342,6 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
   .carousel-track :global(.carousel-item) {
     flex: 0 0 auto;
-    scroll-snap-align: start;
-  }
-
-  @media (max-width: 767px) {
-    .carousel-track::before,
-    .carousel-track::after {
-      content: '';
-      flex: 0 0 var(--snap-pad);
-      pointer-events: none;
-    }
-
-    .carousel-track :global(.carousel-item) {
-      scroll-snap-align: center;
-    }
   }
 
   .carousel-arrow {
@@ -314,6 +360,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s, opacity 0.2s;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+    z-index: 2;
   }
 
   .carousel-arrow:hover:not(:disabled) {
@@ -332,14 +379,42 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     outline-offset: 2px;
   }
 
-  @media (max-width: 639px) {
-    .carousel-arrow {
-      width: 2.25rem;
-      height: 2.25rem;
+  @media (max-width: 767px) {
+    .carousel-outer {
+      gap: 0;
     }
 
-    .carousel-outer {
-      gap: 0.5rem;
+    .carousel-wrap {
+      width: 100%;
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2.25rem;
+      height: 2.25rem;
+      min-width: 44px;
+      min-height: 44px;
+      background: rgb(255 255 255 / 0.96);
+    }
+
+    .carousel-arrow--edge-start {
+      right: 0.15rem;
+    }
+
+    .carousel-arrow--edge-end {
+      left: 0.15rem;
+    }
+
+    .carousel-track {
+      padding-inline: 2.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-arrow {
+      transition: none;
     }
   }
 </style>

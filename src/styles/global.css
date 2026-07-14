@@ -527,21 +527,19 @@ summary {
   outline-offset: 2px;
 }
 
-/* תוסף נגישות — 20% отступ от низа экрана на всех страницах */
-#pm-a11y-widget-root .pm-fab {
-  bottom: 20vh !important;
-}
-
+/* תוסף נגישות — слева по центру экрана */
+#pm-a11y-widget-root .pm-fab,
 #pm-a11y-widget-root .pm-panel {
-  bottom: calc(20vh + 4rem) !important;
+  top: 50% !important;
+  bottom: auto !important;
+  left: 12px !important;
+  right: auto !important;
+  transform: translateY(-50%) !important;
 }
 
 @media (max-width: 480px) {
-  #pm-a11y-widget-root .pm-fab {
-    bottom: 20vh !important;
-  }
-
+  #pm-a11y-widget-root .pm-fab,
   #pm-a11y-widget-root .pm-panel {
-    bottom: calc(20vh + 4rem) !important;
+    left: 8px !important;
   }
 }

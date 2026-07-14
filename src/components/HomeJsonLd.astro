@@ -6,16 +6,22 @@ const organizationSchema = {
   '@type': 'ProfessionalService',
   '@id': 'https://profitmedia.co.il/#organization',
   name: 'Profit Media',
+  alternateName: 'פרופיט מדיה',
   url: 'https://profitmedia.co.il/',
+  logo: 'https://profitmedia.co.il/icons/site-icon.png',
+  image: 'https://profitmedia.co.il/icons/site-icon.png',
   description: homeSeo.description,
+  inLanguage: 'he-IL',
   areaServed: {
     '@type': 'Country',
     name: 'Israel',
   },
   serviceType: [
     'ניהול קמפיינים בפייסבוק',
+    'ניהול קמפיינים באינסטגרם',
     'ניהול קמפיינים בגוגל',
     'בניית דפי נחיתה',
+    'שאלונים לסינון לידים',
     'יצירת לידים לעסקאות גבוהות',
   ],
   knowsAbout: [
@@ -24,13 +30,16 @@ const organizationSchema = {
     'Instagram Ads',
     'Landing pages',
     'Lead generation',
+    'Lead qualification',
     'A/B testing',
     'Interactive quizzes',
+    'High-ticket sales',
   ],
   audience: {
     '@type': 'BusinessAudience',
     audienceType: 'עסקים עם עסקאות גבוהות שנמכרים בשיחה, בוואטסאפ או בפגישה',
   },
+  availableLanguage: ['he', 'en'],
 };
 
 const audienceListSchema = {

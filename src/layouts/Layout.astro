@@ -106,17 +106,23 @@ const canonicalUrl = canonical ?? Astro.url.href;
     />
     <style is:inline id="pm-a11y-site-offset">
       #pm-a11y-widget-root .pm-fab {
-        bottom: 20vh !important;
+        top: 50% !important;
+        bottom: auto !important;
+        left: 12px !important;
+        right: auto !important;
+        transform: translateY(-50%) !important;
       }
       #pm-a11y-widget-root .pm-panel {
-        bottom: calc(20vh + 4rem) !important;
+        top: 50% !important;
+        bottom: auto !important;
+        left: 12px !important;
+        right: auto !important;
+        transform: translateY(-50%) !important;
       }
       @media (max-width: 480px) {
-        #pm-a11y-widget-root .pm-fab {
-          bottom: 20vh !important;
-        }
+        #pm-a11y-widget-root .pm-fab,
         #pm-a11y-widget-root .pm-panel {
-          bottom: calc(20vh + 4rem) !important;
+          left: 8px !important;
         }
       }
     </style>
@@ -260,6 +266,8 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <script is:inline>
       (function () {
         var loaded = false;
+        var LOAD_DELAY_MS = 4000;
+
         function loadA11y() {
           if (loaded) return;
           loaded = true;
@@ -268,6 +276,21 @@ const canonicalUrl = canonical ?? Astro.url.href;
           s.defer = true;
           document.body.appendChild(s);
         }
+
+        // Load shortly after first paint so LCP stays clean, without waiting for a click.
+        if (document.readyState === 'complete') {
+          window.setTimeout(loadA11y, LOAD_DELAY_MS);
+        } else {
+          window.addEventListener(
+            'load',
+            function () {
+              window.setTimeout(loadA11y, LOAD_DELAY_MS);
+            },
+            { once: true }
+          );
+        }
+
+        // If the user interacts earlier, bring the widget in immediately.
         ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
           window.addEventListener(type, loadA11y, { once: true, passive: true });
         });
@@ -275,25 +298,40 @@ const canonicalUrl = canonical ?? Astro.url.href;
     </script>
     <script is:inline>
       (function () {
-        var FAB_BOTTOM = '20vh';
-        var PANEL_BOTTOM = 'calc(20vh + 4rem)';
-
         function positionA11yWidget() {
           var root = document.getElementById('pm-a11y-widget-root');
           if (!root) return false;
           var fab = root.querySelector('.pm-fab');
           var panel = root.querySelector('.pm-panel');
-          if (fab) fab.style.setProperty('bottom', FAB_BOTTOM, 'important');
-          if (panel) panel.style.setProperty('bottom', PANEL_BOTTOM, 'important');
+          [fab, panel].forEach(function (el) {
+            if (!el) return;
+            el.style.setProperty('top', '50%', 'important');
+            el.style.setProperty('bottom', 'auto', 'important');
+            el.style.setProperty('left', '12px', 'important');
+            el.style.setProperty('right', 'auto', 'important');
+            el.style.setProperty('transform', 'translateY(-50%)', 'important');
+          });
           return true;
         }
 
         var ticks = 0;
         var timer = window.setInterval(function () {
-          positionA11yWidget();
-          ticks += 1;
-          if (ticks >= 12) window.clearInterval(timer);
-        }, 1000);
+          if (positionA11yWidget() || ticks >= 20) {
+            // Keep correcting for a bit after mount in case the widget restyles itself.
+            ticks += 1;
+            if (ticks >= 20) window.clearInterval(timer);
+          }
+        }, 250);
+
+        if (typeof MutationObserver !== 'undefined') {
+          var observer = new MutationObserver(function () {
+            if (positionA11yWidget()) observer.disconnect();
+          });
+          observer.observe(document.documentElement, { childList: true, subtree: true });
+          window.setTimeout(function () {
+            observer.disconnect();
+          }, 15000);
+        }
       })();
     </script>
     <script is:inline>
