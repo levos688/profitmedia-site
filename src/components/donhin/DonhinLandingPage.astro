@@ -461,9 +461,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
       if (window.donhinAb && window.donhinAb.trackConversion) window.donhinAb.trackConversion();
 
-      var main = document.getElementById('main-content');
-      var basePath = main && main.dataset.donhinBasePath ? main.dataset.donhinBasePath : '/donhin';
-      window.location.href = basePath + '/thank-you';
+      window.location.href = '/donhin/thank-you/';
     } catch (e) {
       if (status) {
         status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
