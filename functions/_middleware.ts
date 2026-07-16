@@ -9,10 +9,29 @@ interface Env {
   AB_STATS_TOKEN?: string;
 }
 
+const GOOGLE_SITE_VERIFICATION =
+  'google-site-verification: googleae2d1f2277e31c67.html\n';
+
 export async function onRequest(context: { request: Request; env: Env; next: () => Promise<Response> }) {
   const { request, env, next } = context;
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, '') || '/';
+
+  // Cloudflare Pretty URLs 308-redirects *.html → extensionless, which breaks
+  // Google Search Console HTML-file verification. Serve the exact payload on both paths.
+  if (
+    path === '/googleae2d1f2277e31c67.html' ||
+    path === '/googleae2d1f2277e31c67'
+  ) {
+    return new Response(GOOGLE_SITE_VERIFICATION, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=300',
+        'X-Robots-Tag': 'noindex',
+      },
+    });
+  }
 
   if (path !== '/donhin/ab-stats') {
     return next();
