@@ -1,0 +1,3 @@
+# Cloudflare Pretty URLs otherwise 308-redirect *.html → extensionless and
+# Google Search Console verification fails. Rewrite (200) keeps the .html URL.
+/googleae2d1f2277e31c67.html /googleae2d1f2277e31c67 200
