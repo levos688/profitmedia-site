@@ -1,0 +1,140 @@
+---
+import type { BlogPost } from '../../data/blog';
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+
+const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<a href={`/blog/${post.slug}`} class="blog-card">
+  <span class="blog-card__image-frame">
+    <img src={post.image} alt={post.imageAlt} class="blog-card__image" loading="lazy" width="700" height="700" />
+  </span>
+
+  <span class="blog-card__body">
+    <span class="blog-card__meta">
+      <span>{formattedDate}</span>
+      <span aria-hidden="true">·</span>
+      <span>{post.readingMinutes} דקות קריאה</span>
+    </span>
+
+    <span class="blog-card__title">{post.title}</span>
+    <span class="blog-card__excerpt">{post.excerpt}</span>
+
+    <span class="blog-card__cta">המשך קריאה</span>
+  </span>
+</a>
+
+<style>
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 8px 28px rgba(101, 21, 97, 0.06);
+    overflow: hidden;
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(101, 21, 97, 0.22);
+    box-shadow: 0 14px 36px rgba(101, 21, 97, 0.11);
+  }
+
+  .blog-card:focus-visible {
+    outline: 3px solid #fcc000;
+    outline-offset: 2px;
+  }
+
+  .blog-card__image-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    padding: 1.5rem;
+    background: linear-gradient(160deg, #faf8fc 0%, #f3edf5 100%);
+    border-bottom: 1px solid rgba(101, 21, 97, 0.08);
+  }
+
+  .blog-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .blog-card__body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .blog-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: #9ca3af;
+    font-size: 0.8125rem;
+  }
+
+  .blog-card__title {
+    margin-top: 0.65rem;
+    font-size: 1.1875rem;
+    line-height: 1.4;
+    font-weight: 900;
+    color: #29102c;
+  }
+
+  .blog-card__excerpt {
+    margin-top: 0.65rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #6b7280;
+    flex-grow: 1;
+  }
+
+  .blog-card__cta {
+    align-self: center;
+    margin-top: 1.25rem;
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    padding: 0.55rem 1.5rem;
+    border-radius: 9999px;
+    background: #651561;
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .blog-card:hover .blog-card__cta {
+    background-color: #5a1c73;
+    transform: translateY(-1px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blog-card,
+    .blog-card__cta {
+      transition: none;
+    }
+  }
+</style>

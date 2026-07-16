@@ -1,0 +1,146 @@
+---
+import Reveal from './Reveal.astro';
+import BlogCard from './blog/BlogCard.astro';
+import { blogPosts } from '../data/blog';
+
+const posts = blogPosts.slice(0, 3);
+---
+
+{
+  posts.length > 0 && (
+    <section id="blog" class="blog-preview section-padding below-fold" aria-labelledby="blog-preview-title">
+      <div class="mx-auto max-w-6xl px-4 md:px-6">
+        <Reveal>
+          <div class="blog-preview__header">
+            <span class="blog-preview__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 20V6M12 6l-5.5 5.5M12 6l5.5 5.5"
+                  stroke="#fff"
+                  stroke-width="2.25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></path>
+              </svg>
+            </span>
+            <p class="blog-preview__eyebrow">מהבלוג של Profit Media</p>
+            <h2 class="blog-preview__title" id="blog-preview-title">בלוג על פרסום ושיווק באינטרנט</h2>
+            <p class="blog-preview__subtitle">מדריכים ותובנות על קמפיינים ממומנים — בלי הבטחות גורפות.</p>
+          </div>
+        </Reveal>
+
+        <div class:list={['blog-preview__grid', { 'blog-preview__grid--single': posts.length === 1 }]}>
+          {posts.map((post, index) => (
+            <Reveal delay={Math.min(index * 80, 240)}>
+              <BlogCard post={post} />
+            </Reveal>
+          ))}
+        </div>
+
+        <div class="mt-10 text-center">
+          <a href="/blog" class="blog-preview__link">לכל המאמרים בבלוג</a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .blog-preview {
+    background: #fff;
+  }
+
+  .blog-preview__header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .blog-preview__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #651561 0%, #5a1c73 100%);
+    box-shadow: 0 8px 20px rgba(101, 21, 97, 0.25);
+  }
+
+  .blog-preview__eyebrow {
+    margin: 0.9rem 0 0;
+    color: #c60691;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .blog-preview__title {
+    margin: 0.5rem 0 0;
+    font-size: 1.875rem;
+    line-height: 1.25;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .blog-preview__title {
+      font-size: 2.625rem;
+    }
+  }
+
+  .blog-preview__subtitle {
+    margin: 0.75rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .blog-preview__subtitle {
+      font-size: 1.125rem;
+    }
+  }
+
+  .blog-preview__grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .blog-preview__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .blog-preview__grid--single {
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 768px) {
+    .blog-preview__grid--single {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .blog-preview__link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    background: #651561;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .blog-preview__link:hover {
+    background-color: #5a1c73;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blog-preview__link {
+      transition: none;
+    }
+  }
+</style>

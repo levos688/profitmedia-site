@@ -1,0 +1,350 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import MidPageCta from '../../components/preview/MidPageCta.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import BlogProse from '../../components/blog/BlogProse.astro';
+import BlogFaq from '../../components/blog/BlogFaq.astro';
+import { getPostBySlug } from '../../data/blog';
+
+const post = getPostBySlug('kampeinim-memumanim-madrich')!;
+const canonicalUrl = `https://profitmedia.co.il/blog/${post.slug}`;
+
+const faqItems = [
+  {
+    question: 'כמה עולה קידום ממומן לעסק קטן?',
+    answer:
+      'זה תלוי בגודל העסקה ובתחרות בענף. עסקים עם עסקה קטנה יכולים להתחיל בתקציב מדיה מתון ולראות תוצאות ראשוניות תוך שבועות. עסקים עם עסקה גדולה זקוקים לתקציב גבוה יותר לפנייה, אבל שווי הלקוח מצדיק זאת.',
+  },
+  {
+    question: 'כמה זמן לוקח לראות תוצאות מקמפיין ממומן?',
+    answer:
+      'זה תלוי בעיקר בגובה התקציב ובאורך תהליך סגירת העסקה אצלכם. ברוב המקרים כבר בימים הראשונים אפשר לקבל אינדיקציה ראשונית אם הקמפיין עובד. תקציב נמוך יותר פשוט אומר שלוקח יותר זמן לאסוף מספיק נתונים כדי לדעת בוודאות.',
+  },
+  {
+    question: 'האם עדיף לנהל קמפיינים בעצמי או להעביר לסוכנות?',
+    answer:
+      'ניהול קמפיין דורש כמה דברים בו-זמנית: הגדרה מדויקת של קהל היעד, כתיבת מודעות מוכרות בכמה גרסאות, ויצירת באנר גרפי או סרטון וידאו עם כתוביות. כל טעות באחד מהשלבים האלה עולה כסף בפועל, בנוסף לזמן שדרוש כדי ללמוד את הכלים ולבנות ולראות תוצאה מהפרסום. מכאן כל עסק יכול להחליט בעצמו מה משתלם לו יותר.',
+  },
+  {
+    question: 'מה ההבדל בין קמפיין בפייסבוק לקמפיין בגוגל?',
+    answer:
+      'בגוגל פונים לאנשים שכבר מחפשים פתרון באופן פעיל. בפייסבוק ואינסטגרם פונים לאנשים שלא מחפשים כרגע, אבל אפשר לעורר אצלם עניין. הבחירה תלויה באיך קהל היעד שלך מתנהג. יש גם הבדל משמעותי במחיר: בגוגל משלמים על כל קליק, ולכן העלות בדרך כלל גבוהה יותר. בפייסבוק אפשר להגיע לחשיפה רחבה בהרבה, וכשמדובר במוצר או שירות מבוקש שמתאים לקהל רחב ולא לנישה מצומצמת, העלות יכולה להיות נמוכה משמעותית.',
+  },
+  {
+    question: 'האם צריך תקציב מדיה גבוה כדי להתחיל?',
+    answer:
+      'לא בהכרח. חשוב יותר שהתקציב הקיים יספיק לאיסוף נתונים מספק כדי לדעת מה עובד. באבחון ראשוני אפשר לבדוק אם התקציב שקיים כרגע יכול לייצר מספיק מידע לעבודה יעילה.',
+  },
+  {
+    question: 'איך יודעים אם קמפיין ממומן באמת מצליח?',
+    answer:
+      'לא רק לפי עלות לליד, אלא לפי כמה מהלידים האלה הופכים ללקוחות בפועל. קמפיין עם עלות לליד גבוהה יותר אבל איכות פניות טובה יותר יכול להיות משתלם יותר מקמפיין עם עלות זולה ולידים שלא מתקדמים.',
+  },
+  {
+    question: 'האם כדאי לפרסם בכמה פלטפורמות בו-זמנית?',
+    answer:
+      'לרוב עדיף להתחיל בפלטפורמה אחת, לוודא שהמסר והדף נחיתה עובדים, ורק אז להרחיב. פיזור תקציב קטן בין יותר מדי פלטפורמות מקשה על איסוף מספיק נתונים בכל אחת מהן.',
+  },
+  {
+    question: 'מה זה A/B טסטינג ולמה זה חשוב?',
+    answer:
+      'זו לא רק המלצה, אלא אחת הדרכים המרכזיות להוריד את העלות ללקוח ולהעלות את היעילות של הקמפיין. בדיקה מקצועית לא בודקת רק טקסט מודעה: בודקים גרסאות שונות של באנרים, סרטוני וידאו, דפי נחיתה ואפילו בלוקים בודדים בתוך הדף. בקייס של משרד עורכי דין, יותר מ-50 גרסאות מודעות נבדקו עד להגעה לתוצאה האופטימלית.',
+  },
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${canonicalUrl}#article`,
+      headline: post.title,
+      description: post.description,
+      datePublished: post.publishDate,
+      dateModified: post.publishDate,
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      author: {
+        '@type': 'Organization',
+        name: 'Profit Media',
+        url: 'https://profitmedia.co.il/',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Profit Media',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://profitmedia.co.il/icons/site-icon.png',
+        },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://profitmedia.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'בלוג', item: 'https://profitmedia.co.il/blog' },
+        { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    },
+  ],
+};
+
+const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Layout title={post.seoTitle} description={post.description} canonical={canonicalUrl} enableGtm={false}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleSchema)} />
+  <Header />
+  <main id="main-content">
+    <article>
+    <div class="mx-auto max-w-3xl px-4 pt-10 md:px-6 md:pt-14">
+      <nav class="blog-breadcrumbs" aria-label="פירורי לחם">
+        <a href="/blog">בלוג</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{post.category}</span>
+      </nav>
+
+      <p class="blog-article__eyebrow">{post.category}</p>
+      <h1 class="blog-article__title">{post.title}</h1>
+
+      <div class="blog-article__meta">
+        <span>{formattedDate}</span>
+        <span aria-hidden="true">·</span>
+        <span>{post.readingMinutes} דקות קריאה</span>
+      </div>
+
+      <figure class="blog-article__figure">
+        <img src={post.imageWide} alt={post.imageWideAlt} width="1000" height="666" loading="eager" />
+      </figure>
+
+      <BlogProse class="mt-8">
+        <p>
+          בעל עסק ששוקל להתחיל בקמפיינים ממומנים בדרך כלל נתקל באותה תופעה: כל מקום שהוא בודק נותן תשובה כללית.
+          "זה משתלם", "זה מגדיל חשיפה", "זה תלוי בתקציב". התשובות האלה נכונות, אבל הן לא עוזרות לקבל החלטה.
+        </p>
+        <p>
+          במאמר הזה אין הבטחות גורפות. יש פירוט של עלויות אמיתיות, ההבדל בין הפלטפורמות בפועל, קייסים עם
+          מספרים אמיתיים מלקוחות שלנו, והטעויות שהכי הרבה עסקים חוזרים עליהן כשהם מתחילים לבד.
+        </p>
+
+        <h2>מה זה בעצם קידום ממומן</h2>
+        <p>
+          קידום ממומן הוא הצגת מודעות בתשלום ברשתות כמו פייסבוק, אינסטגרם, גוגל וטיקטוק, מול קהל יעד מוגדר לפי
+          מיקום, גיל, תחומי עניין או היסטוריית חיפוש. בשונה מקידום אורגני, כאן התוצאה תלויה בתקציב שמושקע ולא רק
+          בזמן ובאיכות התוכן.
+        </p>
+        <p>
+          הבעיה היא שהמשפט הזה נכון לכל עסק, ולכן הוא לא באמת עוזר. השאלה שמעניינת בעלי עסקים היא לא "מה זה",
+          אלא "כמה זה עולה לי" ו"האם זה יעבוד אצלי".
+        </p>
+
+        <h2>כמה עולה קידום ממומן בפועל</h2>
+        <p>לקידום ממומן שני מרכיבי עלות נפרדים, וחשוב להבין את שניהם:</p>
+        <ul>
+          <li>
+            <strong>עלות ניהול</strong> — התשלום לאיש מקצוע או לסוכנות על העבודה: אסטרטגיה, הקמת קמפיינים, כתיבת
+            מסרים, בדיקות A/B ואופטימיזציה שוטפת.
+          </li>
+          <li>
+            <strong>תקציב מדיה</strong> — התשלום לרשת הפרסום עצמה (פייסבוק, גוגל וכו') על הצגת המודעות.
+          </li>
+        </ul>
+
+        <p>כמה זה בפועל:</p>
+        <ul>
+          <li>
+            <strong>עסקים עם עסקה קטנה</strong> (מוצר או שירות שנסגר בהחלטה מהירה) — תקציב מדיה של כמה מאות
+            שקלים ביום כבר יכול לייצר תנועה משמעותית.
+          </li>
+          <li>
+            <strong>עסקים עם עסקה גדולה</strong> (מטבחים, נדל"ן, שירותים מקצועיים) — כאן העלות לפנייה גבוהה יותר,
+            כי הקהל קטן ומדויק יותר, אבל שווי הלקוח גם גבוה בהרבה, ולכן זה עדיין משתלם.
+          </li>
+          <li>
+            <strong>עלות ניהול</strong> — בדרך כלל נקבעת לפי היקף העבודה וגובה תקציב המדיה, ולא סכום קבוע אחיד
+            לכל עסק.
+          </li>
+        </ul>
+        <p>
+          <strong>
+            התשובה הכנה ביותר: כל מי שנותן לך מספר קונקרטי בלי לשאול על התחום שלך, גודל העסקה וקהל היעד — נותן
+            לך מספר לא רלוונטי.
+          </strong>
+        </p>
+
+        <h2>פייסבוק, אינסטגרם, גוגל או טיקטוק — מה מתאים למי</h2>
+        <p>אין פלטפורמה "הכי טובה". יש פלטפורמה מתאימה יותר לפי איך הלקוח שלך מחפש ומחליט:</p>
+        <ul>
+          <li>
+            <strong>גוגל</strong> — מתאים כשיש כוונת רכישה ברורה כבר ברגע החיפוש. מישהו שמחפש "עורך דין רשלנות
+            רפואית" כבר יודע שהוא צריך את זה עכשיו.
+          </li>
+          <li>
+            <strong>פייסבוק ואינסטגרם</strong> — מתאימים כשהקהל לא מחפש באופן פעיל, אבל אפשר לעורר אצלו עניין
+            דרך תמונה, וידאו או הצעה. מתאים מצוין לעסקאות עם החלטה שדורשת "התאהבות" חזותית, כמו מטבחים בהתאמה
+            אישית או חבילות נופש.
+          </li>
+          <li>
+            <strong>טיקטוק</strong> — מתאים לקהלים צעירים יותר או לתוכן שדורש סגנון קליל ואותנטי, ומתאים כמעט
+            לכל מגזר כשהמסר מותאם נכון לפורמט.
+          </li>
+        </ul>
+        <div class="blog-callout">
+          <p>
+            <strong>הכלל המעשי:</strong> אם הלקוח שלך מחפש פתרון באופן פעיל, תתחיל בגוגל. אם אתה צריך "לייצר" את
+            הרצון אצלו, תתחיל במטא.
+          </p>
+        </div>
+      </BlogProse>
+    </div>
+
+    <MidPageCta />
+
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <BlogProse>
+        <h2>קייס אמיתי: מה קרה כשהחלפנו גישה</h2>
+        <p>
+          <strong>מטבחים בהתאמה אישית:</strong> הקמפיין יוצר פניות ממוקדות ללקוחות שמתקדמים בתהליך מכירה של
+          פגישה ושיחה. במשך שני חודשים רצופים הלקוח דיווח על יותר מ-200,000 ש"ח במכירות בחודש (נתונים חסויים,
+          לפי דיווח הלקוח).
+        </p>
+
+        <p><strong>SKI VIP Travel:</strong> טירגוט מדויק ואופטימיזציה שוטפת הובילו לירידה של 46% בעלות לליד.</p>
+        <blockquote>
+          <p>"ירדנו ב-46% בעלות לליד בזכות טירגוט חכם ושיפור מתמיד בקמפיינים."</p>
+          <cite>עמית שניידר, מנכ"ל SKI VIP Travel</cite>
+        </blockquote>
+
+        <p>
+          <strong>משרד עורכי דין:</strong> שילוב של שאלון חכם ומעל 50 גרסאות מודעות ב-A/B טסטינג הביא לירידה של
+          41% בעלות לליד.
+        </p>
+
+        <p>
+          המכנה המשותף בשלושת הקייסים הוא לא "המודעה הכי יצירתית". זו בדיקה שיטתית מתמשכת, ומדידה שהולכת עד
+          לתוצאה העסקית ולא נעצרת בליד.
+        </p>
+
+        <h2>הטעויות הנפוצות שעסקים עושים כשהם מריצים קמפיינים בעצמם</h2>
+        <ul>
+          <li>
+            <strong>הפעלת הקמפיין ושכיחתו</strong> — קמפיין שלא נבדק ומעודכן במשך שבועות מאבד יעילות, גם אם הוא
+            הצליח בהתחלה.
+          </li>
+          <li>
+            <strong>מדידת כמות לידים בלבד</strong> — ליד זול שלא הופך ללקוח הוא בזבוז כסף, גם אם המספרים בדשבורד
+            נראים טוב.
+          </li>
+          <li>
+            <strong>ויתור על בדיקות A/B</strong> — זו לא המלצה נחמדה, אלא אחת הדרכים המרכזיות בפועל להוריד את
+            העלות ללקוח ולהעלות את היעילות. בדיקה מקצועית לא נעצרת בטקסט המודעה: בודקים גם באנרים, סרטוני וידאו,
+            גרסאות שונות של דף הנחיתה ואפילו בלוקים בודדים בתוך הדף. כל הנתונים האלה נאספים לתמונה אחת שמאפשרת
+            לשפר כל שלב בנפרד.
+          </li>
+          <li>
+            <strong>בחירת פלטפורמה לפי מה שנוח, לא לפי איפה הלקוח מחפש</strong> — פרסום בפייסבוק לקהל שמחפש
+            פתרון דחוף בגוגל, ולהפך.
+          </li>
+          <li>
+            <strong>דף נחיתה כללי במקום דף שמדבר ישירות למודעה</strong> — פער בין ההבטחה במודעה לתוכן בדף הנחיתה
+            מייקר כל ליד.
+          </li>
+        </ul>
+
+        <h2>שאלות נפוצות</h2>
+      </BlogProse>
+
+      <BlogFaq items={faqItems} />
+    </div>
+
+    <PreviewContactForm />
+
+    <div class="mx-auto max-w-3xl px-4 py-10 md:px-6 md:py-14">
+      <p>
+        <a href="/blog" class="font-medium text-brand-purple underline">← חזרה לבלוג</a>
+      </p>
+    </div>
+    </article>
+  </main>
+  <Footer />
+  <LeadCaptureModal />
+  <StickyMobileCta />
+</Layout>
+
+<style>
+  .blog-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .blog-breadcrumbs a {
+    color: #651561;
+    font-weight: 600;
+  }
+
+  .blog-article__eyebrow {
+    margin: 0;
+    color: #c60691;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .blog-article__title {
+    margin: 0.6rem 0 0;
+    font-size: 2rem;
+    line-height: 1.3;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .blog-article__title {
+      font-size: 2.5rem;
+    }
+  }
+
+  .blog-article__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+    color: #6b7280;
+    font-size: 0.9375rem;
+  }
+
+  .blog-article__figure {
+    margin: 1.75rem 0 0;
+    padding: 1.5rem;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 4px;
+    background: linear-gradient(160deg, #faf8fc 0%, #f3edf5 100%);
+  }
+
+  .blog-article__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

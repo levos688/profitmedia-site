@@ -1,0 +1,126 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import { blogPosts, blogSeo } from '../../data/blog';
+
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  '@id': `${blogSeo.canonical}#blog`,
+  url: blogSeo.canonical,
+  name: blogSeo.title,
+  description: blogSeo.description,
+  inLanguage: 'he-IL',
+  blogPost: blogPosts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.title,
+    url: `https://profitmedia.co.il/blog/${post.slug}`,
+    datePublished: post.publishDate,
+  })),
+};
+---
+
+<Layout title={blogSeo.title} description={blogSeo.description} canonical={blogSeo.canonical} enableGtm={false}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(blogSchema)} />
+  <Header />
+  <main id="main-content">
+    <section class="blog-hero section-padding">
+      <div class="mx-auto max-w-3xl px-4 text-center md:px-6">
+        <span class="blog-hero__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 20V6M12 6l-5.5 5.5M12 6l5.5 5.5"
+              stroke="#fff"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </span>
+        <p class="blog-hero__eyebrow">הבלוג של Profit Media</p>
+        <h1 class="blog-hero__title">מדריכים ותובנות על פרסום ממומן</h1>
+        <p class="blog-hero__subtitle">
+          תוכן מעשי על קמפיינים בפייסבוק, אינסטגרם וגוגל — בלי הבטחות גורפות, עם קייסים ומספרים אמיתיים.
+        </p>
+      </div>
+    </section>
+
+    <section class="section-padding pt-0">
+      <div class="mx-auto max-w-6xl px-4 md:px-6">
+        <div class="blog-grid">
+          {blogPosts.map((post) => <BlogCard post={post} />)}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <LeadCaptureModal />
+  <StickyMobileCta />
+</Layout>
+
+<style>
+  .blog-hero {
+    background: linear-gradient(160deg, #faf8fc 0%, #fff 60%, #f8f4fa 100%);
+  }
+
+  .blog-hero__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #651561 0%, #5a1c73 100%);
+    box-shadow: 0 8px 20px rgba(101, 21, 97, 0.25);
+  }
+
+  .blog-hero__eyebrow {
+    margin: 0.9rem 0 0;
+    color: #c60691;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .blog-hero__title {
+    margin: 0.5rem 0 0;
+    font-size: 2.25rem;
+    line-height: 1.25;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  .blog-hero__subtitle {
+    margin: 1rem auto 0;
+    max-width: 42rem;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .blog-hero__title {
+      font-size: 2.875rem;
+    }
+  }
+
+  .blog-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

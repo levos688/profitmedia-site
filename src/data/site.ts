@@ -146,6 +146,7 @@ export const homeNav = [
   { href: '#how-it-works', label: 'איך זה עובד' },
   { href: '#services', label: 'המערכת' },
   { href: '#faq', label: 'שאלות נפוצות' },
+  { href: '/blog', label: 'בלוג' },
 ];
 
 export const faqs = [
