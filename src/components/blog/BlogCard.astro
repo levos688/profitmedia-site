@@ -46,7 +46,8 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
   .blog-card {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    width: 100%;
+    height: auto;
     border: 1px solid rgba(101, 21, 97, 0.1);
     border-radius: 4px;
     background: #fff;
@@ -80,9 +81,13 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
   }
 
   .blog-card__image {
+    display: block;
     width: 100%;
     height: 100%;
+    max-width: 100%;
+    margin-inline: auto;
     object-fit: contain;
+    object-position: center;
   }
 
   .blog-card__body {

@@ -27,7 +27,9 @@ const posts = blogPosts.slice(0, 3);
 
         <div class:list={['blog-preview__grid', { 'blog-preview__grid--single': posts.length === 1 }]}>
           {posts.map((post) => (
-            <BlogCard post={post} eager />
+            <div class="blog-preview__card-wrap">
+              <BlogCard post={post} eager />
+            </div>
           ))}
         </div>
 
@@ -102,6 +104,7 @@ const posts = blogPosts.slice(0, 3);
   .blog-preview__grid {
     display: grid;
     gap: 1.25rem;
+    justify-items: stretch;
   }
 
   @media (min-width: 768px) {
@@ -111,25 +114,26 @@ const posts = blogPosts.slice(0, 3);
   }
 
   .blog-preview__grid--single {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    width: 100%;
   }
 
-  .blog-preview__grid--single :global(.blog-card) {
+  .blog-preview__card-wrap {
     width: 100%;
-    max-width: 26rem;
+    max-width: 22.5rem;
+    margin-inline: auto;
+  }
+
+  .blog-preview__card-wrap :global(.blog-card) {
+    width: 100%;
+    height: auto;
   }
 
   @media (min-width: 768px) {
-    .blog-preview__grid--single {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
+    .blog-preview__card-wrap {
       max-width: 26rem;
-      margin-inline: auto;
-    }
-
-    .blog-preview__grid--single :global(.blog-card) {
-      max-width: none;
     }
   }
 
