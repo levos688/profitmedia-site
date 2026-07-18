@@ -204,7 +204,17 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       index = realCount;
     };
 
+    const updatePeekState = () => {
+      const items = getAllItems();
+      items.forEach((item, i) => {
+        const active = i === index;
+        item.classList.toggle('is-active', active);
+        item.classList.toggle('is-peek', !active);
+      });
+    };
+
     const updateArrows = () => {
+      updatePeekState();
       if (loopEnabled) {
         startBtn.disabled = false;
         endBtn.disabled = false;
@@ -245,7 +255,10 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     track.addEventListener(
       'scroll',
       () => {
-        if (busy) return;
+        if (!busy) {
+          syncIndexFromScroll();
+          updatePeekState();
+        }
         window.clearTimeout(settleTimer);
         settleTimer = window.setTimeout(() => {
           syncIndexFromScroll();
@@ -400,20 +413,31 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     }
 
     .carousel-arrow--edge-start {
-      right: 0.15rem;
+      right: 0.35rem;
     }
 
     .carousel-arrow--edge-end {
-      left: 0.15rem;
+      left: 0.35rem;
     }
 
     .carousel-track {
-      padding-inline: 2.75rem;
+      padding-inline: 3rem;
+      gap: 1rem;
+    }
+
+    .carousel-track :global(.carousel-item) {
+      opacity: 0.3;
+      transition: opacity 0.25s ease;
+    }
+
+    .carousel-track :global(.carousel-item.is-active) {
+      opacity: 1;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .carousel-arrow {
+    .carousel-arrow,
+    .carousel-track :global(.carousel-item) {
       transition: none;
     }
   }

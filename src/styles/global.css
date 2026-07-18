@@ -373,12 +373,12 @@ summary {
 
 .contact-input {
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   border-radius: 9999px;
   border: 1.5px solid #e5e7eb;
   background: #fff;
-  padding: 0.9375rem 1.5rem;
-  font-size: 1.1875rem;
+  padding: 0.65rem 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #111827;
   text-align: right;
@@ -389,6 +389,7 @@ summary {
 
 @media (min-width: 768px) {
   .contact-input {
+    min-height: 48px;
     font-size: 1.25rem;
     padding: 1rem 1.625rem;
   }
@@ -445,10 +446,10 @@ summary {
 }
 
 .contact-submit {
-  padding: 1rem 1.5rem;
-  font-size: 1.1875rem;
+  padding: 0.8rem 1.25rem;
+  font-size: 1.0625rem;
   font-weight: 800;
-  min-height: 52px;
+  min-height: 48px;
   transition:
     transform 0.15s ease-out,
     box-shadow 0.2s ease-out,
@@ -460,6 +461,7 @@ summary {
   .contact-submit {
     font-size: 1.25rem;
     padding: 1.0625rem 1.75rem;
+    min-height: 52px;
   }
 }
 
