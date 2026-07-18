@@ -379,10 +379,19 @@ const canonicalUrl = canonical ?? Astro.url.href;
                 observer.unobserve(entry.target);
               });
             },
-            { threshold: 0.08, rootMargin: '0px 0px -8% 0px' }
+            // Generous rootMargin so elements aren't blocked by sticky mobile CTA /
+            // iOS Safari bottom chrome before they become visible.
+            { threshold: 0.01, rootMargin: '0px 0px 20% 0px' }
           );
 
           revealEls.forEach(function (el) {
+            var rect = el.getBoundingClientRect();
+            var vh = window.innerHeight || document.documentElement.clientHeight;
+            // Already on screen (or just below) — show immediately without waiting for IO.
+            if (rect.top < vh * 1.05 && rect.bottom > 0) {
+              el.classList.add('is-visible');
+              return;
+            }
             observer.observe(el);
           });
         }

@@ -1,5 +1,4 @@
 ---
-import Reveal from './Reveal.astro';
 import BlogCard from './blog/BlogCard.astro';
 import { blogPosts } from '../data/blog';
 
@@ -8,31 +7,27 @@ const posts = blogPosts.slice(0, 3);
 
 {
   posts.length > 0 && (
-    <section id="blog" class="blog-preview section-padding below-fold" aria-labelledby="blog-preview-title">
+    <section id="blog" class="blog-preview section-padding" aria-labelledby="blog-preview-title">
       <div class="mx-auto max-w-6xl px-4 md:px-6">
-        <Reveal>
-          <div class="blog-preview__header">
-            <span class="blog-preview__icon" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 20V6M12 6l-5.5 5.5M12 6l5.5 5.5"
-                  stroke="#fff"
-                  stroke-width="2.25"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"></path>
-              </svg>
-            </span>
-            <p class="blog-preview__eyebrow">מהבלוג של Profit Media</p>
-            <h2 class="blog-preview__title" id="blog-preview-title">בלוג על פרסום ושיווק באינטרנט</h2>
-            <p class="blog-preview__subtitle">מדריכים ותובנות על קמפיינים ממומנים — בלי הבטחות גורפות.</p>
-          </div>
-        </Reveal>
+        <div class="blog-preview__header">
+          <span class="blog-preview__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 20V6M12 6l-5.5 5.5M12 6l5.5 5.5"
+                stroke="#fff"
+                stroke-width="2.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <p class="blog-preview__eyebrow">מהבלוג של Profit Media</p>
+          <h2 class="blog-preview__title" id="blog-preview-title">בלוג על פרסום ושיווק באינטרנט</h2>
+          <p class="blog-preview__subtitle">מדריכים ותובנות על קמפיינים ממומנים — בלי הבטחות גורפות.</p>
+        </div>
 
         <div class:list={['blog-preview__grid', { 'blog-preview__grid--single': posts.length === 1 }]}>
-          {posts.map((post, index) => (
-            <Reveal delay={Math.min(index * 80, 240)}>
-              <BlogCard post={post} />
-            </Reveal>
+          {posts.map((post) => (
+            <BlogCard post={post} eager />
           ))}
         </div>
 

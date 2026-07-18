@@ -3,9 +3,10 @@ import type { BlogPost } from '../../data/blog';
 
 interface Props {
   post: BlogPost;
+  eager?: boolean;
 }
 
-const { post } = Astro.props;
+const { post, eager = false } = Astro.props;
 
 const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
   day: 'numeric',
@@ -16,7 +17,15 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
 
 <a href={`/blog/${post.slug}`} class="blog-card">
   <span class="blog-card__image-frame">
-    <img src={post.image} alt={post.imageAlt} class="blog-card__image" loading="lazy" width="700" height="700" />
+    <img
+      src={post.image}
+      alt={post.imageAlt}
+      class="blog-card__image"
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      width="700"
+      height="700"
+    />
   </span>
 
   <span class="blog-card__body">
