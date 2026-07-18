@@ -82,6 +82,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     let realCount = 0;
     let index = 0;
     let busy = false;
+    let animTimer = 0;
     let settleTimer = 0;
     let ready = false;
 
@@ -119,12 +120,56 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       return best;
     };
 
+    const updatePeekState = () => {
+      if (!isMobile()) {
+        getAllItems().forEach((item) => {
+          item.classList.remove('is-active', 'is-peek');
+        });
+        return;
+      }
+      const items = getAllItems();
+      items.forEach((item, i) => {
+        const active = i === index;
+        item.classList.toggle('is-active', active);
+        item.classList.toggle('is-peek', !active);
+      });
+    };
+
+    const updateArrows = () => {
+      updatePeekState();
+      if (loopEnabled) {
+        startBtn.disabled = false;
+        endBtn.disabled = false;
+        return;
+      }
+      const max = Math.max(0, track.scrollWidth - track.clientWidth);
+      const atStart = track.scrollLeft <= 2;
+      const atEnd = track.scrollLeft >= max - 2;
+      // RTL UI: startBtn scrolls forward (higher index), endBtn backward.
+      startBtn.disabled = !loopEnabled && atEnd;
+      endBtn.disabled = !loopEnabled && atStart;
+      if (max <= 1) {
+        startBtn.disabled = true;
+        endBtn.disabled = true;
+      }
+    };
+
     const jumpToIndex = (nextIndex) => {
       const items = getAllItems();
       const item = items[nextIndex];
       if (!item) return;
       index = nextIndex;
       track.scrollLeft = targetLeftFor(item);
+      updatePeekState();
+    };
+
+    const normalizeLoopIndex = () => {
+      if (!loopEnabled || realCount <= 0) return;
+      if (index < realCount) {
+        jumpToIndex(index + realCount);
+      } else if (index >= realCount * 2) {
+        jumpToIndex(index - realCount);
+      }
     };
 
     const goToIndex = (nextIndex, smooth) => {
@@ -132,24 +177,21 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       if (!items[nextIndex] || busy) return;
 
       busy = true;
+      window.clearTimeout(animTimer);
       window.clearTimeout(settleTimer);
       index = nextIndex;
+      updatePeekState();
 
       const useSmooth = smooth && !reduceMotion();
-      track.scrollTo({ left: targetLeftFor(items[nextIndex]), behavior: useSmooth ? 'smooth' : 'auto' });
+      track.scrollTo({
+        left: targetLeftFor(items[nextIndex]),
+        behavior: useSmooth ? 'smooth' : 'auto',
+      });
 
       const finish = () => {
-        window.clearTimeout(settleTimer);
-        if (loopEnabled && realCount > 0) {
-          if (index < realCount) {
-            jumpToIndex(index + realCount);
-          } else if (index >= realCount * 2) {
-            jumpToIndex(index - realCount);
-          } else {
-            // Re-align in case snap / subpixel drift left a half card
-            jumpToIndex(index);
-          }
-        }
+        window.clearTimeout(animTimer);
+        syncIndexFromScroll();
+        normalizeLoopIndex();
         busy = false;
         updateArrows();
       };
@@ -159,7 +201,8 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
         return;
       }
 
-      settleTimer = window.setTimeout(finish, 380);
+      // Keep buttons locked only for the animation; never share this timer with scroll settle.
+      animTimer = window.setTimeout(finish, 420);
     };
 
     const step = (delta) => {
@@ -204,27 +247,6 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       index = realCount;
     };
 
-    const updatePeekState = () => {
-      const items = getAllItems();
-      items.forEach((item, i) => {
-        const active = i === index;
-        item.classList.toggle('is-active', active);
-        item.classList.toggle('is-peek', !active);
-      });
-    };
-
-    const updateArrows = () => {
-      updatePeekState();
-      if (loopEnabled) {
-        startBtn.disabled = false;
-        endBtn.disabled = false;
-        return;
-      }
-      const max = Math.max(0, track.scrollWidth - track.clientWidth);
-      startBtn.disabled = max <= 1;
-      endBtn.disabled = max <= 1;
-    };
-
     const applyLayout = () => {
       if (loopEnabled) {
         jumpToIndex(Math.min(Math.max(index, realCount), realCount * 2 - 1) || realCount);
@@ -245,34 +267,32 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
     startBtn.addEventListener('click', (event) => {
       event.preventDefault();
+      event.stopPropagation();
       step(1);
     });
     endBtn.addEventListener('click', (event) => {
       event.preventDefault();
+      event.stopPropagation();
       step(-1);
     });
 
     track.addEventListener(
       'scroll',
       () => {
-        if (!busy) {
-          syncIndexFromScroll();
-          updatePeekState();
-        }
+        // While an arrow animation is in progress, ignore settle logic so we don't
+        // cancel the busy→idle transition (that was locking the buttons).
+        if (busy) return;
+
+        syncIndexFromScroll();
+        updatePeekState();
+
         window.clearTimeout(settleTimer);
         settleTimer = window.setTimeout(() => {
+          if (busy) return;
           syncIndexFromScroll();
-          if (!loopEnabled) {
-            updateArrows();
-            return;
-          }
-          if (index < realCount) {
-            jumpToIndex(index + realCount);
-          } else if (index >= realCount * 2) {
-            jumpToIndex(index - realCount);
-          }
+          normalizeLoopIndex();
           updateArrows();
-        }, 120);
+        }, 140);
       },
       { passive: true }
     );
@@ -286,11 +306,9 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       }, 100);
     });
 
-    // Init as soon as the carousel is near the viewport, or immediately if already visible
     const boot = () => {
       const rect = root.getBoundingClientRect();
-      const near =
-        rect.bottom > -240 && rect.top < (window.innerHeight || 800) + 240;
+      const near = rect.bottom > -240 && rect.top < (window.innerHeight || 800) + 240;
       if (near) init();
     };
 
@@ -305,7 +323,6 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       );
       observer.observe(root);
       boot();
-      // Fallback if IO never fires (hash jump above/below)
       window.setTimeout(() => {
         if (!ready) init();
       }, 1200);
@@ -338,11 +355,12 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     direction: ltr;
     gap: 1.5rem;
     overflow-x: auto;
-    scroll-snap-type: none;
+    scroll-snap-type: x mandatory;
     scroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-block: 0.25rem;
+    overscroll-behavior-x: contain;
   }
 
   .carousel-outer--wide .carousel-track {
@@ -355,6 +373,8 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
   .carousel-track :global(.carousel-item) {
     flex: 0 0 auto;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
 
   .carousel-arrow {
@@ -371,7 +391,10 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     background: #fff;
     color: #651561;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      opacity 0.2s;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
     z-index: 2;
   }
@@ -430,8 +453,20 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       transition: opacity 0.25s ease;
     }
 
-    .carousel-track :global(.carousel-item.is-active) {
+    .carousel-track :global(.carousel-item.is-active),
+    .carousel-track :global(.carousel-item:only-child) {
       opacity: 1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .carousel-track {
+      scroll-snap-type: none;
+    }
+
+    .carousel-track :global(.carousel-item) {
+      scroll-snap-align: none;
+      scroll-snap-stop: normal;
     }
   }
 
