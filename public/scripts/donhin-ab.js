@@ -10,15 +10,14 @@
     },
     popup_delay: {
       variants: [
-        { id: '15s', ms: 15000 },
-        { id: '18s', ms: 18000 },
         { id: '22s', ms: 22000 },
+        { id: '25s', ms: 25000 },
       ],
     },
     popup_scroll: {
       variants: [
-        { id: '80pct', ratio: 0.8 },
         { id: '60pct', ratio: 0.6 },
+        { id: '50pct', ratio: 0.5 },
       ],
     },
   };
@@ -26,6 +25,14 @@
   function pickVariant(experiment) {
     var list = CONFIG[experiment].variants;
     return list[Math.floor(Math.random() * list.length)];
+  }
+
+  function isActiveVariant(experiment, variant) {
+    var list = CONFIG[experiment].variants;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === variant) return true;
+    }
+    return false;
   }
 
   function readAssignments() {
@@ -44,7 +51,17 @@
 
   function getAssignments() {
     var existing = readAssignments();
-    if (existing) return existing;
+    if (existing) {
+      var changed = false;
+      Object.keys(CONFIG).forEach(function (experiment) {
+        if (!isActiveVariant(experiment, existing[experiment])) {
+          existing[experiment] = pickVariant(experiment).id;
+          changed = true;
+        }
+      });
+      if (changed) writeAssignments(existing);
+      return existing;
+    }
 
     var assignments = {
       sticky_cta: pickVariant('sticky_cta').id,
@@ -133,14 +150,14 @@
     for (var i = 0; i < CONFIG.popup_delay.variants.length; i++) {
       if (CONFIG.popup_delay.variants[i].id === id) return CONFIG.popup_delay.variants[i].ms;
     }
-    return 15000;
+    return 22000;
   }
 
   function scrollRatio(id) {
     for (var i = 0; i < CONFIG.popup_scroll.variants.length; i++) {
       if (CONFIG.popup_scroll.variants[i].id === id) return CONFIG.popup_scroll.variants[i].ratio;
     }
-    return 0.8;
+    return 0.6;
   }
 
   function getScrollDepth() {

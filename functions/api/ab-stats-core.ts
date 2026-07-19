@@ -12,8 +12,8 @@ export type AbStatsStore = Record<string, Record<string, AbVariantStats>>;
 
 export const AB_EXPERIMENTS = {
   sticky_cta: ['get_consult', 'free_consult'],
-  popup_delay: ['15s', '18s', '22s'],
-  popup_scroll: ['80pct', '60pct'],
+  popup_delay: ['15s', '18s', '22s', '25s'],
+  popup_scroll: ['80pct', '60pct', '50pct'],
 } as const;
 
 const STATS_KEYS: Record<AbChannel, string> = {
