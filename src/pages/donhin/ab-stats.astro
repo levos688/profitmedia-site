@@ -118,10 +118,24 @@ import Layout from '../../layouts/Layout.astro';
     lead_source: 'Источник заявок и кликов',
   };
 
+  /** Must match active variants in public/scripts/donhin-ab.js */
+  const activeVariants: Record<string, string[]> = {
+    sticky_cta: ['get_consult', 'free_consult'],
+    popup_delay: ['22s', '25s'],
+    popup_scroll: ['60pct', '50pct'],
+    lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
+  };
+
   const channelNotes: Record<string, string> = {
     fb_ads: 'Показана статистика только с переходов из Facebook Ads (fbclid, utm_source=ri_XX и т.п.).',
     all: 'Показана вся статистика, включая ваши тестовые визиты без рекламы.',
   };
+
+  function isVariantActive(experiment: string, variant: string): boolean {
+    const list = activeVariants[experiment];
+    if (!list) return true;
+    return list.includes(variant);
+  }
 
   function scoreVariant(experiment: string, variant: VariantRow): number {
     if (experiment === 'lead_source') {
@@ -237,17 +251,30 @@ import Layout from '../../layouts/Layout.astro';
           .map((variant) => {
             const name = labels[experiment.experiment]?.[variant.variant] || variant.variant;
             const rank = ranks.get(variant.variant);
-            const rowClass = rank === 'win' ? 'is-win' : rank === 'lose' ? 'is-lose' : '';
+            const active = isVariantActive(experiment.experiment, variant.variant);
+            const rowClass = [
+              rank === 'win' ? 'is-win' : '',
+              rank === 'lose' ? 'is-lose' : '',
+              active ? 'is-active-variant' : 'is-inactive-variant',
+            ]
+              .filter(Boolean)
+              .join(' ');
             const badge =
               rank === 'win'
                 ? '<span class="ab-stats__badge ab-stats__badge--win">Лучший</span>'
                 : rank === 'lose'
                   ? '<span class="ab-stats__badge ab-stats__badge--lose">Слабый</span>'
                   : '';
+            const status = active
+              ? `<span class="ab-stats__lamp ab-stats__lamp--on" title="Вариант включён в тест" aria-label="Включён"></span>`
+              : `<span class="ab-stats__lamp ab-stats__lamp--off" title="Вариант выключен, данные только исторические" aria-label="Выключен"></span>`;
 
             return `<tr class="${rowClass}">
               <td class="ab-stats__variant">
-                <span class="ab-stats__variant-name">${name}</span>
+                <span class="ab-stats__variant-main">
+                  ${status}
+                  <span class="ab-stats__variant-name">${name}</span>
+                </span>
                 ${badge}
               </td>
               <td class="ab-stats__num ab-stats__col--imp">${variant.impression}</td>
@@ -262,14 +289,22 @@ import Layout from '../../layouts/Layout.astro';
         return `<section class="ab-stats__block">
           <div class="ab-stats__block-head">
             <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
-            ${
-              showLegend
-                ? `<p class="ab-stats__legend">
-              <span class="ab-stats__legend-item ab-stats__legend-item--win">Лучший</span>
-              <span class="ab-stats__legend-item ab-stats__legend-item--lose">Слабый</span>
-            </p>`
-                : '<p class="ab-stats__legend-note">Считается с момента включения учёта по формам</p>'
-            }
+            <p class="ab-stats__legend">
+              <span class="ab-stats__legend-item ab-stats__legend-item--on">
+                <span class="ab-stats__lamp ab-stats__lamp--on" aria-hidden="true"></span>
+                Включён
+              </span>
+              <span class="ab-stats__legend-item ab-stats__legend-item--off">
+                <span class="ab-stats__lamp ab-stats__lamp--off" aria-hidden="true"></span>
+                Выключен
+              </span>
+              ${
+                showLegend
+                  ? `<span class="ab-stats__legend-item ab-stats__legend-item--win">Лучший</span>
+              <span class="ab-stats__legend-item ab-stats__legend-item--lose">Слабый</span>`
+                  : ''
+              }
+            </p>
           </div>
           <div class="ab-stats__table-wrap">
             <table class="ab-stats__table">
@@ -701,6 +736,56 @@ import Layout from '../../layouts/Layout.astro';
   .ab-stats__table tbody .ab-stats__col--cvr {
     background: var(--ab-col-cvr);
     font-weight: 600;
+  }
+
+  .ab-stats__legend-item--on {
+    background: #eef8f1;
+    color: var(--ab-win-text);
+    border: 1px solid var(--ab-win-border);
+  }
+
+  .ab-stats__legend-item--off {
+    background: #f7f2f2;
+    color: #8a5a5a;
+    border: 1px solid #e2c8c8;
+  }
+
+  .ab-stats__lamp {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+
+  .ab-stats__lamp--on {
+    background: radial-gradient(circle at 35% 30%, #c8f0d2 0%, #4caf6e 55%, #2f8a4e 100%);
+    box-shadow:
+      0 0 0 2px rgba(76, 175, 110, 0.16),
+      0 0 8px rgba(76, 175, 110, 0.35);
+  }
+
+  .ab-stats__lamp--off {
+    background: radial-gradient(circle at 35% 30%, #f0d4d4 0%, #c57a7a 60%, #a35a5a 100%);
+    box-shadow: 0 0 0 2px rgba(163, 90, 90, 0.1);
+    opacity: 0.72;
+  }
+
+  .ab-stats__variant-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  .ab-stats__table tbody tr.is-inactive-variant td {
+    opacity: 0.72;
+  }
+
+  .ab-stats__table tbody tr.is-inactive-variant .ab-stats__variant-name {
+    color: #64748b;
+    font-weight: 500;
   }
 
   .ab-stats__variant {
