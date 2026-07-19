@@ -103,6 +103,7 @@ import Layout from '../../layouts/Layout.astro';
       '50pct': 'Скролл 50%',
     },
     lead_source: {
+      historical_unknown: 'Исторические заявки — форма неизвестна',
       quiz: 'Квиз на странице',
       simple: 'Форма внизу страницы',
       popup_quiz: 'Popup с квизом',
@@ -124,6 +125,12 @@ import Layout from '../../layouts/Layout.astro';
     popup_delay: ['22s', '25s'],
     popup_scroll: ['60pct', '50pct'],
     lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
+  };
+
+  // Snapshot taken when per-form tracking was enabled. Earlier leads have no reliable form attribution.
+  const historicalLeadBaseline: Record<string, number> = {
+    fb_ads: 4,
+    all: 3,
   };
 
   const channelNotes: Record<string, string> = {
@@ -175,14 +182,12 @@ import Layout from '../../layouts/Layout.astro';
 
   function renderSummary(experiments: Array<{ experiment: string; variants: VariantRow[] }>) {
     const leadSource = experiments.find((item) => item.experiment === 'lead_source');
-    const leadTotals = leadSource ? sumVariants(leadSource.variants) : null;
     const sticky = experiments.find((item) => item.experiment === 'sticky_cta');
     const stickyTotals = sticky ? sumVariants(sticky.variants) : null;
-    const totalLeads = leadTotals
-      ? leadSource!.variants
-          .filter((v) => v.variant !== 'hero_cta')
-          .reduce((sum, v) => sum + v.conversion, 0)
-      : stickyTotals?.conversion || 0;
+    const abLeadTotals = experiments
+      .filter((item) => item.experiment !== 'lead_source')
+      .map((item) => sumVariants(item.variants).conversion);
+    const totalLeads = abLeadTotals.length ? Math.max(...abLeadTotals) : 0;
     const totalStickyClicks = stickyTotals?.click || 0;
     const totalHeroClicks = leadSource?.variants.find((v) => v.variant === 'hero_cta')?.click || 0;
 
@@ -245,17 +250,33 @@ import Layout from '../../layouts/Layout.astro';
     const tables = experiments
       .map((experiment) => {
         const ranks = rankMap(experiment.experiment, experiment.variants);
-        const totals = sumVariants(experiment.variants);
+        const historicalVariant: VariantRow | null =
+          experiment.experiment === 'lead_source'
+            ? {
+                variant: 'historical_unknown',
+                impression: 0,
+                click: 0,
+                conversion: historicalLeadBaseline[activeChannel] || 0,
+                ctr: 0,
+                cvr: 0,
+              }
+            : null;
+        const displayVariants = historicalVariant
+          ? [historicalVariant, ...experiment.variants]
+          : experiment.variants;
+        const totals = sumVariants(displayVariants);
         const showLegend = experiment.experiment !== 'lead_source';
-        const rows = experiment.variants
+        const rows = displayVariants
           .map((variant) => {
             const name = labels[experiment.experiment]?.[variant.variant] || variant.variant;
             const rank = ranks.get(variant.variant);
             const active = isVariantActive(experiment.experiment, variant.variant);
+            const isHistorical = variant.variant === 'historical_unknown';
             const rowClass = [
               rank === 'win' ? 'is-win' : '',
               rank === 'lose' ? 'is-lose' : '',
               active ? 'is-active-variant' : 'is-inactive-variant',
+              isHistorical ? 'is-historical' : '',
             ]
               .filter(Boolean)
               .join(' ');
@@ -277,11 +298,11 @@ import Layout from '../../layouts/Layout.astro';
                 </span>
                 ${badge}
               </td>
-              <td class="ab-stats__num ab-stats__col--imp">${variant.impression}</td>
-              <td class="ab-stats__num ab-stats__col--click">${variant.click}</td>
+              <td class="ab-stats__num ab-stats__col--imp">${isHistorical ? '—' : variant.impression}</td>
+              <td class="ab-stats__num ab-stats__col--click">${isHistorical ? '—' : variant.click}</td>
               <td class="ab-stats__num ab-stats__col--conv">${variant.conversion}</td>
-              <td class="ab-stats__num ab-stats__col--ctr">${variant.ctr}%</td>
-              <td class="ab-stats__num ab-stats__col--cvr">${variant.cvr}%</td>
+              <td class="ab-stats__num ab-stats__col--ctr">${isHistorical ? '—' : `${variant.ctr}%`}</td>
+              <td class="ab-stats__num ab-stats__col--cvr">${isHistorical ? '—' : `${variant.cvr}%`}</td>
             </tr>`;
           })
           .join('');
