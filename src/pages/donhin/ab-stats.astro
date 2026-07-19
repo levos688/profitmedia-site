@@ -12,6 +12,15 @@ import Layout from '../../layouts/Layout.astro';
   lang="ru"
   dir="ltr"
 >
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
   <main id="main-content" class="ab-stats" dir="ltr" lang="ru">
     <div class="ab-stats__panel">
       <header class="ab-stats__header">
@@ -42,6 +51,15 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script>
+  type VariantRow = {
+    variant: string;
+    impression: number;
+    click: number;
+    conversion: number;
+    ctr: number;
+    cvr: number;
+  };
+
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token') || '';
 
@@ -61,14 +79,7 @@ import Layout from '../../layouts/Layout.astro';
         label: string;
         experiments: Array<{
           experiment: string;
-          variants: Array<{
-            variant: string;
-            impression: number;
-            click: number;
-            conversion: number;
-            ctr: number;
-            cvr: number;
-          }>;
+          variants: VariantRow[];
         }>;
       }
     >;
@@ -103,6 +114,30 @@ import Layout from '../../layouts/Layout.astro';
     all: 'Показана вся статистика, включая ваши тестовые визиты без рекламы.',
   };
 
+  function scoreVariant(experiment: string, variant: VariantRow): number {
+    if (experiment === 'sticky_cta') {
+      return variant.conversion * 1000 + variant.cvr * 10 + variant.ctr;
+    }
+    return variant.conversion * 1000 + variant.cvr;
+  }
+
+  function rankMap(experiment: string, variants: VariantRow[]): Map<string, 'win' | 'lose'> {
+    const ranked = new Map<string, 'win' | 'lose'>();
+    const eligible = variants.filter((v) => v.impression > 0);
+    if (eligible.length < 2) return ranked;
+
+    const scored = eligible.map((v) => ({ id: v.variant, score: scoreVariant(experiment, v) }));
+    const max = Math.max(...scored.map((s) => s.score));
+    const min = Math.min(...scored.map((s) => s.score));
+    if (max === min) return ranked;
+
+    scored.forEach((s) => {
+      if (s.score === max) ranked.set(s.id, 'win');
+      if (s.score === min) ranked.set(s.id, 'lose');
+    });
+    return ranked;
+  }
+
   function setActiveChannel(channel: string) {
     activeChannel = channel === 'all' ? 'all' : 'fb_ads';
     tabButtons.forEach((tab) => {
@@ -130,32 +165,51 @@ import Layout from '../../layouts/Layout.astro';
 
     rootEl.innerHTML = channel.experiments
       .map((experiment) => {
+        const ranks = rankMap(experiment.experiment, experiment.variants);
         const rows = experiment.variants
           .map((variant) => {
             const name = labels[experiment.experiment]?.[variant.variant] || variant.variant;
-            return `<tr>
-              <td class="ab-stats__variant">${name}</td>
-              <td class="ab-stats__num">${variant.impression}</td>
-              <td class="ab-stats__num">${variant.click}</td>
-              <td class="ab-stats__num">${variant.conversion}</td>
-              <td class="ab-stats__num">${variant.ctr}%</td>
-              <td class="ab-stats__num">${variant.cvr}%</td>
+            const rank = ranks.get(variant.variant);
+            const rowClass = rank === 'win' ? 'is-win' : rank === 'lose' ? 'is-lose' : '';
+            const badge =
+              rank === 'win'
+                ? '<span class="ab-stats__badge ab-stats__badge--win">Лучший</span>'
+                : rank === 'lose'
+                  ? '<span class="ab-stats__badge ab-stats__badge--lose">Слабый</span>'
+                  : '';
+
+            return `<tr class="${rowClass}">
+              <td class="ab-stats__variant">
+                <span class="ab-stats__variant-name">${name}</span>
+                ${badge}
+              </td>
+              <td class="ab-stats__num ab-stats__col--imp">${variant.impression}</td>
+              <td class="ab-stats__num ab-stats__col--click">${variant.click}</td>
+              <td class="ab-stats__num ab-stats__col--conv">${variant.conversion}</td>
+              <td class="ab-stats__num ab-stats__col--ctr">${variant.ctr}%</td>
+              <td class="ab-stats__num ab-stats__col--cvr">${variant.cvr}%</td>
             </tr>`;
           })
           .join('');
 
         return `<section class="ab-stats__block">
-          <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
+          <div class="ab-stats__block-head">
+            <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
+            <p class="ab-stats__legend">
+              <span class="ab-stats__legend-item ab-stats__legend-item--win">Лучший</span>
+              <span class="ab-stats__legend-item ab-stats__legend-item--lose">Слабый</span>
+            </p>
+          </div>
           <div class="ab-stats__table-wrap">
-            <table>
+            <table class="ab-stats__table">
               <thead>
                 <tr>
-                  <th>Вариант</th>
-                  <th>Показы</th>
-                  <th>Клики</th>
-                  <th>Конверсии</th>
-                  <th>CTR</th>
-                  <th>CVR</th>
+                  <th scope="col">Вариант</th>
+                  <th scope="col" class="ab-stats__col--imp">Показы</th>
+                  <th scope="col" class="ab-stats__col--click">Клики</th>
+                  <th scope="col" class="ab-stats__col--conv">Конверсии</th>
+                  <th scope="col" class="ab-stats__col--ctr">CTR</th>
+                  <th scope="col" class="ab-stats__col--cvr">CVR</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
@@ -206,242 +260,380 @@ import Layout from '../../layouts/Layout.astro';
   window.setInterval(loadStats, 30000);
 </script>
 
-<style>
+<style is:global>
   .ab-stats {
-    min-height: 100vh;
+    --ab-ink: #16324f;
+    --ab-muted: #5b6b7c;
+    --ab-line: #d7e0ea;
+    --ab-panel: #ffffff;
+    --ab-soft: #f3f6fa;
+    --ab-accent: #1f4e79;
+    --ab-win-bg: #eef8f1;
+    --ab-win-border: #b7dcc3;
+    --ab-win-text: #1f6b3a;
+    --ab-lose-bg: #fbf1f1;
+    --ab-lose-border: #e4bcbc;
+    --ab-lose-text: #8f3d3d;
+    --ab-col-imp: #f4f8fc;
+    --ab-col-click: #f7f5f2;
+    --ab-col-conv: #f3f7f4;
+    --ab-col-ctr: #f6f4f9;
+    --ab-col-cvr: #f2f6fb;
+
+    min-height: 100dvh;
     direction: ltr;
     text-align: left;
     padding: 2.5rem 1.25rem 4.5rem;
-    background: #eef2f7;
-    font-family: Assistant, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(31, 78, 121, 0.08), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 90% 0%, rgba(120, 150, 170, 0.1), transparent 50%),
+      #e8eef4;
+    font-family: Outfit, Assistant, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--ab-ink);
   }
 
   .ab-stats__panel {
-    width: min(100%, 72rem);
+    width: min(100%, 74rem);
     margin-inline: auto;
-    background: #fff;
-    border-radius: 1rem;
-    padding: 2rem 1.75rem 2.25rem;
-    box-shadow: 0 12px 40px rgba(21, 71, 127, 0.1);
+    background: var(--ab-panel);
+    border: 1px solid rgba(22, 50, 79, 0.08);
+    border-radius: 1.125rem;
+    padding: 2rem 1.75rem 2.35rem;
+    box-shadow: 0 18px 48px rgba(22, 50, 79, 0.08);
   }
 
   .ab-stats__header {
     margin-bottom: 1.75rem;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--ab-line);
   }
 
   .ab-stats h1 {
-    margin: 0 0 0.5rem;
-    color: #15477f;
-    font-size: clamp(1.5rem, 3vw, 1.875rem);
-    line-height: 1.25;
-    text-align: left;
+    margin: 0 0 0.45rem;
+    color: var(--ab-accent);
+    font-size: clamp(1.55rem, 2.8vw, 1.95rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-wrap: balance;
   }
 
   .ab-stats__subtitle {
     margin: 0;
-    color: #6b7280;
-    font-size: 0.9375rem;
+    color: var(--ab-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
     line-height: 1.55;
-    max-width: 42rem;
   }
 
   .ab-stats__switcher {
     margin-bottom: 2rem;
-    padding: 1.5rem 1.75rem;
-    border: 1px solid #d6e0ee;
-    border-radius: 0.75rem;
-    background: #f7f9fc;
+    padding: 1.35rem 1.5rem;
+    border: 1px solid var(--ab-line);
+    border-radius: 0.875rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #f3f6fa 100%);
   }
 
   .ab-stats__switcher-label {
-    margin: 0 0 1rem;
-    color: #15477f;
-    font-size: 0.875rem;
+    margin: 0 0 0.85rem;
+    color: var(--ab-accent);
+    font-size: 0.8125rem;
     font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
   .ab-stats__tabs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.875rem;
-    margin-bottom: 1rem;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
   }
 
   .ab-stats__tab {
-    border: 2px solid #c5d0df;
-    border-radius: 0.625rem;
+    border: 1.5px solid #c8d4e2;
+    border-radius: 0.7rem;
     background: #fff;
-    color: #374151;
-    padding: 0.9375rem 1.125rem;
+    color: #334155;
+    padding: 0.9rem 1.05rem;
+    font: inherit;
     font-size: 0.9375rem;
     font-weight: 600;
-    line-height: 1.45;
+    line-height: 1.4;
     text-align: left;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.15s ease;
   }
 
   .ab-stats__tab:hover {
-    border-color: #15477f;
-    color: #15477f;
+    border-color: var(--ab-accent);
+    color: var(--ab-accent);
+  }
+
+  .ab-stats__tab:active {
+    transform: translateY(1px);
   }
 
   .ab-stats__tab:focus-visible {
-    outline: 2px solid #15477f;
+    outline: 2px solid var(--ab-accent);
     outline-offset: 2px;
   }
 
   .ab-stats__tab.is-active {
-    border-color: #15477f;
-    background: #15477f;
+    border-color: var(--ab-accent);
+    background: var(--ab-accent);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(21, 71, 127, 0.22);
+    box-shadow: 0 6px 18px rgba(31, 78, 121, 0.22);
   }
 
-  .ab-stats__channel-note {
-    margin: 0;
-    color: #4b5563;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    max-width: 48rem;
-  }
-
+  .ab-stats__channel-note,
   .ab-stats__status,
   .ab-stats__updated,
   .ab-stats__empty {
-    color: #4b5563;
+    margin: 0;
+    color: var(--ab-muted);
     font-size: 0.875rem;
-    line-height: 1.55;
-    text-align: left;
+    line-height: 1.6;
   }
 
   .ab-stats__updated {
     margin-top: 1.75rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid #e5e7eb;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--ab-line);
   }
 
   .ab-stats__root {
     display: grid;
-    gap: 2.25rem;
+    gap: 1.75rem;
   }
 
   .ab-stats__block {
-    padding: 1.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.75rem;
+    padding: 1.35rem 1.35rem 1.5rem;
+    border: 1px solid var(--ab-line);
+    border-radius: 0.95rem;
     background: #fff;
   }
 
+  .ab-stats__block-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+
   .ab-stats__block h2 {
-    margin: 0 0 1.5rem;
-    color: #15477f;
+    margin: 0;
+    color: var(--ab-accent);
     font-size: 1.125rem;
-    line-height: 1.35;
-    text-align: left;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+  }
+
+  .ab-stats__legend {
+    display: inline-flex;
+    gap: 0.55rem;
+    margin: 0;
+  }
+
+  .ab-stats__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .ab-stats__legend-item--win {
+    background: var(--ab-win-bg);
+    color: var(--ab-win-text);
+    border: 1px solid var(--ab-win-border);
+  }
+
+  .ab-stats__legend-item--lose {
+    background: var(--ab-lose-bg);
+    color: var(--ab-lose-text);
+    border: 1px solid var(--ab-lose-border);
   }
 
   .ab-stats__table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    border-radius: 0.5rem;
+    border: 1px solid var(--ab-line);
+    border-radius: 0.75rem;
+    background: #fff;
   }
 
-  .ab-stats table {
+  .ab-stats__table {
     width: 100%;
-    min-width: 50rem;
+    min-width: 52rem;
     border-collapse: separate;
     border-spacing: 0;
-    border: 2px solid #9ca3af;
-    border-radius: 0.5rem;
-    overflow: hidden;
     font-size: 0.9375rem;
     background: #fff;
   }
 
-  .ab-stats th,
-  .ab-stats td {
-    padding: 1.25rem 1.5rem;
-    text-align: left;
+  .ab-stats__table th,
+  .ab-stats__table td {
+    padding: 0.95rem 1.15rem;
     vertical-align: middle;
-    border-bottom: 1px solid #cbd5e1;
-    line-height: 1.55;
+    border-bottom: 1px solid var(--ab-line);
+    border-right: 1px solid rgba(215, 224, 234, 0.9);
+    line-height: 1.45;
   }
 
-  .ab-stats th:not(:last-child),
-  .ab-stats td:not(:last-child) {
-    padding-right: 2.25rem;
+  .ab-stats__table th:last-child,
+  .ab-stats__table td:last-child {
+    border-right: none;
   }
 
-  .ab-stats th + th,
-  .ab-stats td + td {
-    border-left: 2px solid #9ca3af;
-    padding-left: 2.25rem;
-  }
-
-  .ab-stats tbody tr:last-child td {
+  .ab-stats__table tbody tr:last-child td {
     border-bottom: none;
   }
 
-  .ab-stats thead th {
-    background: #e8eef5;
-    color: #15477f;
+  .ab-stats__table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #eef3f8;
+    color: var(--ab-accent);
+    font-size: 0.78rem;
     font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     white-space: nowrap;
-    border-bottom: 2px solid #9ca3af;
+    border-bottom: 1.5px solid #c5d2e0;
   }
 
-  .ab-stats tbody tr:nth-child(even) td {
-    background: #f8fafc;
+  .ab-stats__table th:first-child,
+  .ab-stats__table td:first-child {
+    text-align: left;
   }
 
-  .ab-stats tbody tr:hover td {
-    background: #eef4fb;
+  .ab-stats__table th:not(:first-child),
+  .ab-stats__table td:not(:first-child) {
+    text-align: right;
+  }
+
+  .ab-stats__table thead .ab-stats__col--imp {
+    background: #e8f0f8;
+  }
+
+  .ab-stats__table thead .ab-stats__col--click {
+    background: #efeae4;
+  }
+
+  .ab-stats__table thead .ab-stats__col--conv {
+    background: #e7f0ea;
+  }
+
+  .ab-stats__table thead .ab-stats__col--ctr {
+    background: #ece8f2;
+  }
+
+  .ab-stats__table thead .ab-stats__col--cvr {
+    background: #e4edf6;
+  }
+
+  .ab-stats__table tbody .ab-stats__col--imp {
+    background: var(--ab-col-imp);
+  }
+
+  .ab-stats__table tbody .ab-stats__col--click {
+    background: var(--ab-col-click);
+  }
+
+  .ab-stats__table tbody .ab-stats__col--conv {
+    background: var(--ab-col-conv);
+  }
+
+  .ab-stats__table tbody .ab-stats__col--ctr {
+    background: var(--ab-col-ctr);
+  }
+
+  .ab-stats__table tbody .ab-stats__col--cvr {
+    background: var(--ab-col-cvr);
+    font-weight: 600;
   }
 
   .ab-stats__variant {
-    min-width: 17rem;
+    min-width: 16.5rem;
     max-width: 28rem;
-    white-space: normal;
-    word-break: break-word;
+    background: #fff;
+  }
+
+  .ab-stats__variant-name {
+    display: inline-block;
     font-weight: 600;
-    color: #1f2937;
-    text-align: left;
-    padding-right: 2.5rem;
+    color: #1e293b;
+    word-break: break-word;
+  }
+
+  .ab-stats__badge {
+    display: inline-flex;
+    margin-left: 0.55rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .ab-stats__badge--win {
+    background: #d9efdf;
+    color: var(--ab-win-text);
+  }
+
+  .ab-stats__badge--lose {
+    background: #f0d6d6;
+    color: var(--ab-lose-text);
   }
 
   .ab-stats__num {
-    min-width: 7.5rem;
-    text-align: right;
+    min-width: 6.75rem;
     font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
     white-space: nowrap;
-    color: #374151;
-    padding-left: 2.25rem;
-    padding-right: 1.75rem;
+    color: #334155;
   }
 
-  .ab-stats th:not(:first-child),
-  .ab-stats td:not(:first-child) {
-    text-align: right;
+  .ab-stats__table tbody tr.is-win td {
+    background: var(--ab-win-bg);
   }
 
-  .ab-stats thead th:not(:first-child) {
-    padding-right: 1.75rem;
+  .ab-stats__table tbody tr.is-win td:first-child {
+    box-shadow: inset 3px 0 0 #6faf84;
+  }
+
+  .ab-stats__table tbody tr.is-lose td {
+    background: var(--ab-lose-bg);
+  }
+
+  .ab-stats__table tbody tr.is-lose td:first-child {
+    box-shadow: inset 3px 0 0 #c98989;
+  }
+
+  .ab-stats__table tbody tr:hover td {
+    filter: brightness(0.985);
   }
 
   @media (max-width: 640px) {
     .ab-stats {
-      padding: 1.5rem 1rem 3rem;
+      padding: 1.35rem 0.85rem 3rem;
     }
 
     .ab-stats__panel {
-      padding: 1.5rem 1.125rem 1.75rem;
-    }
-
-    .ab-stats__switcher {
-      padding: 1.125rem 1.25rem;
+      padding: 1.35rem 1rem 1.6rem;
     }
 
     .ab-stats__tabs {
@@ -449,34 +641,21 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     .ab-stats__block {
-      padding: 1.25rem 1rem;
+      padding: 1rem 0.85rem 1.15rem;
     }
 
-    .ab-stats th,
-    .ab-stats td {
-      padding: 1rem 1.125rem;
+    .ab-stats__table th,
+    .ab-stats__table td {
+      padding: 0.8rem 0.85rem;
       font-size: 0.875rem;
     }
 
-    .ab-stats th:not(:last-child),
-    .ab-stats td:not(:last-child) {
-      padding-right: 1.5rem;
-    }
-
-    .ab-stats th + th,
-    .ab-stats td + td {
-      padding-left: 1.5rem;
-    }
-
     .ab-stats__variant {
-      min-width: 14rem;
-      padding-right: 1.75rem;
+      min-width: 13.5rem;
     }
 
     .ab-stats__num {
-      min-width: 6.5rem;
-      padding-left: 1.5rem;
-      padding-right: 1.25rem;
+      min-width: 5.75rem;
     }
   }
 </style>
