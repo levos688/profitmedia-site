@@ -14,6 +14,7 @@ interface Props {
   metaPixelLead?: boolean;
   lang?: string;
   dir?: 'ltr' | 'rtl';
+  enableA11y?: boolean;
 }
 
 const {
@@ -29,6 +30,7 @@ const {
   metaPixelLead = false,
   lang = 'he',
   dir = 'rtl',
+  enableA11y = true,
 } = Astro.props;
 
 const canonicalUrl = canonical ?? Astro.url.href;
@@ -104,28 +106,32 @@ const canonicalUrl = canonical ?? Astro.url.href;
       type="font/woff2"
       crossorigin
     />
-    <style is:inline id="pm-a11y-site-offset">
-      #pm-a11y-widget-root .pm-fab {
-        top: 50% !important;
-        bottom: auto !important;
-        left: 12px !important;
-        right: auto !important;
-        transform: translateY(-50%) !important;
-      }
-      #pm-a11y-widget-root .pm-panel {
-        top: 50% !important;
-        bottom: auto !important;
-        left: 12px !important;
-        right: auto !important;
-        transform: translateY(-50%) !important;
-      }
-      @media (max-width: 480px) {
-        #pm-a11y-widget-root .pm-fab,
-        #pm-a11y-widget-root .pm-panel {
-          left: 8px !important;
-        }
-      }
-    </style>
+    {
+      enableA11y && (
+        <style is:inline id="pm-a11y-site-offset">
+          #pm-a11y-widget-root .pm-fab {
+            top: 50% !important;
+            bottom: auto !important;
+            left: 12px !important;
+            right: auto !important;
+            transform: translateY(-50%) !important;
+          }
+          #pm-a11y-widget-root .pm-panel {
+            top: 50% !important;
+            bottom: auto !important;
+            left: 12px !important;
+            right: auto !important;
+            transform: translateY(-50%) !important;
+          }
+          @media (max-width: 480px) {
+            #pm-a11y-widget-root .pm-fab,
+            #pm-a11y-widget-root .pm-panel {
+              left: 8px !important;
+            }
+          }
+        </style>
+      )
+    }
     <title>{title}</title>
     {
       enableGtm && (
@@ -268,77 +274,83 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <a href="#main-content" class="skip-link">דילוג לתוכן</a>
     <slot />
     <slot name="scripts" />
-    <script is:inline>
-      (function () {
-        var loaded = false;
-        var LOAD_DELAY_MS = 4000;
+    {
+      enableA11y && (
+        <>
+          <script is:inline>
+            (function () {
+              var loaded = false;
+              var LOAD_DELAY_MS = 4000;
 
-        function loadA11y() {
-          if (loaded) return;
-          loaded = true;
-          var s = document.createElement('script');
-          s.src = 'https://profitmedia.co.il/a11y/v1/profitmedia.js?v=3.7.1';
-          s.defer = true;
-          document.body.appendChild(s);
-        }
+              function loadA11y() {
+                if (loaded) return;
+                loaded = true;
+                var s = document.createElement('script');
+                s.src = 'https://profitmedia.co.il/a11y/v1/profitmedia.js?v=3.7.1';
+                s.defer = true;
+                document.body.appendChild(s);
+              }
 
-        // Load shortly after first paint so LCP stays clean, without waiting for a click.
-        if (document.readyState === 'complete') {
-          window.setTimeout(loadA11y, LOAD_DELAY_MS);
-        } else {
-          window.addEventListener(
-            'load',
-            function () {
-              window.setTimeout(loadA11y, LOAD_DELAY_MS);
-            },
-            { once: true }
-          );
-        }
+              // Load shortly after first paint so LCP stays clean, without waiting for a click.
+              if (document.readyState === 'complete') {
+                window.setTimeout(loadA11y, LOAD_DELAY_MS);
+              } else {
+                window.addEventListener(
+                  'load',
+                  function () {
+                    window.setTimeout(loadA11y, LOAD_DELAY_MS);
+                  },
+                  { once: true }
+                );
+              }
 
-        // If the user interacts earlier, bring the widget in immediately.
-        ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
-          window.addEventListener(type, loadA11y, { once: true, passive: true });
-        });
-      })();
-    </script>
-    <script is:inline>
-      (function () {
-        function positionA11yWidget() {
-          var root = document.getElementById('pm-a11y-widget-root');
-          if (!root) return false;
-          var fab = root.querySelector('.pm-fab');
-          var panel = root.querySelector('.pm-panel');
-          [fab, panel].forEach(function (el) {
-            if (!el) return;
-            el.style.setProperty('top', '50%', 'important');
-            el.style.setProperty('bottom', 'auto', 'important');
-            el.style.setProperty('left', '12px', 'important');
-            el.style.setProperty('right', 'auto', 'important');
-            el.style.setProperty('transform', 'translateY(-50%)', 'important');
-          });
-          return true;
-        }
+              // If the user interacts earlier, bring the widget in immediately.
+              ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
+                window.addEventListener(type, loadA11y, { once: true, passive: true });
+              });
+            })();
+          </script>
+          <script is:inline>
+            (function () {
+              function positionA11yWidget() {
+                var root = document.getElementById('pm-a11y-widget-root');
+                if (!root) return false;
+                var fab = root.querySelector('.pm-fab');
+                var panel = root.querySelector('.pm-panel');
+                [fab, panel].forEach(function (el) {
+                  if (!el) return;
+                  el.style.setProperty('top', '50%', 'important');
+                  el.style.setProperty('bottom', 'auto', 'important');
+                  el.style.setProperty('left', '12px', 'important');
+                  el.style.setProperty('right', 'auto', 'important');
+                  el.style.setProperty('transform', 'translateY(-50%)', 'important');
+                });
+                return true;
+              }
 
-        var ticks = 0;
-        var timer = window.setInterval(function () {
-          if (positionA11yWidget() || ticks >= 20) {
-            // Keep correcting for a bit after mount in case the widget restyles itself.
-            ticks += 1;
-            if (ticks >= 20) window.clearInterval(timer);
-          }
-        }, 250);
+              var ticks = 0;
+              var timer = window.setInterval(function () {
+                if (positionA11yWidget() || ticks >= 20) {
+                  // Keep correcting for a bit after mount in case the widget restyles itself.
+                  ticks += 1;
+                  if (ticks >= 20) window.clearInterval(timer);
+                }
+              }, 250);
 
-        if (typeof MutationObserver !== 'undefined') {
-          var observer = new MutationObserver(function () {
-            if (positionA11yWidget()) observer.disconnect();
-          });
-          observer.observe(document.documentElement, { childList: true, subtree: true });
-          window.setTimeout(function () {
-            observer.disconnect();
-          }, 15000);
-        }
-      })();
-    </script>
+              if (typeof MutationObserver !== 'undefined') {
+                var observer = new MutationObserver(function () {
+                  if (positionA11yWidget()) observer.disconnect();
+                });
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+                window.setTimeout(function () {
+                  observer.disconnect();
+                }, 15000);
+              }
+            })();
+          </script>
+        </>
+      )
+    }
     <script is:inline>
       (function () {
         try {
