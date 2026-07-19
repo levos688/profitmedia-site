@@ -102,12 +102,20 @@ import Layout from '../../layouts/Layout.astro';
       '60pct': 'Скролл 60%',
       '50pct': 'Скролл 50%',
     },
+    lead_source: {
+      quiz: 'Квиз на странице',
+      simple: 'Форма внизу страницы',
+      popup_quiz: 'Popup с квизом',
+      popup_simple: 'Popup со sticky-кнопки',
+      hero_cta: 'Кнопка в шапке (hero)',
+    },
   };
 
   const titles: Record<string, string> = {
     sticky_cta: 'Кнопка внизу экрана',
     popup_delay: 'Таймер popup',
     popup_scroll: 'Скролл popup',
+    lead_source: 'Источник заявок и кликов',
   };
 
   const channelNotes: Record<string, string> = {
@@ -116,6 +124,9 @@ import Layout from '../../layouts/Layout.astro';
   };
 
   function scoreVariant(experiment: string, variant: VariantRow): number {
+    if (experiment === 'lead_source') {
+      return variant.conversion * 1000 + variant.click;
+    }
     if (experiment === 'sticky_cta') {
       return variant.conversion * 1000 + variant.cvr * 10 + variant.ctr;
     }
@@ -124,7 +135,7 @@ import Layout from '../../layouts/Layout.astro';
 
   function rankMap(experiment: string, variants: VariantRow[]): Map<string, 'win' | 'lose'> {
     const ranked = new Map<string, 'win' | 'lose'>();
-    const eligible = variants.filter((v) => v.impression > 0);
+    const eligible = variants.filter((v) => v.impression > 0 || v.click > 0 || v.conversion > 0);
     if (eligible.length < 2) return ranked;
 
     const scored = eligible.map((v) => ({ id: v.variant, score: scoreVariant(experiment, v) }));
@@ -134,9 +145,55 @@ import Layout from '../../layouts/Layout.astro';
 
     scored.forEach((s) => {
       if (s.score === max) ranked.set(s.id, 'win');
-      if (s.score === min) ranked.set(s.id, 'lose');
+      if (s.score === min && experiment !== 'lead_source') ranked.set(s.id, 'lose');
     });
     return ranked;
+  }
+
+  function sumVariants(variants: VariantRow[]) {
+    const impression = variants.reduce((sum, v) => sum + v.impression, 0);
+    const click = variants.reduce((sum, v) => sum + v.click, 0);
+    const conversion = variants.reduce((sum, v) => sum + v.conversion, 0);
+    const ctr = impression > 0 ? Number(((click / impression) * 100).toFixed(2)) : 0;
+    const cvr = impression > 0 ? Number(((conversion / impression) * 100).toFixed(2)) : 0;
+    return { impression, click, conversion, ctr, cvr };
+  }
+
+  function renderSummary(experiments: Array<{ experiment: string; variants: VariantRow[] }>) {
+    const leadSource = experiments.find((item) => item.experiment === 'lead_source');
+    const leadTotals = leadSource ? sumVariants(leadSource.variants) : null;
+    const sticky = experiments.find((item) => item.experiment === 'sticky_cta');
+    const stickyTotals = sticky ? sumVariants(sticky.variants) : null;
+    const totalLeads = leadTotals
+      ? leadSource!.variants
+          .filter((v) => v.variant !== 'hero_cta')
+          .reduce((sum, v) => sum + v.conversion, 0)
+      : stickyTotals?.conversion || 0;
+    const totalStickyClicks = stickyTotals?.click || 0;
+    const totalHeroClicks = leadSource?.variants.find((v) => v.variant === 'hero_cta')?.click || 0;
+
+    return `<section class="ab-stats__summary" aria-label="Сводка">
+      <article class="ab-stats__summary-card">
+        <p class="ab-stats__summary-label">Всего заявок</p>
+        <p class="ab-stats__summary-value">${totalLeads}</p>
+        <p class="ab-stats__summary-note">по всем формам</p>
+      </article>
+      <article class="ab-stats__summary-card">
+        <p class="ab-stats__summary-label">Клики sticky</p>
+        <p class="ab-stats__summary-value">${totalStickyClicks}</p>
+        <p class="ab-stats__summary-note">кнопка внизу экрана</p>
+      </article>
+      <article class="ab-stats__summary-card">
+        <p class="ab-stats__summary-label">Клики hero</p>
+        <p class="ab-stats__summary-value">${totalHeroClicks}</p>
+        <p class="ab-stats__summary-note">кнопка в шапке</p>
+      </article>
+      <article class="ab-stats__summary-card">
+        <p class="ab-stats__summary-label">Показы sticky</p>
+        <p class="ab-stats__summary-value">${stickyTotals?.impression || 0}</p>
+        <p class="ab-stats__summary-note">сумма вариантов кнопки</p>
+      </article>
+    </section>`;
   }
 
   function setActiveChannel(channel: string) {
@@ -164,9 +221,18 @@ import Layout from '../../layouts/Layout.astro';
       return;
     }
 
-    rootEl.innerHTML = channel.experiments
+    const experimentOrder = ['lead_source', 'sticky_cta', 'popup_delay', 'popup_scroll'];
+    const experiments = [...channel.experiments].sort((a, b) => {
+      const ai = experimentOrder.indexOf(a.experiment);
+      const bi = experimentOrder.indexOf(b.experiment);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
+    const tables = experiments
       .map((experiment) => {
         const ranks = rankMap(experiment.experiment, experiment.variants);
+        const totals = sumVariants(experiment.variants);
+        const showLegend = experiment.experiment !== 'lead_source';
         const rows = experiment.variants
           .map((variant) => {
             const name = labels[experiment.experiment]?.[variant.variant] || variant.variant;
@@ -196,10 +262,14 @@ import Layout from '../../layouts/Layout.astro';
         return `<section class="ab-stats__block">
           <div class="ab-stats__block-head">
             <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
-            <p class="ab-stats__legend">
+            ${
+              showLegend
+                ? `<p class="ab-stats__legend">
               <span class="ab-stats__legend-item ab-stats__legend-item--win">Лучший</span>
               <span class="ab-stats__legend-item ab-stats__legend-item--lose">Слабый</span>
-            </p>
+            </p>`
+                : '<p class="ab-stats__legend-note">Считается с момента включения учёта по формам</p>'
+            }
           </div>
           <div class="ab-stats__table-wrap">
             <table class="ab-stats__table">
@@ -214,11 +284,23 @@ import Layout from '../../layouts/Layout.astro';
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
+              <tfoot>
+                <tr class="ab-stats__total-row">
+                  <th scope="row">Итого</th>
+                  <td class="ab-stats__num ab-stats__col--imp">${totals.impression}</td>
+                  <td class="ab-stats__num ab-stats__col--click">${totals.click}</td>
+                  <td class="ab-stats__num ab-stats__col--conv">${totals.conversion}</td>
+                  <td class="ab-stats__num ab-stats__col--ctr">${totals.ctr}%</td>
+                  <td class="ab-stats__num ab-stats__col--cvr">${totals.cvr}%</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </section>`;
       })
       .join('');
+
+    rootEl.innerHTML = `${renderSummary(experiments)}${tables}`;
   }
 
   async function loadStats() {
@@ -410,6 +492,62 @@ import Layout from '../../layouts/Layout.astro';
   .ab-stats__root {
     display: grid;
     gap: 1.75rem;
+  }
+
+  .ab-stats__summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .ab-stats__summary-card {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ab-line);
+    border-radius: 0.85rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #f3f6fa 100%);
+  }
+
+  .ab-stats__summary-label {
+    margin: 0;
+    color: var(--ab-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .ab-stats__summary-value {
+    margin: 0.35rem 0 0.15rem;
+    color: var(--ab-accent);
+    font-size: 1.65rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .ab-stats__summary-note {
+    margin: 0;
+    color: #7b8a9a;
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .ab-stats__legend-note {
+    margin: 0;
+    color: var(--ab-muted);
+    font-size: 0.78rem;
+  }
+
+  .ab-stats__total-row th,
+  .ab-stats__total-row td {
+    background: #e8eef5 !important;
+    border-top: 1.5px solid #c5d2e0;
+    font-weight: 700;
+    color: var(--ab-ink);
+  }
+
+  .ab-stats__total-row th {
+    text-align: left;
   }
 
   .ab-stats__block {
@@ -639,6 +777,10 @@ import Layout from '../../layouts/Layout.astro';
 
     .ab-stats__tabs {
       grid-template-columns: 1fr;
+    }
+
+    .ab-stats__summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .ab-stats__block {

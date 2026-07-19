@@ -14,6 +14,7 @@ export const AB_EXPERIMENTS = {
   sticky_cta: ['get_consult', 'free_consult'],
   popup_delay: ['15s', '18s', '22s', '25s'],
   popup_scroll: ['80pct', '60pct', '50pct'],
+  lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
 } as const;
 
 const STATS_KEYS: Record<AbChannel, string> = {

@@ -208,13 +208,23 @@
 
   window.donhinAb = {
     getAssignments: getAssignments,
-    trackConversion: function () {
+    trackConversion: function (formType) {
       var assignments = getAssignments();
-      return trackEvents([
+      var events = [
         { experiment: 'sticky_cta', variant: assignments.sticky_cta, metric: 'conversion' },
         { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'conversion' },
         { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'conversion' },
-      ]);
+      ];
+      var source = normalizeLeadSource(formType);
+      if (source) {
+        events.push({ experiment: 'lead_source', variant: source, metric: 'conversion' });
+      }
+      return trackEvents(events);
+    },
+    trackLeadSource: function (formType, metric) {
+      var source = normalizeLeadSource(formType);
+      if (!source || !metric) return Promise.resolve();
+      return track('lead_source', source, metric);
     },
     trackPopupImpression: function (assignments) {
       return trackEvents([
@@ -225,4 +235,19 @@
     initStickyCta: initStickyCta,
     initPopup: initPopup,
   };
+
+  function normalizeLeadSource(formType) {
+    if (!formType) return '';
+    var map = {
+      quiz: 'quiz',
+      simple: 'simple',
+      'popup-quiz': 'popup_quiz',
+      popup_quiz: 'popup_quiz',
+      'popup-simple': 'popup_simple',
+      popup_simple: 'popup_simple',
+      hero_cta: 'hero_cta',
+      sticky: 'popup_simple',
+    };
+    return map[formType] || '';
+  }
 })();
