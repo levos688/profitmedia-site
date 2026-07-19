@@ -98,13 +98,25 @@
   }
 
   function track(experiment, variant, metric) {
-    fetch('/api/ab-track', {
+    return fetch('/api/ab-track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         experiment: experiment,
         variant: variant,
         metric: metric,
+        channel: getTrackingChannel(),
+      }),
+    }).catch(function () {});
+  }
+
+  /** One request = one KV write, so sticky/popup conversions cannot overwrite each other. */
+  function trackEvents(events) {
+    return fetch('/api/ab-track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        events: events,
         channel: getTrackingChannel(),
       }),
     }).catch(function () {});
@@ -181,13 +193,17 @@
     getAssignments: getAssignments,
     trackConversion: function () {
       var assignments = getAssignments();
-      track('sticky_cta', assignments.sticky_cta, 'conversion');
-      track('popup_delay', assignments.popup_delay, 'conversion');
-      track('popup_scroll', assignments.popup_scroll, 'conversion');
+      return trackEvents([
+        { experiment: 'sticky_cta', variant: assignments.sticky_cta, metric: 'conversion' },
+        { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'conversion' },
+        { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'conversion' },
+      ]);
     },
     trackPopupImpression: function (assignments) {
-      track('popup_delay', assignments.popup_delay, 'impression');
-      track('popup_scroll', assignments.popup_scroll, 'impression');
+      return trackEvents([
+        { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'impression' },
+        { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'impression' },
+      ]);
     },
     initStickyCta: initStickyCta,
     initPopup: initPopup,

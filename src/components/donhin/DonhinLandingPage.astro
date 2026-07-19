@@ -459,7 +459,11 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       var data = await res.json();
       if (!res.ok || !data.ok) throw new Error('submit failed');
 
-      if (window.donhinAb && window.donhinAb.trackConversion) window.donhinAb.trackConversion();
+      if (window.donhinAb && window.donhinAb.trackConversion) {
+        try {
+          await window.donhinAb.trackConversion();
+        } catch (e) {}
+      }
 
       window.location.href = '/donhin/thank-you/';
     } catch (e) {

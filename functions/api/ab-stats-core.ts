@@ -61,6 +61,45 @@ export async function readAllAbStats(kv: KVNamespace): Promise<Record<AbChannel,
   return { all, fb_ads };
 }
 
+export type AbTrackEvent = {
+  experiment: string;
+  variant: string;
+  metric: AbMetric;
+};
+
+function assertTrackEvent(event: AbTrackEvent): void {
+  if (!(event.experiment in AB_EXPERIMENTS)) {
+    throw new Error('Unknown experiment');
+  }
+  const variants = AB_EXPERIMENTS[event.experiment as keyof typeof AB_EXPERIMENTS];
+  if (!variants.includes(event.variant as (typeof variants)[number])) {
+    throw new Error('Unknown variant');
+  }
+  if (!['impression', 'click', 'conversion'].includes(event.metric)) {
+    throw new Error('Unknown metric');
+  }
+}
+
+/** Apply many increments in one read/write so parallel metrics do not overwrite each other. */
+export async function incrementAbMetrics(
+  kv: KVNamespace,
+  events: AbTrackEvent[],
+  channel: AbChannel = 'all',
+): Promise<AbStatsStore> {
+  if (!events.length) {
+    return readAbStats(kv, channel);
+  }
+
+  for (const event of events) assertTrackEvent(event);
+
+  const stats = await readAbStats(kv, channel);
+  for (const event of events) {
+    stats[event.experiment][event.variant][event.metric] += 1;
+  }
+  await kv.put(STATS_KEYS[channel], JSON.stringify(stats));
+  return stats;
+}
+
 export async function incrementAbMetric(
   kv: KVNamespace,
   experiment: string,
@@ -68,17 +107,7 @@ export async function incrementAbMetric(
   metric: AbMetric,
   channel: AbChannel = 'all',
 ): Promise<AbStatsStore> {
-  if (!(experiment in AB_EXPERIMENTS)) {
-    throw new Error('Unknown experiment');
-  }
-  if (!AB_EXPERIMENTS[experiment as keyof typeof AB_EXPERIMENTS].includes(variant)) {
-    throw new Error('Unknown variant');
-  }
-
-  const stats = await readAbStats(kv, channel);
-  stats[experiment][variant][metric] += 1;
-  await kv.put(STATS_KEYS[channel], JSON.stringify(stats));
-  return stats;
+  return incrementAbMetrics(kv, [{ experiment, variant, metric }], channel);
 }
 
 export function withRates(stats: AbStatsStore) {

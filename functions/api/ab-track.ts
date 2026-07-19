@@ -1,5 +1,5 @@
-import type { AbChannel, AbMetric } from './ab-stats-core';
-import { incrementAbMetric } from './ab-stats-core';
+import type { AbChannel, AbMetric, AbTrackEvent } from './ab-stats-core';
+import { incrementAbMetrics } from './ab-stats-core';
 
 interface Env {
   DONHIN_AB_STATS: KVNamespace;
@@ -19,6 +19,23 @@ interface TrackPayload {
   variant?: string;
   metric?: AbMetric;
   channel?: AbChannel;
+  events?: AbTrackEvent[];
+}
+
+function normalizeEvents(body: TrackPayload): AbTrackEvent[] {
+  if (Array.isArray(body.events) && body.events.length) {
+    return body.events.map((event) => ({
+      experiment: (event.experiment || '').trim(),
+      variant: (event.variant || '').trim(),
+      metric: event.metric,
+    }));
+  }
+
+  const experiment = body.experiment?.trim() || '';
+  const variant = body.variant?.trim() || '';
+  const metric = body.metric;
+  if (!experiment || !variant || !metric) return [];
+  return [{ experiment, variant, metric }];
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
@@ -39,19 +56,26 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     return json({ ok: false, error: 'Invalid JSON' }, 400);
   }
 
-  const experiment = body.experiment?.trim() || '';
-  const variant = body.variant?.trim() || '';
-  const metric = body.metric;
+  const events = normalizeEvents(body);
   const channel: AbChannel = body.channel === 'fb_ads' ? 'fb_ads' : 'all';
 
-  if (!experiment || !variant || !metric || !['impression', 'click', 'conversion'].includes(metric)) {
+  if (
+    !events.length ||
+    events.some(
+      (event) =>
+        !event.experiment ||
+        !event.variant ||
+        !event.metric ||
+        !['impression', 'click', 'conversion'].includes(event.metric),
+    )
+  ) {
     return json({ ok: false, error: 'Invalid payload' }, 400);
   }
 
   try {
-    await incrementAbMetric(env.DONHIN_AB_STATS, experiment, variant, metric, 'all');
+    await incrementAbMetrics(env.DONHIN_AB_STATS, events, 'all');
     if (channel === 'fb_ads') {
-      await incrementAbMetric(env.DONHIN_AB_STATS, experiment, variant, metric, 'fb_ads');
+      await incrementAbMetrics(env.DONHIN_AB_STATS, events, 'fb_ads');
     }
     return json({ ok: true });
   } catch (err) {
