@@ -1,0 +1,191 @@
+---
+import Reveal from './Reveal.astro';
+import CheckIcon from './icons/CheckIcon.astro';
+import { namedOffer, homeCta } from '../data/site';
+---
+
+<section id="offer" class="named-offer section-padding below-fold" aria-labelledby="named-offer-title">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <div class="named-offer__panel">
+        <header class="named-offer__header">
+          <p class="named-offer__eyebrow">{namedOffer.eyebrow}</p>
+          <h2 id="named-offer-title" class="named-offer__title">{namedOffer.title}</h2>
+          <p class="named-offer__subtitle">{namedOffer.subtitle}</p>
+        </header>
+
+        <div class="named-offer__grid">
+          <div class="named-offer__block">
+            <h3 class="named-offer__block-title">מה כלול</h3>
+            <ul class="named-offer__list">
+              {
+                namedOffer.includes.map((item) => (
+                  <li>
+                    <span class="named-offer__check" aria-hidden="true">
+                      <CheckIcon />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="named-offer__block named-offer__block--accent">
+            <h3 class="named-offer__block-title">{namedOffer.diagnosisTitle}</h3>
+            <ul class="named-offer__list">
+              {
+                namedOffer.diagnosisItems.map((item) => (
+                  <li>
+                    <span class="named-offer__check" aria-hidden="true">
+                      <CheckIcon />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <button type="button" class="btn-yellow named-offer__cta" data-lead-modal-open>
+              {namedOffer.cta || homeCta}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .named-offer {
+    background: linear-gradient(165deg, #faf7fb 0%, #fff 45%, #f7f2f8 100%);
+  }
+
+  .named-offer__panel {
+    padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    box-shadow: 0 14px 44px rgba(101, 21, 97, 0.08);
+  }
+
+  @media (min-width: 768px) {
+    .named-offer__panel {
+      padding: 2.75rem 2.25rem;
+    }
+  }
+
+  .named-offer__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .named-offer__eyebrow {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #c60691;
+  }
+
+  .named-offer__title {
+    margin-top: 0.75rem;
+    font-size: 1.875rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .named-offer__title {
+      font-size: 2.25rem;
+    }
+  }
+
+  .named-offer__subtitle {
+    margin: 0.85rem auto 0;
+    max-width: 40rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+
+  .named-offer__grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 900px) {
+    .named-offer__grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+  }
+
+  .named-offer__block {
+    padding: 1.5rem;
+    border-radius: 1.15rem;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    background: #faf8fc;
+  }
+
+  .named-offer__block--accent {
+    background: linear-gradient(160deg, #651561 0%, #5a1c73 100%);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .named-offer__block-title {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #651561;
+  }
+
+  .named-offer__block--accent .named-offer__block-title {
+    color: #fff;
+  }
+
+  .named-offer__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .named-offer__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #374151;
+  }
+
+  .named-offer__block--accent .named-offer__list li {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .named-offer__check {
+    flex: 0 0 auto;
+    margin-top: 0.1rem;
+    color: #c60691;
+  }
+
+  .named-offer__block--accent .named-offer__check {
+    color: #fcc000;
+  }
+
+  .named-offer__cta {
+    margin-top: 1.5rem;
+    width: 100%;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    border-radius: 9999px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.0625rem;
+    font-weight: 800;
+  }
+</style>

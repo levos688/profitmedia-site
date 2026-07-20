@@ -86,49 +86,16 @@ import { campaignResults } from '../../data/site';
 </section>
 
 <script>
-  const caseStats = document.querySelectorAll('[data-case-stat]');
+  // Keep final case stats stable — avoid interrupted count-ups showing wrong proof.
+  const caseStats = document.querySelectorAll<HTMLElement>('[data-case-stat]');
+  const formatter = new Intl.NumberFormat('he-IL');
 
-  const animateCaseStat = (el: HTMLElement) => {
+  caseStats.forEach((el) => {
     const target = Number(el.dataset.target || 0);
     const prefix = el.dataset.prefix || '';
     const suffix = el.dataset.suffix || '';
-    const formatter = new Intl.NumberFormat('he-IL');
-    const duration = 2200;
-    const start = performance.now();
-
-    // HTML ships the final value for crawlers; animation restarts from 0 for sighted users.
-    el.textContent = `${prefix}${formatter.format(0)}${suffix}`;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 4);
-      const current = Math.round(target * eased);
-      el.textContent = `${prefix}${formatter.format(current)}${suffix}`;
-      if (progress < 1) requestAnimationFrame(tick);
-    };
-
-    requestAnimationFrame(tick);
-  };
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    caseStats.forEach((el) => {
-      const node = el as HTMLElement;
-      const formatter = new Intl.NumberFormat('he-IL');
-      node.textContent = `${node.dataset.prefix || ''}${formatter.format(Number(node.dataset.target || 0))}${node.dataset.suffix || ''}`;
-    });
-  } else {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          animateCaseStat(entry.target as HTMLElement);
-          observer.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.45 }
-    );
-    caseStats.forEach((el) => observer.observe(el));
-  }
+    el.textContent = `${prefix}${formatter.format(target)}${suffix}`;
+  });
 </script>
 
 <style>

@@ -37,59 +37,20 @@ import Reveal from './Reveal.astro';
 </section>
 
 <script>
-  const counters = document.querySelectorAll('[data-stat-counter]');
+  // Proof stats stay static. Count-up animations previously left mid-values
+  // (e.g. "7+", "₪0M+") when the frame was interrupted — unacceptable for trust.
+  const counters = document.querySelectorAll<HTMLElement>('[data-stat-counter]');
 
-  const formatCount = (value: number, prefix: string, suffix: string) => `${prefix}${value}${suffix}`;
-
-  const animateCounter = (el: HTMLElement) => {
+  const renderFinal = (el: HTMLElement) => {
+    const span = el.querySelector('span');
+    if (!span) return;
     const target = Number(el.dataset.count || 0);
     const suffix = el.dataset.suffix || '';
     const prefix = el.dataset.prefix || '';
-    const span = el.querySelector('span');
-    if (!span) return;
-
-    const duration = target > 1000 ? 1800 : 1400;
-    const start = performance.now();
-
-    // Final value is already in the SSR HTML for crawlers; animate from 0 when visible.
-    span.textContent = formatCount(0, prefix, suffix);
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(target * eased);
-      span.textContent = formatCount(current, prefix, suffix);
-      if (progress < 1) requestAnimationFrame(tick);
-    };
-
-    requestAnimationFrame(tick);
+    span.textContent = `${prefix}${target}${suffix}`;
   };
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    counters.forEach((el) => {
-      const node = el as HTMLElement;
-      const span = node.querySelector('span');
-      if (span) {
-        span.textContent = formatCount(
-          Number(node.dataset.count || 0),
-          node.dataset.prefix || '',
-          node.dataset.suffix || ''
-        );
-      }
-    });
-  } else {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          animateCounter(entry.target as HTMLElement);
-          observer.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.35 }
-    );
-    counters.forEach((el) => observer.observe(el));
-  }
+  counters.forEach(renderFinal);
 </script>
 
 <style>

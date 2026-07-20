@@ -28,6 +28,12 @@ import { hero, homeCta } from '../../data/site';
           <strong>₪200K+</strong> במכירות שדווחו בחודש · לקוח בתחום המטבחים
         </p>
 
+        {
+          hero.trustLine && (
+            <p class="hero-trust-line max-md:mx-auto">{hero.trustLine}</p>
+          )
+        }
+
         <div class="hero-cta-group mt-8 md:mt-10">
           <button
             type="button"
@@ -115,6 +121,15 @@ import { hero, homeCta } from '../../data/site';
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: none;
     cursor: pointer;
+  }
+
+  .hero-trust-line {
+    margin-top: 0.85rem;
+    max-width: 28rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.82);
   }
 
   .hero-cta:hover {
