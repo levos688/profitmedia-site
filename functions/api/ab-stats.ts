@@ -1,5 +1,5 @@
 import { isAbStatsAuthorized } from '../lib/ab-stats-auth';
-import { readAllAbStats, withRates } from './ab-stats-core';
+import { computeHybridAllocation, readAllAbStats, withRates } from './ab-stats-core';
 
 interface Env {
   DONHIN_AB_STATS: KVNamespace;
@@ -27,9 +27,11 @@ export async function onRequestGet(context: { request: Request; env: Env }) {
   }
 
   const stats = await readAllAbStats(env.DONHIN_AB_STATS);
+  const allocation = computeHybridAllocation(stats.fb_ads);
   return json({
     ok: true,
     updatedAt: new Date().toISOString(),
+    allocation,
     channels: {
       all: {
         label: 'Все визиты (включая тесты)',

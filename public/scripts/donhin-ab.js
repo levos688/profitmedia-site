@@ -22,9 +22,41 @@
     },
   };
 
+  var allocationByExperiment = null;
+
+  function defaultEqualWeights(experiment) {
+    var list = CONFIG[experiment].variants;
+    var weights = {};
+    for (var i = 0; i < list.length; i++) {
+      weights[list[i].id] = 1 / list.length;
+    }
+    return weights;
+  }
+
+  function getWeights(experiment) {
+    if (allocationByExperiment && allocationByExperiment[experiment] && allocationByExperiment[experiment].weights) {
+      return allocationByExperiment[experiment].weights;
+    }
+    return defaultEqualWeights(experiment);
+  }
+
   function pickVariant(experiment) {
     var list = CONFIG[experiment].variants;
-    return list[Math.floor(Math.random() * list.length)];
+    var weights = getWeights(experiment);
+    var total = 0;
+    for (var i = 0; i < list.length; i++) {
+      total += Number(weights[list[i].id]) || 0;
+    }
+    if (!(total > 0)) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+    var r = Math.random() * total;
+    var cursor = 0;
+    for (var j = 0; j < list.length; j++) {
+      cursor += Number(weights[list[j].id]) || 0;
+      if (r <= cursor) return list[j];
+    }
+    return list[list.length - 1];
   }
 
   function isActiveVariant(experiment, variant) {
@@ -206,8 +238,28 @@
     onScroll();
   }
 
+  function loadAllocation() {
+    return fetch('/api/ab-allocate', { credentials: 'same-origin' })
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        if (data && data.ok && data.experiments) {
+          allocationByExperiment = data.experiments;
+        }
+        return allocationByExperiment;
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
   window.donhinAb = {
+    ready: loadAllocation(),
     getAssignments: getAssignments,
+    getAllocation: function () {
+      return allocationByExperiment;
+    },
     trackConversion: function (formType) {
       var assignments = getAssignments();
       var events = [

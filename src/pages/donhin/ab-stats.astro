@@ -74,6 +74,15 @@ import Layout from '../../layouts/Layout.astro';
   let activeChannel = channelFromUrl === 'all' ? 'all' : 'fb_ads';
   let cachedData: {
     updatedAt?: string;
+    allocation?: Record<
+      string,
+      {
+        mode: 'equal' | 'hybrid';
+        weights: Record<string, number>;
+        leader: string | null;
+        reason: string;
+      }
+    >;
     channels?: Record<
       string,
       {
@@ -265,6 +274,11 @@ import Layout from '../../layouts/Layout.astro';
             const status = active
               ? `<span class="ab-stats__lamp ab-stats__lamp--on" title="Вариант включён в тест" aria-label="Включён"></span>`
               : `<span class="ab-stats__lamp ab-stats__lamp--off" title="Вариант выключен, данные только исторические" aria-label="Выключен"></span>`;
+            const trafficWeight = cachedData?.allocation?.[experiment.experiment]?.weights?.[variant.variant];
+            const trafficBadge =
+              active && typeof trafficWeight === 'number'
+                ? `<span class="ab-stats__traffic" title="Текущая доля новых посетителей">${Math.round(trafficWeight * 100)}% трафика</span>`
+                : '';
 
             return `<tr class="${rowClass}">
               <td class="ab-stats__variant">
@@ -272,6 +286,7 @@ import Layout from '../../layouts/Layout.astro';
                   ${status}
                   <span class="ab-stats__variant-name">${name}</span>
                 </span>
+                ${trafficBadge}
                 ${badge}
               </td>
               <td class="ab-stats__num ab-stats__col--imp">${variant.impression}</td>
@@ -303,6 +318,13 @@ import Layout from '../../layouts/Layout.astro';
               }
             </p>
           </div>
+          ${
+            showLegend && cachedData?.allocation?.[experiment.experiment]
+              ? `<p class="ab-stats__alloc-note">${cachedData.allocation[experiment.experiment].reason}</p>`
+              : experiment.experiment === 'lead_source'
+                ? '<p class="ab-stats__alloc-note">Считается с момента включения учёта по формам</p>'
+                : ''
+          }
           <div class="ab-stats__table-wrap">
             <table class="ab-stats__table">
               <thead>
@@ -796,6 +818,27 @@ import Layout from '../../layouts/Layout.astro';
     font-weight: 600;
     color: #1e293b;
     word-break: break-word;
+  }
+
+  .ab-stats__alloc-note {
+    margin: 0 0 0.85rem;
+    color: var(--ab-muted);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .ab-stats__traffic {
+    display: inline-flex;
+    margin-left: 0.45rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    background: #e8eef8;
+    color: var(--ab-accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    vertical-align: middle;
   }
 
   .ab-stats__badge {

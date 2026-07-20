@@ -126,3 +126,113 @@ export function withRates(stats: AbStatsStore) {
     }),
   }));
 }
+
+/** Live traffic variants only (retired rows stay in stats but get 0 traffic). */
+export const ACTIVE_AB_VARIANTS: Record<string, readonly string[]> = {
+  sticky_cta: ['get_consult', 'free_consult'],
+  popup_delay: ['22s', '25s'],
+  popup_scroll: ['60pct', '50pct'],
+};
+
+export type AbAllocation = {
+  mode: 'equal' | 'hybrid';
+  weights: Record<string, number>;
+  leader: string | null;
+  reason: string;
+};
+
+const HYBRID_MIN_IMPRESSIONS = 40;
+const HYBRID_STEP = 0.1;
+const HYBRID_MAX_LEADER = 0.85;
+const HYBRID_MIN_CHALLENGER = 0.15;
+
+function variantScore(experiment: string, values: AbVariantStats): number {
+  const cvr = values.impression > 0 ? (values.conversion / values.impression) * 100 : 0;
+  const ctr = values.impression > 0 ? (values.click / values.impression) * 100 : 0;
+  if (experiment === 'sticky_cta') {
+    return values.conversion * 1000 + cvr * 10 + ctr;
+  }
+  return values.conversion * 1000 + cvr;
+}
+
+function equalWeights(variants: readonly string[]): AbAllocation {
+  const weight = Number((1 / variants.length).toFixed(4));
+  const weights: Record<string, number> = {};
+  for (const variant of variants) weights[variant] = weight;
+  // Fix rounding so sum is exactly 1 for 2 variants.
+  if (variants.length === 2) {
+    weights[variants[0]] = 0.5;
+    weights[variants[1]] = 0.5;
+  }
+  return {
+    mode: 'equal',
+    weights,
+    leader: null,
+    reason: 'Недостаточно данных — трафик 50/50',
+  };
+}
+
+function hybridSteps(minImp: number, leader: AbVariantStats, lag: AbVariantStats): number {
+  let steps = 1;
+  if (minImp >= 50 && leader.conversion > lag.conversion) steps = 2;
+  if (minImp >= 80) {
+    const leaderCvr = leader.impression > 0 ? leader.conversion / leader.impression : 0;
+    const lagCvr = lag.impression > 0 ? lag.conversion / lag.impression : 0;
+    if (leaderCvr >= lagCvr * 1.15) steps = 3;
+  }
+  if (minImp >= 120 && leader.conversion >= lag.conversion + 2) steps = 4;
+  return steps;
+}
+
+/** Hybrid allocation: equal until threshold, then shift up to 85/15 toward the leader. */
+export function computeHybridAllocation(stats: AbStatsStore): Record<string, AbAllocation> {
+  const out: Record<string, AbAllocation> = {};
+
+  for (const [experiment, variants] of Object.entries(ACTIVE_AB_VARIANTS)) {
+    const rows = variants.map((variant) => ({
+      variant,
+      values: stats[experiment]?.[variant] || { impression: 0, click: 0, conversion: 0 },
+    }));
+
+    if (rows.length !== 2) {
+      out[experiment] = equalWeights(variants);
+      continue;
+    }
+
+    const [a, b] = rows;
+    const minImp = Math.min(a.values.impression, b.values.impression);
+    if (minImp < HYBRID_MIN_IMPRESSIONS) {
+      out[experiment] = equalWeights(variants);
+      out[experiment].reason = `Ждём по ≥${HYBRID_MIN_IMPRESSIONS} показов на вариант (сейчас ${a.values.impression}/${b.values.impression})`;
+      continue;
+    }
+
+    const scoreA = variantScore(experiment, a.values);
+    const scoreB = variantScore(experiment, b.values);
+    if (scoreA === scoreB) {
+      out[experiment] = equalWeights(variants);
+      out[experiment].reason = 'Пока равны — оставляем 50/50';
+      continue;
+    }
+
+    const leader = scoreA > scoreB ? a : b;
+    const lag = scoreA > scoreB ? b : a;
+    const steps = hybridSteps(minImp, leader.values, lag.values);
+    let leaderWeight = 0.5 + steps * HYBRID_STEP;
+    leaderWeight = Math.min(HYBRID_MAX_LEADER, Math.max(0.5 + HYBRID_STEP, leaderWeight));
+    const lagWeight = Math.max(HYBRID_MIN_CHALLENGER, Number((1 - leaderWeight).toFixed(2)));
+    leaderWeight = Number((1 - lagWeight).toFixed(2));
+
+    out[experiment] = {
+      mode: 'hybrid',
+      weights: {
+        [leader.variant]: leaderWeight,
+        [lag.variant]: lagWeight,
+      },
+      leader: leader.variant,
+      reason: `Лидер ${leader.variant}: ${Math.round(leaderWeight * 100)}% / ${Math.round(lagWeight * 100)}% (шаг ${steps})`,
+    };
+  }
+
+  return out;
+}

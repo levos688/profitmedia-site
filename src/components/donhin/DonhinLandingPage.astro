@@ -645,25 +645,33 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     var heroCta = document.getElementById('donhin-hero-cta');
     var ab = window.donhinAb;
 
-    if (quizForm) initQuizForm(quizForm);
-    initDonhinPopup();
+    function start() {
+      if (quizForm) initQuizForm(quizForm);
+      initDonhinPopup();
 
-    if (ab && ab.trackLeadSource) {
-      ab.trackLeadSource('quiz', 'impression');
-      ab.trackLeadSource('simple', 'impression');
+      if (ab && ab.trackLeadSource) {
+        ab.trackLeadSource('quiz', 'impression');
+        ab.trackLeadSource('simple', 'impression');
+      }
+
+      if (heroCta && ab && ab.trackLeadSource) {
+        heroCta.addEventListener('click', function () {
+          ab.trackLeadSource('hero_cta', 'click');
+        });
+      }
+
+      if (bottomForm) {
+        bottomForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          submitDonhinLead(bottomForm, 'simple');
+        });
+      }
     }
 
-    if (heroCta && ab && ab.trackLeadSource) {
-      heroCta.addEventListener('click', function () {
-        ab.trackLeadSource('hero_cta', 'click');
-      });
-    }
-
-    if (bottomForm) {
-      bottomForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        submitDonhinLead(bottomForm, 'simple');
-      });
+    if (ab && ab.ready && typeof ab.ready.then === 'function') {
+      ab.ready.then(start).catch(start);
+    } else {
+      start();
     }
   }
 
