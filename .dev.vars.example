@@ -5,6 +5,7 @@ RESEND_API_KEY=re_xxxxxxxx
 CONTACT_EMAIL=lev@profitmedia.co.il
 # DONHIN_TEST_EMAIL=lev688@gmail.com
 # META_CAPI_ACCESS_TOKEN=your_token_from_events_manager
+# PUBLIC_META_PIXEL_ID=your_profitmedia_pixel_id
 # AB_STATS_TOKEN=donhin-ab-stats-2026
 FROM_EMAIL=Profit Media <noreply@profitmedia.co.il>
 

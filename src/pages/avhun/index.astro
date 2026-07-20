@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AvhunLandingPage from '../../components/avhun/AvhunLandingPage.astro';
+import { avhunSeo, avhunPixelId } from '../../data/avhun';
+---
+
+<Layout
+  title={avhunSeo.title}
+  description={avhunSeo.description}
+  canonical={avhunSeo.canonical}
+  noindex
+  enableGtm={false}
+  metaPixelId={avhunPixelId || undefined}
+  lang="he"
+  dir="rtl"
+>
+  <div class="avhun-page">
+    <AvhunLandingPage />
+  </div>
+</Layout>
+
+<style>
+  .avhun-page {
+    min-height: 100vh;
+    background: #fff;
+  }
+</style>

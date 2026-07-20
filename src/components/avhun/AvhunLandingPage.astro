@@ -1,0 +1,570 @@
+---
+import CheckIcon from '../icons/CheckIcon.astro';
+import { avhun } from '../../data/avhun';
+import { formLabels, formPlaceholders } from '../../data/site';
+
+const labels = {
+  name: formLabels.name,
+  phone: formLabels.phone,
+  vertical: formLabels.vertical,
+};
+const placeholders = {
+  name: formPlaceholders.name,
+  phone: formPlaceholders.phone,
+  vertical: formPlaceholders.vertical,
+};
+---
+
+<header class="avhun-top">
+  <a href="/" class="avhun-logo" aria-label="Profit Media — דף הבית">
+    <img src="/logo.svg" alt="Profit Media" width="160" height="56" />
+  </a>
+</header>
+
+<main id="main-content">
+  <section class="avhun-hero" aria-labelledby="avhun-title">
+    <div class="avhun-hero__inner">
+      <div class="avhun-hero__copy">
+        <p class="avhun-eyebrow">{avhun.eyebrow}</p>
+        <h1 id="avhun-title">{avhun.title}</h1>
+        <p class="avhun-sub">{avhun.subtitle}</p>
+        <p class="avhun-chip"><strong>₪200K+</strong> במכירות שדווחו בחודש · לקוח מטבחים</p>
+        <p class="avhun-trust">{avhun.trustLine}</p>
+      </div>
+
+      <div class="avhun-card" id="form">
+        <h2 class="avhun-card__title">{avhun.formTitle}</h2>
+        <p class="avhun-card__note">{avhun.ctaNote}</p>
+
+        <form id="avhun-form" class="avhun-form" novalidate autocomplete="off">
+          <div class="avhun-field">
+            <label for="avhun-name">{labels.name}</label>
+            <input
+              id="avhun-name"
+              name="name"
+              type="text"
+              required
+              autocomplete="name"
+              placeholder={placeholders.name}
+            />
+            <p id="avhun-name-error" class="avhun-error" hidden role="alert"></p>
+          </div>
+          <div class="avhun-field">
+            <label for="avhun-phone">{labels.phone}</label>
+            <input
+              id="avhun-phone"
+              name="phone"
+              type="tel"
+              required
+              inputmode="tel"
+              autocomplete="tel"
+              pattern="[0-9\\-+() ]{9,15}"
+              placeholder={placeholders.phone}
+            />
+            <p id="avhun-phone-error" class="avhun-error" hidden role="alert"></p>
+          </div>
+          <div class="avhun-field">
+            <label for="avhun-vertical">{labels.vertical}</label>
+            <input
+              id="avhun-vertical"
+              name="vertical"
+              type="text"
+              required
+              autocomplete="organization-title"
+              placeholder={placeholders.vertical}
+            />
+            <p id="avhun-vertical-error" class="avhun-error" hidden role="alert"></p>
+          </div>
+
+          <label class="avhun-privacy">
+            <input id="avhun-privacy" name="privacy" type="checkbox" required />
+            <span>
+              קראתי ואני מאשר/ת את
+              <a href="/prat" target="_blank" rel="noopener">מדיניות הפרטיות</a>
+              , ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)
+            </span>
+          </label>
+          <p id="avhun-privacy-error" class="avhun-error" hidden role="alert"></p>
+
+          <button type="submit" id="avhun-submit" class="btn-yellow avhun-submit">
+            <span id="avhun-submit-label">{avhun.cta}</span>
+          </button>
+          <p id="avhun-status" class="avhun-status" hidden role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="avhun-section" aria-labelledby="avhun-includes-title">
+    <div class="avhun-wrap">
+      <h2 id="avhun-includes-title">{avhun.includesTitle}</h2>
+      <ul class="avhun-list">
+        {
+          avhun.includes.map((item) => (
+            <li>
+              <span class="avhun-check" aria-hidden="true">
+                <CheckIcon />
+              </span>
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="avhun-section avhun-section--alt" aria-labelledby="avhun-offer-title">
+    <div class="avhun-wrap">
+      <h2 id="avhun-offer-title">{avhun.offerTitle}</h2>
+      <ul class="avhun-pills">
+        {avhun.offerItems.map((item) => <li>{item}</li>)}
+      </ul>
+      <blockquote class="avhun-quote">
+        <p>“{avhun.caseStudy.quote}”</p>
+        <footer>{avhun.caseStudy.attribution} · {avhun.caseStudy.label}</footer>
+      </blockquote>
+      <a href="#form" class="btn-yellow avhun-inline-cta">{avhun.cta}</a>
+    </div>
+  </section>
+
+  <section class="avhun-section" aria-labelledby="avhun-faq-title">
+    <div class="avhun-wrap avhun-wrap--narrow">
+      <h2 id="avhun-faq-title">שאלות נפוצות</h2>
+      <div class="avhun-faq">
+        {
+          avhun.faqs.map((item) => (
+            <details class="avhun-faq__item">
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="avhun-footer">
+  <p>© {new Date().getFullYear()} Profit Media</p>
+  <p>
+    <a href="/prat">מדיניות פרטיות</a>
+    ·
+    <a href="/hatzara">הצהרת נגישות</a>
+  </p>
+</footer>
+
+<script define:vars={{ formSource: avhun.formSource, thankYouPath: avhun.thankYouPath, ctaLabel: avhun.cta }}>
+  const form = document.getElementById('avhun-form');
+  const submitBtn = document.getElementById('avhun-submit');
+  const submitLabel = document.getElementById('avhun-submit-label');
+  const status = document.getElementById('avhun-status');
+
+  const fields = {
+    name: {
+      input: document.getElementById('avhun-name'),
+      error: document.getElementById('avhun-name-error'),
+      message: 'נא למלא שם מלא',
+    },
+    phone: {
+      input: document.getElementById('avhun-phone'),
+      error: document.getElementById('avhun-phone-error'),
+      message: 'נא למלא טלפון תקין',
+    },
+    vertical: {
+      input: document.getElementById('avhun-vertical'),
+      error: document.getElementById('avhun-vertical-error'),
+      message: 'נא לציין את תחום העסק',
+    },
+    privacy: {
+      input: document.getElementById('avhun-privacy'),
+      error: document.getElementById('avhun-privacy-error'),
+      message: 'יש לאשר את מדיניות הפרטיות',
+    },
+  };
+
+  const setError = (field, show) => {
+    if (!field.input || !field.error) return;
+    field.input.setAttribute('aria-invalid', show ? 'true' : 'false');
+    field.error.hidden = !show;
+    field.error.textContent = show ? field.message : '';
+  };
+
+  const validate = () => {
+    let ok = true;
+    const nameOk = Boolean(fields.name.input?.value.trim());
+    setError(fields.name, !nameOk);
+    ok = ok && nameOk;
+
+    const phoneVal = fields.phone.input?.value.trim() || '';
+    const phoneOk = /^[0-9\-+() ]{9,15}$/.test(phoneVal);
+    setError(fields.phone, !phoneOk);
+    ok = ok && phoneOk;
+
+    const verticalOk = Boolean(fields.vertical.input?.value.trim());
+    setError(fields.vertical, !verticalOk);
+    ok = ok && verticalOk;
+
+    const privacyOk = Boolean(fields.privacy.input?.checked);
+    setError(fields.privacy, !privacyOk);
+    ok = ok && privacyOk;
+
+    return ok;
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (status) {
+      status.hidden = true;
+      status.textContent = '';
+    }
+    if (!validate()) {
+      form.querySelector('[aria-invalid="true"]')?.focus();
+      return;
+    }
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitLabel) submitLabel.textContent = 'שולח…';
+
+    const payload = {
+      name: fields.name.input?.value.trim(),
+      phone: fields.phone.input?.value.trim(),
+      email: '',
+      vertical: fields.vertical.input?.value.trim() || '',
+      verticalLabel: fields.vertical.input?.value.trim() || '',
+      pageUrl: window.location.href,
+      source: formSource,
+      referrer: document.referrer || '',
+      language: navigator.language || '',
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error('submit failed');
+      window.location.href = thankYouPath;
+    } catch {
+      if (status) {
+        status.hidden = false;
+        status.textContent = 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il';
+        status.setAttribute('role', 'alert');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitLabel) submitLabel.textContent = ctaLabel;
+    }
+  });
+</script>
+
+<style>
+  .avhun-top {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border-bottom: 1px solid rgba(101, 21, 97, 0.08);
+  }
+
+  .avhun-logo img {
+    height: 2.75rem;
+    width: auto;
+  }
+
+  .avhun-hero {
+    background: linear-gradient(165deg, #651561 0%, #5a1c73 72%, #4a1247 100%);
+    color: #fff;
+    padding: 2rem 1.25rem 2.5rem;
+  }
+
+  .avhun-hero__inner {
+    max-width: 68rem;
+    margin: 0 auto;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 960px) {
+    .avhun-hero__inner {
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: start;
+      gap: 2.5rem;
+      padding-block: 1.5rem;
+    }
+  }
+
+  .avhun-eyebrow {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .avhun-hero h1 {
+    margin: 0.75rem 0 0;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.15;
+    font-weight: 900;
+  }
+
+  .avhun-sub {
+    margin: 1rem 0 0;
+    font-size: 1.125rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.94);
+    max-width: 36rem;
+  }
+
+  .avhun-chip {
+    display: inline-flex;
+    margin-top: 1.1rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 9999px;
+    background: rgba(252, 192, 0, 0.95);
+    color: #651561;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .avhun-trust {
+    margin: 0.85rem 0 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .avhun-card {
+    background: #fff;
+    color: #111827;
+    border-radius: 1.25rem;
+    padding: 1.5rem 1.25rem 1.35rem;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  }
+
+  @media (min-width: 768px) {
+    .avhun-card {
+      padding: 1.75rem 1.5rem 1.5rem;
+    }
+  }
+
+  .avhun-card__title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #651561;
+  }
+
+  .avhun-card__note {
+    margin: 0.5rem 0 1.1rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: #6b7280;
+  }
+
+  .avhun-form {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .avhun-field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+  }
+
+  .avhun-field input[type='text'],
+  .avhun-field input[type='tel'] {
+    width: 100%;
+    border: 1px solid rgba(101, 21, 97, 0.18);
+    border-radius: 0.75rem;
+    padding: 0.8rem 0.9rem;
+    font-size: 1rem;
+    background: #faf8fc;
+  }
+
+  .avhun-field input[aria-invalid='true'] {
+    border-color: #dc2626;
+  }
+
+  .avhun-error {
+    margin: 0.35rem 0 0;
+    font-size: 0.8125rem;
+    color: #dc2626;
+  }
+
+  .avhun-privacy {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #4b5563;
+  }
+
+  .avhun-privacy a {
+    color: #651561;
+    text-decoration: underline;
+  }
+
+  .avhun-submit {
+    width: 100%;
+    justify-content: center;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.95rem 1.25rem;
+    font-size: 1.0625rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .avhun-status {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #dc2626;
+  }
+
+  .avhun-section {
+    padding: 2.75rem 1.25rem;
+    background: #fff;
+  }
+
+  .avhun-section--alt {
+    background: #faf7fb;
+  }
+
+  .avhun-wrap {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .avhun-wrap--narrow {
+    max-width: 40rem;
+  }
+
+  .avhun-section h2 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900;
+    color: #111827;
+    text-align: center;
+  }
+
+  .avhun-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .avhun-list li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: #374151;
+  }
+
+  .avhun-check {
+    color: #c60691;
+    margin-top: 0.2rem;
+  }
+
+  .avhun-pills {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: center;
+  }
+
+  .avhun-pills li {
+    padding: 0.55rem 0.9rem;
+    border-radius: 9999px;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #651561;
+  }
+
+  .avhun-quote {
+    margin: 1.75rem auto 0;
+    max-width: 36rem;
+    padding: 1.25rem 1.35rem;
+    border-radius: 1rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    box-shadow: 0 10px 30px rgba(101, 21, 97, 0.06);
+  }
+
+  .avhun-quote p {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .avhun-quote footer {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    color: #6b7280;
+  }
+
+  .avhun-inline-cta {
+    display: inline-flex;
+    margin: 1.75rem auto 0;
+    border-radius: 9999px;
+    padding: 0.85rem 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .avhun-section--alt .avhun-wrap {
+    text-align: center;
+  }
+
+  .avhun-faq {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .avhun-faq__item {
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    border-radius: 0.9rem;
+    padding: 0.9rem 1rem;
+    background: #faf8fc;
+  }
+
+  .avhun-faq__item summary {
+    cursor: pointer;
+    font-weight: 800;
+    color: #651561;
+  }
+
+  .avhun-faq__item p {
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+
+  .avhun-footer {
+    padding: 1.5rem 1.25rem 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+    border-top: 1px solid rgba(101, 21, 97, 0.08);
+  }
+
+  .avhun-footer a {
+    color: #651561;
+  }
+</style>

@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { avhunPixelId } from '../../data/avhun';
+---
+
+<Layout
+  title="תודה | אבחון קמפיין | Profit Media"
+  description="קיבלנו את הפרטים — נחזור אליך תוך 24 שעות."
+  noindex
+  enableGtm={false}
+  metaPixelId={avhunPixelId || undefined}
+  metaPixelLead={Boolean(avhunPixelId)}
+  lang="he"
+  dir="rtl"
+>
+  <main
+    id="main-content"
+    class="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-16 text-center"
+  >
+    <a href="/" class="mb-10 block" aria-label="Profit Media — דף הבית">
+      <img src="/logo.svg" alt="Profit Media" class="mx-auto h-14 w-auto md:h-[70px]" width="200" height="70" />
+    </a>
+
+    <div class="max-w-lg">
+      <h1 class="text-3xl leading-tight font-black text-brand-purple md:text-5xl">קיבלנו את הפרטים</h1>
+      <p class="mt-5 text-xl leading-relaxed text-gray-600 md:text-2xl">
+        נחזור אליך עם אבחון מעשי תוך 24 שעות
+      </p>
+      <a href="/" class="btn-yellow mt-10 inline-flex rounded-full px-8 py-3 text-base font-black">
+        חזרה לדף הבית
+      </a>
+    </div>
+  </main>
+</Layout>
