@@ -5,7 +5,6 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
 import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
-import MidPageCta from '../../components/preview/MidPageCta.astro';
 import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
 import BlogProse from '../../components/blog/BlogProse.astro';
 import BlogFaq from '../../components/blog/BlogFaq.astro';
@@ -215,8 +214,6 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
         </div>
       </BlogProse>
     </div>
-
-    <MidPageCta />
 
     <div class="mx-auto max-w-3xl px-4 md:px-6">
       <BlogProse>
