@@ -101,4 +101,42 @@ const { class: className = '' } = Astro.props;
   .blog-prose :global(.blog-callout p:last-child) {
     margin-bottom: 0;
   }
+
+  .blog-prose :global(table) {
+    width: 100%;
+    margin: 1.5rem 0 1.75rem;
+    border-collapse: collapse;
+    font-size: 0.975rem;
+    line-height: 1.55;
+  }
+
+  .blog-prose :global(th),
+  .blog-prose :global(td) {
+    padding: 0.75rem 0.85rem;
+    border: 1px solid rgba(101, 21, 97, 0.14);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .blog-prose :global(th) {
+    background: rgba(101, 21, 97, 0.06);
+    color: #29102c;
+    font-weight: 800;
+  }
+
+  .blog-prose :global(td) {
+    background: #fff;
+  }
+
+  .blog-prose :global(tr:nth-child(even) td) {
+    background: #faf8fc;
+  }
+
+  .blog-prose :global(ol) {
+    margin: 0 0 1.25rem;
+    padding-inline-end: 1.5rem;
+    list-style: decimal;
+    display: grid;
+    gap: 0.5rem;
+  }
 </style>

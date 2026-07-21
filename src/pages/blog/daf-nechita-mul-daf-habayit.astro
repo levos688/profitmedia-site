@@ -1,0 +1,339 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import MidPageCta from '../../components/preview/MidPageCta.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import BlogProse from '../../components/blog/BlogProse.astro';
+import BlogFaq from '../../components/blog/BlogFaq.astro';
+import { getPostBySlug } from '../../data/blog';
+
+const post = getPostBySlug('daf-nechita-mul-daf-habayit')!;
+const canonicalUrl = `https://profitmedia.co.il/blog/${post.slug}`;
+
+const faqItems = [
+  {
+    question: 'האם חובה דף נחיתה לכל קמפיין?',
+    answer:
+      'לא תמיד. לקמפיין מותג או לתנועה שמגיעה מחיפוש שם העסק, דף הבית יכול להספיק. לקמפיין לידים או הצעה ספציפית — דף נחיתה ייעודי בדרך כלל עדיף.',
+  },
+  {
+    question: 'מה ההבדל בין דף נחיתה לבין עמוד שירות באתר?',
+    answer:
+      'עמוד שירות עדיין חלק מהאתר: יש ניווט, קישורים פנימיים ומסר רחב יותר. דף נחיתה בנוי סביב פעולה אחת ומסר אחד, לרוב בלי תפריט מסיח.',
+  },
+  {
+    question: 'האם דף נחיתה משפיע על קידום אורגני?',
+    answer:
+      'דף נחיתה לקמפיין ממומן לא חייב להיות הדף העיקרי ל-SEO. אפשר (ולרוב כדאי) לסמן דפי קמפיין ב-noindex אם הם זמניים או מיועדים רק למודעות — ולשמור את דפי התוכן והבלוג לאינדוקס.',
+  },
+  {
+    question: 'כמה זמן לוקח לבנות דף נחיתה?',
+    answer:
+      'תלוי במורכבות: טופס פשוט מול שאלון חכם, עיצוב ומעקב. השאלה החשובה יותר היא האם המסר מחובר למודעה ולתהליך המכירה — לא רק כמה ימים לקח לעיצוב.',
+  },
+  {
+    question: 'איך יודעים אם הדף עובד?',
+    answer:
+      'לא רק לפי מספר לידים. בודקים גם שיעור המרה מקליק לפנייה, ואיכות הפניות (כמה ענו, כמה התאימו לשיחה). אם ה-CPL נמוך אבל המכירות לא זזות — כנראה המסר או הסינון חלשים.',
+  },
+  {
+    question: 'מה כולל אבחון קמפיין בהקשר לדף נחיתה?',
+    answer:
+      'בודקים את המסר במודעה מול מה שמופיע אחרי הקליק, את הטופס או השאלון, ואת נקודות החיכוך. המטרה: המלצה מעשית תוך 24 שעות — בלי התחייבות.',
+  },
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${canonicalUrl}#article`,
+      headline: post.title,
+      description: post.description,
+      datePublished: post.publishDate,
+      dateModified: post.publishDate,
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      image: [`https://profitmedia.co.il${post.imageWide}`, `https://profitmedia.co.il${post.image}`],
+      author: {
+        '@type': 'Organization',
+        name: 'Profit Media',
+        url: 'https://profitmedia.co.il/',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Profit Media',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://profitmedia.co.il/icons/site-icon.png',
+        },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://profitmedia.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'בלוג', item: 'https://profitmedia.co.il/blog' },
+        { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    },
+  ],
+};
+
+const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Layout title={post.seoTitle} description={post.description} canonical={canonicalUrl} enableGtm={false}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleSchema)} />
+  <Header />
+  <main id="main-content">
+    <article>
+      <div class="mx-auto max-w-3xl px-4 pt-10 md:px-6 md:pt-14">
+        <nav class="blog-breadcrumbs" aria-label="פירורי לחם">
+          <a href="/blog">בלוג</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{post.category}</span>
+        </nav>
+
+        <p class="blog-article__eyebrow">{post.category}</p>
+        <h1 class="blog-article__title">{post.title}</h1>
+
+        <div class="blog-article__meta">
+          <span>{formattedDate}</span>
+          <span aria-hidden="true">·</span>
+          <span>{post.readingMinutes} דקות קריאה</span>
+        </div>
+
+        <figure class="blog-article__figure">
+          <img src={post.imageWide} alt={post.imageWideAlt} width="1200" height="900" loading="eager" />
+        </figure>
+
+        <BlogProse class="mt-8">
+          <p>
+            בעל עסק שמריץ קמפיין בפייסבוק או בגוגל שומע לעיתים קרובות את אותה עצה: "תשלח לדף נחיתה". אבל אם כבר
+            יש אתר יפה, למה לא פשוט לשלוח לדף הבית? זו שאלה הגיונית — והתשובה תלויה במה אתם מודדים: כניסות לאתר,
+            או פניות שמתקדמות לשיחה.
+          </p>
+
+          <div class="blog-callout">
+            <p>
+              <strong>תשובה קצרה:</strong> לקמפיין ממומן עדיף ברוב המקרים דף נחיתה ייעודי עם מסר אחד וטופס או
+              שאלון ברור. דף הבית מתאים למי שכבר מחפש את המותג או רוצה להכיר את העסק. כששולחים תנועה בתשלום לדף
+              בית עמוס, משלמים על הסחות דעת — לא רק על לידים.
+            </p>
+          </div>
+
+          <h2>מה זה דף נחיתה לעסק</h2>
+          <p>
+            דף נחיתה הוא עמוד שנועד למטרה אחת: להמיר מבקר לפעולה — השארת פרטים, מענה לשאלון, או קביעת שיחה.
+            בניגוד לדף הבית, אין בו תפריט רחב, בלוג, או כמה הצעות במקביל. המסר בדף צריך להמשיך את ההבטחה מהמודעה,
+            כדי שהמבקר לא ירגיש ש"נחת" במקום אחר.
+          </p>
+
+          <h2>דף נחיתה מול דף הבית — השוואה</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>קריטריון</th>
+                <th>דף הבית</th>
+                <th>דף נחיתה ייעודי</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>מטרה</td>
+                <td>להציג את העסק והמותג</td>
+                <td>להמיר פנייה אחת ברורה</td>
+              </tr>
+              <tr>
+                <td>מספר מסרים</td>
+                <td>כמה (שירותים, אודות, בלוג)</td>
+                <td>מסר אחד שמתאים למודעה</td>
+              </tr>
+              <tr>
+                <td>ניווט</td>
+                <td>תפריט מלא</td>
+                <td>מינימלי או בלי תפריט</td>
+              </tr>
+              <tr>
+                <td>התאמה למודעה</td>
+                <td>כללית</td>
+                <td>מדויקת — אותה הבטחה</td>
+              </tr>
+              <tr>
+                <td>מדידה</td>
+                <td>קשה לבודד מה עבד</td>
+                <td>ברור: קליק → פעולה</td>
+              </tr>
+              <tr>
+                <td>מתאים ל</td>
+                <td>חיפוש מותג, סקרנות, SEO</td>
+                <td>קמפיין ממומן, הצעה ספציפית</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>שורה תחתונה:</strong> דף הבית בונה אמון למותג. דף נחיתה בונה המרה לקמפיין. אלה שני כלים
+            שונים — לא תחליף אחד לשני.
+          </p>
+        </BlogProse>
+      </div>
+
+      <MidPageCta />
+
+      <div class="mx-auto max-w-3xl px-4 md:px-6">
+        <BlogProse>
+          <h2>מתי כן אפשר לשלוח לדף הבית</h2>
+          <p>יש מצבים שבהם דף הבית מספיק:</p>
+          <ol>
+            <li>
+              <strong>חיפוש מותג</strong> — מי שחיפש את שם העסק כבר יודע לאן הוא רוצה להגיע.
+            </li>
+            <li>
+              <strong>תנועה אורגנית כללית</strong> — כשהמטרה היא היכרות, לא ליד מיידי ממודעה.
+            </li>
+            <li>
+              <strong>הצעה רחבה מאוד</strong> — ורק אם בדף הבית יש אזור ברור עם טופס ומסר שלא מתחרה בעשרה קישורים
+              אחרים.
+            </li>
+          </ol>
+          <p>
+            גם אז כדאי לבדוק: אם רוב התקציב הממומן נוחת בדף הבית והיחס פנייה/קליק נמוך — זה סימן לבדוק דף נחיתה
+            ייעודי.
+          </p>
+
+          <h2>למה קמפיין ממומן סובל מדף בית עמוס</h2>
+          <p>
+            בקמפיין אתם משלמים על כל קליק או על כל תוצאה. כשהמבקר מגיע לדף עם תפריט, שלושה שירותים, עדויות שלא
+            קשורות למודעה ובלוג — הוא בוחר לאן ללכת. חלק עוזבים. חלק קוראים ולא משאירים פרטים. התוצאה בדשבורד
+            נראית כמו "המודעה לא עובדת", כשבעצם הבעיה היא פער בין ההבטחה במודעה לבין מה שקורה אחרי הקליק.
+          </p>
+          <p>
+            הטעות הנפוצה: לשפוט הצלחה רק לפי עלות לליד מדף הבית, בלי לבדוק כמה מהפניות בכלל מתאימות לשיחה או
+            לפגישה.
+          </p>
+
+          <h2>מה חייב להיות בדף נחיתה שממיר</h2>
+          <ol>
+            <li>
+              <strong>כותרת שממשיכה את המודעה</strong> — אותה הבטחה, בלי סיבוב.
+            </li>
+            <li>
+              <strong>פסקה אחת של הבהרה</strong> — למי זה מתאים ומה קורה אחרי השארת פרטים.
+            </li>
+            <li>
+              <strong>טופס קצר או שאלון חכם</strong> — מספיק מידע לסינון, בלי שאלון אינסופי.
+            </li>
+            <li>
+              <strong>הוכחה קצרה</strong> — מספר, ציטוט או תוצאה רלוונטית (בלי הבטחת מכירות).
+            </li>
+            <li>
+              <strong>פחות הסחות דעת</strong> — בלי תפריט שמזמין לברוח מהפעולה.
+            </li>
+          </ol>
+
+          <h2>דוגמה מהשטח (בלי לחשוף לקוח)</h2>
+          <p>
+            בעסקים עם עסקה גבוהה — מטבחים, תיירות פרימיום, שירותים מקצועיים — המודעה בדרך כלל מדברת על פנייה
+            לייעוץ או לפגישה. כששולחים את אותו קהל לדף בית כללי, מקבלים יותר גלישה ופחות פניות איכותיות. כשמחברים
+            מודעה → דף נחיתה עם שאלון → מעקב אחרי איכות הפניות, אפשר לשפר את הקמפיין לפי מה שבאמת קורה במכירות —
+            לא רק לפי כמה טפסים נשלחו.
+          </p>
+
+          <h2>שאלות נפוצות</h2>
+        </BlogProse>
+
+        <BlogFaq items={faqItems} />
+      </div>
+
+      <PreviewContactForm />
+
+      <div class="mx-auto max-w-3xl px-4 py-10 md:px-6 md:py-14">
+        <p>
+          <a href="/blog" class="font-medium text-brand-purple underline">← חזרה לבלוג</a>
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer />
+  <LeadCaptureModal />
+  <StickyMobileCta />
+</Layout>
+
+<style>
+  .blog-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .blog-breadcrumbs a {
+    color: #651561;
+    font-weight: 600;
+  }
+
+  .blog-article__eyebrow {
+    margin: 0;
+    color: #c60691;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .blog-article__title {
+    margin: 0.6rem 0 0;
+    font-size: 2rem;
+    line-height: 1.3;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  @media (min-width: 768px) {
+    .blog-article__title {
+      font-size: 2.5rem;
+    }
+  }
+
+  .blog-article__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+    color: #6b7280;
+    font-size: 0.9375rem;
+  }
+
+  .blog-article__figure {
+    margin: 1.75rem 0 0;
+    padding: 1.5rem;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 4px;
+    background: linear-gradient(160deg, #faf8fc 0%, #f3edf5 100%);
+  }
+
+  .blog-article__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

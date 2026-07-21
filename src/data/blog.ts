@@ -22,6 +22,22 @@ export const blogSeo = {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'daf-nechita-mul-daf-habayit',
+    title: 'דף נחיתה לעסק מול דף הבית — לאן לשלוח את הקמפיין?',
+    seoTitle: 'דף נחיתה לעסק מול דף הבית — מתי לא לשלוח לדף הבית | Profit Media',
+    description:
+      'האם לשלוח קמפיין ממומן לדף הבית או לדף נחיתה ייעודי? השוואה ברורה, טבלת הבדלים, ומתי דף הבית כן מספיק — בלי הבטחות מכירות.',
+    excerpt:
+      'למה תנועה בתשלום לדף בית עמוס מייקרת לידים, מתי דף הבית כן מתאים, ומה חייב להיות בדף נחיתה שממיר לפניות איכותיות.',
+    category: 'דפי נחיתה',
+    publishDate: '2026-07-21',
+    readingMinutes: 8,
+    image: '/images/blog/daf-nechita-mul-daf-habayit-square.png',
+    imageAlt: 'איור של שני מסלולים — דף בית עמוס מול דף נחיתה ממוקד עם כפתור פעולה',
+    imageWide: '/images/blog/daf-nechita-mul-daf-habayit-wide.png',
+    imageWideAlt: 'השוואה ויזואלית בין דף בית עם תפריט לבין דף נחיתה עם מסר אחד וקריאה לפעולה',
+  },
+  {
     slug: 'kampeinim-memumanim-madrich',
     title: 'קמפיינים ממומנים: כמה זה באמת עולה ולמי זה מתאים',
     seoTitle: 'קמפיינים ממומנים 2026 — כמה זה עולה ולמי זה מתאים | Profit Media',
