@@ -3,6 +3,8 @@ Allow: /
 Disallow: /donhin/ab-stats
 
 # LLM context: https://profitmedia.co.il/llms.txt
+Sitemap: https://profitmedia.co.il/sitemap.xml
+
 
 User-agent: Googlebot
 Disallow: /prat/

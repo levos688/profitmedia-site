@@ -352,7 +352,7 @@ export const landings = [
   { title: 'דף נחיתה הלוואות לעסקים', image: '/images/landings/upgrade.jpg' },
   { title: 'דף נחיתה מקצועי לקליניקה', image: '/images/landings/frame_43.jpg' },
   { title: 'דף נחיתה לחברת ייעוץ משכנתאות', image: '/images/landings/frame_33.jpg' },
-  { title: 'דף נחיתה לעבודות גבס', image: '/images/landings/frame_27.jpg' },
+  { title: 'דף נחיתה לקמפיין לידים — שיפוצים', image: '/images/landings/frame_27.jpg' },
 ];
 
 export function getPortfolioLandings() {
