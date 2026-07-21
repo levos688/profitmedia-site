@@ -150,15 +150,23 @@ import Layout from '../../layouts/Layout.astro';
     if (experiment === 'lead_source') {
       return variant.conversion * 1000 + variant.click;
     }
+    // Prefer conversion rate so a tiny sample with 1 lucky lead does not beat a stable leader,
+    // and absolute volume alone does not hide a higher CVR once both sides have enough data.
     if (experiment === 'sticky_cta') {
-      return variant.conversion * 1000 + variant.cvr * 10 + variant.ctr;
+      return variant.cvr * 1000 + variant.ctr * 10 + variant.conversion;
     }
-    return variant.conversion * 1000 + variant.cvr;
+    return variant.cvr * 1000 + variant.conversion;
   }
+
+  const RANK_MIN_IMPRESSIONS = 40;
 
   function rankMap(experiment: string, variants: VariantRow[]): Map<string, 'win' | 'lose'> {
     const ranked = new Map<string, 'win' | 'lose'>();
-    const eligible = variants.filter((v) => v.impression > 0 || v.click > 0 || v.conversion > 0);
+    if (experiment === 'lead_source') return ranked;
+
+    const eligible = variants.filter(
+      (v) => isVariantActive(experiment, v.variant) && v.impression >= RANK_MIN_IMPRESSIONS,
+    );
     if (eligible.length < 2) return ranked;
 
     const scored = eligible.map((v) => ({ id: v.variant, score: scoreVariant(experiment, v) }));
@@ -168,7 +176,7 @@ import Layout from '../../layouts/Layout.astro';
 
     scored.forEach((s) => {
       if (s.score === max) ranked.set(s.id, 'win');
-      if (s.score === min && experiment !== 'lead_source') ranked.set(s.id, 'lose');
+      if (s.score === min) ranked.set(s.id, 'lose');
     });
     return ranked;
   }
@@ -320,7 +328,7 @@ import Layout from '../../layouts/Layout.astro';
           </div>
           ${
             showLegend && cachedData?.allocation?.[experiment.experiment]
-              ? `<p class="ab-stats__alloc-note">${cachedData.allocation[experiment.experiment].reason}</p>`
+              ? `<p class="ab-stats__alloc-note">${cachedData.allocation[experiment.experiment].reason}. Бейдж «Лучший» — только среди включённых вариантов с ≥${RANK_MIN_IMPRESSIONS} показами, по CVR.</p>`
               : experiment.experiment === 'lead_source'
                 ? '<p class="ab-stats__alloc-note">Считается с момента включения учёта по формам</p>'
                 : ''
