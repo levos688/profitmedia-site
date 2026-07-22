@@ -190,6 +190,10 @@ import Layout from '../../layouts/Layout.astro';
     return { impression, click, conversion, ctr, cvr };
   }
 
+  function sumActiveVariants(experiment: string, variants: VariantRow[]) {
+    return sumVariants(variants.filter((v) => isVariantActive(experiment, v.variant)));
+  }
+
   function renderSummary(experiments: Array<{ experiment: string; variants: VariantRow[] }>) {
     const leadSource = experiments.find((item) => item.experiment === 'lead_source');
     const sticky = experiments.find((item) => item.experiment === 'sticky_cta');
@@ -259,8 +263,12 @@ import Layout from '../../layouts/Layout.astro';
     const tables = experiments
       .map((experiment) => {
         const ranks = rankMap(experiment.experiment, experiment.variants);
-        const totals = sumVariants(experiment.variants);
-        const showLegend = experiment.experiment !== 'lead_source';
+        const isLeadSource = experiment.experiment === 'lead_source';
+        const totals = isLeadSource
+          ? sumVariants(experiment.variants)
+          : sumActiveVariants(experiment.experiment, experiment.variants);
+        const showLegend = !isLeadSource;
+        const totalLabel = isLeadSource ? 'Итого' : 'Итого (включённые)';
         const rows = experiment.variants
           .map((variant) => {
             const name = labels[experiment.experiment]?.[variant.variant] || variant.variant;
@@ -306,6 +314,9 @@ import Layout from '../../layouts/Layout.astro';
           })
           .join('');
 
+        const totalCtr = isLeadSource ? '—' : `${totals.ctr}%`;
+        const totalCvr = isLeadSource ? '—' : `${totals.cvr}%`;
+
         return `<section class="ab-stats__block">
           <div class="ab-stats__block-head">
             <h2>${titles[experiment.experiment] || experiment.experiment}</h2>
@@ -328,9 +339,9 @@ import Layout from '../../layouts/Layout.astro';
           </div>
           ${
             showLegend && cachedData?.allocation?.[experiment.experiment]
-              ? `<p class="ab-stats__alloc-note">${cachedData.allocation[experiment.experiment].reason}. Бейдж «Лучший» — только среди включённых вариантов с ≥${RANK_MIN_IMPRESSIONS} показами, по CVR.</p>`
-              : experiment.experiment === 'lead_source'
-                ? '<p class="ab-stats__alloc-note">Считается с момента включения учёта по формам</p>'
+              ? `<p class="ab-stats__alloc-note">${cachedData.allocation[experiment.experiment].reason}. Бейдж «Лучший» — только среди включённых вариантов с ≥${RANK_MIN_IMPRESSIONS} показами, по CVR. Строка «Итого» считает только включённые варианты.</p>`
+              : isLeadSource
+                ? '<p class="ab-stats__alloc-note">CVR в строках — конверсия этого источника (заявки / показы источника). Итоговый CTR/CVR здесь не смешивается: у форм разные знаменатели (просмотр страницы ≠ открытие popup).</p>'
                 : ''
           }
           <div class="ab-stats__table-wrap">
@@ -348,12 +359,12 @@ import Layout from '../../layouts/Layout.astro';
               <tbody>${rows}</tbody>
               <tfoot>
                 <tr class="ab-stats__total-row">
-                  <th scope="row">Итого</th>
+                  <th scope="row">${totalLabel}</th>
                   <td class="ab-stats__num ab-stats__col--imp">${totals.impression}</td>
                   <td class="ab-stats__num ab-stats__col--click">${totals.click}</td>
                   <td class="ab-stats__num ab-stats__col--conv">${totals.conversion}</td>
-                  <td class="ab-stats__num ab-stats__col--ctr">${totals.ctr}%</td>
-                  <td class="ab-stats__num ab-stats__col--cvr">${totals.cvr}%</td>
+                  <td class="ab-stats__num ab-stats__col--ctr">${totalCtr}</td>
+                  <td class="ab-stats__num ab-stats__col--cvr">${totalCvr}</td>
                 </tr>
               </tfoot>
             </table>
