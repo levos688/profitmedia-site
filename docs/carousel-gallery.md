@@ -47,7 +47,11 @@ If gallery breaks again, restore behavior from this doc (and git history around 
 - Slides from real items only:  
   `.carousel-item:not([data-carousel-clone]) [data-lightbox-trigger]`
 - Ignore clicks on `.carousel-arrow` and clones.
-- Nav buttons: SVG + `dir="ltr"`, placed **beside** the image (not overlaid on it).
+- Layout: `.lightbox__stage` is a **row** with `dir="ltr"` / `direction: ltr`:
+  - **Left** = prev (`‹` SVG path pointing left) — outside the image, pointing **outward**
+  - **Center** = image
+  - **Right** = next (`›` SVG path pointing right) — outside the image, pointing **outward**
+- Do **not** drop `dir="ltr"` on the stage: on an RTL page, flex reverses the row and chevrons look like they point **into** the image.
 - Unlock page on close (`html.lightbox-open` + `body` overflow).
 
 ---
@@ -58,7 +62,7 @@ If gallery breaks again, restore behavior from this doc (and git history around 
 - [ ] Right arrow: one card at a time
 - [ ] Many left/right presses: no freeze, no empty left hole
 - [ ] Logos carousel: same behavior
-- [ ] Tap card → enlarge; arrows outside image; next/prev work; close unlocks scroll
+- [ ] Tap card → enlarge; arrows **outside** image and pointing **outward** (‹ left, › right); next/prev work; close unlocks scroll
 
 ---
 

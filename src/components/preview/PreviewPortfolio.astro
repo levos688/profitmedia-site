@@ -63,8 +63,8 @@ const slidesJson = JSON.stringify(
         </svg>
       </button>
 
-      <div class="lightbox__stage">
-        <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="דף נחיתה קודם" dir="ltr">
+      <div class="lightbox__stage" dir="ltr">
+        <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="דף נחיתה קודם">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
@@ -74,7 +74,7 @@ const slidesJson = JSON.stringify(
           <img id="lightbox-image" class="lightbox__image" src="" alt="" />
         </div>
 
-        <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="דף נחיתה הבא" dir="ltr">
+        <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="דף נחיתה הבא">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
@@ -340,14 +340,18 @@ const slidesJson = JSON.stringify(
     z-index: 2;
   }
 
-  /* Arrows sit beside the image — never overlaid on top of it */
+  /* Arrows sit beside the image — never overlaid on top of it.
+     dir=ltr on the stage keeps physical order: [‹] image [›] (outward),
+     even though the page is RTL (otherwise flex reverses and chevrons point inward). */
   .lightbox__stage {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     width: 100%;
     max-width: 100%;
+    direction: ltr;
   }
 
   .lightbox__media {
