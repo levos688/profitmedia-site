@@ -1,8 +1,13 @@
 ---
+/**
+ * Working gallery recipe: docs/carousel-gallery.md
+ * transform + clone loop, one card per step — do not switch back to scrollLeft on RTL.
+ */
 interface Props {
   ariaLabel: string;
   gap?: 'normal' | 'wide';
   shuffle?: boolean;
+  /** Circular one-card steps. Default true. */
   loop?: boolean;
 }
 
@@ -16,12 +21,11 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   aria-label={ariaLabel}
   data-carousel-root={uid}
 >
-  <!-- RTL: first = right edge, arrow → scrolls forward -->
   <button
     type="button"
     class="carousel-arrow carousel-arrow--edge-start"
     aria-label="גלול קדימה"
-    data-carousel-start={uid}
+    data-carousel-next={uid}
   >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
@@ -33,18 +37,17 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     </svg>
   </button>
 
-  <div class="carousel-wrap">
-    <div class="carousel-track" data-carousel-track={uid} tabindex="0">
+  <div class="carousel-viewport" data-carousel-viewport={uid}>
+    <div class="carousel-strip" data-carousel-strip={uid} dir="ltr">
       <slot />
     </div>
   </div>
 
-  <!-- RTL: last = left edge, arrow ← scrolls backward -->
   <button
     type="button"
     class="carousel-arrow carousel-arrow--edge-end"
     aria-label="גלול אחורה"
-    data-carousel-end={uid}
+    data-carousel-prev={uid}
   >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
@@ -60,14 +63,15 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 <script define:vars={{ uid, shuffle, loop }}>
   (() => {
     const root = document.querySelector(`[data-carousel-root="${uid}"]`);
-    const track = document.querySelector(`[data-carousel-track="${uid}"]`);
-    const startBtn = document.querySelector(`[data-carousel-start="${uid}"]`);
-    const endBtn = document.querySelector(`[data-carousel-end="${uid}"]`);
-    if (!root || !track || !startBtn || !endBtn) return;
+    const viewport = document.querySelector(`[data-carousel-viewport="${uid}"]`);
+    const strip = document.querySelector(`[data-carousel-strip="${uid}"]`);
+    const nextBtn = document.querySelector(`[data-carousel-next="${uid}"]`);
+    const prevBtn = document.querySelector(`[data-carousel-prev="${uid}"]`);
+    if (!root || !viewport || !strip || !nextBtn || !prevBtn) return;
 
     const getRealItems = () =>
-      [...track.querySelectorAll(':scope > .carousel-item:not([data-carousel-clone])')];
-    const getAllItems = () => [...track.querySelectorAll(':scope > .carousel-item')];
+      [...strip.querySelectorAll(':scope > .carousel-item:not([data-carousel-clone])')];
+    const getAllItems = () => [...strip.querySelectorAll(':scope > .carousel-item')];
 
     if (shuffle) {
       const items = getRealItems();
@@ -75,151 +79,23 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
         const j = Math.floor(Math.random() * (i + 1));
         [items[i], items[j]] = [items[j], items[i]];
       }
-      items.forEach((item) => track.appendChild(item));
+      items.forEach((item) => strip.appendChild(item));
     }
 
-    let loopEnabled = false;
     let realCount = 0;
+    let loopOn = false;
     let index = 0;
     let busy = false;
-    let animTimer = 0;
-    let settleTimer = 0;
-    let ready = false;
+    let currentX = 0;
 
     const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
-
-    const targetLeftFor = (item) => {
-      if (!item) return 0;
-      const left = isMobile()
-        ? item.offsetLeft - (track.clientWidth - item.offsetWidth) / 2
-        : item.offsetLeft;
-      const max = Math.max(0, track.scrollWidth - track.clientWidth);
-      return Math.min(max, Math.max(0, left));
-    };
-
-    const syncIndexFromScroll = () => {
-      const items = getAllItems();
-      if (!items.length) return 0;
-      const focus = isMobile()
-        ? track.scrollLeft + track.clientWidth / 2
-        : track.scrollLeft + Math.min(24, track.clientWidth * 0.1);
-      let best = 0;
-      let bestDist = Infinity;
-      items.forEach((item, i) => {
-        const point = isMobile()
-          ? item.offsetLeft + item.offsetWidth / 2
-          : item.offsetLeft;
-        const dist = Math.abs(point - focus);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = i;
-        }
-      });
-      index = best;
-      return best;
-    };
-
-    const updatePeekState = () => {
-      if (!isMobile()) {
-        getAllItems().forEach((item) => {
-          item.classList.remove('is-active', 'is-peek');
-        });
-        return;
-      }
-      const items = getAllItems();
-      items.forEach((item, i) => {
-        const active = i === index;
-        item.classList.toggle('is-active', active);
-        item.classList.toggle('is-peek', !active);
-      });
-    };
-
-    const updateArrows = () => {
-      updatePeekState();
-      if (loopEnabled) {
-        startBtn.disabled = false;
-        endBtn.disabled = false;
-        return;
-      }
-      const max = Math.max(0, track.scrollWidth - track.clientWidth);
-      const atStart = track.scrollLeft <= 2;
-      const atEnd = track.scrollLeft >= max - 2;
-      // RTL UI: startBtn scrolls forward (higher index), endBtn backward.
-      startBtn.disabled = !loopEnabled && atEnd;
-      endBtn.disabled = !loopEnabled && atStart;
-      if (max <= 1) {
-        startBtn.disabled = true;
-        endBtn.disabled = true;
-      }
-    };
-
-    const jumpToIndex = (nextIndex) => {
-      const items = getAllItems();
-      const item = items[nextIndex];
-      if (!item) return;
-      index = nextIndex;
-      track.scrollLeft = targetLeftFor(item);
-      updatePeekState();
-    };
-
-    const normalizeLoopIndex = () => {
-      if (!loopEnabled || realCount <= 0) return;
-      if (index < realCount) {
-        jumpToIndex(index + realCount);
-      } else if (index >= realCount * 2) {
-        jumpToIndex(index - realCount);
-      }
-    };
-
-    const goToIndex = (nextIndex, smooth) => {
-      const items = getAllItems();
-      if (!items[nextIndex] || busy) return;
-
-      busy = true;
-      window.clearTimeout(animTimer);
-      window.clearTimeout(settleTimer);
-      index = nextIndex;
-      updatePeekState();
-
-      const useSmooth = smooth && !reduceMotion();
-      track.scrollTo({
-        left: targetLeftFor(items[nextIndex]),
-        behavior: useSmooth ? 'smooth' : 'auto',
-      });
-
-      const finish = () => {
-        window.clearTimeout(animTimer);
-        syncIndexFromScroll();
-        normalizeLoopIndex();
-        busy = false;
-        updateArrows();
-      };
-
-      if (!useSmooth) {
-        finish();
-        return;
-      }
-
-      // Keep buttons locked only for the animation; never share this timer with scroll settle.
-      animTimer = window.setTimeout(finish, 420);
-    };
-
-    const step = (delta) => {
-      if (!ready) init();
-      if (busy) return;
-      syncIndexFromScroll();
-      const next = index + delta;
-      const items = getAllItems();
-      if (next < 0 || next >= items.length) return;
-      goToIndex(next, true);
-    };
 
     const setupLoop = () => {
       const items = getRealItems();
       realCount = items.length;
       if (!loop || realCount < 2) {
-        loopEnabled = false;
+        loopOn = false;
         index = 0;
         return;
       }
@@ -235,100 +111,171 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
           clone.setAttribute('aria-hidden', 'true');
           clone.querySelectorAll('button, a, input, select, textarea').forEach((el) => {
             el.setAttribute('tabindex', '-1');
+            el.setAttribute('disabled', '');
+            el.style.pointerEvents = 'none';
           });
         });
         before.appendChild(cloneBefore);
         after.appendChild(cloneAfter);
       });
 
-      track.insertBefore(before, track.firstChild);
-      track.appendChild(after);
-      loopEnabled = true;
+      strip.insertBefore(before, strip.firstChild);
+      strip.appendChild(after);
+      loopOn = true;
+      // Start on first REAL item (middle section).
       index = realCount;
     };
 
-    const applyLayout = () => {
-      if (loopEnabled) {
-        jumpToIndex(Math.min(Math.max(index, realCount), realCount * 2 - 1) || realCount);
-      } else {
-        jumpToIndex(Math.min(index, Math.max(0, getAllItems().length - 1)));
+    const maxOffset = () => Math.max(0, strip.scrollWidth - viewport.clientWidth);
+
+    const offsetForIndex = (i) => {
+      const items = getAllItems();
+      const item = items[i];
+      if (!item) return 0;
+      return Math.min(Math.max(0, item.offsetLeft), maxOffset());
+    };
+
+    const updatePeek = () => {
+      const items = getAllItems();
+      if (!isMobile()) {
+        for (let i = 0; i < items.length; i++) {
+          items[i].classList.remove('is-active', 'is-peek');
+        }
+        return;
       }
+      for (let i = 0; i < items.length; i++) {
+        items[i].classList.toggle('is-active', i === index);
+        items[i].classList.toggle('is-peek', i !== index);
+      }
+    };
+
+    const updateArrows = () => {
+      if (loopOn) {
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
+        return;
+      }
+      const items = getAllItems();
+      prevBtn.disabled = index <= 0;
+      nextBtn.disabled = index >= items.length - 1 || maxOffset() <= 1;
+    };
+
+    const setX = (x, animate) => {
+      if (animate && !reduceMotion()) {
+        strip.style.transition = 'transform 0.4s ease';
+      } else {
+        strip.style.transition = 'none';
+      }
+      strip.style.transform = `translate3d(${x}px, 0, 0)`;
+      currentX = x;
+    };
+
+    /** After a step into the clone zone, jump to the matching real item with no animation. */
+    const normalizeIfNeeded = () => {
+      if (!loopOn || realCount < 2) return;
+      if (index < realCount) {
+        index += realCount;
+        setX(-offsetForIndex(index), false);
+      } else if (index >= realCount * 2) {
+        index -= realCount;
+        setX(-offsetForIndex(index), false);
+      }
+    };
+
+    const goTo = (nextIndex, animate) => {
+      const items = getAllItems();
+      if (!items.length || busy) return;
+      if (nextIndex < 0 || nextIndex >= items.length) return;
+
+      // Guard: only adjacent steps (one card).
+      if (Math.abs(nextIndex - index) !== 1 && animate) return;
+
+      busy = true;
+      index = nextIndex;
+      setX(-offsetForIndex(index), animate);
+      updatePeek();
       updateArrows();
+
+      const done = () => {
+        normalizeIfNeeded();
+        updatePeek();
+        updateArrows();
+        busy = false;
+      };
+
+      if (!animate || reduceMotion()) {
+        done();
+        return;
+      }
+      window.setTimeout(done, 420);
     };
 
-    const init = () => {
-      if (ready) return;
-      ready = true;
-      setupLoop();
-      requestAnimationFrame(() => {
-        requestAnimationFrame(applyLayout);
-      });
+    const step = (delta) => {
+      goTo(index + delta, true);
     };
 
-    startBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (busy) return;
       step(1);
     });
-    endBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
+
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (busy) return;
       step(-1);
     });
 
-    track.addEventListener(
-      'scroll',
-      () => {
-        // While an arrow animation is in progress, ignore settle logic so we don't
-        // cancel the busy→idle transition (that was locking the buttons).
+    let touchX = 0;
+    let touchY = 0;
+    viewport.addEventListener(
+      'touchstart',
+      (e) => {
+        const t = e.changedTouches[0];
+        touchX = t?.clientX ?? 0;
+        touchY = t?.clientY ?? 0;
+      },
+      { passive: true }
+    );
+    viewport.addEventListener(
+      'touchend',
+      (e) => {
         if (busy) return;
-
-        syncIndexFromScroll();
-        updatePeekState();
-
-        window.clearTimeout(settleTimer);
-        settleTimer = window.setTimeout(() => {
-          if (busy) return;
-          syncIndexFromScroll();
-          normalizeLoopIndex();
-          updateArrows();
-        }, 140);
+        const t = e.changedTouches[0];
+        if (!t) return;
+        const dx = t.clientX - touchX;
+        const dy = t.clientY - touchY;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+        step(dx < 0 ? 1 : -1);
       },
       { passive: true }
     );
 
-    window.addEventListener('resize', () => {
-      if (!ready) return;
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => {
-        syncIndexFromScroll();
-        applyLayout();
-      }, 100);
-    });
+    window.addEventListener(
+      'resize',
+      () => {
+        setX(-offsetForIndex(index), false);
+        updatePeek();
+        updateArrows();
+      },
+      { passive: true }
+    );
 
     const boot = () => {
-      const rect = root.getBoundingClientRect();
-      const near = rect.bottom > -240 && rect.top < (window.innerHeight || 800) + 240;
-      if (near) init();
+      setupLoop();
+      setX(-offsetForIndex(index), false);
+      updatePeek();
+      updateArrows();
+      // Remeasure after images load.
+      window.setTimeout(() => {
+        setX(-offsetForIndex(index), false);
+        updateArrows();
+      }, 300);
     };
 
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          init();
-          observer.disconnect();
-        },
-        { rootMargin: '320px 0px' }
-      );
-      observer.observe(root);
-      boot();
-      window.setTimeout(() => {
-        if (!ready) init();
-      }, 1200);
-    } else {
-      init();
-    }
+    requestAnimationFrame(() => requestAnimationFrame(boot));
   })();
 </script>
 
@@ -338,43 +285,37 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .carousel-outer--wide {
     gap: 1rem;
   }
 
-  .carousel-wrap {
+  .carousel-viewport {
     flex: 1;
     min-width: 0;
     overflow: hidden;
+    touch-action: pan-y;
   }
 
-  .carousel-track {
+  .carousel-strip {
     display: flex;
+    position: relative;
     direction: ltr;
     gap: 1.5rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    will-change: transform;
     padding-block: 0.25rem;
-    overscroll-behavior-x: contain;
+    transform: translate3d(0, 0, 0);
   }
 
-  .carousel-outer--wide .carousel-track {
+  .carousel-outer--wide .carousel-strip {
     gap: 1.5rem;
   }
 
-  .carousel-track::-webkit-scrollbar {
-    display: none;
-  }
-
-  .carousel-track :global(.carousel-item) {
+  .carousel-strip :global(.carousel-item) {
     flex: 0 0 auto;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
   }
 
   .carousel-arrow {
@@ -396,7 +337,9 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       color 0.2s,
       opacity 0.2s;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
-    z-index: 2;
+    z-index: 6;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .carousel-arrow:hover:not(:disabled) {
@@ -408,6 +351,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   .carousel-arrow:disabled {
     opacity: 0.35;
     cursor: default;
+    pointer-events: none;
   }
 
   .carousel-arrow:focus-visible {
@@ -420,18 +364,21 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       gap: 0;
     }
 
-    .carousel-wrap {
+    .carousel-viewport {
       width: 100%;
+      padding-inline: 2.75rem;
+    }
+
+    .carousel-strip {
+      gap: 1rem;
     }
 
     .carousel-arrow {
       position: absolute;
-      top: 50%;
+      top: 38%;
       transform: translateY(-50%);
-      width: 2.25rem;
-      height: 2.25rem;
-      min-width: 44px;
-      min-height: 44px;
+      width: 2.5rem;
+      height: 2.5rem;
       background: rgb(255 255 255 / 0.96);
     }
 
@@ -443,36 +390,24 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       left: 0.35rem;
     }
 
-    .carousel-track {
-      padding-inline: 3rem;
-      gap: 1rem;
+    .carousel-strip :global(.carousel-item) {
+      opacity: 0.45;
+      transition: opacity 0.35s ease;
     }
 
-    .carousel-track :global(.carousel-item) {
-      opacity: 0.3;
-      transition: opacity 0.25s ease;
-    }
-
-    .carousel-track :global(.carousel-item.is-active),
-    .carousel-track :global(.carousel-item:only-child) {
+    .carousel-strip :global(.carousel-item.is-active),
+    .carousel-strip :global(.carousel-item:only-child) {
       opacity: 1;
     }
   }
 
-  @media (min-width: 768px) {
-    .carousel-track {
-      scroll-snap-type: none;
-    }
-
-    .carousel-track :global(.carousel-item) {
-      scroll-snap-align: none;
-      scroll-snap-stop: normal;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
+    .carousel-strip {
+      transition: none !important;
+    }
+
     .carousel-arrow,
-    .carousel-track :global(.carousel-item) {
+    .carousel-strip :global(.carousel-item) {
       transition: none;
     }
   }
