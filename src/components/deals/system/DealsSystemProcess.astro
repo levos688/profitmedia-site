@@ -20,18 +20,19 @@ import { dealsProcess } from '../../../data/deals';
               <path d="M0,0 L8,4 L0,8 Z" fill="#fcc000"></path>
             </marker>
           </defs>
+          {/* Mirrored horizontally (x' = 720 - x) so the flow reads right-to-left, matching Hebrew and the step order below. */}
           <path
-            d="M70 90 H650"
+            d="M650 90 H70"
             fill="none"
             stroke="rgba(101,21,97,0.22)"
             stroke-width="3"
             stroke-dasharray="8 8"
           ></path>
-          <path d="M70 90 H210" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
-          <path d="M250 90 H390" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
-          <path d="M430 90 H570" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
+          <path d="M650 90 H510" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
+          <path d="M470 90 H330" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
+          <path d="M290 90 H150" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
           {
-            [90, 270, 450, 630].map((x, i) => (
+            [630, 450, 270, 90].map((x, i) => (
               <g>
                 <circle cx={x} cy="90" r="28" fill={i === 3 ? '#651561' : '#fff'} stroke={i === 3 ? '#fcc000' : '#651561'} stroke-width="3" />
                 <text
