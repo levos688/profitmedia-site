@@ -1,0 +1,145 @@
+---
+import Reveal from '../Reveal.astro';
+import CheckIcon from '../icons/CheckIcon.astro';
+import { dealsAudience } from '../../data/deals';
+---
+
+<section id="audience" class="deals-audience section-padding below-fold" aria-labelledby="deals-audience-title">
+  <div class="mx-auto max-w-5xl px-4 md:px-6">
+    <Reveal>
+      <div class="deals-audience__head">
+        <h2 id="deals-audience-title" class="deals-audience__title">{dealsAudience.title}</h2>
+        <p class="deals-audience__subtitle">{dealsAudience.subtitle}</p>
+      </div>
+    </Reveal>
+
+    <div class="deals-audience__grid">
+      {
+        dealsAudience.items.map((item, index) => (
+          <Reveal delay={Math.min(index * 70, 210)}>
+            <div class="deals-audience__item">
+              <span class="deals-audience__check" aria-hidden="true">
+                <CheckIcon />
+              </span>
+              <div>
+                <h3 class="deals-audience__item-title">{item.title}</h3>
+                <p class="deals-audience__item-body">{item.description}</p>
+              </div>
+            </div>
+          </Reveal>
+        ))
+      }
+    </div>
+
+    <Reveal delay={200}>
+      <div class="deals-audience__less">
+        <p class="deals-audience__less-title">{dealsAudience.lessFitTitle}</p>
+        <p class="deals-audience__less-body">{dealsAudience.lessFit}</p>
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .deals-audience {
+    background: #fff;
+  }
+
+  .deals-audience__head {
+    text-align: center;
+    margin-bottom: 2.25rem;
+  }
+
+  .deals-audience__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 4.6vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: #29102c;
+  }
+
+  .deals-audience__subtitle {
+    margin: 0.85rem auto 0;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .deals-audience__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .deals-audience__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    height: 100%;
+    border-radius: 4px;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    background: #f7f5f8;
+    padding: 1.35rem 1.25rem;
+  }
+
+  .deals-audience__check {
+    display: flex;
+    flex: 0 0 1.75rem;
+    height: 1.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #651561;
+    color: #fcc000;
+  }
+
+  .deals-audience__check :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .deals-audience__item-title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 800;
+    line-height: 1.4;
+    color: #29102c;
+  }
+
+  .deals-audience__item-body {
+    margin: 0.45rem 0 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .deals-audience__less {
+    margin-top: 1.75rem;
+    border-radius: 4px;
+    border: 1px dashed rgba(101, 21, 97, 0.25);
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .deals-audience__less-title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 900;
+    color: #4a0f46;
+  }
+
+  .deals-audience__less-body {
+    margin: 0.5rem auto 0;
+    max-width: 42rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .deals-audience__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+  }
+</style>

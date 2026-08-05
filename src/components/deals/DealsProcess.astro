@@ -1,0 +1,128 @@
+---
+import Reveal from '../Reveal.astro';
+import { dealsProcess } from '../../data/deals';
+---
+
+<section id="process" class="deals-process section-padding below-fold" aria-labelledby="deals-process-title">
+  <div class="mx-auto max-w-4xl px-4 md:px-6">
+    <Reveal>
+      <div class="deals-process__head">
+        <h2 id="deals-process-title" class="deals-process__title">{dealsProcess.title}</h2>
+        <p class="deals-process__subtitle">{dealsProcess.subtitle}</p>
+      </div>
+    </Reveal>
+
+    <ol class="deals-process__list">
+      {
+        dealsProcess.steps.map((step, index) => (
+          <Reveal delay={Math.min(index * 80, 240)}>
+            <li class="deals-process__item">
+              <span class="deals-process__marker" aria-hidden="true">
+                {index + 1}
+              </span>
+              <div>
+                <h3 class="deals-process__item-title">{step.title}</h3>
+                <p class="deals-process__item-body">{step.description}</p>
+              </div>
+            </li>
+          </Reveal>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .deals-process {
+    background: #fff;
+  }
+
+  .deals-process__head {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .deals-process__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 4.6vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: #29102c;
+  }
+
+  .deals-process__subtitle {
+    margin: 0.85rem auto 0;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .deals-process__list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .deals-process__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+    border-radius: 4px;
+    background: #f7f5f8;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    padding: 1.35rem 1.25rem;
+    transition: border-color 0.2s ease-out;
+  }
+
+  .deals-process__item:hover {
+    border-color: rgba(198, 6, 145, 0.35);
+  }
+
+  .deals-process__marker {
+    display: flex;
+    flex: 0 0 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #651561;
+    color: #fcc000;
+    font-size: 1.05rem;
+    font-weight: 900;
+  }
+
+  .deals-process__item-title {
+    margin: 0.25rem 0 0;
+    font-size: 1.0625rem;
+    font-weight: 800;
+    line-height: 1.4;
+    color: #29102c;
+  }
+
+  .deals-process__item-body {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .deals-process__item {
+      padding: 1.6rem 1.6rem;
+    }
+
+    .deals-process__item-title {
+      font-size: 1.175rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .deals-process__item {
+      transition: none;
+    }
+  }
+</style>

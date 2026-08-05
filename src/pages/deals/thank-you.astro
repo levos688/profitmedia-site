@@ -1,0 +1,32 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { dealsPixelId } from '../../data/deals';
+---
+
+<Layout
+  title="תודה | Profit Media"
+  description="קיבלנו את הפרטים. נחזור אליך תוך 24 שעות."
+  noindex
+  enableGtm={false}
+  metaPixelId={dealsPixelId || undefined}
+  metaPixelLead={Boolean(dealsPixelId)}
+  preloadImage={false}
+  lang="he"
+  dir="rtl"
+>
+  <main
+    id="main-content"
+    class="flex min-h-[100dvh] flex-col items-center justify-center bg-white px-4 py-16 text-center"
+  >
+    <a href="/" class="mb-10 block" aria-label="Profit Media, דף הבית">
+      <img src="/logo.svg" alt="Profit Media" class="mx-auto h-14 w-auto md:h-[70px]" width="200" height="70" />
+    </a>
+
+    <div class="max-w-xl">
+      <h1 class="text-3xl leading-tight font-black text-brand-purple md:text-5xl">קיבלנו את הפרטים</h1>
+      <p class="mt-5 text-xl leading-relaxed text-gray-600 md:text-2xl">
+        חוזרים אליכם תוך 24 שעות עם מה שראינו, גם אם המסקנה תהיה שלא צריך אותנו עכשיו.
+      </p>
+    </div>
+  </main>
+</Layout>

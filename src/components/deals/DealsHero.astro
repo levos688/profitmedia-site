@@ -1,0 +1,190 @@
+---
+import HeroIllustration from '../HeroIllustration.astro';
+import PremiumAtmosphere from '../preview/PremiumAtmosphere.astro';
+import { dealsHero } from '../../data/deals';
+---
+
+<section
+  class="deals-hero hero-gradient relative overflow-hidden"
+  aria-labelledby="deals-hero-title"
+>
+  <PremiumAtmosphere variant="hero" />
+
+  <div class="relative mx-auto max-w-6xl px-4 md:px-6">
+    <div class="deals-hero__layout">
+      <p class="deals-hero__eyebrow">{dealsHero.eyebrow}</p>
+
+      <h1 id="deals-hero-title" class="deals-hero__title">{dealsHero.title}</h1>
+
+      <div class="deals-hero__visual">
+        <HeroIllustration />
+      </div>
+
+      <div class="deals-hero__more">
+        <p class="deals-hero__subtitle">{dealsHero.subtitle}</p>
+
+        <div class="deals-hero__cta-wrap">
+          <button type="button" class="btn-yellow deals-hero__cta rounded-full font-black" data-lead-modal-open>
+            {dealsHero.cta}
+          </button>
+          <p class="deals-hero__note">{dealsHero.ctaNote}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .deals-hero {
+    padding-block: 1.25rem 2.5rem;
+  }
+
+  .deals-hero__layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-block: 1.5rem;
+  }
+
+  .deals-hero__eyebrow {
+    width: 100%;
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .deals-hero__title {
+    width: 100%;
+    max-width: 52rem;
+    margin-top: 0.75rem;
+    font-size: clamp(2rem, 6.4vw, 3.35rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+  }
+
+  .deals-hero__visual {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .deals-hero__more {
+    width: 100%;
+    max-width: 36rem;
+    margin-top: 1rem;
+  }
+
+  .deals-hero__subtitle {
+    margin: 0;
+    font-size: 1.075rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .deals-hero__cta-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .deals-hero__cta {
+    min-height: 48px;
+    padding: 0.8rem 2rem;
+    font-size: 1.075rem;
+  }
+
+  .deals-hero__note {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  @media (min-width: 768px) {
+    .deals-hero__subtitle {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Desktop RTL: first grid column = right = copy, second = left = visual. */
+  @media (min-width: 1024px) {
+    .deals-hero {
+      padding-block: 2rem 3.5rem;
+    }
+
+    .deals-hero__layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-areas:
+        'eyebrow visual'
+        'title visual'
+        'more visual';
+      column-gap: 3.5rem;
+      align-items: center;
+      text-align: right;
+    }
+
+    .deals-hero__eyebrow {
+      grid-area: eyebrow;
+      align-self: end;
+    }
+
+    .deals-hero__title {
+      grid-area: title;
+      max-width: none;
+      margin-top: 0.5rem;
+    }
+
+    .deals-hero__visual {
+      grid-area: visual;
+      margin-top: 0;
+    }
+
+    .deals-hero__more {
+      grid-area: more;
+      max-width: none;
+      margin-top: 1rem;
+    }
+
+    .deals-hero__cta-wrap {
+      align-items: flex-start;
+    }
+
+    .deals-hero__eyebrow,
+    .deals-hero__title,
+    .deals-hero__more {
+      animation: deals-hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .deals-hero__visual {
+      animation: deals-hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    }
+  }
+
+  @keyframes deals-hero-in {
+    from {
+      transform: translateY(22px);
+      opacity: 0.01;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .deals-hero__eyebrow,
+    .deals-hero__title,
+    .deals-hero__more,
+    .deals-hero__visual {
+      animation: none;
+    }
+  }
+</style>

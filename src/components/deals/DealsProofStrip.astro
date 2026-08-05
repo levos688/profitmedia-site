@@ -1,0 +1,43 @@
+---
+import { dealsHero } from '../../data/deals';
+---
+
+<section class="deals-proof-strip" aria-label="נתוני אמון">
+  <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 text-center md:px-6">
+    <p class="deals-proof-strip__chip">{dealsHero.proofChip}</p>
+    <p class="deals-proof-strip__trust">{dealsHero.trustLine}</p>
+  </div>
+</section>
+
+<style>
+  .deals-proof-strip {
+    background: #f7f5f8;
+    border-bottom: 1px solid rgba(101, 21, 97, 0.08);
+    padding-block: 1.25rem;
+  }
+
+  .deals-proof-strip__chip {
+    margin: 0;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.14);
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    line-height: 1.45;
+    color: #4a0f46;
+  }
+
+  .deals-proof-strip__trust {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b5570;
+  }
+
+  @media (min-width: 768px) {
+    .deals-proof-strip__chip {
+      font-size: 1rem;
+    }
+  }
+</style>
