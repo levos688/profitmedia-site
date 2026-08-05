@@ -18,17 +18,17 @@ import { dealsResults } from '../../data/deals';
       </Reveal>
 
       <Reveal class="deals-results__chart-wrap" delay={120}>
-        <figure class="deals-results__chart">
-          <div class="deals-results__bars">
+        <figure class="deals-results__chart" aria-label="השוואת עסקאות לחודש לפני ואחרי">
+          <div class="deals-results__cols">
             {
               dealsResults.bars.map((bar) => (
-                <div class:list={['deals-bar', `deals-bar--${bar.tone}`]}>
-                  <div class="deals-bar__track">
-                    <div class="deals-bar__fill" style={`--bar-ratio:${bar.ratio}`}>
-                      <span class="deals-bar__value">{bar.value}</span>
+                <div class:list={['deals-col', `deals-col--${bar.tone}`]}>
+                  <div class="deals-col__visual">
+                    <div class="deals-col__fill" style={`--bar-ratio:${bar.ratio}`}>
+                      <span class="deals-col__value">{bar.value}</span>
                     </div>
                   </div>
-                  <p class="deals-bar__label">{bar.label}</p>
+                  <p class="deals-col__label">{bar.label}</p>
                 </div>
               ))
             }
@@ -42,24 +42,26 @@ import { dealsResults } from '../../data/deals';
 
 <style>
   .deals-results {
-    background: #f7f5f8;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(198, 6, 145, 0.08), transparent 45%),
+      #f7f5f8;
   }
 
   .deals-results__layout {
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem;
   }
 
   .deals-results__title {
     margin: 0;
-    font-size: clamp(1.5rem, 4.6vw, 2.25rem);
-    font-weight: 800;
-    line-height: 1.25;
+    font-size: clamp(1.65rem, 4.8vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.2;
     color: #29102c;
   }
 
   .deals-results__body {
-    margin: 1rem 0 0;
+    margin: 1.1rem 0 0;
     font-size: 1.0625rem;
     line-height: 1.75;
     color: #4b5563;
@@ -67,10 +69,11 @@ import { dealsResults } from '../../data/deals';
 
   .deals-results__honesty {
     margin-top: 1.5rem;
-    border-inline-start: 3px solid #fcc000;
+    border-inline-start: 4px solid #fcc000;
     background: #fff;
     border-radius: 4px;
-    padding: 1.1rem 1.25rem;
+    padding: 1.2rem 1.35rem;
+    box-shadow: 0 14px 40px rgba(101, 21, 97, 0.07);
   }
 
   .deals-results__honesty p {
@@ -91,98 +94,128 @@ import { dealsResults } from '../../data/deals';
     margin: 0;
     border-radius: 4px;
     background: #fff;
-    border: 1px solid rgba(101, 21, 97, 0.12);
-    box-shadow: 0 12px 40px rgba(101, 21, 97, 0.07);
-    padding: 1.5rem 1.35rem;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    box-shadow: 0 22px 55px rgba(101, 21, 97, 0.1);
+    padding: 1.75rem 1.25rem 1.4rem;
   }
 
-  .deals-results__bars {
+  .deals-results__cols {
     display: grid;
-    gap: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    align-items: end;
+    min-height: 16rem;
   }
 
-  .deals-bar__track {
+  .deals-col {
     display: flex;
-    border-radius: 4px;
-    background: rgba(101, 21, 97, 0.07);
-  }
-
-  .deals-bar__fill {
-    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    min-width: 3.5rem;
-    width: calc(var(--bar-ratio) * 100%);
-    height: 2.75rem;
-    padding-inline-end: 0.85rem;
-    border-radius: 4px;
-    background: #cdc3d1;
-    transform-origin: right center;
-    animation: deals-bar-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    gap: 0.75rem;
+    text-align: center;
   }
 
-  .deals-bar--now .deals-bar__fill {
-    background: linear-gradient(90deg, #c60691 0%, #651561 100%);
+  .deals-col__visual {
+    display: flex;
+    width: 100%;
+    height: 14rem;
+    align-items: flex-end;
+    justify-content: center;
   }
 
-  .deals-bar__value {
-    font-size: 1.125rem;
+  .deals-col__fill {
+    display: flex;
+    width: 100%;
+    max-width: 5.5rem;
+    height: calc(var(--bar-ratio) * 100%);
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 0.85rem;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, #d8cddd 0%, #b9adbe 100%);
+    transform-origin: bottom center;
+    animation: deals-col-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .deals-col--now .deals-col__fill {
+    background: linear-gradient(180deg, #c60691 0%, #651561 100%);
+    box-shadow: 0 18px 35px rgba(101, 21, 97, 0.28);
+  }
+
+  .deals-col__value {
+    font-size: clamp(1.25rem, 3.5vw, 1.75rem);
     font-weight: 900;
+    line-height: 1;
     color: #29102c;
   }
 
-  .deals-bar--now .deals-bar__value {
+  .deals-col--now .deals-col__value {
     color: #fff;
   }
 
-  .deals-bar__label {
-    margin: 0.5rem 0 0;
-    font-size: 0.9375rem;
-    font-weight: 600;
+  .deals-col__label {
+    margin: 0;
+    min-height: 2.6rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.35;
     color: #4b5563;
   }
 
-  .deals-bar--now .deals-bar__label {
+  .deals-col--now .deals-col__label {
     color: #4a0f46;
-    font-weight: 800;
+    font-weight: 900;
   }
 
   .deals-results__chart figcaption {
-    margin-top: 1.35rem;
+    margin-top: 1.25rem;
     padding-top: 1rem;
     border-top: 1px solid rgba(101, 21, 97, 0.1);
     font-size: 0.8125rem;
     line-height: 1.6;
     color: #6b5570;
+    text-align: center;
   }
 
-  /* Bars grow on reveal so the "before / after" contrast reads as a change over time. */
-  @keyframes deals-bar-grow {
+  @keyframes deals-col-rise {
     from {
-      transform: scaleX(0.05);
-      opacity: 0.4;
+      transform: scaleY(0.08);
+      opacity: 0.35;
     }
     to {
-      transform: scaleX(1);
+      transform: scaleY(1);
       opacity: 1;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .deals-bar__fill {
+    .deals-col__fill {
       animation: none;
     }
   }
 
   @media (min-width: 1024px) {
     .deals-results__layout {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 3.5rem;
       align-items: center;
     }
 
     .deals-results__chart {
-      padding: 2rem 1.75rem;
+      padding: 2.25rem 2rem 1.6rem;
+    }
+
+    .deals-results__cols {
+      min-height: 18rem;
+      gap: 1.25rem;
+    }
+
+    .deals-col__visual {
+      height: 16rem;
+    }
+
+    .deals-col__fill {
+      max-width: 6.5rem;
     }
   }
 </style>

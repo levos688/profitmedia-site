@@ -1,43 +1,77 @@
 ---
-import { dealsHero } from '../../data/deals';
+import { dealsEditorialMetrics } from '../../data/deals';
 ---
 
-<section class="deals-proof-strip" aria-label="נתוני אמון">
-  <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 text-center md:px-6">
-    <p class="deals-proof-strip__chip">{dealsHero.proofChip}</p>
-    <p class="deals-proof-strip__trust">{dealsHero.trustLine}</p>
+<section class="deals-metrics" aria-label="נתוני הוכחה">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <div class="deals-metrics__grid">
+      {
+        dealsEditorialMetrics.map((metric) => (
+          <div class="deals-metrics__item">
+            <p class="deals-metrics__value">{metric.value}</p>
+            <p class="deals-metrics__unit">{metric.unit}</p>
+            <p class="deals-metrics__label">{metric.label}</p>
+          </div>
+        ))
+      }
+    </div>
   </div>
 </section>
 
 <style>
-  .deals-proof-strip {
-    background: #f7f5f8;
-    border-bottom: 1px solid rgba(101, 21, 97, 0.08);
-    padding-block: 1.25rem;
+  .deals-metrics {
+    background: #120714;
+    border-bottom: 1px solid rgba(252, 192, 0, 0.16);
+    padding-block: 2rem;
   }
 
-  .deals-proof-strip__chip {
+  .deals-metrics__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 1rem;
+  }
+
+  .deals-metrics__item {
+    text-align: center;
+  }
+
+  .deals-metrics__value {
     margin: 0;
-    border-radius: 999px;
-    background: #fff;
-    border: 1px solid rgba(101, 21, 97, 0.14);
-    padding: 0.55rem 1.1rem;
-    font-size: 0.9375rem;
+    font-size: clamp(2.25rem, 7vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fcc000;
+  }
+
+  .deals-metrics__unit {
+    margin: 0.35rem 0 0;
+    font-size: 0.8125rem;
     font-weight: 800;
-    line-height: 1.45;
-    color: #4a0f46;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.72);
   }
 
-  .deals-proof-strip__trust {
-    margin: 0;
-    font-size: 0.875rem;
+  .deals-metrics__label {
+    margin: 0.35rem 0 0;
+    font-size: 0.9375rem;
     font-weight: 600;
-    color: #6b5570;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.88);
   }
 
-  @media (min-width: 768px) {
-    .deals-proof-strip__chip {
-      font-size: 1rem;
+  @media (min-width: 900px) {
+    .deals-metrics {
+      padding-block: 2.5rem;
+    }
+
+    .deals-metrics__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .deals-metrics__item + .deals-metrics__item {
+      border-inline-start: 1px solid rgba(255, 255, 255, 0.1);
     }
   }
 </style>

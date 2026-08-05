@@ -1,7 +1,15 @@
 ---
 import HeroIllustration from '../HeroIllustration.astro';
 import PremiumAtmosphere from '../preview/PremiumAtmosphere.astro';
+import DealsSystemHeroViz from './system/DealsSystemHeroViz.astro';
 import { dealsHero } from '../../data/deals';
+
+interface Props {
+  /** editorial = existing illustration, system = product-proof SVG */
+  variant?: 'editorial' | 'system';
+}
+
+const { variant = 'editorial' } = Astro.props;
 ---
 
 <section
@@ -17,7 +25,7 @@ import { dealsHero } from '../../data/deals';
       <h1 id="deals-hero-title" class="deals-hero__title">{dealsHero.title}</h1>
 
       <div class="deals-hero__visual">
-        <HeroIllustration />
+        {variant === 'system' ? <DealsSystemHeroViz /> : <HeroIllustration />}
       </div>
 
       <div class="deals-hero__more">
@@ -113,7 +121,6 @@ import { dealsHero } from '../../data/deals';
     }
   }
 
-  /* Desktop RTL: first grid column = right = copy, second = left = visual. */
   @media (min-width: 1024px) {
     .deals-hero {
       padding-block: 2rem 3.5rem;
@@ -162,10 +169,6 @@ import { dealsHero } from '../../data/deals';
     .deals-hero__more {
       animation: deals-hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
-
-    .deals-hero__visual {
-      animation: deals-hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
-    }
   }
 
   @keyframes deals-hero-in {
@@ -182,8 +185,7 @@ import { dealsHero } from '../../data/deals';
   @media (prefers-reduced-motion: reduce) {
     .deals-hero__eyebrow,
     .deals-hero__title,
-    .deals-hero__more,
-    .deals-hero__visual {
+    .deals-hero__more {
       animation: none;
     }
   }

@@ -1,0 +1,181 @@
+---
+import Reveal from '../../Reveal.astro';
+import { dealsProcess } from '../../../data/deals';
+---
+
+<section id="process" class="sys-process section-padding below-fold" aria-labelledby="sys-process-title">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <div class="sys-process__head">
+        <h2 id="sys-process-title" class="sys-process__title">{dealsProcess.title}</h2>
+        <p class="sys-process__subtitle">{dealsProcess.subtitle}</p>
+      </div>
+    </Reveal>
+
+    <Reveal delay={80}>
+      <div class="sys-process__loop" aria-hidden="true">
+        <svg viewBox="0 0 720 180" class="sys-process__loop-svg">
+          <defs>
+            <marker id="sysArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#fcc000"></path>
+            </marker>
+          </defs>
+          <path
+            d="M70 90 H650"
+            fill="none"
+            stroke="rgba(101,21,97,0.22)"
+            stroke-width="3"
+            stroke-dasharray="8 8"
+          ></path>
+          <path d="M70 90 H210" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
+          <path d="M250 90 H390" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
+          <path d="M430 90 H570" fill="none" stroke="#c60691" stroke-width="3" marker-end="url(#sysArrow)"></path>
+          {
+            [90, 270, 450, 630].map((x, i) => (
+              <g>
+                <circle cx={x} cy="90" r="28" fill={i === 3 ? '#651561' : '#fff'} stroke={i === 3 ? '#fcc000' : '#651561'} stroke-width="3" />
+                <text
+                  x={x}
+                  y="96"
+                  text-anchor="middle"
+                  fill={i === 3 ? '#fcc000' : '#651561'}
+                  font-size="20"
+                  font-weight="900"
+                  font-family="Assistant, sans-serif"
+                >
+                  {i + 1}
+                </text>
+              </g>
+            ))
+          }
+        </svg>
+      </div>
+    </Reveal>
+
+    <div class="sys-process__grid">
+      {
+        dealsProcess.steps.map((step, index) => (
+          <Reveal delay={Math.min(index * 70, 210)}>
+            <article class:list={['sys-process__card', index === 3 && 'is-accent']}>
+              <p class="sys-process__num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</p>
+              <h3 class="sys-process__card-title">{step.title}</h3>
+              <p class="sys-process__card-body">{step.description}</p>
+            </article>
+          </Reveal>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .sys-process {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(198, 6, 145, 0.06), transparent 42%),
+      #f7f5f8;
+  }
+
+  .sys-process__head {
+    max-width: 40rem;
+    margin-inline: auto;
+    margin-bottom: 1.75rem;
+    text-align: center;
+  }
+
+  .sys-process__title {
+    margin: 0;
+    font-size: clamp(1.6rem, 4.6vw, 2.45rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: #29102c;
+  }
+
+  .sys-process__subtitle {
+    margin: 0.85rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .sys-process__loop {
+    display: none;
+    margin-bottom: 1.75rem;
+  }
+
+  .sys-process__loop-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .sys-process__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sys-process__card {
+    height: 100%;
+    border-radius: 4px;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    padding: 1.4rem 1.25rem;
+    box-shadow: 0 14px 35px rgba(101, 21, 97, 0.06);
+  }
+
+  .sys-process__card.is-accent {
+    background: linear-gradient(160deg, #4a0f46, #651561);
+    border-color: rgba(252, 192, 0, 0.35);
+  }
+
+  .sys-process__num {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #c60691;
+  }
+
+  .sys-process__card.is-accent .sys-process__num {
+    color: #fcc000;
+  }
+
+  .sys-process__card-title {
+    margin: 0.55rem 0 0;
+    font-size: 1.125rem;
+    font-weight: 900;
+    line-height: 1.35;
+    color: #29102c;
+  }
+
+  .sys-process__card.is-accent .sys-process__card-title {
+    color: #fff;
+  }
+
+  .sys-process__card-body {
+    margin: 0.55rem 0 0;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+
+  .sys-process__card.is-accent .sys-process__card-body {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  @media (min-width: 768px) {
+    .sys-process__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.15rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .sys-process__loop {
+      display: block;
+    }
+
+    .sys-process__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,305 @@
+---
+import Reveal from '../../Reveal.astro';
+import { dealsContrast } from '../../../data/deals';
+---
+
+<section id="contrast" class="sys-contrast section-padding below-fold" aria-labelledby="sys-contrast-title">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <div class="sys-contrast__head">
+        <p class="sys-contrast__eyebrow">{dealsContrast.eyebrow}</p>
+        <h2 id="sys-contrast-title" class="sys-contrast__title">{dealsContrast.title}</h2>
+        <p class="sys-contrast__subtitle">{dealsContrast.subtitle}</p>
+      </div>
+    </Reveal>
+
+    <div class="sys-contrast__layout">
+      <Reveal class="sys-contrast__copy">
+        <div class="sys-contrast__cols">
+          {
+            dealsContrast.columns.map((column) => (
+              <div class:list={['sys-contrast__card', `sys-contrast__card--${column.tone}`]}>
+                <p class="sys-contrast__label">{column.label}</p>
+                <ul>
+                  {column.rows.map((row) => (
+                    <li>{row}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+        <p class="sys-contrast__closing">{dealsContrast.closing}</p>
+      </Reveal>
+
+      <Reveal delay={120} class="sys-contrast__viz-wrap">
+        <figure class="sys-contrast__viz" aria-label="אינפוגרפיקה: אותו ערוץ נראה מוצלח בפרסום וחלש בעסקאות">
+          <img
+            src="/images/deals/deals-system-network.webp"
+            alt=""
+            width="1600"
+            height="900"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="sys-channel-bars" aria-hidden="true">
+            <div class="sys-channel">
+              <p class="sys-channel__name">ערוץ זול בדוח</p>
+              <div class="sys-channel__pair">
+                <div class="sys-channel__meter">
+                  <span class="sys-channel__meter-label">לידים</span>
+                  <span class="sys-channel__bar sys-channel__bar--leads" style="--w:92%"></span>
+                </div>
+                <div class="sys-channel__meter">
+                  <span class="sys-channel__meter-label">פגישות</span>
+                  <span class="sys-channel__bar sys-channel__bar--meets" style="--w:12%"></span>
+                </div>
+              </div>
+            </div>
+            <div class="sys-channel">
+              <p class="sys-channel__name">ערוץ שמסגר</p>
+              <div class="sys-channel__pair">
+                <div class="sys-channel__meter">
+                  <span class="sys-channel__meter-label">לידים</span>
+                  <span class="sys-channel__bar sys-channel__bar--leads" style="--w:58%"></span>
+                </div>
+                <div class="sys-channel__meter">
+                  <span class="sys-channel__meter-label">פגישות</span>
+                  <span class="sys-channel__bar sys-channel__bar--meets" style="--w:78%"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption>איור מערכת + דוגמה סכמטית: לידים זולים לא בהכרח אומרים פגישות.</figcaption>
+        </figure>
+      </Reveal>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sys-contrast {
+    background: #fff;
+  }
+
+  .sys-contrast__head {
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .sys-contrast__eyebrow {
+    margin: 0 0 0.65rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: #c60691;
+  }
+
+  .sys-contrast__title {
+    margin: 0;
+    font-size: clamp(1.6rem, 4.6vw, 2.45rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: #29102c;
+  }
+
+  .sys-contrast__subtitle {
+    margin: 0.85rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .sys-contrast__layout {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .sys-contrast__cols {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sys-contrast__card {
+    border-radius: 4px;
+    padding: 1.4rem 1.25rem;
+  }
+
+  .sys-contrast__card--muted {
+    background: #f4f4f5;
+    border: 1px solid #e4e4e7;
+  }
+
+  .sys-contrast__card--brand {
+    background: linear-gradient(160deg, #4a0f46, #651561 60%, #7d1a72);
+    box-shadow: 0 18px 40px rgba(101, 21, 97, 0.2);
+  }
+
+  .sys-contrast__label {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #29102c;
+  }
+
+  .sys-contrast__card--brand .sys-contrast__label {
+    color: #fcc000;
+  }
+
+  .sys-contrast__card ul {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sys-contrast__card li {
+    position: relative;
+    padding-inline-start: 1.25rem;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: #3f3f46;
+  }
+
+  .sys-contrast__card li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.55rem;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: #a1a1aa;
+  }
+
+  .sys-contrast__card--brand li {
+    color: rgba(255, 255, 255, 0.94);
+  }
+
+  .sys-contrast__card--brand li::before {
+    background: #fcc000;
+  }
+
+  .sys-contrast__closing {
+    margin: 1.35rem 0 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.65;
+    color: #4a0f46;
+  }
+
+  .sys-contrast__viz {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    background: #120714;
+    box-shadow: 0 24px 55px rgba(101, 21, 97, 0.16);
+  }
+
+  .sys-contrast__viz > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    opacity: 0.88;
+  }
+
+  .sys-channel-bars {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem 1.15rem 0.35rem;
+  }
+
+  .sys-channel__name {
+    margin: 0 0 0.55rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .sys-channel__pair {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .sys-channel__meter {
+    display: grid;
+    grid-template-columns: 4.25rem 1fr;
+    gap: 0.55rem;
+    align-items: center;
+  }
+
+  .sys-channel__meter-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .sys-channel__bar {
+    position: relative;
+    height: 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+  }
+
+  .sys-channel__bar::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--w);
+    border-radius: inherit;
+    animation: sys-bar-fill 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .sys-channel__bar--leads::after {
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .sys-channel__bar--meets::after {
+    background: #fcc000;
+  }
+
+  .sys-contrast__viz figcaption {
+    padding: 0.9rem 1.15rem 1.15rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.68);
+  }
+
+  @keyframes sys-bar-fill {
+    from {
+      transform: scaleX(0.08);
+      transform-origin: right center;
+    }
+    to {
+      transform: scaleX(1);
+      transform-origin: right center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sys-channel__bar::after {
+      animation: none;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .sys-contrast__cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .sys-contrast__layout {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+  }
+</style>

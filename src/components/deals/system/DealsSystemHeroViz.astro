@@ -1,0 +1,115 @@
+---
+/**
+ * Product-proof hero visual: channel → CRM → deals loop.
+ * Honest SVG infographic (not a fake dashboard screenshot).
+ */
+---
+
+<figure class="sys-hero-viz" aria-label="אינפוגרפיקה: פרסום מתחבר ל־CRM וחוזר לעסקאות">
+  <svg viewBox="0 0 560 420" role="img" aria-hidden="true">
+    <defs>
+      <linearGradient id="sysHeroFill" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#c60691" stop-opacity="0.95" />
+        <stop offset="100%" stop-color="#651561" stop-opacity="1" />
+      </linearGradient>
+      <linearGradient id="sysHeroSoft" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04" />
+      </linearGradient>
+    </defs>
+
+    <rect x="18" y="24" width="524" height="372" rx="18" fill="url(#sysHeroSoft)" />
+
+    <!-- Ads nodes -->
+    <g class="sys-hero-viz__node">
+      <rect x="46" y="58" width="150" height="72" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" />
+      <text x="121" y="90" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" font-family="Assistant, sans-serif">Facebook</text>
+      <text x="121" y="114" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="13" font-family="Assistant, sans-serif">לידים זולים</text>
+    </g>
+    <g class="sys-hero-viz__node">
+      <rect x="46" y="164" width="150" height="72" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" />
+      <text x="121" y="196" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" font-family="Assistant, sans-serif">Instagram</text>
+      <text x="121" y="220" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="13" font-family="Assistant, sans-serif">טפסים רבים</text>
+    </g>
+    <g class="sys-hero-viz__node">
+      <rect x="46" y="270" width="150" height="72" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" />
+      <text x="121" y="302" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" font-family="Assistant, sans-serif">Google</text>
+      <text x="121" y="326" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="13" font-family="Assistant, sans-serif">כוונה גבוהה</text>
+    </g>
+
+    <!-- Flow lines -->
+    <path d="M196 94 H250" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M196 200 H250" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M196 306 H250" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M250 94 V306" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M250 200 H290" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- CRM hub -->
+    <g class="sys-hero-viz__hub">
+      <rect x="290" y="144" width="178" height="112" rx="16" fill="url(#sysHeroFill)" stroke="#fcc000" stroke-width="2" />
+      <text x="379" y="188" text-anchor="middle" fill="#fcc000" font-size="20" font-weight="900" font-family="Assistant, sans-serif">CRM אישי</text>
+      <text x="379" y="216" text-anchor="middle" fill="#fff" font-size="14" font-family="Assistant, sans-serif">פגישות · עסקאות</text>
+      <text x="379" y="236" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="13" font-family="Assistant, sans-serif">סכומים · איכות</text>
+    </g>
+
+    <!-- Feedback arrow back -->
+    <path
+      d="M379 144 C379 78, 330 58, 196 58"
+      fill="none"
+      stroke="rgba(252,192,0,0.75)"
+      stroke-width="2.5"
+      stroke-dasharray="6 6"
+      stroke-linecap="round"
+    />
+    <polygon points="196,58 208,52 208,64" fill="#fcc000" />
+    <text x="290" y="48" text-anchor="middle" fill="#fcc000" font-size="13" font-weight="800" font-family="Assistant, sans-serif">פידבק לפרסום</text>
+
+    <!-- Outcome -->
+    <g>
+      <rect x="486" y="168" width="48" height="64" rx="10" fill="#fcc000" />
+      <text x="510" y="206" text-anchor="middle" fill="#4a0f46" font-size="15" font-weight="900" font-family="Assistant, sans-serif">₪</text>
+    </g>
+    <path d="M468 200 H486" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
+  </svg>
+  <figcaption class="sr-only">
+    ערוצי פרסום מתחברים ל־CRM אישי שמודד פגישות ועסקאות ומחזיר פידבק לאופטימיזציית הקמפיינים.
+  </figcaption>
+</figure>
+
+<style>
+  .sys-hero-viz {
+    margin: 0;
+    width: 100%;
+    max-width: 34rem;
+  }
+
+  .sys-hero-viz svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.28));
+  }
+
+  @media (min-width: 1024px) {
+    .sys-hero-viz {
+      animation: sys-hero-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    }
+  }
+
+  @keyframes sys-hero-in {
+    from {
+      transform: translateY(20px);
+      opacity: 0.01;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sys-hero-viz {
+      animation: none;
+    }
+  }
+</style>

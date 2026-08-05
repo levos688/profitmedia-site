@@ -1,0 +1,156 @@
+---
+import Reveal from '../../Reveal.astro';
+import { dealsResults } from '../../../data/deals';
+---
+
+<section id="results" class="sys-results section-padding below-fold" aria-labelledby="sys-results-title">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <Reveal>
+      <div class="sys-results__head">
+        <h2 id="sys-results-title" class="sys-results__title">{dealsResults.title}</h2>
+        <p class="sys-results__body">{dealsResults.body}</p>
+      </div>
+    </Reveal>
+
+    <Reveal delay={90}>
+      <div class="sys-funnel" aria-label="אינפוגרפיקה של שינוי נורמת עסקאות">
+        {
+          dealsResults.bars.map((bar) => (
+            <div class:list={['sys-funnel__item', `sys-funnel__item--${bar.tone}`]}>
+              <p class="sys-funnel__value">{bar.value}</p>
+              <p class="sys-funnel__label">{bar.label}</p>
+              <div class="sys-funnel__ring" style={`--ratio:${bar.ratio}`} aria-hidden="true"></div>
+            </div>
+          ))
+        }
+      </div>
+    </Reveal>
+
+    <Reveal delay={140}>
+      <div class="sys-results__honesty">
+        <p>{dealsResults.honesty}</p>
+        <p class="sys-results__disclaimer">{dealsResults.disclaimer}</p>
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .sys-results {
+    background: #fff;
+  }
+
+  .sys-results__head {
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: 2.25rem;
+    text-align: center;
+  }
+
+  .sys-results__title {
+    margin: 0;
+    font-size: clamp(1.6rem, 4.6vw, 2.45rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: #29102c;
+  }
+
+  .sys-results__body {
+    margin: 0.9rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .sys-funnel {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sys-funnel__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    background: #f7f5f8;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+  }
+
+  .sys-funnel__item--now {
+    background: linear-gradient(145deg, #4a0f46, #651561 55%, #7a1870);
+    border-color: rgba(252, 192, 0, 0.35);
+    box-shadow: 0 20px 45px rgba(101, 21, 97, 0.22);
+  }
+
+  .sys-funnel__value {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: clamp(2.5rem, 8vw, 3.75rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #651561;
+  }
+
+  .sys-funnel__item--now .sys-funnel__value {
+    color: #fcc000;
+  }
+
+  .sys-funnel__label {
+    position: relative;
+    z-index: 1;
+    margin: 0.55rem 0 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #4b5563;
+  }
+
+  .sys-funnel__item--now .sys-funnel__label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .sys-funnel__ring {
+    position: absolute;
+    inset-inline-end: -12%;
+    bottom: -40%;
+    width: calc(7rem + var(--ratio) * 5rem);
+    height: calc(7rem + var(--ratio) * 5rem);
+    border-radius: 50%;
+    border: 14px solid rgba(101, 21, 97, 0.08);
+    pointer-events: none;
+  }
+
+  .sys-funnel__item--now .sys-funnel__ring {
+    border-color: rgba(252, 192, 0, 0.18);
+  }
+
+  .sys-results__honesty {
+    margin-top: 1.75rem;
+    border-radius: 4px;
+    border-inline-start: 4px solid #fcc000;
+    background: #f7f5f8;
+    padding: 1.25rem 1.35rem;
+  }
+
+  .sys-results__honesty p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #3f3f46;
+  }
+
+  .sys-results__disclaimer {
+    margin-top: 0.75rem !important;
+    font-size: 0.8125rem !important;
+    color: #6b5570 !important;
+  }
+
+  @media (min-width: 768px) {
+    .sys-funnel {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.15rem;
+    }
+  }
+</style>

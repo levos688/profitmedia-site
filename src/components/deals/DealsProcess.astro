@@ -4,7 +4,7 @@ import { dealsProcess } from '../../data/deals';
 ---
 
 <section id="process" class="deals-process section-padding below-fold" aria-labelledby="deals-process-title">
-  <div class="mx-auto max-w-4xl px-4 md:px-6">
+  <div class="mx-auto max-w-5xl px-4 md:px-6">
     <Reveal>
       <div class="deals-process__head">
         <h2 id="deals-process-title" class="deals-process__title">{dealsProcess.title}</h2>
@@ -12,17 +12,17 @@ import { dealsProcess } from '../../data/deals';
       </div>
     </Reveal>
 
-    <ol class="deals-process__list">
+    <ol class="deals-process__rail">
       {
         dealsProcess.steps.map((step, index) => (
           <Reveal delay={Math.min(index * 80, 240)}>
-            <li class="deals-process__item">
-              <span class="deals-process__marker" aria-hidden="true">
-                {index + 1}
-              </span>
-              <div>
-                <h3 class="deals-process__item-title">{step.title}</h3>
-                <p class="deals-process__item-body">{step.description}</p>
+            <li class="deals-process__step">
+              <div class="deals-process__index" aria-hidden="true">
+                <span>{String(index + 1).padStart(2, '0')}</span>
+              </div>
+              <div class="deals-process__copy">
+                <h3 class="deals-process__step-title">{step.title}</h3>
+                <p class="deals-process__step-body">{step.description}</p>
               </div>
             </li>
           </Reveal>
@@ -38,91 +38,77 @@ import { dealsProcess } from '../../data/deals';
   }
 
   .deals-process__head {
+    max-width: 40rem;
+    margin-inline: auto;
+    margin-bottom: 2.75rem;
     text-align: center;
-    margin-bottom: 2.5rem;
   }
 
   .deals-process__title {
     margin: 0;
-    font-size: clamp(1.5rem, 4.6vw, 2.25rem);
-    font-weight: 800;
-    line-height: 1.25;
+    font-size: clamp(1.65rem, 4.8vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.2;
     color: #29102c;
   }
 
   .deals-process__subtitle {
-    margin: 0.85rem auto 0;
-    max-width: 38rem;
+    margin: 0.9rem 0 0;
     font-size: 1.0625rem;
     line-height: 1.7;
     color: #4b5563;
   }
 
-  .deals-process__list {
+  .deals-process__rail {
     display: grid;
-    gap: 0.75rem;
+    gap: 0;
     margin: 0;
     padding: 0;
     list-style: none;
-    counter-reset: none;
   }
 
-  .deals-process__item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.1rem;
-    border-radius: 4px;
-    background: #f7f5f8;
-    border: 1px solid rgba(101, 21, 97, 0.1);
-    padding: 1.35rem 1.25rem;
-    transition: border-color 0.2s ease-out;
+  .deals-process__step {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1rem;
+    padding-block: 1.75rem;
+    border-top: 1px solid rgba(101, 21, 97, 0.12);
   }
 
-  .deals-process__item:hover {
-    border-color: rgba(198, 6, 145, 0.35);
+  .deals-process__step:last-child {
+    border-bottom: 1px solid rgba(101, 21, 97, 0.12);
   }
 
-  .deals-process__marker {
-    display: flex;
-    flex: 0 0 2.5rem;
-    height: 2.5rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    background: #651561;
-    color: #fcc000;
-    font-size: 1.05rem;
+  .deals-process__index span {
+    display: block;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
     font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #c60691;
   }
 
-  .deals-process__item-title {
-    margin: 0.25rem 0 0;
-    font-size: 1.0625rem;
-    font-weight: 800;
-    line-height: 1.4;
+  .deals-process__step-title {
+    margin: 0.15rem 0 0;
+    font-size: clamp(1.125rem, 2.6vw, 1.4rem);
+    font-weight: 900;
+    line-height: 1.35;
     color: #29102c;
   }
 
-  .deals-process__item-body {
-    margin: 0.5rem 0 0;
-    font-size: 1rem;
+  .deals-process__step-body {
+    margin: 0.55rem 0 0;
+    max-width: 54ch;
+    font-size: 1.02rem;
     line-height: 1.7;
     color: #4b5563;
   }
 
   @media (min-width: 768px) {
-    .deals-process__item {
-      padding: 1.6rem 1.6rem;
-    }
-
-    .deals-process__item-title {
-      font-size: 1.175rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .deals-process__item {
-      transition: none;
+    .deals-process__step {
+      grid-template-columns: 6rem 1fr;
+      gap: 1.75rem;
+      padding-block: 2.1rem;
     }
   }
 </style>

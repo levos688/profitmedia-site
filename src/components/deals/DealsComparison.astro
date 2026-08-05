@@ -4,7 +4,7 @@ import { dealsComparison } from '../../data/deals';
 ---
 
 <section id="comparison" class="deals-compare section-padding below-fold" aria-labelledby="deals-compare-title">
-  <div class="mx-auto max-w-5xl px-4 md:px-6">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <div class="deals-compare__head">
         <h2 id="deals-compare-title" class="deals-compare__title">{dealsComparison.title}</h2>
@@ -12,34 +12,36 @@ import { dealsComparison } from '../../data/deals';
       </div>
     </Reveal>
 
-    <Reveal delay={100}>
-      <div class="deals-compare__table-wrap">
-        <table class="deals-compare__table">
-          <thead>
-            <tr>
-              <th scope="col"><span class="sr-only">קריטריון</span></th>
-              {
-                dealsComparison.columns.map((column, index) => (
-                  <th scope="col" class:list={[index === 2 && 'is-highlight']}>
-                    {column}
-                  </th>
-                ))
-              }
-            </tr>
-          </thead>
-          <tbody>
-            {
-              dealsComparison.rows.map((row) => (
-                <tr>
-                  <th scope="row">{row.label}</th>
-                  {row.values.map((value, index) => (
-                    <td class:list={[index === 2 && 'is-highlight']}>{value}</td>
-                  ))}
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+    <Reveal delay={80}>
+      <div class="deals-compare__board" role="table" aria-label="השוואה בין סוכנות רגילה, כלים מהמדף והמערכת כאן">
+        <div class="deals-compare__row deals-compare__row--head" role="row">
+          <div role="columnheader" class="deals-compare__cell deals-compare__cell--label"><span class="sr-only">קריטריון</span></div>
+          {
+            dealsComparison.columns.map((column, index) => (
+              <div
+                role="columnheader"
+                class:list={['deals-compare__cell', index === 2 && 'is-highlight']}
+              >
+                {column}
+              </div>
+            ))
+          }
+        </div>
+
+        {
+          dealsComparison.rows.map((row) => (
+            <div class="deals-compare__row" role="row">
+              <div role="rowheader" class="deals-compare__cell deals-compare__cell--label">
+                {row.label}
+              </div>
+              {row.values.map((value, index) => (
+                <div role="cell" class:list={['deals-compare__cell', index === 2 && 'is-highlight']}>
+                  {value}
+                </div>
+              ))}
+            </div>
+          ))
+        }
       </div>
     </Reveal>
 
@@ -63,7 +65,7 @@ import { dealsComparison } from '../../data/deals';
       }
     </div>
 
-    <Reveal delay={160}>
+    <Reveal delay={140}>
       <p class="deals-compare__closing">{dealsComparison.closing}</p>
     </Reveal>
   </div>
@@ -71,89 +73,96 @@ import { dealsComparison } from '../../data/deals';
 
 <style>
   .deals-compare {
-    background: #f7f5f8;
+    background:
+      radial-gradient(ellipse at 85% 0%, rgba(101, 21, 97, 0.07), transparent 40%),
+      #f7f5f8;
   }
 
   .deals-compare__head {
+    max-width: 42rem;
+    margin-inline: auto;
+    margin-bottom: 2.5rem;
     text-align: center;
-    margin-bottom: 2.25rem;
   }
 
   .deals-compare__title {
     margin: 0;
-    font-size: clamp(1.5rem, 4.6vw, 2.25rem);
-    font-weight: 800;
-    line-height: 1.25;
+    font-size: clamp(1.65rem, 4.8vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.2;
     color: #29102c;
   }
 
   .deals-compare__subtitle {
-    margin: 0.85rem auto 0;
-    max-width: 38rem;
+    margin: 0.9rem 0 0;
     font-size: 1.0625rem;
     line-height: 1.7;
     color: #4b5563;
   }
 
-  .deals-compare__table-wrap {
+  .deals-compare__board {
     display: none;
   }
 
-  .deals-compare__table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+  .deals-compare__row {
+    display: grid;
+    grid-template-columns: 9.5rem repeat(3, 1fr);
+  }
+
+  .deals-compare__row--head .deals-compare__cell {
+    font-weight: 900;
+  }
+
+  .deals-compare__cell {
+    padding: 1.1rem 1rem;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: #3f3f46;
     background: #fff;
-    border: 1px solid rgba(101, 21, 97, 0.12);
-    border-radius: 4px;
-    overflow: hidden;
+    border-bottom: 1px solid rgba(101, 21, 97, 0.1);
   }
 
-  .deals-compare__table th,
-  .deals-compare__table td {
-    padding: 1rem 1.1rem;
-    text-align: right;
-    font-size: 1rem;
-    line-height: 1.6;
-    vertical-align: top;
-  }
-
-  .deals-compare__table thead th {
-    background: #f4f4f5;
-    font-size: 1.0625rem;
+  .deals-compare__cell--label {
     font-weight: 900;
     color: #29102c;
+    background: #faf7fb;
   }
 
-  .deals-compare__table thead th.is-highlight {
-    background: #651561;
-    color: #fcc000;
-  }
-
-  .deals-compare__table tbody th {
-    font-weight: 800;
+  .deals-compare__row--head .deals-compare__cell:not(.deals-compare__cell--label) {
+    background: #efe8f1;
     color: #29102c;
-    white-space: nowrap;
   }
 
-  .deals-compare__table tbody td {
-    color: #4b5563;
-  }
-
-  .deals-compare__table tbody td.is-highlight {
-    background: rgba(101, 21, 97, 0.055);
-    color: #3b0f38;
+  .deals-compare__cell.is-highlight {
+    background: #651561;
+    color: #fff;
     font-weight: 700;
   }
 
-  .deals-compare__table tbody tr + tr th,
-  .deals-compare__table tbody tr + tr td {
-    border-top: 1px solid rgba(101, 21, 97, 0.09);
+  .deals-compare__row--head .deals-compare__cell.is-highlight {
+    background: #4a0f46;
+    color: #fcc000;
+  }
+
+  .deals-compare__row:first-child .deals-compare__cell:first-child {
+    border-start-start-radius: 4px;
+  }
+
+  .deals-compare__row:first-child .deals-compare__cell:last-child {
+    border-start-end-radius: 4px;
+  }
+
+  .deals-compare__row:last-child .deals-compare__cell:first-child {
+    border-end-start-radius: 4px;
+  }
+
+  .deals-compare__row:last-child .deals-compare__cell:last-child {
+    border-end-end-radius: 4px;
   }
 
   .deals-compare__cards {
     display: grid;
-    gap: 0.85rem;
+    gap: 0.9rem;
   }
 
   .deals-compare__card {
@@ -161,6 +170,7 @@ import { dealsComparison } from '../../data/deals';
     background: #fff;
     border: 1px solid rgba(101, 21, 97, 0.12);
     padding: 1.25rem;
+    box-shadow: 0 12px 30px rgba(101, 21, 97, 0.05);
   }
 
   .deals-compare__card-label {
@@ -172,13 +182,13 @@ import { dealsComparison } from '../../data/deals';
 
   .deals-compare__card dl {
     display: grid;
-    gap: 0.6rem;
+    gap: 0.55rem;
     margin: 0;
   }
 
   .deals-compare__pair {
     border-radius: 4px;
-    padding: 0.6rem 0.75rem;
+    padding: 0.65rem 0.8rem;
     background: #f7f5f8;
   }
 
@@ -198,8 +208,8 @@ import { dealsComparison } from '../../data/deals';
 
   .deals-compare__pair dd {
     margin: 0.15rem 0 0;
-    font-size: 0.9375rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.55;
     color: #3f3f46;
   }
 
@@ -212,15 +222,19 @@ import { dealsComparison } from '../../data/deals';
     margin: 2rem auto 0;
     max-width: 42rem;
     text-align: center;
-    font-size: 1rem;
+    font-size: 1.02rem;
     font-weight: 700;
     line-height: 1.7;
     color: #4a0f46;
   }
 
-  @media (min-width: 900px) {
-    .deals-compare__table-wrap {
+  @media (min-width: 960px) {
+    .deals-compare__board {
       display: block;
+      overflow: hidden;
+      border-radius: 4px;
+      border: 1px solid rgba(101, 21, 97, 0.12);
+      box-shadow: 0 22px 50px rgba(101, 21, 97, 0.08);
     }
 
     .deals-compare__cards {

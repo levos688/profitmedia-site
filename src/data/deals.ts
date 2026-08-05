@@ -11,6 +11,20 @@ export const dealsSeo = {
   canonical: 'https://profitmedia.co.il/deals/',
 };
 
+export const dealsSystemSeo = {
+  title: 'מערכת עסקאות מהפרסום | אבחון קמפיין חינם | Profit Media',
+  description: dealsSeo.description,
+  canonical: 'https://profitmedia.co.il/deals/system/',
+};
+
+/** Editorial proof metrics shown under the hero on /deals. */
+export const dealsEditorialMetrics = [
+  { value: '1-3', unit: 'עסקאות', label: 'חודש רגיל לפני' },
+  { value: '5-7', unit: 'עסקאות', label: 'חודש רגיל היום' },
+  { value: '223+', unit: 'לקוחות', label: 'עבדו איתנו' },
+  { value: '₪6M+', unit: 'פרסום', label: 'תקציבים מנוהלים' },
+];
+
 /** Set PUBLIC_META_PIXEL_ID in Cloudflare Pages env for conversion tracking. */
 export const dealsPixelId = import.meta.env.PUBLIC_META_PIXEL_ID || '';
 

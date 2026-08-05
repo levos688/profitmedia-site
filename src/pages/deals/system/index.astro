@@ -1,0 +1,56 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import '../../../styles/preview.css';
+import AdsLpHeader from '../../../components/ads/AdsLpHeader.astro';
+import DealsHero from '../../../components/deals/DealsHero.astro';
+import DealsProofStrip from '../../../components/deals/DealsProofStrip.astro';
+import DealsSystemContrast from '../../../components/deals/system/DealsSystemContrast.astro';
+import DealsSystemResults from '../../../components/deals/system/DealsSystemResults.astro';
+import DealsGuard from '../../../components/deals/DealsGuard.astro';
+import DealsSystemProcess from '../../../components/deals/system/DealsSystemProcess.astro';
+import DealsComparison from '../../../components/deals/DealsComparison.astro';
+import DealsAudience from '../../../components/deals/DealsAudience.astro';
+import Clients from '../../../components/Clients.astro';
+import DealsContactForm from '../../../components/deals/DealsContactForm.astro';
+import PreviewFaq from '../../../components/preview/PreviewFaq.astro';
+import LeadCaptureModal from '../../../components/preview/LeadCaptureModal.astro';
+import DealsStickyCta from '../../../components/deals/DealsStickyCta.astro';
+import Footer from '../../../components/Footer.astro';
+import { dealsSystemSeo, dealsPixelId, dealsFaqs } from '../../../data/deals';
+---
+
+<Layout
+  title={dealsSystemSeo.title}
+  description={dealsSystemSeo.description}
+  canonical={dealsSystemSeo.canonical}
+  noindex
+  enableGtm={false}
+  metaPixelId={dealsPixelId || undefined}
+  preloadImage={false}
+>
+  <div
+    class="preview-page"
+    data-lead-page
+    data-lead-source="deals-system-meta-lp"
+    data-lead-source-prefix="deals-system"
+    data-thank-you="/deals/thank-you"
+  >
+    <AdsLpHeader />
+    <main id="main-content">
+      <DealsHero variant="system" />
+      <DealsProofStrip />
+      <DealsSystemContrast />
+      <DealsSystemResults />
+      <DealsGuard />
+      <DealsSystemProcess />
+      <DealsComparison />
+      <DealsAudience />
+      <Clients />
+      <DealsContactForm />
+      <PreviewFaq items={dealsFaqs} />
+    </main>
+    <Footer minimal />
+    <LeadCaptureModal />
+    <DealsStickyCta />
+  </div>
+</Layout>
