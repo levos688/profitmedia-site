@@ -1,5 +1,10 @@
 ---
-const year = new Date().getFullYear();
+interface Props {
+  /** LP mode: only legal links (no About / Blog exits). */
+  minimal?: boolean;
+}
+
+const { minimal = false } = Astro.props;
 ---
 
 <footer class="border-t border-gray-200 bg-white py-10">
@@ -9,11 +14,21 @@ const year = new Date().getFullYear();
         class="flex flex-wrap justify-center gap-6 text-base font-medium text-gray-800 md:gap-8 md:text-lg"
         aria-label="קישורים משפטיים"
       >
-        <a href="/blog" class="footer-link">בלוג</a>
+        {
+          !minimal && (
+            <>
+              <a href="/about" class="footer-link">
+                מי אנחנו
+              </a>
+              <a href="/blog" class="footer-link">
+                בלוג
+              </a>
+            </>
+          )
+        }
         <a href="/hatzara" class="footer-link">הצהרת נגישות</a>
         <a href="/prat" class="footer-link">מדיניות הפרטיות</a>
       </nav>
-      <p class="text-sm text-gray-500">© {year} Profit Media. כל הזכויות שמורות.</p>
     </div>
   </div>
 </footer>

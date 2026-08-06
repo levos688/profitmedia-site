@@ -44,8 +44,13 @@ export const dealsHero = {
 export const dealsContrast = {
   eyebrow: 'מהדוח להחלטה עסקית',
   title: 'Ads Manager הוא רק תחילת התמונה',
-  titleLines: ['Ads Manager הוא רק תחילת התמונה.', 'המערכת משלימה את מה שקורה אחרי הליד.'],
-  subtitle: 'Ads Manager מציג עלויות ולידים. המערכת מחברת אליהם פגישות, עסקאות והכנסות לפי פלטפורמה, קהל ומודעה.',
+  // NBSP keeps phrase endings together so a single orphan word does not wrap alone.
+  titleLines: [
+    'Ads Manager הוא רק תחילת\u00A0התמונה.',
+    'המערכת משלימה את מה שקורה אחרי\u00A0הליד.',
+  ],
+  subtitle:
+    'Ads Manager מציג עלויות ולידים. המערכת מחברת אליהם פגישות, עסקאות והכנסות לפי פלטפורמה, קהל\u00A0ומודעה.',
   columns: [
     {
       label: 'מה רואים ב־Ads Manager',
@@ -68,7 +73,8 @@ export const dealsContrast = {
       ],
     },
   ],
-  closing: 'זה רק מנגנון אחד במערכת: המחקר, הקריאייטיב, הסינון, הדף וה־CRM עובדים יחד כדי לשפר את איכות ההזדמנויות.',
+  closing:
+    'זה רק מנגנון אחד במערכת: המחקר, הקריאייטיב, הסינון, הדף וה־CRM עובדים יחד כדי לשפר את\u00A0איכות\u00A0ההזדמנויות.',
 };
 
 /** Illustrated sample snapshot for the system variant product visual. */
@@ -88,12 +94,12 @@ export const dealsSystemSources = {
   note: 'המספרים להמחשה. במערכת שלכם יופיעו הנתונים האמיתיים מהפרסום ומה־CRM.',
   rows: [
     { source: 'Instagram', leads: '47', meetings: '3', deals: '0' },
-            { source: 'Facebook', leads: '19', meetings: '11', deals: '5' },
+    { source: 'Facebook', leads: '19', meetings: '11', deals: '5' },
   ],
 };
 
 export const dealsResults = {
-  title: 'מקרה לקוח: מ־0-3 ל־6-8 עסקאות בחודש',
+  title: 'מקרה לקוח: מ־0-3 ל־6-8 עסקאות\u00A0בחודש',
   body: 'אצל לקוח בתחום המטבחים, 0 עד 3 עסקאות בחודש היה המצב הרגיל. לאחר חיבור הפרסום, הדף וה־CRM, נרשמו 6 עד 8 עסקאות בחודש עם אותו תקציב פרסום.',
   bars: [
     { label: 'לפני, חודש רגיל', value: '0-3', ratio: 0.32, tone: 'past' as const },
