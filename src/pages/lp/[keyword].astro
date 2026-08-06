@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/preview.css';
-import Header from '../../components/Header.astro';
+import AdsLpHeader from '../../components/ads/AdsLpHeader.astro';
 import PreviewHero from '../../components/preview/PreviewHero.astro';
 import AgencyStats from '../../components/AgencyStats.astro';
 import DealsContrast from '../../components/deals/DealsContrast.astro';
@@ -11,15 +11,10 @@ import TargetAudience from '../../components/TargetAudience.astro';
 import Clients from '../../components/Clients.astro';
 import NamedOffer from '../../components/NamedOffer.astro';
 import VideoTestimonials from '../../components/VideoTestimonials.astro';
-import PreviewPortfolio from '../../components/preview/PreviewPortfolio.astro';
-import PreviewFaq from '../../components/preview/PreviewFaq.astro';
-import BlogPreview from '../../components/BlogPreview.astro';
-import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import DealsContactForm from '../../components/deals/DealsContactForm.astro';
 import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
-import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
-import HomeAbPopup from '../../components/preview/HomeAbPopup.astro';
+import DealsStickyCta from '../../components/deals/DealsStickyCta.astro';
 import Footer from '../../components/Footer.astro';
-import { hero as defaultHero } from '../../data/site';
 
 export function getStaticPaths() {
   return [
@@ -51,41 +46,98 @@ const canonical = `https://profitmedia.co.il/lp/${keyword}/`;
   title={title}
   description={description}
   canonical={canonical}
+  noindex
   preloadImage="/images/hero/photo-min.svg"
 >
+  <Fragment slot="head">
+    <script is:inline>
+      (function () {
+        var key = 'pm_lp_order_v1';
+        var variants = ['proof_first', 'mechanism_first'];
+        var params = new URL(window.location.href).searchParams;
+        var forced = params.get('force_order');
+        var value = variants.indexOf(forced) !== -1 ? forced : '';
+        try {
+          if (!value) value = localStorage.getItem(key) || '';
+          if (variants.indexOf(value) === -1) {
+            value = variants[Math.random() < 0.5 ? 0 : 1];
+            localStorage.setItem(key, value);
+          } else if (forced) {
+            localStorage.setItem(key, value);
+          }
+        } catch (e) {
+          if (!value) value = variants[Math.random() < 0.5 ? 0 : 1];
+        }
+        document.documentElement.dataset.pmLpOrder = value;
+      })();
+    </script>
+  </Fragment>
+
   <div
     class="preview-page"
     data-lead-page
     data-lead-source={`lp-${keyword}`}
     data-lead-source-prefix="lp"
+    data-thank-you="/thank-you"
+    data-lp-keyword={keyword}
   >
-    <Header />
+    <AdsLpHeader />
     <main id="main-content">
-      {/* 
-        We pass the dynamic H1 down into the hero via a slotted or prop mechanism.
-        Since PreviewHero uses the default hero from site.ts, we need to override it here.
-        To avoid modifying PreviewHero for all pages, we can just render the hero markup directly,
-        or we can pass props to PreviewHero. Let's pass an overrideTitle prop to PreviewHero.
-      */}
       <PreviewHero overrideTitle={h1} />
-      
       <AgencyStats />
-      <DealsContrast />
-      <DealsSystemProcess sectionId="how-it-works" />
-      <DealsResults />
+
+      <div class="lp-test-sections" data-lp-test-sections>
+        <div class="lp-test-block lp-test-block--results" data-lp-block="results">
+          <DealsResults />
+        </div>
+        <div class="lp-test-block lp-test-block--contrast" data-lp-block="contrast">
+          <DealsContrast />
+        </div>
+        <div class="lp-test-block lp-test-block--process" data-lp-block="process">
+          <DealsSystemProcess sectionId="how-it-works" />
+        </div>
+      </div>
+
       <NamedOffer />
       <Clients />
       <TargetAudience />
       <VideoTestimonials />
-      <PreviewPortfolio />
-      <PreviewFaq />
-      <PreviewContactForm />
-      <BlogPreview />
+      <DealsContactForm />
     </main>
-    <Footer />
+    <Footer minimal />
     <LeadCaptureModal />
-    <HomeAbPopup />
-    <StickyMobileCta />
+    <DealsStickyCta />
   </div>
-  <script src="/scripts/pm-home-ab.js?v=20260729a" defer></script>
+  <script src="/scripts/pm-lp-ab.js?v=20260806a" defer></script>
 </Layout>
+
+<style is:global>
+  .lp-test-sections {
+    display: flex;
+    flex-direction: column;
+  }
+
+  html[data-pm-lp-order='proof_first'] .lp-test-block--results {
+    order: 1;
+  }
+
+  html[data-pm-lp-order='proof_first'] .lp-test-block--contrast {
+    order: 2;
+  }
+
+  html[data-pm-lp-order='proof_first'] .lp-test-block--process {
+    order: 3;
+  }
+
+  html[data-pm-lp-order='mechanism_first'] .lp-test-block--contrast {
+    order: 1;
+  }
+
+  html[data-pm-lp-order='mechanism_first'] .lp-test-block--process {
+    order: 2;
+  }
+
+  html[data-pm-lp-order='mechanism_first'] .lp-test-block--results {
+    order: 3;
+  }
+</style>

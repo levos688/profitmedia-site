@@ -1,0 +1,274 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Profit Media Google LP A/B Stats"
+  description="Internal keyword landing page experiment dashboard"
+  noindex
+  blockAiCrawlers
+  preloadImage={false}
+  enableGtm={false}
+  enableA11y={false}
+  lang="ru"
+  dir="ltr"
+>
+  <main id="main-content" class="lp-stats">
+    <section class="lp-stats__panel">
+      <header>
+        <p class="lp-stats__eyebrow">PROFIT MEDIA · GOOGLE ADS</p>
+        <h1>Keyword LP A/B</h1>
+        <p>Отдельная статистика коротких посадочных страниц: порядок блоков и конверсия каждого ключевого направления.</p>
+      </header>
+
+      <nav class="lp-stats__tabs" aria-label="Источник трафика">
+        <button type="button" class="is-active" data-channel="google_ads">Только Google Ads</button>
+        <button type="button" data-channel="all">Все визиты</button>
+      </nav>
+
+      <p id="lp-stats-status">Загрузка…</p>
+      <div id="lp-stats-summary" class="lp-stats__summary"></div>
+      <div id="lp-stats-tables" class="lp-stats__tables"></div>
+      <p id="lp-stats-updated" class="lp-stats__updated"></p>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const status = document.getElementById('lp-stats-status');
+  const summary = document.getElementById('lp-stats-summary');
+  const tables = document.getElementById('lp-stats-tables');
+  const updated = document.getElementById('lp-stats-updated');
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token') || '';
+
+  const names: Record<string, string> = {
+    page_order: 'Порядок блоков',
+    landing_keyword: 'Посадочная по ключевой фразе',
+    proof_first: 'Сначала результат клиента',
+    mechanism_first: 'Сначала механизм системы',
+    'digital-advertising-agency': 'סוכנות פרסום דיגיטלי',
+    'digital-advertising-office': 'משרד פרסום דיגיטלי',
+  };
+
+  const number = (value: number) => new Intl.NumberFormat('ru-RU').format(value || 0);
+
+  function render(data: any) {
+    if (!summary || !tables) return;
+    summary.innerHTML = [
+      ['Просмотры', data.page.views],
+      ['Клики CTA', data.page.clicks],
+      ['Лиды', data.page.leads],
+      ['Конверсия', `${data.page.cvr}%`],
+    ]
+      .map(([label, value]) => `<article><span>${label}</span><strong>${value}</strong></article>`)
+      .join('');
+
+    tables.innerHTML = data.experiments
+      .map(
+        (experiment: any) => `
+          <section class="lp-stats__experiment">
+            <h2>${names[experiment.experiment] || experiment.experiment}</h2>
+            <div class="lp-stats__table-wrap">
+              <table>
+                <thead><tr><th>Вариант</th><th>Показы</th><th>Клики</th><th>Лиды</th><th>CTR</th><th>CVR</th></tr></thead>
+                <tbody>
+                  ${experiment.variants
+                    .map(
+                      (variant: any) => `
+                        <tr>
+                          <td>${names[variant.variant] || variant.variant}</td>
+                          <td>${number(variant.impression)}</td>
+                          <td>${number(variant.click)}</td>
+                          <td>${number(variant.conversion)}</td>
+                          <td>${variant.ctr}%</td>
+                          <td><strong>${variant.cvr}%</strong></td>
+                        </tr>`,
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+            </div>
+          </section>`,
+      )
+      .join('');
+    if (updated) updated.textContent = `Обновлено: ${new Date(data.updatedAt).toLocaleString('ru-RU')}`;
+  }
+
+  async function load(channel = 'google_ads') {
+    if (status) status.textContent = 'Загрузка…';
+    const query = new URLSearchParams({ channel });
+    if (token) query.set('token', token);
+    try {
+      const response = await fetch(`/api/lp-ab-stats?${query.toString()}`);
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Ошибка загрузки');
+      render(data);
+      if (status) status.textContent = channel === 'google_ads' ? 'Трафик Google Ads' : 'Все визиты';
+    } catch (error) {
+      if (status) status.textContent = error instanceof Error ? error.message : 'Ошибка загрузки';
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-channel]').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-channel]').forEach((item) => item.classList.remove('is-active'));
+      button.classList.add('is-active');
+      load(button.dataset.channel || 'google_ads');
+    });
+  });
+
+  load();
+</script>
+
+<style>
+  .lp-stats {
+    min-height: 100dvh;
+    padding: 2rem 1rem 4rem;
+    background: #eef1f5;
+    color: #25132a;
+    font-family: Assistant, system-ui, sans-serif;
+  }
+
+  .lp-stats__panel {
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    border: 1px solid #ddd4df;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 18px 45px rgba(46, 20, 52, 0.08);
+  }
+
+  .lp-stats header {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #ebe5ec;
+  }
+
+  .lp-stats__eyebrow {
+    margin: 0 0 0.35rem;
+    color: #651561;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .lp-stats h1 {
+    margin: 0;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+  }
+
+  .lp-stats header > p:last-child {
+    margin: 0.55rem 0 0;
+    color: #6b6170;
+  }
+
+  .lp-stats__tabs {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.25rem 0;
+  }
+
+  .lp-stats__tabs button {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border: 1px solid #d9cddd;
+    border-radius: 999px;
+    background: #fff;
+    color: #4a3d4e;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .lp-stats__tabs button.is-active {
+    border-color: #651561;
+    background: #651561;
+    color: #fff;
+  }
+
+  .lp-stats__summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin: 1rem 0 1.5rem;
+  }
+
+  .lp-stats__summary article {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: #f7f3f8;
+  }
+
+  .lp-stats__summary span,
+  .lp-stats__summary strong {
+    display: block;
+  }
+
+  .lp-stats__summary span {
+    color: #766b79;
+    font-size: 0.85rem;
+  }
+
+  .lp-stats__summary strong {
+    margin-top: 0.25rem;
+    color: #651561;
+    font-size: 1.45rem;
+  }
+
+  .lp-stats__tables {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .lp-stats__experiment {
+    padding: 1.1rem;
+    border: 1px solid #e4dce6;
+    border-radius: 0.85rem;
+  }
+
+  .lp-stats__experiment h2 {
+    margin: 0 0 0.8rem;
+    font-size: 1.15rem;
+  }
+
+  .lp-stats__table-wrap {
+    overflow-x: auto;
+  }
+
+  .lp-stats table {
+    width: 100%;
+    min-width: 42rem;
+    border-collapse: collapse;
+  }
+
+  .lp-stats th,
+  .lp-stats td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #ece6ed;
+    text-align: right;
+  }
+
+  .lp-stats th:first-child,
+  .lp-stats td:first-child {
+    text-align: left;
+  }
+
+  .lp-stats th {
+    background: #f7f3f8;
+    color: #651561;
+    font-size: 0.8rem;
+  }
+
+  .lp-stats__updated {
+    margin: 1.25rem 0 0;
+    color: #776d7a;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 700px) {
+    .lp-stats__summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

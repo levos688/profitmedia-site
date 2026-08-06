@@ -176,6 +176,15 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
       submitBtn.textContent = 'שולח…';
     }
 
+    const pageRoot = document.querySelector('[data-lead-page]') as HTMLElement | null;
+    const formSource = pageRoot?.dataset.leadSource || 'homepage-lead-modal';
+    const thankYou = pageRoot?.dataset.thankYou || '/thank-you';
+    const ab = window.pmLpAb || window.pmAdsAb || window.pmHomeAb;
+
+    const attr =
+      typeof window.pmGetLeadAttribution === 'function'
+        ? window.pmGetLeadAttribution()
+        : { utm: {}, landingUrl: window.location.href };
     const payload = {
       name,
       phone,
@@ -183,7 +192,9 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
       vertical,
       verticalLabel: vertical,
       pageUrl: window.location.href,
-      source: 'homepage-lead-modal',
+      landingUrl: attr.landingUrl,
+      utm: attr.utm,
+      source: formSource,
       referrer: document.referrer || '',
       language: navigator.language || '',
     };
@@ -196,7 +207,9 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
-      window.location.href = '/thank-you';
+      const source = ab?.getLeadSource?.() || 'mid_cta';
+      await ab?.trackConversion?.(source);
+      window.location.href = thankYou;
     } catch {
       alert('שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
     } finally {

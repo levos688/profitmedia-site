@@ -253,6 +253,7 @@ import { dealsForm } from '../../data/deals';
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
+      await window.pmLpAb?.trackConversion?.();
       window.location.href = meta.thankYou;
     } catch {
       if (status) {

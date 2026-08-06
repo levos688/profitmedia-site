@@ -5,3 +5,9 @@ pages_build_output_dir = "dist"
 [[kv_namespaces]]
 binding = "DONHIN_AB_STATS"
 id = "f24c8074c5b649eb92b38a73306656bf"
+
+[[d1_databases]]
+binding = "AB_DB"
+database_name = "profitmedia-ab-stats"
+database_id = "b7028c6a-0c1c-4148-8003-a71cdec55436"
+migrations_dir = "migrations"
