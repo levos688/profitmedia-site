@@ -5,7 +5,7 @@ import Header from '../components/Header.astro';
 import PreviewHero from '../components/preview/PreviewHero.astro';
 import HomeJsonLd from '../components/HomeJsonLd.astro';
 import AgencyStats from '../components/AgencyStats.astro';
-import DealsContrast from '../components/deals/DealsContrast.astro';
+import DealsSystemContrast from '../components/deals/system/DealsSystemContrast.astro';
 import DealsSystemProcess from '../components/deals/system/DealsSystemProcess.astro';
 import DealsResults from '../components/deals/DealsResults.astro';
 import TargetAudience from '../components/TargetAudience.astro';
@@ -41,7 +41,7 @@ import { homeSeo } from '../data/site';
       {/* CRO order: mechanism → proof → qualify → objections → CTA; blog last (SEO, low conversion weight) */}
       <PreviewHero />
       <AgencyStats />
-      <DealsContrast />
+      <DealsSystemContrast />
       <DealsSystemProcess sectionId="how-it-works" />
       <DealsResults />
       <NamedOffer />

@@ -88,7 +88,7 @@ export const dealsSystemSources = {
   note: 'המספרים להמחשה. במערכת שלכם יופיעו הנתונים האמיתיים מהפרסום ומה־CRM.',
   rows: [
     { source: 'Instagram', leads: '47', meetings: '3', deals: '0' },
-    { source: 'Google', leads: '19', meetings: '11', deals: '5' },
+            { source: 'Facebook', leads: '19', meetings: '11', deals: '5' },
   ],
 };
 
