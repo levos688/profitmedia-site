@@ -13,6 +13,8 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 input[type="text"],
@@ -92,10 +94,10 @@ textarea {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.85rem;
   border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.96rem;
+  font-weight: 600;
   color: #374151;
   transition:
     color 0.2s ease-out,
@@ -299,6 +301,17 @@ textarea {
 body {
   font-family: Assistant, "Segoe UI", Tahoma, Arial, sans-serif;
   touch-action: manipulation;
+  overflow-x: clip;
+  max-width: 100%;
+  position: relative;
+}
+
+/* Prevent media / wide intrinsic sizes from blowing out the mobile viewport (esp. RTL + iOS). */
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 a[href],
@@ -529,19 +542,4 @@ summary {
   outline-offset: 2px;
 }
 
-/* תוסף נגישות — слева по центру экрана */
-#pm-a11y-widget-root .pm-fab,
-#pm-a11y-widget-root .pm-panel {
-  top: 50% !important;
-  bottom: auto !important;
-  left: 12px !important;
-  right: auto !important;
-  transform: translateY(-50%) !important;
-}
-
-@media (max-width: 480px) {
-  #pm-a11y-widget-root .pm-fab,
-  #pm-a11y-widget-root .pm-panel {
-    left: 8px !important;
-  }
-}
+/* Accessibility FAB is inside Shadow DOM — positioning is handled in Layout.astro JS. */

@@ -1,17 +1,28 @@
 ---
 import { homeNav, homeCta } from '../data/site';
+
+const navLinkId = (href: string) => {
+  const hash = href.includes('#') ? href.split('#')[1] : '';
+  return hash || undefined;
+};
 ---
 
 <header class="site-header sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur transition-shadow duration-300" id="site-header">
-  <div class="header-bar mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6 lg:flex-row">
+  <div class="header-bar mx-auto flex w-full max-w-6xl min-w-0 items-center gap-4 px-4 py-3 md:px-6 lg:flex-row">
     <a href="/" class="header-logo block shrink-0" aria-label="Profit Media — דף הבית">
-      <img src="/logo.svg" alt="Profit Media" class="h-10 w-auto md:h-[70px]" width="200" height="70" />
+      <img
+        src="/logo.svg"
+        alt="Profit Media"
+        class="header-logo__img"
+        width="200"
+        height="70"
+      />
     </a>
 
     <nav class="hidden min-w-0 flex-1 items-center justify-end gap-1 lg:flex" aria-label="ניווט ראשי">
       {
         homeNav.map((item) => (
-          <a href={item.href} class="nav-link" data-nav-link={item.href.slice(1)}>
+          <a href={item.href} class="nav-link" data-nav-link={navLinkId(item.href)}>
             {item.label}
           </a>
         ))
@@ -20,7 +31,7 @@ import { homeNav, homeCta } from '../data/site';
 
     <button
       type="button"
-      class="btn-yellow hidden shrink-0 rounded-full px-5 py-2 text-sm font-black lg:inline-flex"
+      class="btn-yellow hidden shrink-0 items-center justify-center rounded-full px-5 pb-[0.45rem] pt-[0.6rem] text-[0.96rem] font-black leading-none lg:inline-flex"
       data-lead-modal-open
     >
       {homeCta}
@@ -55,7 +66,7 @@ import { homeNav, homeCta } from '../data/site';
         {
           homeNav.map((item) => (
             <li>
-              <a href={item.href} class="mobile-nav-link" data-nav-link={item.href.slice(1)}>
+              <a href={item.href} class="mobile-nav-link" data-nav-link={navLinkId(item.href)}>
                 {item.label}
               </a>
             </li>
@@ -171,6 +182,27 @@ import { homeNav, homeCta } from '../data/site';
   .site-header--scrolled {
     box-shadow: 0 8px 28px rgba(101, 21, 97, 0.08);
     border-color: rgba(101, 21, 97, 0.08);
+  }
+
+  .header-logo__img {
+    display: block;
+    width: auto;
+    height: 2rem; /* 32px — mobile */
+    max-width: min(148px, 42vw);
+  }
+
+  @media (min-width: 768px) {
+    .header-logo__img {
+      height: 3.25rem; /* 52px */
+      max-width: 200px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .header-logo__img {
+      height: 4.375rem; /* 70px */
+      max-width: 240px;
+    }
   }
 
   @media (max-width: 1023px) {
