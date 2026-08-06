@@ -2,6 +2,13 @@
 import HeroIllustration from '../HeroIllustration.astro';
 import PremiumAtmosphere from './PremiumAtmosphere.astro';
 import { hero } from '../../data/site';
+
+interface Props {
+  overrideTitle?: string;
+}
+
+const { overrideTitle } = Astro.props;
+const displayTitle = overrideTitle || hero.title;
 ---
 
 <section
@@ -26,7 +33,7 @@ import { hero } from '../../data/site';
         class="hero-title mt-3 text-4xl leading-tight font-bold text-white md:mt-4 md:text-[52px] lg:text-[56px]"
         data-ab-hero-title
       >
-        {hero.title}
+        {displayTitle}
       </h1>
 
       <div class="hero-visual">

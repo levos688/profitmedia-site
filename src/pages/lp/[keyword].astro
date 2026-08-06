@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import PreviewHero from '../../components/preview/PreviewHero.astro';
+import AgencyStats from '../../components/AgencyStats.astro';
+import DealsContrast from '../../components/deals/DealsContrast.astro';
+import DealsSystemProcess from '../../components/deals/system/DealsSystemProcess.astro';
+import DealsResults from '../../components/deals/DealsResults.astro';
+import TargetAudience from '../../components/TargetAudience.astro';
+import Clients from '../../components/Clients.astro';
+import NamedOffer from '../../components/NamedOffer.astro';
+import VideoTestimonials from '../../components/VideoTestimonials.astro';
+import PreviewPortfolio from '../../components/preview/PreviewPortfolio.astro';
+import PreviewFaq from '../../components/preview/PreviewFaq.astro';
+import BlogPreview from '../../components/BlogPreview.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import HomeAbPopup from '../../components/preview/HomeAbPopup.astro';
+import Footer from '../../components/Footer.astro';
+import { hero as defaultHero } from '../../data/site';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { keyword: 'digital-advertising-agency' },
+      props: {
+        title: 'סוכנות פרסום דיגיטלי | אבחון קמפיין חינם | Profit Media',
+        h1: 'סוכנות פרסום דיגיטלי לעסקאות, לא רק ללידים',
+      },
+    },
+    {
+      params: { keyword: 'digital-advertising-office' },
+      props: {
+        title: 'משרד פרסום דיגיטלי | אבחון קמפיין חינם | Profit Media',
+        h1: 'משרד פרסום דיגיטלי לעסקאות, לא רק ללידים',
+      },
+    },
+  ];
+}
+
+const { keyword } = Astro.params;
+const { title, h1 } = Astro.props;
+
+const description = 'מערכת שמחברת פרסום לעסקאות: מחקר מתחרים, קמפיינים, דף נחיתה ו־CRM. אבחון קמפיין חינם תוך 24 שעות, בלי התחייבות.';
+const canonical = `https://profitmedia.co.il/lp/${keyword}/`;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  preloadImage="/images/hero/photo-min.svg"
+>
+  <div
+    class="preview-page"
+    data-lead-page
+    data-lead-source={`lp-${keyword}`}
+    data-lead-source-prefix="lp"
+  >
+    <Header />
+    <main id="main-content">
+      {/* 
+        We pass the dynamic H1 down into the hero via a slotted or prop mechanism.
+        Since PreviewHero uses the default hero from site.ts, we need to override it here.
+        To avoid modifying PreviewHero for all pages, we can just render the hero markup directly,
+        or we can pass props to PreviewHero. Let's pass an overrideTitle prop to PreviewHero.
+      */}
+      <PreviewHero overrideTitle={h1} />
+      
+      <AgencyStats />
+      <DealsContrast />
+      <DealsSystemProcess sectionId="how-it-works" />
+      <DealsResults />
+      <NamedOffer />
+      <Clients />
+      <TargetAudience />
+      <VideoTestimonials />
+      <PreviewPortfolio />
+      <PreviewFaq />
+      <PreviewContactForm />
+      <BlogPreview />
+    </main>
+    <Footer />
+    <LeadCaptureModal />
+    <HomeAbPopup />
+    <StickyMobileCta />
+  </div>
+  <script src="/scripts/pm-home-ab.js?v=20260729a" defer></script>
+</Layout>

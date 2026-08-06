@@ -154,7 +154,7 @@ async function sendTelegram(env: Env, lead: LeadData) {
   }
 }
 
-/** Map site form → pm-crm page bucket (home | ads | deals). Skip client LPs (donhin, avhun, …). */
+/** Map site form → pm-crm page bucket (home | ads | deals | lp). Skip client LPs (donhin, avhun, …). */
 function shouldDualWritePmCrm(lead: LeadData): boolean {
   const client = (lead.client || '').toLowerCase();
   if (client && client !== 'profitmedia' && client !== 'pm') return false;
@@ -165,6 +165,12 @@ function shouldDualWritePmCrm(lead: LeadData): boolean {
 
 function pmCrmLeadSource(lead: LeadData): string {
   const blob = `${lead.source} ${lead.pageUrl} ${lead.landingUrl}`.toLowerCase();
+  if (blob.includes('/lp/')) {
+    // Extract the keyword part for better tracking (e.g. "lp/digital-advertising-agency")
+    const match = blob.match(/\/lp\/([^\/?#]+)/);
+    if (match) return `lp_${match[1]}`;
+    return 'lp';
+  }
   if (blob.includes('/deals') || blob.includes('deals-meta') || blob.includes('deals-system')) {
     return 'deals';
   }
