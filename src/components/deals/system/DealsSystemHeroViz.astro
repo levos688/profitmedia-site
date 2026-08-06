@@ -1,78 +1,31 @@
 ---
 /**
- * Product-proof hero visual: channel → CRM → deals loop.
- * Honest SVG infographic (not a fake dashboard screenshot).
+ * A3 product-in-business-context hero visual with sample numbers.
  */
+import { dealsSystemSnapshot } from '../../../data/deals';
 ---
 
-<figure class="sys-hero-viz" aria-label="אינפוגרפיקה: פרסום מתחבר ל־CRM וחוזר לעסקאות">
-  <svg viewBox="0 0 560 420" role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="sysHeroFill" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#c60691" stop-opacity="0.95" />
-        <stop offset="100%" stop-color="#651561" stop-opacity="1" />
-      </linearGradient>
-      <linearGradient id="sysHeroSoft" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
-        <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04" />
-      </linearGradient>
-    </defs>
-
-    <rect x="18" y="24" width="524" height="372" rx="18" fill="url(#sysHeroSoft)" />
-
-    <!-- Ads nodes -->
-    <g class="sys-hero-viz__node">
-      <rect x="46" y="58" width="150" height="72" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" />
-      <text x="121" y="90" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" font-family="Assistant, sans-serif">Facebook</text>
-      <text x="121" y="114" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="13" font-family="Assistant, sans-serif">לידים זולים</text>
-    </g>
-    <g class="sys-hero-viz__node">
-      <rect x="46" y="164" width="150" height="72" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" />
-      <text x="121" y="196" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" font-family="Assistant, sans-serif">Instagram</text>
-      <text x="121" y="220" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="13" font-family="Assistant, sans-serif">טפסים רבים</text>
-    </g>
-    <g class="sys-hero-viz__node">
-      <rect x="46" y="270" width="150" height="72" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" />
-      <text x="121" y="302" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" font-family="Assistant, sans-serif">Google</text>
-      <text x="121" y="326" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="13" font-family="Assistant, sans-serif">כוונה גבוהה</text>
-    </g>
-
-    <!-- Flow lines -->
-    <path d="M196 94 H250" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
-    <path d="M196 200 H250" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
-    <path d="M196 306 H250" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
-    <path d="M250 94 V306" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
-    <path d="M250 200 H290" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
-
-    <!-- CRM hub -->
-    <g class="sys-hero-viz__hub">
-      <rect x="290" y="144" width="178" height="112" rx="16" fill="url(#sysHeroFill)" stroke="#fcc000" stroke-width="2" />
-      <text x="379" y="188" text-anchor="middle" fill="#fcc000" font-size="20" font-weight="900" font-family="Assistant, sans-serif">CRM אישי</text>
-      <text x="379" y="216" text-anchor="middle" fill="#fff" font-size="14" font-family="Assistant, sans-serif">פגישות · עסקאות</text>
-      <text x="379" y="236" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="13" font-family="Assistant, sans-serif">סכומים · איכות</text>
-    </g>
-
-    <!-- Feedback arrow back -->
-    <path
-      d="M379 144 C379 78, 330 58, 196 58"
-      fill="none"
-      stroke="rgba(252,192,0,0.75)"
-      stroke-width="2.5"
-      stroke-dasharray="6 6"
-      stroke-linecap="round"
-    />
-    <polygon points="196,58 208,52 208,64" fill="#fcc000" />
-    <text x="290" y="48" text-anchor="middle" fill="#fcc000" font-size="13" font-weight="800" font-family="Assistant, sans-serif">פידבק לפרסום</text>
-
-    <!-- Outcome -->
-    <g>
-      <rect x="486" y="168" width="48" height="64" rx="10" fill="#fcc000" />
-      <text x="510" y="206" text-anchor="middle" fill="#4a0f46" font-size="15" font-weight="900" font-family="Assistant, sans-serif">₪</text>
-    </g>
-    <path d="M468 200 H486" stroke="#fcc000" stroke-width="2.5" stroke-linecap="round" />
-  </svg>
+<figure class="sys-hero-viz" aria-label="תמונת מצב עסקית: פגישות, עסקאות והשקעה לפי מקור">
+  <div class="sys-hero-viz__stage" aria-hidden="true">
+    <div class="sys-hero-viz__glow"></div>
+    <div class="sys-hero-viz__window">
+      <p class="sys-hero-viz__label">{dealsSystemSnapshot.label}</p>
+      <div class="sys-hero-viz__grid">
+        {
+          dealsSystemSnapshot.metrics.map((metric) => (
+            <div class="sys-hero-viz__metric">
+              <p class="sys-hero-viz__value">{metric.value}</p>
+              <p class="sys-hero-viz__metric-label">{metric.label}</p>
+              <p class="sys-hero-viz__detail">{metric.detail}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <p class="sys-hero-viz__chip">{dealsSystemSnapshot.chip}</p>
+  </div>
   <figcaption class="sr-only">
-    ערוצי פרסום מתחברים ל־CRM אישי שמודד פגישות ועסקאות ומחזיר פידבק לאופטימיזציית הקמפיינים.
+    דוגמה מומחשת: המערכת מחברת פגישות, עסקאות והשקעה לפי מקור פרסום, קהל ומודעה.
   </figcaption>
 </figure>
 
@@ -83,16 +36,110 @@
     max-width: 34rem;
   }
 
-  .sys-hero-viz svg {
-    display: block;
+  .sys-hero-viz__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 17rem;
+    overflow: hidden;
+    border-radius: 4px;
+    background:
+      radial-gradient(circle at 78% 22%, rgba(198, 6, 145, 0.35), transparent 42%),
+      linear-gradient(145deg, #3d1248 0%, #180a1d 100%);
+    padding: 1.5rem 1.25rem 2.25rem;
+  }
+
+  .sys-hero-viz__glow {
+    position: absolute;
+    inset-inline-end: -2rem;
+    top: -2rem;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 999px;
+    background: rgba(252, 192, 0, 0.18);
+    filter: blur(36px);
+    pointer-events: none;
+  }
+
+  .sys-hero-viz__window {
+    position: relative;
+    z-index: 1;
     width: 100%;
-    height: auto;
-    filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.28));
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 28px 55px rgba(0, 0, 0, 0.28);
+    padding: 1rem 1rem 1.15rem;
+  }
+
+  .sys-hero-viz__label {
+    margin: 0 0 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #651561;
+  }
+
+  .sys-hero-viz__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+
+  .sys-hero-viz__metric {
+    border-radius: 4px;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    background: #f8f5f8;
+    padding: 0.85rem 0.75rem;
+  }
+
+  .sys-hero-viz__value {
+    margin: 0;
+    font-size: clamp(1.35rem, 4vw, 1.75rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #651561;
+  }
+
+  .sys-hero-viz__metric-label {
+    margin: 0.4rem 0 0;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: #29102c;
+  }
+
+  .sys-hero-viz__detail {
+    margin: 0.2rem 0 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #6b6470;
+  }
+
+  .sys-hero-viz__chip {
+    position: absolute;
+    z-index: 2;
+    inset-inline-start: 0.85rem;
+    bottom: 0.7rem;
+    margin: 0;
+    max-width: 12rem;
+    border-radius: 4px;
+    background: #fcc000;
+    color: #4a0f46;
+    font-size: 0.75rem;
+    font-weight: 900;
+    line-height: 1.35;
+    padding: 0.65rem 0.8rem;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
   }
 
   @media (min-width: 1024px) {
     .sys-hero-viz {
       animation: sys-hero-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+    }
+
+    .sys-hero-viz__stage {
+      min-height: 19rem;
+      padding: 1.75rem 1.5rem 2.5rem;
     }
   }
 

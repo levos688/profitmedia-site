@@ -5,20 +5,20 @@ import Header from '../components/Header.astro';
 import PreviewHero from '../components/preview/PreviewHero.astro';
 import HomeJsonLd from '../components/HomeJsonLd.astro';
 import AgencyStats from '../components/AgencyStats.astro';
+import DealsContrast from '../components/deals/DealsContrast.astro';
+import DealsSystemProcess from '../components/deals/system/DealsSystemProcess.astro';
+import DealsResults from '../components/deals/DealsResults.astro';
 import TargetAudience from '../components/TargetAudience.astro';
-import PreviewCampaignResults from '../components/preview/PreviewCampaignResults.astro';
 import Clients from '../components/Clients.astro';
-import HowItWorks from '../components/HowItWorks.astro';
 import NamedOffer from '../components/NamedOffer.astro';
-import Services from '../components/Services.astro';
 import VideoTestimonials from '../components/VideoTestimonials.astro';
 import PreviewPortfolio from '../components/preview/PreviewPortfolio.astro';
-import WhyUs from '../components/WhyUs.astro';
 import PreviewFaq from '../components/preview/PreviewFaq.astro';
 import BlogPreview from '../components/BlogPreview.astro';
 import PreviewContactForm from '../components/preview/PreviewContactForm.astro';
 import LeadCaptureModal from '../components/preview/LeadCaptureModal.astro';
 import StickyMobileCta from '../components/preview/StickyMobileCta.astro';
+import HomeAbPopup from '../components/preview/HomeAbPopup.astro';
 import Footer from '../components/Footer.astro';
 import { homeSeo } from '../data/site';
 ---
@@ -28,29 +28,35 @@ import { homeSeo } from '../data/site';
   description={homeSeo.description}
   canonical={homeSeo.canonical}
   preloadImage="/images/hero/photo-min.svg"
-  enableGtm={false}
 >
   <HomeJsonLd slot="head" />
-  <div class="preview-page">
+  <div
+    class="preview-page"
+    data-lead-page
+    data-lead-source="homepage"
+    data-lead-source-prefix="home"
+  >
     <Header />
     <main id="main-content">
+      {/* CRO order: mechanism → proof → qualify → objections → CTA; blog last (SEO, low conversion weight) */}
       <PreviewHero />
       <AgencyStats />
-      <TargetAudience />
-      <PreviewCampaignResults />
-      <Clients />
-      <HowItWorks />
+      <DealsContrast />
+      <DealsSystemProcess sectionId="how-it-works" />
+      <DealsResults />
       <NamedOffer />
-      <Services />
+      <Clients />
+      <TargetAudience />
       <VideoTestimonials />
       <PreviewPortfolio />
-      <WhyUs />
       <PreviewFaq />
-      <BlogPreview />
       <PreviewContactForm />
+      <BlogPreview />
     </main>
     <Footer />
     <LeadCaptureModal />
+    <HomeAbPopup />
     <StickyMobileCta />
   </div>
+  <script src="/scripts/pm-home-ab.js?v=20260729a" defer></script>
 </Layout>

@@ -8,6 +8,9 @@ export interface Env {
   TELEGRAM_CHAT_ID?: string;
   META_CAPI_ACCESS_TOKEN?: string;
   META_CAPI_DATASET_ID?: string;
+  /** Dual-write Profit Media site leads into pm-crm (best-effort). */
+  PM_CRM_INTAKE_URL?: string;
+  PM_CRM_INTAKE_KEY?: string;
 }
 
 export interface UtmParams {

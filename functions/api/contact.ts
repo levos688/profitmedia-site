@@ -154,6 +154,68 @@ async function sendTelegram(env: Env, lead: LeadData) {
   }
 }
 
+/** Map site form → pm-crm page bucket (home | ads | deals). Skip client LPs (donhin, avhun, …). */
+function shouldDualWritePmCrm(lead: LeadData): boolean {
+  const client = (lead.client || '').toLowerCase();
+  if (client && client !== 'profitmedia' && client !== 'pm') return false;
+  const blob = `${lead.source} ${lead.pageUrl} ${lead.landingUrl}`.toLowerCase();
+  if (blob.includes('donhin') || blob.includes('avhun')) return false;
+  return true;
+}
+
+function pmCrmLeadSource(lead: LeadData): string {
+  const blob = `${lead.source} ${lead.pageUrl} ${lead.landingUrl}`.toLowerCase();
+  if (blob.includes('/deals') || blob.includes('deals-meta') || blob.includes('deals-system')) {
+    return 'deals';
+  }
+  if (blob.includes('/ads') || /(^|[^a-z])ads([^a-z]|$)/.test(blob) || blob.includes('ads-meta')) {
+    return 'ads';
+  }
+  return 'home';
+}
+
+/** Best-effort dual-write into Profit Media CRM. Never fails the contact response. */
+async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
+  const url = env.PM_CRM_INTAKE_URL?.trim();
+  const key = env.PM_CRM_INTAKE_KEY?.trim();
+  if (!url || !key) return;
+  if (!shouldDualWritePmCrm(lead)) return;
+
+  const payload = {
+    name: lead.name,
+    phone: lead.phone,
+    email: lead.email || undefined,
+    lead_source: pmCrmLeadSource(lead),
+    lead_audience: lead.utm.utm_content || undefined,
+    lead_ad_id: lead.utm.utm_term || undefined,
+    lead_campaign: lead.utm.utm_campaign || undefined,
+    utm_source: lead.utm.utm_source || undefined,
+    utm_medium: lead.utm.utm_medium || undefined,
+    quiz_answer: lead.quizAnswer || undefined,
+    vertical: lead.vertical || undefined,
+    page_url: lead.pageUrl || undefined,
+    landing_url: lead.landingUrl || undefined,
+    notes: [lead.formType && `form:${lead.formType}`, lead.source && `source:${lead.source}`]
+      .filter(Boolean)
+      .join(' | '),
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Intake-Key': key,
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(8_000),
+  });
+
+  if (!res.ok) {
+    const err = await res.text().catch(() => '');
+    console.error(`pm-crm intake ${res.status}: ${err.slice(0, 300)}`);
+  }
+}
+
 function pickUtm(body: ContactPayload): UtmParams {
   const utm = body.utm || {};
   const out: UtmParams = {};
@@ -254,6 +316,12 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     await sendTelegram(env, lead);
   } catch (err) {
     console.error(err);
+  }
+
+  try {
+    await sendToPmCrm(env, lead);
+  } catch (err) {
+    console.error('pm-crm dual-write failed:', err);
   }
 
   return json({ ok: true });

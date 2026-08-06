@@ -1,13 +1,20 @@
 ---
 import Reveal from '../../Reveal.astro';
 import { dealsProcess } from '../../../data/deals';
+
+interface Props {
+  sectionId?: string;
+}
+
+const { sectionId = 'process' } = Astro.props;
+const titleId = `${sectionId}-title`;
 ---
 
-<section id="process" class="sys-process section-padding below-fold" aria-labelledby="sys-process-title">
+<section id={sectionId} class="sys-process section-padding below-fold" aria-labelledby={titleId}>
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <div class="sys-process__head">
-        <h2 id="sys-process-title" class="sys-process__title">{dealsProcess.title}</h2>
+        <h2 id={titleId} class="sys-process__title">{dealsProcess.title}</h2>
         <p class="sys-process__subtitle">{dealsProcess.subtitle}</p>
       </div>
     </Reveal>

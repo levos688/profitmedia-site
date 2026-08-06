@@ -6,43 +6,40 @@ const [adsCol, crmCol] = dealsContrast.columns;
 ---
 
 <section id="contrast" class="deals-contrast below-fold" aria-labelledby="deals-contrast-title">
-  <div class="deals-contrast__bg" aria-hidden="true">
-    <img
-      src="/images/deals/deals-editorial-atmosphere.webp"
-      alt=""
-      width="1600"
-      height="900"
-      loading="lazy"
-      decoding="async"
-    />
-  </div>
-
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <div class="deals-contrast__head">
         <p class="deals-contrast__eyebrow">{dealsContrast.eyebrow}</p>
-        <h2 id="deals-contrast-title" class="deals-contrast__title">{dealsContrast.title}</h2>
+        <h2 id="deals-contrast-title" class="deals-contrast__title">
+          {dealsContrast.titleLines.map((line) => (
+            <span class="deals-contrast__title-line">{line}</span>
+          ))}
+        </h2>
         <p class="deals-contrast__subtitle">{dealsContrast.subtitle}</p>
       </div>
     </Reveal>
 
     <div class="deals-contrast__stage">
-      <Reveal class="deals-contrast__panel deals-contrast__panel--ads">
-        <p class="deals-contrast__panel-kicker">{adsCol.label}</p>
-        <ul>
-          {adsCol.rows.map((row) => <li>{row}</li>)}
-        </ul>
+      <Reveal>
+        <div class="deals-contrast__panel deals-contrast__panel--ads">
+          <p class="deals-contrast__panel-kicker">{adsCol.label}</p>
+          <ul>
+            {adsCol.rows.map((row) => <li>{row}</li>)}
+          </ul>
+        </div>
       </Reveal>
 
       <div class="deals-contrast__vs" aria-hidden="true">
         <span>מול</span>
       </div>
 
-      <Reveal class="deals-contrast__panel deals-contrast__panel--crm" delay={100}>
-        <p class="deals-contrast__panel-kicker">{crmCol.label}</p>
-        <ul>
-          {crmCol.rows.map((row) => <li>{row}</li>)}
-        </ul>
+      <Reveal delay={100}>
+        <div class="deals-contrast__panel deals-contrast__panel--crm">
+          <p class="deals-contrast__panel-kicker">{crmCol.label}</p>
+          <ul>
+            {crmCol.rows.map((row) => <li>{row}</li>)}
+          </ul>
+        </div>
       </Reveal>
     </div>
 
@@ -56,30 +53,10 @@ const [adsCol, crmCol] = dealsContrast.columns;
   .deals-contrast {
     position: relative;
     overflow: hidden;
-    background: #160918;
-    padding-block: 3.5rem;
-  }
-
-  .deals-contrast__bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .deals-contrast__bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.28;
-  }
-
-  .deals-contrast__bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
     background:
-      linear-gradient(180deg, rgba(22, 9, 24, 0.55) 0%, rgba(22, 9, 24, 0.82) 55%, rgba(22, 9, 24, 0.95) 100%),
-      radial-gradient(ellipse at 70% 20%, rgba(198, 6, 145, 0.28), transparent 55%);
+      radial-gradient(ellipse at 85% 10%, rgba(198, 6, 145, 0.07), transparent 38%),
+      #fff;
+    padding-block: 3.5rem;
   }
 
   .deals-contrast__head {
@@ -95,22 +72,26 @@ const [adsCol, crmCol] = dealsContrast.columns;
     font-size: 0.875rem;
     font-weight: 800;
     letter-spacing: 0.04em;
-    color: #fcc000;
+    color: #c60691;
   }
 
   .deals-contrast__title {
     margin: 0;
     font-size: clamp(1.65rem, 4.8vw, 2.6rem);
     font-weight: 900;
-    line-height: 1.2;
-    color: #fff;
+    line-height: 1.25;
+    color: #29102c;
+  }
+
+  .deals-contrast__title-line {
+    display: block;
   }
 
   .deals-contrast__subtitle {
     margin: 0.95rem 0 0;
     font-size: 1.0625rem;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.78);
+    color: #4b5563;
   }
 
   .deals-contrast__stage {
@@ -119,33 +100,36 @@ const [adsCol, crmCol] = dealsContrast.columns;
     gap: 1rem;
   }
 
+  .deals-contrast__stage > :global([data-reveal]) {
+    height: 100%;
+  }
+
   .deals-contrast__panel {
+    height: 100%;
     border-radius: 4px;
     padding: 1.75rem 1.5rem;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
   }
 
   .deals-contrast__panel--ads {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: #f4f4f5;
+    border: 1px solid #e4e4e7;
   }
 
   .deals-contrast__panel--crm {
-    background: linear-gradient(160deg, rgba(101, 21, 97, 0.95) 0%, rgba(90, 28, 115, 0.98) 100%);
-    border: 1px solid rgba(252, 192, 0, 0.35);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    background: #f7eff8;
+    border: 1px solid rgba(101, 21, 97, 0.22);
+    box-shadow: 0 18px 45px rgba(101, 21, 97, 0.1);
   }
 
   .deals-contrast__panel-kicker {
     margin: 0 0 1.25rem;
     font-size: 1.125rem;
     font-weight: 900;
-    color: #fff;
+    color: #29102c;
   }
 
   .deals-contrast__panel--crm .deals-contrast__panel-kicker {
-    color: #fcc000;
+    color: #651561;
   }
 
   .deals-contrast__panel ul {
@@ -161,7 +145,7 @@ const [adsCol, crmCol] = dealsContrast.columns;
     padding-inline-start: 1.35rem;
     font-size: 1.02rem;
     line-height: 1.55;
-    color: rgba(255, 255, 255, 0.88);
+    color: #3f3f46;
   }
 
   .deals-contrast__panel li::before {
@@ -172,11 +156,11 @@ const [adsCol, crmCol] = dealsContrast.columns;
     width: 0.45rem;
     height: 0.45rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.4);
+    background: #a1a1aa;
   }
 
   .deals-contrast__panel--crm li::before {
-    background: #fcc000;
+    background: #651561;
   }
 
   .deals-contrast__vs {
@@ -206,7 +190,7 @@ const [adsCol, crmCol] = dealsContrast.columns;
     font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.9);
+    color: #4a0f46;
   }
 
   @media (min-width: 900px) {
@@ -230,14 +214,4 @@ const [adsCol, crmCol] = dealsContrast.columns;
     }
   }
 
-  @media (prefers-reduced-transparency: reduce) {
-    .deals-contrast__panel {
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-    }
-
-    .deals-contrast__panel--ads {
-      background: #2a1530;
-    }
-  }
 </style>
