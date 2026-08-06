@@ -1,153 +1,221 @@
 ---
 import HeroIllustration from '../HeroIllustration.astro';
 import PremiumAtmosphere from './PremiumAtmosphere.astro';
-import { hero, homeCta } from '../../data/site';
+import { hero } from '../../data/site';
 ---
 
 <section
-  class="preview-depth-section hero-gradient relative overflow-hidden pb-10 pt-4 md:pb-16 md:pt-6"
+  class="preview-depth-section hero-gradient relative overflow-hidden pb-4 pt-4 md:pb-8 md:pt-6"
   aria-labelledby="hero-title"
+  data-ab-hero
 >
   <div class="hero-gradient__mesh" aria-hidden="true"></div>
   <PremiumAtmosphere variant="hero" />
 
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
-    <div class="grid items-center gap-10 py-6 md:gap-14 md:py-10 lg:grid-cols-2">
-      <div class="hero-content text-right text-white max-md:text-center">
-        <p class="hero-eyebrow text-sm font-bold tracking-wide text-white/90 md:text-base">
-          {hero.eyebrow}
-        </p>
-        <h1 id="hero-title" class="mt-4 text-4xl leading-tight font-bold md:text-[52px] lg:text-[56px]">
-          {hero.title}
-        </h1>
-        <p class="hero-subtitle mt-6 text-lg leading-relaxed text-white/95 md:text-2xl lg:mt-7">
+    <div class="hero-layout py-6 md:py-10">
+      <p
+        class="hero-eyebrow text-sm font-bold tracking-wide text-white/90 md:text-base"
+        data-ab-hero-eyebrow
+      >
+        {hero.eyebrow}
+      </p>
+
+      <h1
+        id="hero-title"
+        class="hero-title mt-3 text-4xl leading-tight font-bold text-white md:mt-4 md:text-[52px] lg:text-[56px]"
+        data-ab-hero-title
+      >
+        {hero.title}
+      </h1>
+
+      <div class="hero-visual">
+        <HeroIllustration />
+      </div>
+
+      <div class="hero-more text-white">
+        <p class="hero-subtitle text-lg leading-relaxed text-white/95 md:text-2xl" data-ab-hero-subtitle>
           {hero.subtitle}
         </p>
 
-        <p class="hero-proof-chip max-md:mx-auto">
-          <strong>₪200K+</strong> במכירות שדווחו בחודש · לקוח בתחום המטבחים
-        </p>
-
         {
-          hero.trustLine && (
-            <p class="hero-trust-line max-md:mx-auto">{hero.trustLine}</p>
+          hero.proofChip && (
+            <p class="hero-proof-chip" data-ab-hero-proof>
+              {hero.proofChip}
+            </p>
           )
         }
 
-        <div class="hero-cta-group mt-8 md:mt-10">
+        {
+          hero.trustLine && (
+            <p class="hero-trust-line" data-ab-hero-trust>
+              {hero.trustLine}
+            </p>
+          )
+        }
+
+        <div class="hero-cta-wrap">
           <button
             type="button"
-            class="btn-yellow hero-cta rounded-full px-8 py-3.5 text-lg font-bold shadow-lg md:px-10 md:py-4 md:text-xl"
+            class="btn-yellow rounded-full font-black hero-cta"
             data-lead-modal-open
+            data-ab-open="hero"
+            data-ab-hero-cta
           >
-            {homeCta}
+            {hero.cta}
           </button>
-          <p class="hero-cta-note text-sm text-white/80 md:text-base">
-            {hero.ctaNote}
-          </p>
+          {
+            hero.ctaNote && (
+              <p class="hero-cta-note" data-ab-hero-note>
+                {hero.ctaNote}
+              </p>
+            )
+          }
         </div>
-      </div>
-
-      <div class="hero-visual flex justify-center lg:justify-start">
-        <HeroIllustration />
       </div>
     </div>
   </div>
 </section>
 
 <style>
+  .hero-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+
   .hero-eyebrow {
     letter-spacing: 0.02em;
+    width: 100%;
+  }
+
+  .hero-title {
+    width: 100%;
+    max-width: 52rem;
+  }
+
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-more {
+    width: 100%;
+    max-width: 36rem;
+    margin-top: 0.5rem;
   }
 
   .hero-subtitle {
-    max-width: 36rem;
+    margin: 0;
   }
 
-  @media (min-width: 1024px) {
-    .hero-subtitle {
-      margin-inline-start: 0;
-      margin-inline-end: auto;
-    }
+  .hero-trust-line {
+    margin-top: 1.25rem;
+    font-size: 1.05rem; /* Increased size as requested */
+    font-weight: 600;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.82);
   }
 
-  .hero-cta-group {
-    display: inline-flex;
+  .hero-cta-wrap {
+    margin-top: 1.75rem; /* More balanced top margin */
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .hero-cta {
+    min-height: 44px;
+    padding: 0.75rem 1.75rem;
+    font-size: 1.05rem;
   }
 
   .hero-cta-note {
-    width: 100%;
-    text-align: center;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.78);
   }
 
-  @media (max-width: 767px) {
-    .hero-cta-group {
-      width: 100%;
+  /* Desktop RTL: first column = inline-start = right → copy; second = left → image */
+  @media (min-width: 1024px) {
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        'eyebrow visual'
+        'title visual'
+        'more visual';
+      column-gap: 3.5rem;
+      row-gap: 0.75rem;
+      align-items: center;
+      text-align: right;
     }
 
-    .hero-cta {
-      width: 100%;
+    .hero-eyebrow {
+      grid-area: eyebrow;
+      align-self: end;
+    }
+
+    .hero-title {
+      grid-area: title;
+      max-width: none;
+      margin-top: 0;
+    }
+
+    .hero-visual {
+      grid-area: visual;
+      margin: 0;
       justify-content: center;
     }
 
-    .hero-subtitle {
-      margin-inline: auto;
+    .hero-more {
+      grid-area: more;
+      max-width: none;
+      margin-top: -0.5rem;
+      justify-self: stretch;
     }
-  }
 
-  @media (min-width: 768px) {
-    .hero-content {
+    .hero-cta-wrap {
+      align-items: flex-start;
+    }
+
+    .hero-proof-chip {
+      margin-inline: 0;
+    }
+
+    .hero-eyebrow,
+    .hero-title,
+    .hero-more {
       animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     .hero-visual {
       animation: hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
     }
-
-    .hero-cta-group {
-      align-items: flex-start;
-    }
-
-    .hero-cta-note {
-      text-align: right;
-    }
-  }
-
-  .hero-cta {
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: none;
-    cursor: pointer;
-  }
-
-  .hero-trust-line {
-    margin-top: 0.85rem;
-    max-width: 28rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.82);
-  }
-
-  .hero-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
   }
 
   @keyframes hero-fade-up {
     from {
       transform: translateY(24px);
+      opacity: 0.01;
     }
     to {
       transform: translateY(0);
+      opacity: 1;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-content,
+    .hero-eyebrow,
+    .hero-title,
+    .hero-more,
     .hero-visual {
       animation: none;
     }
