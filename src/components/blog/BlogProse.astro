@@ -103,11 +103,15 @@ const { class: className = '' } = Astro.props;
   }
 
   .blog-prose :global(table) {
+    display: block;
     width: 100%;
+    max-width: 100%;
     margin: 1.5rem 0 1.75rem;
     border-collapse: collapse;
     font-size: 0.975rem;
     line-height: 1.55;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .blog-prose :global(th),

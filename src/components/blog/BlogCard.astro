@@ -47,6 +47,8 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: auto;
     border: 1px solid rgba(101, 21, 97, 0.1);
     border-radius: 4px;
@@ -75,7 +77,11 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
     align-items: center;
     justify-content: center;
     aspect-ratio: 1 / 1;
-    padding: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 1rem;
+    overflow: hidden;
     background: linear-gradient(160deg, #faf8fc 0%, #f3edf5 100%);
     border-bottom: 1px solid rgba(101, 21, 97, 0.08);
   }
@@ -88,6 +94,12 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
     margin-inline: auto;
     object-fit: contain;
     object-position: center;
+  }
+
+  @media (min-width: 768px) {
+    .blog-card__image-frame {
+      padding: 1.5rem;
+    }
   }
 
   .blog-card__body {

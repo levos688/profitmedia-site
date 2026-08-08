@@ -1,5 +1,4 @@
 ---
-import CheckIcon from '../icons/CheckIcon.astro';
 import { avhun } from '../../data/avhun';
 import { formLabels, formPlaceholders } from '../../data/site';
 
@@ -16,23 +15,28 @@ const placeholders = {
 ---
 
 <header class="avhun-top">
-  <a href="/" class="avhun-logo" aria-label="Profit Media — דף הבית">
+  <a href="/" class="avhun-logo" aria-label="Profit Media, דף הבית">
     <img src="/logo.svg" alt="Profit Media" width="160" height="56" />
   </a>
 </header>
 
 <main id="main-content">
   <section class="avhun-hero" aria-labelledby="avhun-title">
+    <div class="avhun-hero__glow" aria-hidden="true"></div>
     <div class="avhun-hero__inner">
       <div class="avhun-hero__copy">
         <p class="avhun-eyebrow">{avhun.eyebrow}</p>
         <h1 id="avhun-title">{avhun.title}</h1>
         <p class="avhun-sub">{avhun.subtitle}</p>
-        <p class="avhun-chip"><strong>₪200K+</strong> במכירות שדווחו בחודש · לקוח מטבחים</p>
-        <p class="avhun-trust">{avhun.trustLine}</p>
+
+        <div class="avhun-proof-row">
+          <p class="avhun-chip"><strong>₪200K+</strong> במכירות שדווחו בחודש · לקוח מטבחים</p>
+          <p class="avhun-trust">{avhun.trustLine}</p>
+        </div>
       </div>
 
       <div class="avhun-card" id="form">
+        <div class="avhun-card__badge" aria-hidden="true">חינם</div>
         <h2 class="avhun-card__title">{avhun.formTitle}</h2>
         <p class="avhun-card__note">{avhun.ctaNote}</p>
 
@@ -95,17 +99,27 @@ const placeholders = {
     </div>
   </section>
 
-  <section class="avhun-section" aria-labelledby="avhun-includes-title">
+  <section class="avhun-stats" aria-label="מספרים מהשטח">
+    <div class="avhun-wrap avhun-stats__grid">
+      {
+        avhun.stats.map((stat) => (
+          <div class="avhun-stat">
+            <p class="avhun-stat__value">{stat.value}</p>
+            <p class="avhun-stat__label">{stat.label}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="avhun-clients" aria-labelledby="avhun-clients-title">
     <div class="avhun-wrap">
-      <h2 id="avhun-includes-title">{avhun.includesTitle}</h2>
-      <ul class="avhun-list">
+      <h2 id="avhun-clients-title" class="avhun-clients__title">{avhun.clientsTitle}</h2>
+      <ul class="avhun-clients__row">
         {
-          avhun.includes.map((item) => (
+          avhun.clients.map((client) => (
             <li>
-              <span class="avhun-check" aria-hidden="true">
-                <CheckIcon />
-              </span>
-              <span>{item}</span>
+              <img src={client.src} alt={client.alt} width="120" height="48" loading="lazy" />
             </li>
           ))
         }
@@ -113,17 +127,86 @@ const placeholders = {
     </div>
   </section>
 
-  <section class="avhun-section avhun-section--alt" aria-labelledby="avhun-offer-title">
+  <section class="avhun-section" aria-labelledby="avhun-includes-title">
+    <div class="avhun-wrap">
+      <h2 id="avhun-includes-title">{avhun.includesTitle}</h2>
+      <ul class="avhun-tiles">
+        {
+          avhun.includes.map((item) => (
+            <li class="avhun-tile">
+              <img class="avhun-tile__icon" src={item.icon} alt="" width="72" height="72" loading="lazy" />
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="avhun-section avhun-section--soft" aria-labelledby="avhun-steps-title">
+    <div class="avhun-wrap">
+      <h2 id="avhun-steps-title">{avhun.stepsTitle}</h2>
+      <ol class="avhun-steps">
+        {
+          avhun.steps.map((step) => (
+            <li class="avhun-step">
+              <span class="avhun-step__n" aria-hidden="true">
+                {step.n}
+              </span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="avhun-section" aria-labelledby="avhun-offer-title">
     <div class="avhun-wrap">
       <h2 id="avhun-offer-title">{avhun.offerTitle}</h2>
-      <ul class="avhun-pills">
-        {avhun.offerItems.map((item) => <li>{item}</li>)}
+      <p class="avhun-section__sub">{avhun.offerSub}</p>
+      <ul class="avhun-offer">
+        {
+          avhun.offerItems.map((item) => (
+            <li class="avhun-offer__item">
+              <img src={item.icon} alt="" width="88" height="88" loading="lazy" />
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))
+        }
       </ul>
-      <blockquote class="avhun-quote">
-        <p>“{avhun.caseStudy.quote}”</p>
-        <footer>{avhun.caseStudy.attribution} · {avhun.caseStudy.label}</footer>
-      </blockquote>
-      <a href="#form" class="btn-yellow avhun-inline-cta">{avhun.cta}</a>
+    </div>
+  </section>
+
+  <section class="avhun-section avhun-section--soft" aria-labelledby="avhun-proof-title">
+    <div class="avhun-wrap">
+      <h2 id="avhun-proof-title">{avhun.proofTitle}</h2>
+      <div class="avhun-proof">
+        <div class="avhun-proof__shots">
+          {
+            avhun.proofImages.map((img) => (
+              <figure>
+                <img src={img.src} alt={img.alt} width="560" height="360" loading="lazy" />
+              </figure>
+            ))
+          }
+        </div>
+        <blockquote class="avhun-quote">
+          <p>“{avhun.caseStudy.quote}”</p>
+          <footer>
+            <strong>{avhun.caseStudy.attribution}</strong>
+            <span>{avhun.caseStudy.label}</span>
+          </footer>
+        </blockquote>
+      </div>
+      <div class="avhun-center">
+        <a href="#form" class="btn-yellow avhun-inline-cta">{avhun.cta}</a>
+      </div>
     </div>
   </section>
 
@@ -142,13 +225,23 @@ const placeholders = {
       </div>
     </div>
   </section>
+
+  <section class="avhun-bottom" aria-labelledby="avhun-bottom-title">
+    <div class="avhun-wrap avhun-bottom__inner">
+      <div>
+        <h2 id="avhun-bottom-title">{avhun.bottomCtaTitle}</h2>
+        <p>{avhun.bottomCtaSub}</p>
+      </div>
+      <a href="#form" class="btn-yellow avhun-inline-cta">{avhun.cta}</a>
+    </div>
+  </section>
 </main>
 
 <footer class="avhun-footer">
   <p>© {new Date().getFullYear()} Profit Media</p>
   <p>
     <a href="/prat">מדיניות פרטיות</a>
-    ·
+    <span aria-hidden="true"> · </span>
     <a href="/hatzara">הצהרת נגישות</a>
   </p>
 </footer>
@@ -263,24 +356,39 @@ const placeholders = {
   .avhun-top {
     display: flex;
     justify-content: center;
-    padding: 1rem 1.25rem;
+    padding: 0.85rem 1.25rem;
     background: #fff;
-    border-bottom: 1px solid rgba(101, 21, 97, 0.08);
+    border-bottom: 1px solid rgba(101, 21, 97, 0.1);
   }
 
   .avhun-logo img {
-    height: 2.75rem;
+    height: 2.6rem;
     width: auto;
   }
 
   .avhun-hero {
-    background: linear-gradient(165deg, #651561 0%, #5a1c73 72%, #4a1247 100%);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(155deg, #651561 0%, #5a1c73 58%, #3d1248 100%);
     color: #fff;
-    padding: 2rem 1.25rem 2.5rem;
+    padding: 1.75rem 1.25rem 2.25rem;
+  }
+
+  .avhun-hero__glow {
+    position: absolute;
+    inset-inline-end: -8rem;
+    top: -6rem;
+    width: 22rem;
+    height: 22rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(252, 192, 0, 0.22), transparent 68%);
+    pointer-events: none;
   }
 
   .avhun-hero__inner {
-    max-width: 68rem;
+    position: relative;
+    z-index: 1;
+    max-width: 70rem;
     margin: 0 auto;
     display: grid;
     gap: 1.75rem;
@@ -288,10 +396,10 @@ const placeholders = {
 
   @media (min-width: 960px) {
     .avhun-hero__inner {
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1.08fr 0.92fr;
       align-items: start;
-      gap: 2.5rem;
-      padding-block: 1.5rem;
+      gap: 2.75rem;
+      padding-block: 1.25rem;
     }
   }
 
@@ -303,69 +411,109 @@ const placeholders = {
   }
 
   .avhun-hero h1 {
-    margin: 0.75rem 0 0;
-    font-size: clamp(2rem, 5vw, 3.25rem);
+    margin: 0.65rem 0 0;
+    font-size: clamp(2rem, 4.8vw, 3.15rem);
     line-height: 1.15;
     font-weight: 900;
+    text-wrap: balance;
   }
 
   .avhun-sub {
-    margin: 1rem 0 0;
-    font-size: 1.125rem;
+    margin: 0.95rem 0 0;
+    font-size: 1.1rem;
     line-height: 1.65;
     color: rgba(255, 255, 255, 0.94);
     max-width: 36rem;
   }
 
+  .avhun-proof-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin-top: 1.35rem;
+  }
+
+  @media (max-width: 959px) {
+    .avhun-hero__copy {
+      text-align: center;
+    }
+
+    .avhun-sub {
+      margin-inline: auto;
+    }
+
+    .avhun-proof-row {
+      align-items: center;
+    }
+  }
+
   .avhun-chip {
     display: inline-flex;
-    margin-top: 1.1rem;
-    padding: 0.45rem 0.85rem;
+    margin: 0;
+    padding: 0.5rem 0.9rem;
     border-radius: 9999px;
-    background: rgba(252, 192, 0, 0.95);
+    background: #fcc000;
     color: #651561;
     font-size: 0.875rem;
     font-weight: 700;
   }
 
   .avhun-trust {
-    margin: 0.85rem 0 0;
-    font-size: 0.9375rem;
+    margin: 0;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(255, 255, 255, 0.84);
   }
 
+  /* Form: tinted panel + white fields with strong border (no white-on-white) */
   .avhun-card {
-    background: #fff;
+    position: relative;
+    background: #e8dced;
     color: #111827;
     border-radius: 1.25rem;
-    padding: 1.5rem 1.25rem 1.35rem;
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+    border: 2px solid rgba(252, 192, 0, 0.55);
+    padding: 1.55rem 1.25rem 1.4rem;
+    box-shadow:
+      0 22px 50px rgba(26, 10, 36, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
   }
 
   @media (min-width: 768px) {
     .avhun-card {
-      padding: 1.75rem 1.5rem 1.5rem;
+      padding: 1.85rem 1.55rem 1.6rem;
     }
   }
 
+  .avhun-card__badge {
+    position: absolute;
+    inset-inline-start: 1.15rem;
+    top: -0.7rem;
+    background: #fcc000;
+    color: #651561;
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 0.28rem 0.7rem;
+    border-radius: 9999px;
+  }
+
   .avhun-card__title {
-    margin: 0;
+    margin: 0.35rem 0 0;
     font-size: 1.35rem;
     font-weight: 900;
     color: #651561;
   }
 
   .avhun-card__note {
-    margin: 0.5rem 0 1.1rem;
+    margin: 0.45rem 0 1.15rem;
     font-size: 0.875rem;
     line-height: 1.45;
-    color: #6b7280;
+    color: #4b5563;
   }
 
   .avhun-form {
     display: grid;
-    gap: 0.85rem;
+    gap: 0.9rem;
   }
 
   .avhun-field label {
@@ -379,21 +527,44 @@ const placeholders = {
   .avhun-field input[type='text'],
   .avhun-field input[type='tel'] {
     width: 100%;
-    border: 1px solid rgba(101, 21, 97, 0.18);
-    border-radius: 0.75rem;
-    padding: 0.8rem 0.9rem;
+    border: 2px solid #8f6a98;
+    border-radius: 0.85rem;
+    padding: 0.85rem 0.95rem;
     font-size: 1rem;
-    background: #faf8fc;
+    font-weight: 600;
+    color: #111827;
+    background: #fff;
+    box-shadow: inset 0 1px 2px rgba(101, 21, 97, 0.06);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .avhun-field input::placeholder {
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  .avhun-field input:hover {
+    border-color: #651561;
+  }
+
+  .avhun-field input:focus {
+    outline: none;
+    border-color: #fcc000;
+    box-shadow: 0 0 0 4px rgba(252, 192, 0, 0.35);
   }
 
   .avhun-field input[aria-invalid='true'] {
     border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
   }
 
   .avhun-error {
     margin: 0.35rem 0 0;
     font-size: 0.8125rem;
-    color: #dc2626;
+    font-weight: 700;
+    color: #b91c1c;
   }
 
   .avhun-privacy {
@@ -402,12 +573,21 @@ const placeholders = {
     align-items: flex-start;
     font-size: 0.8125rem;
     line-height: 1.45;
-    color: #4b5563;
+    color: #374151;
+  }
+
+  .avhun-privacy input {
+    margin-top: 0.15rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: #651561;
+    flex-shrink: 0;
   }
 
   .avhun-privacy a {
     color: #651561;
     text-decoration: underline;
+    font-weight: 700;
   }
 
   .avhun-submit {
@@ -415,16 +595,122 @@ const placeholders = {
     justify-content: center;
     border: none;
     border-radius: 9999px;
-    padding: 0.95rem 1.25rem;
+    padding: 1rem 1.25rem;
     font-size: 1.0625rem;
     font-weight: 800;
     cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
+    box-shadow: 0 8px 24px rgba(252, 192, 0, 0.35);
+  }
+
+  .avhun-submit:hover {
+    transform: translateY(-1px);
+  }
+
+  .avhun-submit:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  .avhun-submit:disabled {
+    opacity: 0.7;
+    cursor: wait;
+    transform: none;
   }
 
   .avhun-status {
     margin: 0;
     font-size: 0.875rem;
-    color: #dc2626;
+    font-weight: 700;
+    color: #b91c1c;
+  }
+
+  .avhun-stats {
+    background: #fff;
+    border-bottom: 1px solid rgba(101, 21, 97, 0.08);
+    padding: 1.5rem 1.25rem;
+  }
+
+  .avhun-stats__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.95rem;
+  }
+
+  @media (min-width: 768px) {
+    .avhun-stats__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.15rem;
+    }
+  }
+
+  .avhun-stat {
+    text-align: center;
+    padding: 1.15rem 0.65rem;
+    border-radius: 1.1rem;
+    background: #faf7fb;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+  }
+
+  .avhun-stat__value {
+    margin: 0;
+    font-size: clamp(1.85rem, 6.5vw, 2.55rem);
+    line-height: 1.05;
+    font-weight: 900;
+    color: #651561;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .avhun-stat__label {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #4b5563;
+  }
+
+  .avhun-clients {
+    padding: 2rem 1.25rem 1.5rem;
+    background: #fff;
+  }
+
+  .avhun-clients__title {
+    margin: 0 0 1.15rem;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #4b5563;
+  }
+
+  .avhun-clients__row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .avhun-clients__row img {
+    height: 3.25rem;
+    width: auto;
+    max-width: 9.5rem;
+    object-fit: contain;
+    filter: grayscale(0.35) opacity(0.9);
+    transition: filter 0.2s ease;
+  }
+
+  @media (min-width: 768px) {
+    .avhun-clients__row img {
+      height: 3.75rem;
+      max-width: 11rem;
+    }
+  }
+
+  .avhun-clients__row img:hover {
+    filter: none;
   }
 
   .avhun-section {
@@ -432,12 +718,12 @@ const placeholders = {
     background: #fff;
   }
 
-  .avhun-section--alt {
+  .avhun-section--soft {
     background: #faf7fb;
   }
 
   .avhun-wrap {
-    max-width: 52rem;
+    max-width: 64rem;
     margin: 0 auto;
   }
 
@@ -446,14 +732,71 @@ const placeholders = {
   }
 
   .avhun-section h2 {
-    margin: 0 0 1.25rem;
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 1.35rem;
+    font-size: clamp(1.55rem, 3vw, 2.05rem);
     font-weight: 900;
     color: #111827;
     text-align: center;
+    text-wrap: balance;
   }
 
-  .avhun-list {
+  .avhun-section__sub {
+    margin: -0.5rem auto 1.5rem;
+    max-width: 36rem;
+    text-align: center;
+    color: #4b5563;
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .avhun-tiles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 700px) {
+    .avhun-tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .avhun-tile {
+    background: #faf7fb;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 1.1rem;
+    padding: 1.35rem 1.2rem;
+    box-shadow: 0 10px 28px rgba(101, 21, 97, 0.05);
+    text-align: center;
+  }
+
+  .avhun-tile__icon {
+    width: 4.25rem;
+    height: 4.25rem;
+    object-fit: contain;
+    margin: 0 auto 0.75rem;
+    display: block;
+  }
+
+  .avhun-tile h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #651561;
+  }
+
+  .avhun-tile p {
+    margin: 0.45rem auto 0;
+    color: #4b5563;
+    line-height: 1.55;
+    font-size: 1rem;
+    max-width: 28rem;
+  }
+
+  .avhun-steps {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -461,75 +804,208 @@ const placeholders = {
     gap: 0.9rem;
   }
 
-  .avhun-list li {
+  @media (min-width: 800px) {
+    .avhun-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+  }
+
+  .avhun-step {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: 0.75rem;
-    align-items: flex-start;
-    font-size: 1.0625rem;
-    line-height: 1.55;
-    color: #374151;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 1.1rem;
+    padding: 1.35rem 1.15rem;
   }
 
-  .avhun-check {
-    color: #c60691;
-    margin-top: 0.2rem;
+  @media (min-width: 800px) {
+    .avhun-step {
+      align-items: flex-start;
+      text-align: start;
+      flex-direction: row;
+    }
   }
 
-  .avhun-pills {
+  .avhun-step__n {
+    flex-shrink: 0;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #651561;
+    color: #fcc000;
+    font-weight: 900;
+    font-size: 1.15rem;
+  }
+
+  .avhun-step h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  .avhun-step p {
+    margin: 0.35rem 0 0;
+    color: #4b5563;
+    line-height: 1.5;
+    font-size: 1rem;
+  }
+
+  .avhun-offer {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    justify-content: center;
+    display: grid;
+    gap: 1rem;
   }
 
-  .avhun-pills li {
-    padding: 0.55rem 0.9rem;
-    border-radius: 9999px;
-    background: #fff;
+  @media (min-width: 800px) {
+    .avhun-offer {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .avhun-offer__item {
+    text-align: center;
+    background: linear-gradient(180deg, #faf7fb 0%, #fff 100%);
     border: 1px solid rgba(101, 21, 97, 0.12);
-    font-size: 0.9375rem;
-    font-weight: 700;
+    border-radius: 1.2rem;
+    padding: 1.4rem 1.1rem 1.3rem;
+  }
+
+  .avhun-offer__item img {
+    width: 4.5rem;
+    height: 4.5rem;
+    object-fit: contain;
+    margin: 0 auto 0.75rem;
+  }
+
+  .avhun-offer__item h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 900;
     color: #651561;
   }
 
-  .avhun-quote {
-    margin: 1.75rem auto 0;
-    max-width: 36rem;
-    padding: 1.25rem 1.35rem;
+  .avhun-offer__item p {
+    margin: 0.45rem 0 0;
+    color: #4b5563;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+
+  .avhun-proof {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 900px) {
+    .avhun-proof {
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: stretch;
+    }
+  }
+
+  .avhun-proof__shots {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 700px) {
+    .avhun-proof__shots {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .avhun-proof__shots figure {
+    margin: 0;
     border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    box-shadow: 0 14px 34px rgba(101, 21, 97, 0.1);
     background: #fff;
-    border: 1px solid rgba(101, 21, 97, 0.1);
-    box-shadow: 0 10px 30px rgba(101, 21, 97, 0.06);
+  }
+
+  .avhun-proof__shots img {
+    width: 100%;
+    height: auto;
+    min-height: 14rem;
+    max-height: none;
+    object-fit: contain;
+    object-position: center top;
+    display: block;
+    background: #f8f5fa;
+  }
+
+  @media (min-width: 700px) {
+    .avhun-proof__shots img {
+      min-height: 16rem;
+    }
+  }
+
+  .avhun-quote {
+    margin: 0;
+    padding: 1.4rem 1.35rem;
+    border-radius: 1.15rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    box-shadow: 0 12px 32px rgba(101, 21, 97, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .avhun-quote p {
     margin: 0;
-    font-size: 1.125rem;
+    font-size: 1.15rem;
     line-height: 1.55;
     font-weight: 700;
     color: #111827;
   }
 
   .avhun-quote footer {
-    margin-top: 0.75rem;
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.15rem;
     font-size: 0.9375rem;
     color: #6b7280;
   }
 
-  .avhun-inline-cta {
-    display: inline-flex;
-    margin: 1.75rem auto 0;
-    border-radius: 9999px;
-    padding: 0.85rem 1.5rem;
+  .avhun-quote footer strong {
+    color: #651561;
     font-weight: 800;
-    text-decoration: none;
   }
 
-  .avhun-section--alt .avhun-wrap {
+  .avhun-center {
     text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  .avhun-inline-cta {
+    display: inline-flex;
+    border-radius: 9999px;
+    padding: 0.9rem 1.55rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 8px 22px rgba(252, 192, 0, 0.3);
+    transition: transform 0.15s ease;
+  }
+
+  .avhun-inline-cta:hover {
+    transform: translateY(-1px);
+  }
+
+  .avhun-inline-cta:active {
+    transform: translateY(1px) scale(0.98);
   }
 
   .avhun-faq {
@@ -538,10 +1014,10 @@ const placeholders = {
   }
 
   .avhun-faq__item {
-    border: 1px solid rgba(101, 21, 97, 0.12);
-    border-radius: 0.9rem;
-    padding: 0.9rem 1rem;
-    background: #faf8fc;
+    border: 1px solid rgba(101, 21, 97, 0.14);
+    border-radius: 0.95rem;
+    padding: 0.95rem 1.05rem;
+    background: #faf7fb;
   }
 
   .avhun-faq__item summary {
@@ -556,15 +1032,57 @@ const placeholders = {
     color: #4b5563;
   }
 
+  .avhun-bottom {
+    background: linear-gradient(155deg, #651561 0%, #5a1c73 100%);
+    color: #fff;
+    padding: 2.25rem 1.25rem;
+  }
+
+  .avhun-bottom__inner {
+    display: grid;
+    gap: 1.1rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 800px) {
+    .avhun-bottom__inner {
+      grid-template-columns: 1fr auto;
+      text-align: start;
+    }
+  }
+
+  .avhun-bottom h2 {
+    margin: 0;
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    font-weight: 900;
+    text-wrap: balance;
+  }
+
+  .avhun-bottom p {
+    margin: 0.45rem 0 0;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
   .avhun-footer {
     padding: 1.5rem 1.25rem 2rem;
     text-align: center;
     font-size: 0.875rem;
     color: #6b7280;
     border-top: 1px solid rgba(101, 21, 97, 0.08);
+    background: #fff;
   }
 
   .avhun-footer a {
     color: #651561;
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .avhun-submit,
+    .avhun-inline-cta,
+    .avhun-clients__row img {
+      transition: none;
+    }
   }
 </style>

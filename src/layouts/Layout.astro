@@ -25,7 +25,7 @@ const {
   noindex = false,
   blockAiCrawlers = false,
   preloadImage = '/images/hero/photo-min.svg',
-  enableGtm = false,
+  enableGtm = true,
   metaPixelId,
   metaPixelLead = false,
   lang = 'he',
@@ -41,6 +41,22 @@ const canonicalUrl = canonical ?? Astro.url.href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {
+      enableGtm && (
+        <script is:inline>
+          (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
+        </script>
+      )
+    }
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site context" />
@@ -106,60 +122,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
       type="font/woff2"
       crossorigin
     />
-    {
-      enableA11y && (
-        <style is:inline id="pm-a11y-site-offset">
-          #pm-a11y-widget-root .pm-fab {
-            top: 50% !important;
-            bottom: auto !important;
-            left: 12px !important;
-            right: auto !important;
-            transform: translateY(-50%) !important;
-          }
-          #pm-a11y-widget-root .pm-panel {
-            top: 50% !important;
-            bottom: auto !important;
-            left: 12px !important;
-            right: auto !important;
-            transform: translateY(-50%) !important;
-          }
-          @media (max-width: 480px) {
-            #pm-a11y-widget-root .pm-fab,
-            #pm-a11y-widget-root .pm-panel {
-              left: 8px !important;
-            }
-          }
-        </style>
-      )
-    }
     <title>{title}</title>
-    {
-      enableGtm && (
-        <script is:inline>
-          (function (w, d, s, l, i) {
-            var loaded = false;
-            function loadGtm() {
-              if (loaded) return;
-              loaded = true;
-              w[l] = w[l] || [];
-              w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-              var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-              j.async = true;
-              j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-              f.parentNode.insertBefore(j, f);
-            }
-            function scheduleGtm() {
-              ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
-                w.addEventListener(type, loadGtm, { once: true, passive: true });
-              });
-            }
-            scheduleGtm();
-          })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
-        </script>
-      )
-    }
     {
       metaPixelId && (
         <>
@@ -312,40 +275,62 @@ const canonicalUrl = canonical ?? Astro.url.href;
           </script>
           <script is:inline>
             (function () {
-              function positionA11yWidget() {
-                var root = document.getElementById('pm-a11y-widget-root');
-                if (!root) return false;
-                var fab = root.querySelector('.pm-fab');
-                var panel = root.querySelector('.pm-panel');
+              var STYLE_ID = 'pm-a11y-midleft-fix';
+
+              function applyMidLeft(shadow) {
+                if (!shadow) return false;
+                var fab = shadow.querySelector('.pm-fab');
+                var panel = shadow.querySelector('.pm-panel');
+                if (!fab) return false;
+
+                if (!shadow.getElementById(STYLE_ID)) {
+                  var style = document.createElement('style');
+                  style.id = STYLE_ID;
+                  style.textContent =
+                    '.pm-fab,.pm-panel{top:50%!important;bottom:auto!important;left:10px!important;right:auto!important;' +
+                    'transform:translateY(-50%)!important;margin:0!important;}' +
+                    '@media (max-width:480px){.pm-fab,.pm-panel{top:50%!important;bottom:auto!important;left:8px!important;right:auto!important;' +
+                    'transform:translateY(-50%)!important;}' +
+                    '.pm-panel{width:min(370px,calc(100vw - 16px))!important;max-width:calc(100vw - 16px)!important;}}';
+                  shadow.appendChild(style);
+                }
+
                 [fab, panel].forEach(function (el) {
                   if (!el) return;
                   el.style.setProperty('top', '50%', 'important');
                   el.style.setProperty('bottom', 'auto', 'important');
-                  el.style.setProperty('left', '12px', 'important');
+                  el.style.setProperty('left', window.innerWidth <= 480 ? '8px' : '10px', 'important');
                   el.style.setProperty('right', 'auto', 'important');
                   el.style.setProperty('transform', 'translateY(-50%)', 'important');
+                  el.style.setProperty('margin', '0', 'important');
                 });
                 return true;
               }
 
+              function positionA11yWidget() {
+                var root = document.getElementById('pm-a11y-widget-root');
+                if (!root || !root.shadowRoot) return false;
+                return applyMidLeft(root.shadowRoot);
+              }
+
               var ticks = 0;
               var timer = window.setInterval(function () {
-                if (positionA11yWidget() || ticks >= 20) {
-                  // Keep correcting for a bit after mount in case the widget restyles itself.
-                  ticks += 1;
-                  if (ticks >= 20) window.clearInterval(timer);
-                }
+                positionA11yWidget();
+                ticks += 1;
+                if (ticks >= 120) window.clearInterval(timer);
               }, 250);
 
               if (typeof MutationObserver !== 'undefined') {
                 var observer = new MutationObserver(function () {
-                  if (positionA11yWidget()) observer.disconnect();
+                  positionA11yWidget();
                 });
                 observer.observe(document.documentElement, { childList: true, subtree: true });
                 window.setTimeout(function () {
                   observer.disconnect();
-                }, 15000);
+                }, 45000);
               }
+
+              window.addEventListener('resize', positionA11yWidget, { passive: true });
             })();
           </script>
         </>
@@ -358,7 +343,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
             sessionStorage.setItem('pm_first_landing', location.href);
             var params = new URL(location.href).searchParams;
             var utm = {};
-            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'].forEach(
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid'].forEach(
               function (key) {
                 var value = params.get(key);
                 if (value) utm[key] = value;
@@ -369,6 +354,32 @@ const canonicalUrl = canonical ?? Astro.url.href;
             }
           }
         } catch (e) {}
+
+        /** First-touch UTM + landing for CRM attribution (utm_content→audience, utm_term→ad). */
+        window.pmGetLeadAttribution = function () {
+          var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid'];
+          var currentUtm = {};
+          try {
+            var pageUrl = new URL(window.location.href);
+            keys.forEach(function (key) {
+              var value = pageUrl.searchParams.get(key);
+              if (value) currentUtm[key] = value;
+            });
+          } catch (e) {}
+          var firstUtm = {};
+          try {
+            var stored = sessionStorage.getItem('pm_first_utm');
+            if (stored) firstUtm = JSON.parse(stored);
+          } catch (e) {}
+          var landingUrl = window.location.href;
+          try {
+            landingUrl = sessionStorage.getItem('pm_first_landing') || window.location.href;
+          } catch (e) {}
+          return {
+            utm: Object.assign({}, currentUtm, firstUtm),
+            landingUrl: landingUrl,
+          };
+        };
 
         function initReveal() {
           var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

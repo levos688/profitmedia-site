@@ -197,6 +197,9 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
     lead_campaign: lead.utm.utm_campaign || undefined,
     utm_source: lead.utm.utm_source || undefined,
     utm_medium: lead.utm.utm_medium || undefined,
+    gclid: lead.utm.gclid || undefined,
+    gbraid: lead.utm.gbraid || undefined,
+    wbraid: lead.utm.wbraid || undefined,
     quiz_answer: lead.quizAnswer || undefined,
     vertical: lead.vertical || undefined,
     page_url: lead.pageUrl || undefined,
@@ -232,6 +235,8 @@ function pickUtm(body: ContactPayload): UtmParams {
     'utm_content',
     'utm_term',
     'gclid',
+    'gbraid',
+    'wbraid',
     'fbclid',
   ] as const;
   for (const key of keys) {

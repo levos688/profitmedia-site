@@ -1,7 +1,11 @@
 import { computeHybridAllocation, readAbStats } from './ab-stats-core';
+import { maybeNotifySoloWins } from './ab-solo-notify';
 
 interface Env {
   DONHIN_AB_STATS: KVNamespace;
+  AB_DB: D1Database;
+  RESEND_API_KEY?: string;
+  FROM_EMAIL?: string;
 }
 
 const json = (body: object, status = 200) =>
@@ -17,13 +21,15 @@ const json = (body: object, status = 200) =>
 export async function onRequestGet(context: { env: Env }) {
   const { env } = context;
 
-  if (!env.DONHIN_AB_STATS) {
+  if (!env.DONHIN_AB_STATS || !env.AB_DB) {
     return json({ ok: false, error: 'Stats storage is not configured' }, 503);
   }
 
   try {
-    const stats = await readAbStats(env.DONHIN_AB_STATS, 'fb_ads');
+    const stats = await readAbStats(env.DONHIN_AB_STATS, env.AB_DB, 'fb_ads');
     const allocation = computeHybridAllocation(stats);
+    // Fire-and-forget notify; do not block allocate on email latency beyond await (dedup is fast).
+    await maybeNotifySoloWins(env, allocation, 'fb_ads');
     return json({
       ok: true,
       channel: 'fb_ads',

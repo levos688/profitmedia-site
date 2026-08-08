@@ -1,11 +1,29 @@
 (function () {
   var STORAGE_KEY = 'donhin_ab_v1';
+  var SKIP_KEY = 'pm_ab_skip';
+
+  function isTrackingSkipped() {
+    try {
+      var params = new URL(window.location.href).searchParams;
+      if (params.get('ab_skip') === '1') {
+        sessionStorage.setItem(SKIP_KEY, '1');
+        return true;
+      }
+      if (params.get('ab_skip') === '0') {
+        sessionStorage.removeItem(SKIP_KEY);
+        return false;
+      }
+      return sessionStorage.getItem(SKIP_KEY) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
 
   var CONFIG = {
     sticky_cta: {
       variants: [
-        { id: 'get_consult', label: 'Получить бесплатную консультацию' },
-        { id: 'free_consult', label: 'Бесплатная консультация' },
+        { id: 'ask_lawyer', label: 'Задать вопрос адвокату' },
+        { id: 'lawyer_reply', label: 'Получить ответ адвоката' },
       ],
     },
     popup_delay: {
@@ -18,6 +36,71 @@
       variants: [
         { id: '60pct', ratio: 0.6 },
         { id: '50pct', ratio: 0.5 },
+      ],
+    },
+    quiz_copy: {
+      variants: [
+        {
+          id: 'control',
+          label: 'Контроль: ответьте на вопрос',
+          sectionTitle: 'Ответьте на вопрос — получите бесплатную консультацию адвоката',
+          question: 'Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?',
+          nextLabel: 'Следующий',
+          step2Heading: 'Запишитесь на бесплатную консультацию',
+          submitLabel: 'Отправить',
+          theme: 'light',
+        },
+        {
+          id: 'ask_case',
+          label: '1 вопрос → разбор случая',
+          sectionTitle: '1 короткий вопрос — адвокат разберёт ваш случай',
+          question: 'Было ли у вас стоматологическое лечение за последние 7 лет?',
+          nextLabel: 'Продолжить',
+          step2Heading: 'Куда прислать ответ адвоката?',
+          submitLabel: 'Жду звонок адвоката',
+          theme: 'light',
+        },
+        {
+          id: 'dark_band',
+          label: 'Дизайн: синяя полоса 100%',
+          sectionTitle: 'Ответьте на вопрос — получите бесплатную консультацию адвоката',
+          question: 'Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?',
+          nextLabel: 'Следующий',
+          step2Heading: 'Запишитесь на бесплатную консультацию',
+          submitLabel: 'Отправить',
+          theme: 'dark_band',
+        },
+      ],
+    },
+    bottom_copy: {
+      variants: [
+        {
+          id: 'control',
+          label: 'Контроль: светлая форма',
+          title: 'Оставьте заявку для бесплатной консультации',
+          submitLabel: 'Отправить',
+          theme: 'light',
+        },
+        {
+          id: 'ask_lawyer',
+          label: 'Текст: задайте вопрос',
+          title: 'Задайте вопрос адвокату — без обязательств',
+          submitLabel: 'Задать вопрос',
+          theme: 'light',
+        },
+        {
+          id: 'dark_band',
+          label: 'Дизайн: тёмная полоса 100%',
+          title: 'Оставьте заявку для бесплатной консультации',
+          submitLabel: 'Отправить',
+          theme: 'dark_band',
+        },
+      ],
+    },
+    hero_media: {
+      variants: [
+        { id: 'photo', label: 'Фото в hero' },
+        { id: 'video', label: 'Видео Vimeo в hero' },
       ],
     },
   };
@@ -67,6 +150,15 @@
     return false;
   }
 
+  function findVariant(experiment, id) {
+    var list = CONFIG[experiment] && CONFIG[experiment].variants;
+    if (!list) return null;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) return list[i];
+    }
+    return list[0] || null;
+  }
+
   function readAssignments() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -81,27 +173,57 @@
     } catch (e) {}
   }
 
+  function applyForceOverrides(assignments) {
+    try {
+      var url = new URL(window.location.href);
+      var map = {
+        force_sticky: 'sticky_cta',
+        force_quiz: 'quiz_copy',
+        force_bottom: 'bottom_copy',
+        force_hero: 'hero_media',
+        force_delay: 'popup_delay',
+        force_scroll: 'popup_scroll',
+      };
+      var changed = false;
+      Object.keys(map).forEach(function (param) {
+        var experiment = map[param];
+        var value = (url.searchParams.get(param) || '').trim();
+        if (!value) return;
+        if (!isActiveVariant(experiment, value)) return;
+        if (assignments[experiment] !== value) {
+          assignments[experiment] = value;
+          changed = true;
+        }
+      });
+      if (changed) writeAssignments(assignments);
+    } catch (e) {}
+    return assignments;
+  }
+
   function getAssignments() {
     var existing = readAssignments();
     if (existing) {
       var changed = false;
       Object.keys(CONFIG).forEach(function (experiment) {
-        if (!isActiveVariant(experiment, existing[experiment])) {
+        if (!existing[experiment] || !isActiveVariant(experiment, existing[experiment])) {
           existing[experiment] = pickVariant(experiment).id;
           changed = true;
         }
       });
       if (changed) writeAssignments(existing);
-      return existing;
+      return applyForceOverrides(existing);
     }
 
     var assignments = {
       sticky_cta: pickVariant('sticky_cta').id,
       popup_delay: pickVariant('popup_delay').id,
       popup_scroll: pickVariant('popup_scroll').id,
+      quiz_copy: pickVariant('quiz_copy').id,
+      bottom_copy: pickVariant('bottom_copy').id,
+      hero_media: pickVariant('hero_media').id,
     };
     writeAssignments(assignments);
-    return assignments;
+    return applyForceOverrides(assignments);
   }
 
   function readCookie(name) {
@@ -147,6 +269,7 @@
   }
 
   function track(experiment, variant, metric) {
+    if (isTrackingSkipped()) return Promise.resolve();
     return fetch('/api/ab-track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -159,8 +282,10 @@
     }).catch(function () {});
   }
 
-  /** One request = one KV write, so sticky/popup conversions cannot overwrite each other. */
+  /** One request = one D1 batch, so sticky/popup conversions cannot overwrite each other. */
   function trackEvents(events) {
+    if (isTrackingSkipped()) return Promise.resolve();
+    if (!events || !events.length) return Promise.resolve();
     return fetch('/api/ab-track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -172,10 +297,8 @@
   }
 
   function stickyLabel(id) {
-    for (var i = 0; i < CONFIG.sticky_cta.variants.length; i++) {
-      if (CONFIG.sticky_cta.variants[i].id === id) return CONFIG.sticky_cta.variants[i].label;
-    }
-    return CONFIG.sticky_cta.variants[0].label;
+    var variant = findVariant('sticky_cta', id);
+    return variant ? variant.label : CONFIG.sticky_cta.variants[0].label;
   }
 
   function delayMs(id) {
@@ -192,10 +315,96 @@
     return 0.6;
   }
 
-  function getScrollDepth() {
-    var doc = document.documentElement;
-    var total = Math.max(doc.scrollHeight - window.innerHeight, 1);
-    return window.scrollY / total;
+  function setText(el, value) {
+    if (el && typeof value === 'string') el.textContent = value;
+  }
+
+  function applyQuizCopy(variantId) {
+    var copy = findVariant('quiz_copy', variantId) || CONFIG.quiz_copy.variants[0];
+    var section = document.getElementById('form-quiz') || document.querySelector('.donhin-form-section');
+    if (section) {
+      section.classList.toggle('donhin-form-section--dark-band', copy.theme === 'dark_band');
+      section.setAttribute('data-ab-band', copy.theme === 'dark_band' ? 'dark' : 'light');
+    }
+    var sectionTitle = document.querySelector('.donhin-form-section__title');
+    setText(sectionTitle, copy.sectionTitle);
+
+    document.querySelectorAll('#donhin-quiz-form .donhin-quiz__question, #donhin-popup-quiz-form .donhin-quiz__question').forEach(function (el) {
+      setText(el, copy.question);
+    });
+    document.querySelectorAll('#donhin-quiz-form [data-quiz-next], #donhin-popup-quiz-form [data-quiz-next]').forEach(function (el) {
+      setText(el, copy.nextLabel);
+    });
+    document.querySelectorAll('#donhin-quiz-form .donhin-form__heading, #donhin-popup-quiz-form .donhin-form__heading').forEach(function (el) {
+      setText(el, copy.step2Heading);
+    });
+    document.querySelectorAll('#donhin-quiz-form button[type="submit"], #donhin-popup-quiz-form button[type="submit"]').forEach(function (el) {
+      setText(el, copy.submitLabel);
+    });
+
+    var popup = document.getElementById('donhin-popup');
+    if (popup) popup.dataset.quizTitle = copy.sectionTitle;
+    return copy;
+  }
+
+  function applyBottomCopy(variantId) {
+    var copy = findVariant('bottom_copy', variantId) || CONFIG.bottom_copy.variants[0];
+    var section = document.getElementById('form-bottom') || document.querySelector('.donhin-bottom-form');
+    if (section) {
+      section.classList.toggle('donhin-bottom-form--dark-band', copy.theme === 'dark_band');
+      section.setAttribute('data-ab-band', copy.theme === 'dark_band' ? 'dark' : 'light');
+    }
+    setText(document.querySelector('.donhin-bottom-form__title'), copy.title);
+    var submit = document.querySelector('#donhin-bottom-form button[type="submit"]');
+    setText(submit, copy.submitLabel);
+    var popup = document.getElementById('donhin-popup');
+    if (popup) popup.dataset.simpleTitle = copy.title;
+    var popupSimpleSubmit = document.querySelector('#donhin-popup-simple-form button[type="submit"]');
+    setText(popupSimpleSubmit, copy.submitLabel);
+    return copy;
+  }
+
+  function ensureVimeoApi() {
+    if (window.Vimeo || document.querySelector('script[data-donhin-vimeo]')) return;
+    var script = document.createElement('script');
+    script.src = 'https://player.vimeo.com/api/player.js';
+    script.async = true;
+    script.setAttribute('data-donhin-vimeo', '1');
+    document.head.appendChild(script);
+  }
+
+  function applyHeroMedia(variantId) {
+    var media = document.getElementById('donhin-hero-media');
+    if (!media) return;
+    var showVideo = variantId === 'video';
+    var photoPanel = media.querySelector('[data-hero-panel="photo"]');
+    var videoPanel = media.querySelector('[data-hero-panel="video"]');
+    media.setAttribute('data-hero-media', showVideo ? 'video' : 'photo');
+    if (photoPanel) {
+      if (showVideo) photoPanel.setAttribute('hidden', '');
+      else photoPanel.removeAttribute('hidden');
+    }
+    if (videoPanel) {
+      if (showVideo) {
+        videoPanel.removeAttribute('hidden');
+        var iframe = document.getElementById('donhin-hero-vimeo');
+        if (iframe && !iframe.getAttribute('src')) {
+          var src = iframe.getAttribute('data-src') || '';
+          if (src) iframe.setAttribute('src', src);
+        }
+        ensureVimeoApi();
+      } else {
+        videoPanel.setAttribute('hidden', '');
+        var idle = document.getElementById('donhin-hero-vimeo');
+        if (idle) idle.removeAttribute('src');
+      }
+    }
+  }
+
+  function applyCopyVariants(assignments) {
+    applyQuizCopy(assignments.quiz_copy);
+    applyBottomCopy(assignments.bottom_copy);
+    applyHeroMedia(assignments.hero_media);
   }
 
   function initStickyCta(assignments, openPopupFromSticky) {
@@ -207,7 +416,6 @@
     bar.hidden = false;
     bar.classList.remove('hidden');
     document.body.classList.add('donhin-has-sticky');
-    track('sticky_cta', assignments.sticky_cta, 'impression');
 
     btn.addEventListener('click', function (e) {
       e.preventDefault();
@@ -238,6 +446,37 @@
     onScroll();
   }
 
+  function getScrollDepth() {
+    var doc = document.documentElement;
+    var total = Math.max(doc.scrollHeight - window.innerHeight, 1);
+    return window.scrollY / total;
+  }
+
+  var HYBRID_REROLL_MAX_WEIGHT = 0.15;
+
+  /** Re-roll once if assigned arm is weight 0 (solo) or ≤15% while hybrid/catchup favors another. */
+  function rebalanceAssignmentsIfNeeded() {
+    if (!allocationByExperiment) return;
+    var existing = readAssignments();
+    if (!existing) return;
+    var changed = false;
+    Object.keys(CONFIG).forEach(function (experiment) {
+      var alloc = allocationByExperiment[experiment];
+      if (!alloc || !alloc.weights || !existing[experiment]) return;
+      var weight = Number(alloc.weights[existing[experiment]]);
+      if (!(weight >= 0) || weight > HYBRID_REROLL_MAX_WEIGHT) return;
+      var flagKey =
+        'donhin_rebalance_' + experiment + '_' + (alloc.mode || 'x') + '_' + (alloc.leader || 'none');
+      try {
+        if (localStorage.getItem(flagKey) === '1') return;
+        existing[experiment] = pickVariant(experiment).id;
+        localStorage.setItem(flagKey, '1');
+        changed = true;
+      } catch (e) {}
+    });
+    if (changed) writeAssignments(existing);
+  }
+
   function loadAllocation() {
     return fetch('/api/ab-allocate', { credentials: 'same-origin' })
       .then(function (res) {
@@ -246,6 +485,7 @@
       .then(function (data) {
         if (data && data.ok && data.experiments) {
           allocationByExperiment = data.experiments;
+          rebalanceAssignmentsIfNeeded();
         }
         return allocationByExperiment;
       })
@@ -260,16 +500,30 @@
     getAllocation: function () {
       return allocationByExperiment;
     },
+    applyCopyVariants: applyCopyVariants,
+    getQuizCopy: function (id) {
+      return findVariant('quiz_copy', id) || CONFIG.quiz_copy.variants[0];
+    },
+    getBottomCopy: function (id) {
+      return findVariant('bottom_copy', id) || CONFIG.bottom_copy.variants[0];
+    },
     trackConversion: function (formType) {
       var assignments = getAssignments();
       var events = [
         { experiment: 'sticky_cta', variant: assignments.sticky_cta, metric: 'conversion' },
         { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'conversion' },
         { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'conversion' },
+        { experiment: 'hero_media', variant: assignments.hero_media, metric: 'conversion' },
       ];
       var source = normalizeLeadSource(formType);
       if (source) {
         events.push({ experiment: 'lead_source', variant: source, metric: 'conversion' });
+      }
+      if (source === 'quiz' || source === 'popup_quiz') {
+        events.push({ experiment: 'quiz_copy', variant: assignments.quiz_copy, metric: 'conversion' });
+      }
+      if (source === 'simple' || source === 'popup_simple') {
+        events.push({ experiment: 'bottom_copy', variant: assignments.bottom_copy, metric: 'conversion' });
       }
       return trackEvents(events);
     },
@@ -278,12 +532,35 @@
       if (!source || !metric) return Promise.resolve();
       return track('lead_source', source, metric);
     },
-    trackPopupImpression: function (assignments) {
+    trackCopyMetric: function (experiment, metric) {
+      var assignments = getAssignments();
+      if (!assignments[experiment] || !metric) return Promise.resolve();
+      return track(experiment, assignments[experiment], metric);
+    },
+    /** One batched request for all page-load impressions. */
+    trackPageImpressions: function (assignments) {
+      var a = assignments || getAssignments();
       return trackEvents([
-        { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'impression' },
-        { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'impression' },
+        { experiment: 'sticky_cta', variant: a.sticky_cta, metric: 'impression' },
+        { experiment: 'lead_source', variant: 'quiz', metric: 'impression' },
+        { experiment: 'lead_source', variant: 'simple', metric: 'impression' },
+        { experiment: 'quiz_copy', variant: a.quiz_copy, metric: 'impression' },
+        { experiment: 'bottom_copy', variant: a.bottom_copy, metric: 'impression' },
+        { experiment: 'hero_media', variant: a.hero_media, metric: 'impression' },
       ]);
     },
+    trackPopupImpression: function (assignments, leadSource) {
+      var events = [
+        { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'impression' },
+        { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'impression' },
+      ];
+      var source = normalizeLeadSource(leadSource);
+      if (source) {
+        events.push({ experiment: 'lead_source', variant: source, metric: 'impression' });
+      }
+      return trackEvents(events);
+    },
+    isTrackingSkipped: isTrackingSkipped,
     initStickyCta: initStickyCta,
     initPopup: initPopup,
   };

@@ -22,6 +22,22 @@ export const blogSeo = {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'shipur-yahas-hamara',
+    title: 'שיפור יחס המרה: למה בדיקת מודעות בלבד כבר לא מספיקה',
+    seoTitle: 'שיפור יחס המרה בדף נחיתה — בדיקות A/B מעבר למודעות | Profit Media',
+    description:
+      'שיפור יחס המרה לא נגמר במודעה. איך מערכת A/B פנימית בודקת כותרות, כפתורים, פופאפים, וידאו מול תמונה — בלי שהלקוח מתעסק בכלים חיצוניים.',
+    excerpt:
+      'אם בודקים רק מודעות — או בכלל לא בודקים — מפסידים חלק גדול מהפוטנציאל. הנה איך נראית מערכת בדיקות מתמשכת על הדף עצמו.',
+    category: 'אופטימיזציית המרות',
+    publishDate: '2026-07-25',
+    readingMinutes: 9,
+    image: '/images/blog/shipur-yahas-hamara-square.png',
+    imageAlt: 'איור של שתי גרסאות דף A ו-B עם כפתורי פעולה וחץ המרה כלפי מעלה',
+    imageWide: '/images/blog/shipur-yahas-hamara-wide.png',
+    imageWideAlt: 'איור זרימה: מודעה, דף נחיתה עם בדיקת A/B, כפתור ופופאפ, ואז המרה',
+  },
+  {
     slug: 'daf-nechita-mul-daf-habayit',
     title: 'דף נחיתה לעסק מול דף הבית — לאן לשלוח את הקמפיין?',
     seoTitle: 'דף נחיתה לעסק מול דף הבית — מתי לא לשלוח לדף הבית | Profit Media',
@@ -48,9 +64,9 @@ export const blogPosts: BlogPost[] = [
     category: 'קמפיינים ממומנים',
     publishDate: '2026-07-16',
     readingMinutes: 7,
-    image: '/images/blog/kampeinim-memumanim-square.png',
+    image: '/images/blog/kampeinim-memumanim-square-v4.png',
     imageAlt: 'איור של מגפון עם חץ צמיחה ומטבעות שקל, המסמל תקציב ותוצאות מקמפיינים ממומנים',
-    imageWide: '/images/blog/kampeinim-memumanim-wide.png',
+    imageWide: '/images/blog/kampeinim-memumanim-wide-v3.png',
     imageWideAlt: 'איור המשווה בין חיפוש פעיל בגוגל, טירגוט קהל יעד ותוכן שמעורר עניין ברשתות החברתיות',
   },
 ];

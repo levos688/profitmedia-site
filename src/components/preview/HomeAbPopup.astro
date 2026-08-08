@@ -1,0 +1,341 @@
+---
+/**
+ * Homepage AB popup: quiz (timer/scroll) or simple form (sticky).
+ */
+---
+
+<div id="pm-home-popup" class="pm-home-popup" hidden role="dialog" aria-modal="true" aria-labelledby="pm-home-popup-title">
+  <div class="pm-home-popup__backdrop" data-pm-popup-close></div>
+  <div class="pm-home-popup__panel">
+    <button type="button" class="pm-home-popup__close" data-pm-popup-close aria-label="סגור">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+    </button>
+
+    <div data-pm-popup-quiz>
+      <h2 id="pm-home-popup-title" class="pm-home-popup__title">שאלה אחת קצרה</h2>
+      <p class="pm-home-popup__question">איפה רצה אצלכם פרסום ממומן היום?</p>
+      <div class="pm-home-popup__answers" role="group" aria-label="ערוצי פרסום">
+        <button type="button" class="pm-home-popup__answer" data-pm-quiz-answer="Facebook">Facebook / Instagram</button>
+        <button type="button" class="pm-home-popup__answer" data-pm-quiz-answer="Google">Google</button>
+        <button type="button" class="pm-home-popup__answer" data-pm-quiz-answer="Both">שניהם</button>
+        <button type="button" class="pm-home-popup__answer" data-pm-quiz-answer="Starting">רק מתחילים</button>
+      </div>
+    </div>
+
+    <div data-pm-popup-form hidden>
+      <h2 class="pm-home-popup__title" data-pm-popup-form-title>השאירו פרטים ונחזור תוך 24 שעות</h2>
+      <p class="pm-home-popup__subtitle">ללא התחייבות · בלי הבטחות מכירות</p>
+      <form id="pm-home-popup-form" novalidate>
+        <input type="hidden" name="quizAnswer" id="pm-home-popup-quiz-answer" value="" />
+        <label class="pm-home-popup__label" for="pm-home-popup-name">שם מלא</label>
+        <input class="pm-home-popup__input" id="pm-home-popup-name" name="name" required autocomplete="name" />
+        <p class="pm-home-popup__error" id="pm-home-popup-name-error" hidden></p>
+
+        <label class="pm-home-popup__label" for="pm-home-popup-phone">טלפון נייד</label>
+        <input class="pm-home-popup__input" id="pm-home-popup-phone" name="phone" required inputmode="tel" autocomplete="tel" />
+        <p class="pm-home-popup__error" id="pm-home-popup-phone-error" hidden></p>
+
+        <label class="pm-home-popup__label" for="pm-home-popup-vertical">תחום העסק</label>
+        <input class="pm-home-popup__input" id="pm-home-popup-vertical" name="vertical" required autocomplete="organization-title" />
+        <p class="pm-home-popup__error" id="pm-home-popup-vertical-error" hidden></p>
+
+        <label class="pm-home-popup__privacy">
+          <input type="checkbox" id="pm-home-popup-privacy" required />
+          <span>קראתי ואני מאשר/ת את <a href="/prat" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
+        </label>
+        <p class="pm-home-popup__error" id="pm-home-popup-privacy-error" hidden></p>
+
+        <button type="submit" class="btn-yellow pm-home-popup__submit" id="pm-home-popup-submit">המשך</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pm-home-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .pm-home-popup.pm-home-popup--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .pm-home-popup[hidden] {
+    display: none !important;
+  }
+  .pm-home-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 8, 28, 0.72);
+  }
+  .pm-home-popup__panel {
+    position: relative;
+    width: min(100%, 26rem);
+    max-height: min(90vh, 40rem);
+    overflow: auto;
+    padding: 1.5rem 1.25rem 1.35rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(252, 192, 0, 0.22);
+    background: linear-gradient(165deg, #5a1c73 0%, #651561 48%, #4a1248 100%);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    text-align: center;
+    color: #fff;
+  }
+  .pm-home-popup__close {
+    position: absolute;
+    top: 0.65rem;
+    inset-inline-end: 0.65rem;
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .pm-home-popup__close:hover,
+  .pm-home-popup__close:focus-visible {
+    background: rgba(252, 192, 0, 0.95);
+    color: #1f2937;
+  }
+  .pm-home-popup__title {
+    margin: 0 1.5rem 0.5rem;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .pm-home-popup__question,
+  .pm-home-popup__subtitle {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.45;
+  }
+  .pm-home-popup__answers {
+    display: grid;
+    gap: 0.65rem;
+  }
+  .pm-home-popup__answer {
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.28);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  }
+  .pm-home-popup__answer:hover,
+  .pm-home-popup__answer:focus-visible {
+    border-color: #fcc000;
+    background: #fcc000;
+    color: #1f2937;
+    outline: none;
+  }
+  .pm-home-popup__answer:focus-visible {
+    box-shadow: 0 0 0 3px rgba(252, 192, 0, 0.45);
+  }
+  .pm-home-popup__label {
+    display: block;
+    margin: 0.75rem 0 0.35rem;
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .pm-home-popup__input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 9999px;
+    background: #fff;
+    color: #1f2937;
+    text-align: right;
+    font-size: 1rem;
+  }
+  .pm-home-popup__input:focus {
+    outline: 2px solid #fcc000;
+    outline-offset: 2px;
+  }
+  .pm-home-popup__privacy {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.9rem;
+    text-align: right;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+  }
+  .pm-home-popup__privacy a {
+    color: #fcc000;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .pm-home-popup__submit {
+    width: 100%;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 9999px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .pm-home-popup__error {
+    margin: 0.25rem 0 0;
+    text-align: right;
+    font-size: 0.8rem;
+    color: #fecaca;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pm-home-popup__answer {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function getPageAb() {
+    return window.pmAdsAb || window.pmHomeAb;
+  }
+
+  const popup = document.getElementById('pm-home-popup');
+  const form = document.getElementById('pm-home-popup-form') as HTMLFormElement | null;
+  const quizAnswerInput = document.getElementById('pm-home-popup-quiz-answer') as HTMLInputElement | null;
+  const submitBtn = document.getElementById('pm-home-popup-submit') as HTMLButtonElement | null;
+
+  popup?.querySelectorAll('[data-pm-popup-close]').forEach((el) => {
+    el.addEventListener('click', () => getPageAb()?.closePopup());
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && popup && !popup.hidden) getPageAb()?.closePopup();
+  });
+
+  popup?.querySelectorAll('[data-pm-quiz-answer]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const answer = (btn as HTMLElement).getAttribute('data-pm-quiz-answer') || '';
+      if (quizAnswerInput) quizAnswerInput.value = answer;
+      const quiz = popup.querySelector('[data-pm-popup-quiz]') as HTMLElement | null;
+      const formStep = popup.querySelector('[data-pm-popup-form]') as HTMLElement | null;
+      const ab = getPageAb();
+      if (quiz) quiz.hidden = true;
+      if (formStep) formStep.hidden = false;
+      const title = popup.querySelector('[data-pm-popup-form-title]');
+      if (title && ab) {
+        const stickyId = ab.getAssignments().sticky_cta;
+        const sticky = ab.findVariant('sticky_cta', stickyId);
+        title.textContent =
+          sticky?.id === 'opt_plan'
+            ? 'השאירו פרטים לתוכנית אופטימיזציה אישית'
+            : sticky?.label?.includes('הזמנת') || sticky?.id === 'order_system' || sticky?.id === 'start_work'
+              ? 'השאירו פרטים להזמנת המערכת'
+              : 'השאירו פרטים לאבחון חינם';
+      }
+      if (submitBtn && ab) {
+        const stickyId = ab.getAssignments().sticky_cta;
+        const sticky = ab.findVariant('sticky_cta', stickyId);
+        submitBtn.textContent = sticky?.label || 'המשך';
+      }
+      document.getElementById('pm-home-popup-name')?.focus();
+    });
+  });
+
+  const setErr = (id: string, msg: string, show: boolean) => {
+    const el = document.getElementById(`${id}-error`);
+    if (!el) return;
+    el.textContent = show ? msg : '';
+    el.hidden = !show;
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('pm-home-popup-name') as HTMLInputElement).value.trim();
+    const phone = (document.getElementById('pm-home-popup-phone') as HTMLInputElement).value.trim();
+    const vertical = (document.getElementById('pm-home-popup-vertical') as HTMLInputElement).value.trim();
+    const privacy = (document.getElementById('pm-home-popup-privacy') as HTMLInputElement).checked;
+    const quizAnswer = quizAnswerInput?.value || '';
+    let ok = true;
+    if (!name) {
+      setErr('pm-home-popup-name', 'נא להזין שם', true);
+      ok = false;
+    } else setErr('pm-home-popup-name', '', false);
+    if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) {
+      setErr('pm-home-popup-phone', 'נא להזין טלפון תקין', true);
+      ok = false;
+    } else setErr('pm-home-popup-phone', '', false);
+    if (!vertical) {
+      setErr('pm-home-popup-vertical', 'נא להזין תחום', true);
+      ok = false;
+    } else setErr('pm-home-popup-vertical', '', false);
+    if (!privacy) {
+      setErr('pm-home-popup-privacy', 'יש לאשר את מדיניות הפרטיות', true);
+      ok = false;
+    } else setErr('pm-home-popup-privacy', '', false);
+    if (!ok) return;
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'שולח…';
+    }
+
+    const ab = getPageAb();
+    const pageRoot = document.querySelector('[data-lead-page]') as HTMLElement | null;
+    const formSource = pageRoot?.dataset.leadSource || 'homepage-popup';
+    const thankYou = pageRoot?.dataset.thankYou || '/thank-you';
+    const source = ab?.getLeadSource?.() || 'popup_quiz';
+    try {
+      await ab?.trackConversion?.(source);
+      const attr =
+        typeof window.pmGetLeadAttribution === 'function'
+          ? window.pmGetLeadAttribution()
+          : { utm: {}, landingUrl: window.location.href };
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          email: '',
+          vertical,
+          verticalLabel: vertical,
+          pageUrl: window.location.href,
+          landingUrl: attr.landingUrl,
+          utm: attr.utm,
+          source: formSource,
+          quizAnswer,
+          referrer: document.referrer || '',
+          language: navigator.language || '',
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean };
+      if (!res.ok || !data.ok) throw new Error('fail');
+      window.location.href = thankYou;
+    } catch {
+      alert('שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'המשך';
+      }
+    }
+  });
+</script>

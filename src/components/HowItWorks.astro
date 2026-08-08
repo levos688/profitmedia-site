@@ -1,6 +1,12 @@
 ---
 import SectionTitle from './SectionTitle.astro';
-import { processSteps } from '../data/site';
+import { processSteps as defaultProcessSteps } from '../data/site';
+
+const {
+  title = defaultProcessSteps.title,
+  subtitle = defaultProcessSteps.subtitle,
+  steps = defaultProcessSteps.steps,
+} = Astro.props;
 ---
 
 <section
@@ -12,15 +18,20 @@ import { processSteps } from '../data/site';
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <SectionTitle
       id="how-it-works-title"
-      title={processSteps.title}
-      subtitle={processSteps.subtitle}
+      title={title}
+      subtitle={subtitle}
       class="mb-12 md:mb-14"
     />
 
     <ol class="process-steps">
       {
-        processSteps.steps.map((step, index) => (
+        steps.map((step, index) => (
           <li class="process-step" style={`--step-delay: ${index * 0.08}s`}>
+            {index > 0 && (
+              <span class="process-step__arrow" aria-hidden="true">
+                ←
+              </span>
+            )}
             <div class="process-step__marker" aria-hidden="true">
               <span class="process-step__number">{index + 1}</span>
             </div>
@@ -53,6 +64,30 @@ import { processSteps } from '../data/site';
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1.25rem;
     }
+
+    .process-step {
+      position: relative;
+    }
+
+    .process-step__arrow {
+      display: flex;
+      position: absolute;
+      top: 1.75rem;
+      /* RTL: start = right → arrow sits in the gap toward the previous step */
+      inset-inline-start: -1.15rem;
+      width: 1.1rem;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 900;
+      line-height: 1;
+      color: #c60691;
+      pointer-events: none;
+    }
+  }
+
+  .process-step__arrow {
+    display: none;
   }
 
   .process-step {

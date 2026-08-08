@@ -108,9 +108,11 @@
 .mid-page-cta-section {
   position: relative;
   overflow: hidden;
+  /* Full-bleed without 100vw (100vw + RTL frequently causes horizontal shift on iOS). */
   margin-block: 2.75rem;
-  margin-inline: calc(50% - 50vw);
-  width: 100vw;
+  margin-inline: 0;
+  width: 100%;
+  max-width: 100%;
   padding: 2.75rem 1.25rem;
   background: linear-gradient(160deg, #1a0a24 0%, #3d1248 42%, #5a1c73 100%);
   text-align: center;
@@ -192,9 +194,19 @@
 
 .sticky-cta {
   position: fixed;
-  inset-inline: 0;
+  /* Physical edges — more reliable than inset-inline with mixed LTR/RTL fixed UI on iOS. */
+  left: 0;
+  right: 0;
   bottom: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   z-index: 45;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  direction: ltr; /* keep bar geometry centered; Hebrew text still renders correctly */
+  /* Symmetric padding so the yellow CTA stays visually centered */
   padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
   background: rgba(255, 255, 255, 0.96);
   border-top: 1px solid rgba(101, 21, 97, 0.1);
@@ -212,14 +224,18 @@
 .sticky-cta__btn {
   display: flex;
   width: 100%;
+  max-width: 28rem;
   min-height: 48px;
+  margin: 0 auto;
   align-items: center;
   justify-content: center;
   border: none;
   border-radius: 9999px;
   font-size: 1.0625rem;
   font-weight: 800;
+  text-align: center;
   cursor: pointer;
+  direction: rtl;
 }
 
 /* Lead capture modal */

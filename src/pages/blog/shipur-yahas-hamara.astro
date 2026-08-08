@@ -1,0 +1,345 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import BlogProse from '../../components/blog/BlogProse.astro';
+import BlogFaq from '../../components/blog/BlogFaq.astro';
+import { getPostBySlug } from '../../data/blog';
+
+const post = getPostBySlug('shipur-yahas-hamara')!;
+const canonicalUrl = `https://profitmedia.co.il/blog/${post.slug}`;
+
+const faqItems = [
+  {
+    question: 'מה זה שיפור יחס המרה בפועל?',
+    answer:
+      'להגדיל את האחוז מהמבקרים שמבצעים פעולה רצויה — השארת פרטים, מענה לשאלון, פנייה — בלי בהכרח להגדיל את תקציב המדיה.',
+  },
+  {
+    question: 'האם A/B על מודעות מספיק?',
+    answer:
+      'זה חלק חשוב, אבל לא מספיק. אם הדף לא נבדק, חלק גדול מהשיפור נשאר על השולחן.',
+  },
+  {
+    question: 'כמה זמן לוקח לראות תוצאה?',
+    answer:
+      'תלוי בנפח. בודקים לפי המרות ונפח מינימלי לכל גרסה — לא לפי תחושה אחרי 48 שעות.',
+  },
+  {
+    question: 'האם אני כלקוח צריך לנהל את הבדיקות?',
+    answer:
+      'לא. הרעיון הוא שתקבלו מערכת מוכנה; הניהול השוטף של הניסויים קורה מאחורי הקלעים.',
+  },
+  {
+    question: 'מה בודקים קודם — כותרת או פופאפ?',
+    answer:
+      'בדרך כלל מתחילים במה שקרוב למסר ולפעולה הראשית (כותרת / CTA), ואז יורדים לטריגרים ולשכבות משניות. הסדר תלוי בדף ובתנועה.',
+  },
+  {
+    question: 'איך זה מתחבר לאיכות לידים ולא רק לכמות?',
+    answer:
+      'מודדים המרה, אבל מסתכלים גם אם הפניות מתאימות לשיחה. שיפור יחס המרה בלי סינון יכול להביא עוד טפסים חלשים — ולכן השאלון והמסר חשובים לא פחות מהצבע של הכפתור.',
+  },
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${canonicalUrl}#article`,
+      headline: post.title,
+      description: post.description,
+      datePublished: post.publishDate,
+      dateModified: post.publishDate,
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      image: [`https://profitmedia.co.il${post.imageWide}`, `https://profitmedia.co.il${post.image}`],
+      author: {
+        '@type': 'Person',
+        name: 'לב אוסינובסקי',
+        url: 'https://profitmedia.co.il/about#founder',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Profit Media',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://profitmedia.co.il/icons/site-icon.png',
+        },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://profitmedia.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'בלוג', item: 'https://profitmedia.co.il/blog' },
+        { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    },
+  ],
+};
+
+const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Layout title={post.seoTitle} description={post.description} canonical={canonicalUrl}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleSchema)} />
+  <Header />
+  <main id="main-content">
+    <article>
+      <div class="mx-auto max-w-3xl px-4 pt-10 md:px-6 md:pt-14">
+        <nav class="blog-breadcrumbs" aria-label="פירורי לחם">
+          <a href="/blog">בלוג</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{post.category}</span>
+        </nav>
+
+        <p class="blog-article__eyebrow">{post.category}</p>
+        <h1 class="blog-article__title">{post.title}</h1>
+
+        <div class="blog-article__meta">
+          <span>{formattedDate}</span>
+          <span aria-hidden="true">·</span>
+          <span>{post.readingMinutes} דקות קריאה</span>
+        </div>
+
+        <figure class="blog-article__figure">
+          <img src={post.imageWide} alt={post.imageWideAlt} width="1200" height="675" loading="eager" />
+        </figure>
+
+        <BlogProse class="mt-8">
+          <p>
+            רוב בעלי עסקים שמריצים פרסום ממומן שואלים שאלה אחת: "איך מביאים יותר לידים באותו תקציב?"
+          </p>
+
+          <div class="blog-callout">
+            <p>
+              <strong>תשובה קצרה לשיפור יחס המרה:</strong> לא רק לשפר את המודעה — לבדוק גם מה קורה אחרי
+              הקליק. כותרת, כפתור, טריגר של פופאפ, אפילו האם בחלק העליון של הדף יושב וידאו או תמונה. כל אלה משפיעים על כמה
+              מהמבקרים הופכים לפנייה. ואם עובדים רק על מודעות — או בכלל לא מריצים בדיקות מסודרות — קל לאבד
+              עשרות אחוזים מהפוטנציאל, בלי לשים לב.
+            </p>
+          </div>
+
+          <h2>למה "רק מודעות" זה מודל ישן</h2>
+          <p>מודעה טובה מביאה קליקים. זה חשוב. אבל הקליק הוא רק כניסה לדלת.</p>
+          <p>
+            אחריו מגיע הדף: מסר, עומס ויזואלי, שאלה בטופס, כפתור דביק למטה, חלון קופץ אחרי כמה שניות. אם הדף
+            לא מכוון — משלמים על תנועה שלא ממירה.
+          </p>
+          <p>
+            ראיתי את זה שוב ושוב לאורך השנים: קמפיין "נראה בסדר" בדוח המודעות, ובפועל היחס לפנייה נמוך כי אף
+            אחד לא בדק ברצינות את הדף עצמו.
+          </p>
+
+          <h2>מה פיתחתי במקום אוסף כלים חיצוניים</h2>
+          <p>
+            במקום לחבר ללקוח חמישה ספקים — כלי A/B אחד, כלי פופאפים שני, תבנית דף שלישית, דשבורד רביעי — בניתי
+            <strong> מערכת בדיקות משלי</strong>.
+          </p>
+          <p>הרעיון פשוט:</p>
+          <ul>
+            <li>כל בלוק בדף יכול להפוך לניסוי.</li>
+            <li>המדד המרכזי הוא <strong>המרה</strong> (פנייה / פעולה), לא רק קליק על כפתור.</li>
+            <li>מנצח נשאר באוויר — ואז מוסיפים מתחרה חדש על בסיס מה שעבד.</li>
+            <li>הלקוח לא מנהל את זה. הוא מקבל מערכת שעובדת מאחורי הקלעים.</li>
+          </ul>
+          <p>
+            זה לא "עוד תוסף לוורדפרס". זו תשתית שמותאמת לקמפיין ולדף — כולל מעקב שמפריד תנועה ממודעות מתנועת
+            בדיקה פנימית, כדי שהמסקנות יהיו נקיות.
+          </p>
+        </BlogProse>
+      </div>
+
+      <div class="mx-auto max-w-3xl px-4 md:px-6">
+        <BlogProse>
+          <h2>מה אפשר לבדוק בפועל (לא רק תיאוריה)</h2>
+          <p>בפרויקטים אמיתיים המערכת רצה במקביל על כמה שכבות. לדוגמה:</p>
+          <ul>
+            <li>
+              <strong>כפתור דביק (sticky)</strong> — טקסטים שונים לאותה פעולה. "ייעוץ חינם" מול "לשאול שאלה"
+              זה לא אותו מסר במוח של המבקר. לפעמים גרסה אחת מביאה יותר קליקים, ואחרת יותר פניות אמיתיות.
+              בודקים לפי המרה.
+            </li>
+            <li>
+              <strong>פופאפ לפי זמן</strong> — 15 שניות מול 22 מול 25. נשמע קטן. בפועל משנה כמה אנשים רואים את
+              ההצעה ומתי הם עדיין פתוחים להשאיר פרטים.
+            </li>
+            <li>
+              <strong>פופאפ לפי גלילה</strong> — מתי החלון מופיע ביחס להתקדמות בדף.
+            </li>
+            <li>
+              <strong>חלק עליון: תמונה מול וידאו</strong> — אותו מסר, מדיה אחרת. לפעמים וידאו מרגיש "עשיר" אבל
+              מאט או מסיח; לפעמים הוא בדיוק מה שסוגר את האמון.
+            </li>
+            <li>
+              <strong>שאלון / טריגרים</strong> — ניסוח השאלה הראשונה, עיצוב הרצועה, אורך המסלול. שאלה אחת
+              חדה יכולה לעלות על ניסוח "נכון שיווקית" שנשמע יפה אבל לא ממיר.
+            </li>
+            <li>
+              <strong>טופס תחתון</strong> — טקסט, צבעים, רקע בהיר מול כהה. כן, גם צבעים ויחסים ויזואליים
+              נכנסים לניסוי כשיש מספיק תנועה.
+            </li>
+            <li>
+              <strong>מקורות הפנייה</strong> — מאיפה באמת הגיעה ההשלמה: שאלון בדף, פופאפ, כפתור sticky,
+              כפתור בחלק העליון. בלי זה קל לייחס הצלחה למקום הלא נכון.
+            </li>
+          </ul>
+          <p>
+            וכל זה רץ <strong>במקביל לבדיקות מודעות וקהלים</strong> — לא במקום שלהן. המודעה מביאה את האדם
+            הנכון; הדף צריך לסגור את הצעד הבא.
+          </p>
+
+          <h2>איך נראה מחזור העבודה</h2>
+          <ol>
+            <li>בוחרים אלמנט אחד עם השערה ברורה (למשל: טקסט הכפתור).</li>
+            <li>מריצים שתי גרסאות או יותר על חלק מהתנועה.</li>
+            <li>מחכים לנפח מינימלי — לא סוגרים אחרי יום על תחושת בטן.</li>
+            <li>הכותרת/הכפתור/הטריגר המנצח הופך לברירת מחדל.</li>
+            <li>בונים מתחרה חדש על בסיס מה שלמדנו — לא חוזרים לאותה נקודת התחלה.</li>
+          </ol>
+          <p>
+            זה מה שאני קורא לו בדיקות מתמשכות: לא "עשינו A/B פעם אחת ב־2023", אלא שיפור יחס המרה כתהליך חי.
+          </p>
+
+          <h2>מה הלקוח רואה — ומה לא</h2>
+          <p>
+            הלקוח לא אמור לפתוח חמישה דשבורדים, לשבור את הראש על משקלים סטטיסטיים, או להחליט באיזה שנייה לפתוח
+            פופאפ.
+          </p>
+          <p>
+            הוא רואה תוצאה עסקית: פניות, איכות, עלות לפנייה שמתחברת למכירות כשיש נתונים. מאחורי הקלעים רצה
+            מערכת שמחלקת תנועה, סופרת המרות לפי אלמנט, ומעדכנת מה נשאר באוויר.
+          </p>
+          <p>
+            זה ההבדל בין "סוכנות שמחליפה קריאייטיב במודעות" לבין
+            <strong> שותף שבונה מערכת המרה</strong>.
+          </p>
+
+          <h2>למי זה מתאים — ולמי פחות</h2>
+          <p>
+            מתאים לעסקים עם תקציב פרסום רציני ועסקה גבוהה יחסית — כאלה שנמכרים בשיחה, בוואטסאפ או בפגישה. שם
+            כל שיפור קטן ביחס ההמרה שווה הרבה כסף.
+          </p>
+          <p>
+            פחות דחוף אם אין עדיין תנועה בכלל. בלי קליקים אין מה למדוד. קודם מוודאים שיש זרימה בסיסית
+            <a href="/blog/daf-nechita-mul-daf-habayit/"> לדף נחיתה ממוקד</a> — ורק אז מאיצים את מנוע
+            הבדיקות. ועל עלויות ומה מתאים לקמפיין ממומן — ב־
+            <a href="/blog/kampeinim-memumanim-madrich/">מדריך הקמפיינים</a>.
+          </p>
+
+          <h2>קצת עליי (למה אני בכלל בונה ככה)</h2>
+          <p>
+            אני עוסק בפרסום באינטרנט כ־<strong>18 שנה</strong>. עברתי תפקידים שונים בתחום — מהצד של הביצוע,
+            הניהול והאסטרטגיה. כ־<strong>13 שנה</strong> אני עצמאי: מלווה עסקים בפרסום ממומן, בדפי נחיתה
+            ובמערכות שמחברות בין הקליק לפנייה.
+          </p>
+          <p>
+            המערכת הזו נולדה מהשטח. לא ממצגת. אחרי מספיק קמפיינים שבהם "המודעה הייתה בסדר" והדף אכל את התקציב
+            — הבנתי שאי אפשר להשאיר את ההמרה למזל או לכלי גנרי שכולם משתמשים בו באותה צורה.
+          </p>
+
+          <h2>שורה תחתונה</h2>
+          <p>
+            שיפור יחס המרה ב־2026 זה לא סלוגן. זה משמעת: לבדוק את מה שאחרי הקליק באותה רצינות שבה בודקים את
+            המודעה.
+          </p>
+          <p>
+            אם היום אתם משפרים רק קריאייטיב — או לא בודקים בכלל — כנראה אתם משאירים על השולחן עשרות אחוזים
+            מהפוטנציאל של אותו תקציב.
+          </p>
+          <p>
+            רוצים שנבדוק איפה נשברת ההמרה אצלכם?
+            <a href="#contact">אבחון קמפיין</a> — מענה אישי תוך 24 שעות, בלי התחייבות.
+          </p>
+
+          <h2>שאלות נפוצות</h2>
+        </BlogProse>
+
+        <BlogFaq items={faqItems} />
+      </div>
+
+      <PreviewContactForm />
+
+      <div class="mx-auto max-w-3xl px-4 py-10 md:px-6 md:py-14">
+        <p>
+          <a href="/blog" class="font-medium text-brand-purple underline">← חזרה לבלוג</a>
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer />
+  <LeadCaptureModal />
+  <StickyMobileCta />
+</Layout>
+
+<style>
+  .blog-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .blog-breadcrumbs a {
+    color: #651561;
+    text-decoration: underline;
+  }
+
+  .blog-article__eyebrow {
+    margin: 0 0 0.75rem;
+    color: #c60691;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .blog-article__title {
+    margin: 0 0 1rem;
+    color: #651561;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  .blog-article__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .blog-article__figure {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #faf8fc;
+  }
+
+  .blog-article__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

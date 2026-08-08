@@ -9,9 +9,11 @@ interface Props {
   shuffle?: boolean;
   /** Circular one-card steps. Default true. */
   loop?: boolean;
+  /** Fade keeps every card whole; slide is the default for visual galleries. */
+  motion?: 'slide' | 'fade';
 }
 
-const { ariaLabel, gap = 'normal', shuffle = false, loop = true } = Astro.props;
+const { ariaLabel, gap = 'normal', shuffle = false, loop = true, motion = 'slide' } = Astro.props;
 const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -60,7 +62,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   </button>
 </div>
 
-<script define:vars={{ uid, shuffle, loop }}>
+<script define:vars={{ uid, shuffle, loop, motion }}>
   (() => {
     const root = document.querySelector(`[data-carousel-root="${uid}"]`);
     const viewport = document.querySelector(`[data-carousel-viewport="${uid}"]`);
@@ -161,12 +163,25 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     };
 
     const setX = (x, animate) => {
-      if (animate && !reduceMotion()) {
+      if (animate && !reduceMotion() && motion === 'fade') {
+        strip.style.transition = 'opacity 0.12s ease';
+        strip.style.opacity = '0';
+        window.setTimeout(() => {
+          strip.style.transition = 'none';
+          strip.style.transform = `translate3d(${x}px, 0, 0)`;
+          requestAnimationFrame(() => {
+            strip.style.transition = 'opacity 0.18s ease';
+            strip.style.opacity = '1';
+          });
+        }, 120);
+      } else if (animate && !reduceMotion()) {
         strip.style.transition = 'transform 0.4s ease';
+        strip.style.transform = `translate3d(${x}px, 0, 0)`;
       } else {
         strip.style.transition = 'none';
+        strip.style.opacity = '1';
+        strip.style.transform = `translate3d(${x}px, 0, 0)`;
       }
-      strip.style.transform = `translate3d(${x}px, 0, 0)`;
       currentX = x;
     };
 

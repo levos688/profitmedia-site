@@ -6,12 +6,12 @@ import { services } from '../data/site';
 <section id="services" class="section-padding below-fold bg-white reveal" data-reveal>
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <SectionTitle
-      title="מערכת עסקאות מהפרסום — מה בפנים"
-      subtitle="אסטרטגיה, תשתית המרה וניהול קמפיינים שעובדים יחד כמערכת אחת"
+      title="רכיבי המערכת"
+      subtitle="שישה חלקים במחזור אחד — ממחקר והצעה ועד אופטימיזציית AI ופידבק לפלטפורמות"
       class="mb-12 md:mb-16"
     />
 
-    <div class="services-grid grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="services-grid grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
       {
         services.map((service, index) => (
           <article class="service-card h-full" style={`--card-delay: ${index * 0.08}s`}>

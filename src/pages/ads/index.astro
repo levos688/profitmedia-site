@@ -1,0 +1,62 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import AdsLpHeader from '../../components/ads/AdsLpHeader.astro';
+import AdsPainBridge from '../../components/ads/AdsPainBridge.astro';
+import PreviewHero from '../../components/preview/PreviewHero.astro';
+import AgencyStats from '../../components/AgencyStats.astro';
+import NamedOffer from '../../components/NamedOffer.astro';
+import PreviewCampaignResults from '../../components/preview/PreviewCampaignResults.astro';
+import HowItWorks from '../../components/HowItWorks.astro';
+import TargetAudience from '../../components/TargetAudience.astro';
+import Clients from '../../components/Clients.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import PreviewFaq from '../../components/preview/PreviewFaq.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import HomeAbPopup from '../../components/preview/HomeAbPopup.astro';
+import Footer from '../../components/Footer.astro';
+import { adsLpSeo, adsLpPixelId, adsProcessSteps, adsFaqs } from '../../data/ads';
+---
+
+<Layout
+  title={adsLpSeo.title}
+  description={adsLpSeo.description}
+  canonical={adsLpSeo.canonical}
+  noindex
+  enableGtm={false}
+  metaPixelId={adsLpPixelId || undefined}
+  preloadImage="/images/hero/photo-min.svg"
+>
+  <div
+    class="preview-page"
+    data-lead-page
+    data-lead-source="ads-meta-lp"
+    data-lead-source-prefix="ads"
+    data-thank-you="/ads/thank-you"
+  >
+    <AdsLpHeader />
+    <main id="main-content">
+      {/* Hero → pain bridge → proof stats → cases → offer → 3 steps → who → logos → form → FAQ */}
+      <PreviewHero />
+      <AdsPainBridge />
+      <AgencyStats />
+      <PreviewCampaignResults />
+      <NamedOffer />
+      <HowItWorks
+        title={adsProcessSteps.title}
+        subtitle={adsProcessSteps.subtitle}
+        steps={adsProcessSteps.steps}
+      />
+      <TargetAudience />
+      <Clients />
+      <PreviewContactForm />
+      <PreviewFaq items={adsFaqs} />
+    </main>
+    <Footer minimal />
+    <LeadCaptureModal />
+    <HomeAbPopup />
+    <StickyMobileCta />
+  </div>
+  <script src="/scripts/pm-ads-ab.js?v=20260729c" defer></script>
+</Layout>

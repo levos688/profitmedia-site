@@ -1,7 +1,9 @@
 ---
 import SectionTitle from '../SectionTitle.astro';
 import Reveal from '../Reveal.astro';
-import { faqs } from '../../data/site';
+import { faqs as defaultFaqs } from '../../data/site';
+
+const { items = defaultFaqs } = Astro.props;
 ---
 
 <section id="faq" class="faq section-padding below-fold" aria-labelledby="faq-title">
@@ -17,7 +19,7 @@ import { faqs } from '../../data/site';
 
     <div class="faq__list">
       {
-        faqs.map((item, index) => (
+        items.map((item, index) => (
           <Reveal delay={Math.min(index * 60, 240)}>
             <details class="faq__item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
               <summary itemprop="name">

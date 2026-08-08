@@ -2,7 +2,7 @@ import type { AbChannel, AbMetric, AbTrackEvent } from './ab-stats-core';
 import { incrementAbMetrics } from './ab-stats-core';
 
 interface Env {
-  DONHIN_AB_STATS: KVNamespace;
+  AB_DB: D1Database;
 }
 
 const json = (body: object, status = 200) =>
@@ -41,7 +41,7 @@ function normalizeEvents(body: TrackPayload): AbTrackEvent[] {
 export async function onRequestPost(context: { request: Request; env: Env }) {
   const { request, env } = context;
 
-  if (!env.DONHIN_AB_STATS) {
+  if (!env.AB_DB) {
     return json({ ok: false, error: 'Stats storage is not configured' }, 503);
   }
 
@@ -73,10 +73,8 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   }
 
   try {
-    await incrementAbMetrics(env.DONHIN_AB_STATS, events, 'all');
-    if (channel === 'fb_ads') {
-      await incrementAbMetrics(env.DONHIN_AB_STATS, events, 'fb_ads');
-    }
+    // Single channel write: dashboard "all" aggregates organic + fb from D1.
+    await incrementAbMetrics(env.AB_DB, events, channel);
     return json({ ok: true });
   } catch (err) {
     console.error(err);

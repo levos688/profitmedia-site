@@ -2,17 +2,28 @@
 interface Props {
   youtubeId: string;
   title: string;
+  /** portrait = vertical phone videos (testimonials); landscape = standard 16:9 */
+  aspect?: 'portrait' | 'landscape';
 }
 
-const { youtubeId, title } = Astro.props;
-const thumb = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+const { youtubeId, title, aspect = 'landscape' } = Astro.props;
+const isPortrait = aspect === 'portrait';
+/*
+  YouTube still serves landscape thumbs for vertical uploads (center strip + blurred sides).
+  In a 9:16 frame, object-fit: cover crops those sides away.
+*/
+const thumb = `https://i.ytimg.com/vi/${youtubeId}/hq720.jpg`;
+const thumbFallback = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
 ---
 
-<div class="youtube-facade overflow-hidden rounded-xl bg-black shadow-lg">
-  <div class="relative aspect-[9/16] w-full">
+<div
+  class:list={['youtube-facade', isPortrait && 'youtube-facade--portrait']}
+  data-aspect={aspect}
+>
+  <div class="youtube-facade__frame">
     <button
       type="button"
-      class="youtube-facade__btn group absolute inset-0 flex h-full w-full items-center justify-center"
+      class="youtube-facade__btn group"
       data-youtube-id={youtubeId}
       data-youtube-title={title}
       aria-label={`נגן — ${title}`}
@@ -22,9 +33,10 @@ const thumb = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
         alt=""
         loading="lazy"
         decoding="async"
-        width="480"
-        height="360"
-        class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+        width={isPortrait ? 720 : 1280}
+        height={isPortrait ? 1280 : 720}
+        class="youtube-facade__thumb"
+        onerror={`this.onerror=null;this.src='${thumbFallback}'`}
       />
       <span class="youtube-facade__play" aria-hidden="true">
         <svg width="68" height="48" viewBox="0 0 68 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,16 +52,69 @@ const thumb = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
 </div>
 
 <style>
+  .youtube-facade {
+    overflow: hidden;
+    border-radius: 0.75rem;
+    background: #000;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    width: 100%;
+  }
+
+  .youtube-facade__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .youtube-facade--portrait .youtube-facade__frame {
+    aspect-ratio: 9 / 16;
+  }
+
   .youtube-facade__btn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
     border: none;
     padding: 0;
-    background: transparent;
+    background: #000;
   }
 
   .youtube-facade__btn:focus-visible {
     outline: 2px solid #fcc000;
     outline-offset: 2px;
+  }
+
+  .youtube-facade__thumb {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    background: #000;
+    transition: transform 0.3s ease;
+  }
+
+  /* Extra zoom on portrait so blurred YouTube sidebars never peek in */
+  .youtube-facade--portrait .youtube-facade__thumb {
+    object-fit: cover;
+    /* Landscape YT thumb: video lives in the middle ~40% — scale just enough to crop blur */
+    transform: scale(1.01);
+  }
+
+  .youtube-facade__btn:hover .youtube-facade__thumb {
+    transform: scale(1.03);
+  }
+
+  .youtube-facade--portrait .youtube-facade__btn:hover .youtube-facade__thumb {
+    transform: scale(1.04);
   }
 
   .youtube-facade__play {
@@ -61,5 +126,31 @@ const thumb = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
 
   .youtube-facade__btn:hover .youtube-facade__play {
     transform: scale(1.06);
+  }
+
+  .youtube-facade__frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .youtube-facade__thumb,
+    .youtube-facade__play {
+      transition: none;
+    }
+
+    .youtube-facade__btn:hover .youtube-facade__thumb,
+    .youtube-facade--portrait .youtube-facade__thumb,
+    .youtube-facade--portrait .youtube-facade__btn:hover .youtube-facade__thumb,
+    .youtube-facade__btn:hover .youtube-facade__play {
+      transform: none;
+    }
+
+    .youtube-facade--portrait .youtube-facade__thumb {
+      transform: none;
+    }
   }
 </style>

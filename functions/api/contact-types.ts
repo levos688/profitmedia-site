@@ -20,6 +20,8 @@ export interface UtmParams {
   utm_content?: string;
   utm_term?: string;
   gclid?: string;
+  gbraid?: string;
+  wbraid?: string;
   fbclid?: string;
   [key: string]: string | undefined;
 }

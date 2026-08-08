@@ -58,19 +58,34 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
           <p class="donhin-hero__subtitle">
             За последние 15 лет мои клиенты получили более 20 миллионов шекелей
           </p>
-          <a href="#form-quiz" id="donhin-hero-cta" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
         </div>
-        <div class="donhin-hero__photo-wrap">
-          <img
-            src="/images/donhin/hero.webp"
-            alt="Адвокат Саймон Донхин"
-            class="donhin-hero__photo"
-            width="397"
-            height="397"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-          />
+        <div class="donhin-hero__media" id="donhin-hero-media" data-hero-media="photo">
+          <div class="donhin-hero__photo-panel" data-hero-panel="photo">
+            <img
+              src="/images/donhin/hero.webp"
+              alt="Адвокат Саймон Донхин"
+              class="donhin-hero__photo"
+              width="397"
+              height="397"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </div>
+          <div class="donhin-hero__video-panel" data-hero-panel="video" hidden>
+            <div class="donhin-hero__video">
+              <iframe
+                id="donhin-hero-vimeo"
+                src=""
+                data-src="https://player.vimeo.com/video/1057213040?badge=0&autopause=0&autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0&playsinline=1"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                title="Видео: адвокат Саймон Донхин"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
           <p class="donhin-hero__name">
             <img
               src="/images/donhin/icon-scales.svg"
@@ -84,6 +99,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             <span>Адвокат Саймон Донхин</span>
           </p>
         </div>
+        <a href="#form-quiz" id="donhin-hero-cta" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
       </div>
     </section>
 
@@ -363,7 +379,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 
   <Fragment slot="scripts">
-<script is:inline src="/scripts/donhin-ab.js"></script>
+<script is:inline src="/scripts/donhin-ab.js?v=20260727a"></script>
 <script is:inline>
   function readCookie(name) {
     var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -521,6 +537,9 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     if (nextBtn) {
       nextBtn.addEventListener('click', function () {
         if (!quizForm.querySelector('.donhin-quiz input[type="radio"]:checked') || !step1 || !step2) return;
+        if (window.donhinAb && window.donhinAb.trackCopyMetric) {
+          window.donhinAb.trackCopyMetric('quiz_copy', 'click');
+        }
         goToStep(step1, step2, 'forward');
       });
     }
@@ -552,6 +571,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     var title = document.getElementById('donhin-popup-title');
     var quizTitle = popup.dataset.quizTitle || 'Ответьте на вопрос — получите бесплатную консультацию адвоката';
     var assignments = ab.getAssignments();
+    if (ab.applyCopyVariants) ab.applyCopyVariants(assignments);
     var autoSeenKey = 'donhin_popup_auto_seen';
 
     function isAutoSeen() {
@@ -569,14 +589,26 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     }
 
     function setPopupMode(mode) {
+      var quizCopy = ab.getQuizCopy ? ab.getQuizCopy(assignments.quiz_copy) : null;
+      var bottomCopy = ab.getBottomCopy ? ab.getBottomCopy(assignments.bottom_copy) : null;
       if (mode === 'simple') {
         if (quizWrap) quizWrap.setAttribute('hidden', '');
         if (simpleWrap) simpleWrap.removeAttribute('hidden');
-        if (title) title.textContent = 'Оставьте заявку для бесплатной консультации';
+        if (title) {
+          title.textContent =
+            (bottomCopy && bottomCopy.title) ||
+            popup.dataset.simpleTitle ||
+            'Оставьте заявку для бесплатной консультации';
+        }
       } else {
         if (simpleWrap) simpleWrap.setAttribute('hidden', '');
         if (quizWrap) quizWrap.removeAttribute('hidden');
-        if (title) title.textContent = quizTitle;
+        if (title) {
+          title.textContent =
+            (quizCopy && quizCopy.sectionTitle) ||
+            popup.dataset.quizTitle ||
+            quizTitle;
+        }
       }
     }
 
@@ -601,8 +633,9 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       setPopupMode(mode);
       showPopupShell();
 
-      if (isAuto) ab.trackPopupImpression(assignments);
-      if (ab.trackLeadSource) {
+      if (isAuto) {
+        ab.trackPopupImpression(assignments, mode === 'simple' ? 'popup-simple' : 'popup-quiz');
+      } else if (ab.trackLeadSource) {
         ab.trackLeadSource(mode === 'simple' ? 'popup-simple' : 'popup-quiz', 'impression');
       }
     }
@@ -645,24 +678,35 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     var heroCta = document.getElementById('donhin-hero-cta');
     var ab = window.donhinAb;
 
+    // Apply copy/theme immediately so force_* preview works before allocate fetch.
+    if (ab && ab.getAssignments && ab.applyCopyVariants) {
+      try {
+        ab.applyCopyVariants(ab.getAssignments());
+      } catch (e) {}
+    }
+
     function start() {
+      var assignments = ab && ab.getAssignments ? ab.getAssignments() : null;
+      if (ab && ab.applyCopyVariants && assignments) ab.applyCopyVariants(assignments);
+
       if (quizForm) initQuizForm(quizForm);
       initDonhinPopup();
 
-      if (ab && ab.trackLeadSource) {
-        ab.trackLeadSource('quiz', 'impression');
-        ab.trackLeadSource('simple', 'impression');
+      if (ab && ab.trackPageImpressions && assignments) {
+        ab.trackPageImpressions(assignments);
       }
 
-      if (heroCta && ab && ab.trackLeadSource) {
+      if (heroCta && ab) {
         heroCta.addEventListener('click', function () {
-          ab.trackLeadSource('hero_cta', 'click');
+          if (ab.trackLeadSource) ab.trackLeadSource('hero_cta', 'click');
+          if (ab.trackCopyMetric) ab.trackCopyMetric('hero_media', 'click');
         });
       }
 
       if (bottomForm) {
         bottomForm.addEventListener('submit', function (e) {
           e.preventDefault();
+          if (ab && ab.trackCopyMetric) ab.trackCopyMetric('bottom_copy', 'click');
           submitDonhinLead(bottomForm, 'simple');
         });
       }
@@ -707,7 +751,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
   .donhin-hero__grid {
     display: grid;
-    gap: 2rem;
+    gap: 1.5rem 2rem;
     align-items: center;
   }
 
@@ -720,9 +764,20 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       margin-inline: auto;
     }
 
+    .donhin-hero__media {
+      width: 100%;
+    }
+
+    .donhin-hero__photo,
+    .donhin-hero__video {
+      width: 100%;
+      max-width: none;
+    }
+
     .donhin-btn--hero {
       display: flex;
       width: 100%;
+      margin-top: 0.25rem;
     }
   }
 
@@ -733,7 +788,27 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
     .donhin-hero__grid {
       grid-template-columns: 1.05fr 0.95fr;
-      gap: 3rem;
+      grid-template-rows: auto auto;
+      gap: 1.25rem 3rem;
+      align-items: start;
+    }
+
+    .donhin-hero__content {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .donhin-hero__media {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+
+    .donhin-btn--hero {
+      grid-column: 1;
+      grid-row: 2;
+      justify-self: start;
+      margin-top: 0.5rem;
     }
   }
 
@@ -754,15 +829,34 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     color: rgba(255, 255, 255, 0.92);
   }
 
-  .donhin-hero__photo-wrap {
+  .donhin-hero__media {
     text-align: center;
   }
 
   .donhin-hero__photo {
-    width: min(100%, 24.8125rem);
+    width: min(100%, 29.775rem);
     height: auto;
     display: block;
     margin-inline: auto;
+  }
+
+  .donhin-hero__video {
+    position: relative;
+    width: min(100%, 29.775rem);
+    margin-inline: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    background: #061f3a;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  .donhin-hero__video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
 
   .donhin-hero__name {
@@ -813,7 +907,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     color: #fff;
     background: #111111;
     border: none;
-    margin-top: 1.75rem;
+    margin-top: 0;
     border-radius: 3.1875rem;
   }
 
@@ -1397,6 +1491,130 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     font-size: clamp(1.375rem, 3vw, 2rem);
     font-weight: 700;
     text-wrap: balance;
+  }
+
+  /* Dynamically toggled by AB — must be :global so class added via JS always matches */
+  :global(#form-bottom.donhin-bottom-form--dark-band),
+  :global(#form-bottom[data-ab-band='dark']) {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 3.75rem 1rem 4.75rem;
+    background:
+      radial-gradient(ellipse 70% 80% at 50% 0%, rgba(255, 255, 255, 0.08), transparent 55%),
+      linear-gradient(180deg, #16457a 0%, #0f2f54 100%);
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-bottom-form__inner),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-bottom-form__inner) {
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-bottom-form__title),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-bottom-form__title) {
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-form--bottom),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-form--bottom) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input) {
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #0f172a;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input::placeholder),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input::placeholder) {
+    color: #64748b;
+    opacity: 1;
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-privacy),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-privacy) {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-privacy a),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-privacy a) {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-btn--brand),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-btn--brand) {
+    background: #fff;
+    color: #143c6f;
+    border: none;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  }
+
+  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-btn--brand:hover),
+  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-btn--brand:hover) {
+    background: #f0f6ff;
+    color: #0f2f54;
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band),
+  :global(#form-quiz[data-ab-band='dark']) {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 3.5rem 1rem 4rem;
+    background:
+      radial-gradient(ellipse 70% 80% at 50% 0%, rgba(255, 255, 255, 0.08), transparent 55%),
+      linear-gradient(180deg, #16457a 0%, #0f2f54 100%);
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-form-section__inner),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-form-section__inner) {
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-form-section__title),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-form-section__title) {
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-form--quiz),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-form--quiz) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-quiz__question),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-quiz__question),
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-form__heading),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-form__heading) {
+    color: #fff;
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-btn--quiz-back),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-btn--quiz-back) {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-privacy),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-privacy) {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  :global(#form-quiz.donhin-form-section--dark-band) :global(.donhin-privacy a),
+  :global(#form-quiz[data-ab-band='dark']) :global(.donhin-privacy a) {
+    color: #fff;
   }
 
   .donhin-scroll-sentinel {

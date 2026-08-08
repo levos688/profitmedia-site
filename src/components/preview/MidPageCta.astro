@@ -3,13 +3,13 @@ import PremiumAtmosphere from './PremiumAtmosphere.astro';
 import { midPageCta } from '../../data/site';
 ---
 
-<section class="mid-page-cta-section" role="region" aria-label="הזמנה לאבחון">
+<section class="mid-page-cta-section" role="region" aria-label="הזמנה לפעולה" data-ab-mid>
   <PremiumAtmosphere variant="contact" />
   <div class="mid-page-cta-section__inner">
-    <p class="mid-page-cta-section__eyebrow">אבחון חינם · ללא התחייבות</p>
-    <h2 class="mid-page-cta-section__title">{midPageCta.title}</h2>
-    <p class="mid-page-cta-section__subtitle">{midPageCta.subtitle}</p>
-    <button type="button" class="btn-yellow mid-page-cta-section__btn" data-lead-modal-open>
+    <p class="mid-page-cta-section__eyebrow">ללא התחייבות · מענה תוך 24 שעות</p>
+    <h2 class="mid-page-cta-section__title" data-ab-mid-title>{midPageCta.title}</h2>
+    <p class="mid-page-cta-section__subtitle" data-ab-mid-subtitle>{midPageCta.subtitle}</p>
+    <button type="button" class="btn-yellow mid-page-cta-section__btn" data-lead-modal-open data-ab-open="mid" data-ab-mid-button>
       {midPageCta.button}
     </button>
   </div>

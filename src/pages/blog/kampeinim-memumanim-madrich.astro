@@ -70,9 +70,9 @@ const articleSchema = {
       mainEntityOfPage: canonicalUrl,
       url: canonicalUrl,
       author: {
-        '@type': 'Organization',
-        name: 'Profit Media',
-        url: 'https://profitmedia.co.il/',
+        '@type': 'Person',
+        name: 'לב אוסינובסקי',
+        url: 'https://profitmedia.co.il/about#founder',
       },
       publisher: {
         '@type': 'Organization',
@@ -109,7 +109,7 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
 });
 ---
 
-<Layout title={post.seoTitle} description={post.description} canonical={canonicalUrl} enableGtm={false}>
+<Layout title={post.seoTitle} description={post.description} canonical={canonicalUrl}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleSchema)} />
   <Header />
   <main id="main-content">

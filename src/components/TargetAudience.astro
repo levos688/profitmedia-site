@@ -19,12 +19,18 @@ import { targetAudience } from '../data/site';
             <h3 class="audience-card__title">{item.title}</h3>
             <p class="audience-card__situation">{item.situation}</p>
             <p class="audience-card__outcome">
-              <strong class="audience-card__outcome-label">התוצאה:</strong> {item.outcome}
+              <strong class="audience-card__outcome-label">למה זה חשוב:</strong> {item.outcome}
             </p>
           </div>
         ))
       }
     </div>
+
+    {
+      targetAudience.notFor && (
+        <p class="target-audience__not-for">{targetAudience.notFor}</p>
+      )
+    }
   </div>
 </section>
 
@@ -100,6 +106,15 @@ import { targetAudience } from '../data/site';
   .audience-card__outcome-label {
     font-weight: 800;
     color: #651561;
+  }
+
+  .target-audience__not-for {
+    max-width: 42rem;
+    margin: 1.75rem auto 0;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #6b7280;
   }
 
   @media (prefers-reduced-motion: reduce) {

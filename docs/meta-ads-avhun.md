@@ -63,11 +63,30 @@ Before launch: set `PUBLIC_META_PIXEL_ID` in Cloudflare Pages (Production) and r
 
 ## Creative direction (static / Reel)
 
+Ready-to-upload PNGs (source SVG alongside): `docs/meta-ads-creatives/`
+
+| File | Angle | Size |
+|------|--------|------|
+| `feed-a-pain.png` | Pain: יש לידים — אבל לא סוגרים? | 1080×1080 |
+| `feed-b-system.png` | Offer: מערכת עסקאות מהפרסום | 1080×1080 |
+| `feed-c-proof.png` | Proof: ₪200K+ / עד 46% | 1080×1080 |
+| `story-a-pain.png` | Same pain for Stories/Reels cover | 1080×1920 |
+
 1. **UGC-style talking head (you):** open with “יש לידים ולא סוגרים?” → 3 bullets (quiz, LP, quality) → CTA אבחון חינם. 15–25s vertical.
-2. **Before/after board:** “CPL נמוך / איכות נמוכה” → “פניות מתועדפות + דף ייעודי”. Big Hebrew text, brand purple + yellow CTA.
-3. **Carousel:** (1) הבעיה (2) שאלון (3) דף נחיתה (4) אבחון חינם.
+2. Upload the three feed PNGs as separate ads (A/B/C) in one ad set first.
+3. **Carousel (optional week 2):** (1) הבעיה (2) שאלון (3) דף נחיתה (4) אבחון חינם.
 
 Avoid: promising sales numbers as a guarantee; “הכי זול לליד”.
+
+---
+
+## Ads Manager — launch steps (15 min)
+
+1. Campaign → **Leads** → website → destination `https://profitmedia.co.il/avhun/?utm_source=facebook&utm_medium=paid&utm_campaign=avhun_deals_2026`
+2. One CBO campaign, **2 ad sets** max at start: (a) interest/broad IL Hebrew 28–55, (b) retarget site visitors 30d
+3. Per ad set: 3 ads = copy A+creative A, B+B, C+C (see texts above)
+4. Pixel: PageView on `/avhun/`, Lead on `/avhun/thank-you/` (needs env var below)
+5. Budget: ₪100/day × 7 days, then kill losers per checklist
 
 ---
 

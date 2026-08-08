@@ -31,9 +31,9 @@ import { namedOffer, homeCta } from '../data/site';
             </ul>
           </div>
 
-          <div class="named-offer__block named-offer__block--accent">
-            <h3 class="named-offer__block-title">{namedOffer.diagnosisTitle}</h3>
-            <ul class="named-offer__list">
+          <div class="named-offer__block named-offer__block--accent" data-ab-offer>
+            <h3 class="named-offer__block-title" data-ab-offer-title>{namedOffer.diagnosisTitle}</h3>
+            <ul class="named-offer__list" data-ab-offer-items>
               {
                 namedOffer.diagnosisItems.map((item) => (
                   <li>
@@ -45,7 +45,13 @@ import { namedOffer, homeCta } from '../data/site';
                 ))
               }
             </ul>
-            <button type="button" class="btn-yellow named-offer__cta" data-lead-modal-open>
+            <button
+              type="button"
+              class="btn-yellow named-offer__cta"
+              data-lead-modal-open
+              data-ab-open="offer"
+              data-ab-offer-button
+            >
               {namedOffer.cta || homeCta}
             </button>
           </div>

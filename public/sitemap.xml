@@ -6,9 +6,21 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://profitmedia.co.il/about</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://profitmedia.co.il/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://profitmedia.co.il/blog/shipur-yahas-hamara</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://profitmedia.co.il/blog/daf-nechita-mul-daf-habayit</loc>

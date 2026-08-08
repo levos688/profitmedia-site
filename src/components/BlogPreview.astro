@@ -44,6 +44,8 @@ const posts = blogPosts.slice(0, 3);
 <style>
   .blog-preview {
     background: #fff;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   .blog-preview__header {
@@ -105,6 +107,9 @@ const posts = blogPosts.slice(0, 3);
     display: grid;
     gap: 1.25rem;
     justify-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   @media (min-width: 768px) {
@@ -122,8 +127,10 @@ const posts = blogPosts.slice(0, 3);
 
   .blog-preview__card-wrap {
     width: 100%;
-    max-width: 22.5rem;
+    max-width: min(22.5rem, 100%);
+    min-width: 0;
     margin-inline: auto;
+    overflow: hidden;
   }
 
   .blog-preview__card-wrap :global(.blog-card) {

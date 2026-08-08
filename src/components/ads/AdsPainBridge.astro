@@ -1,0 +1,43 @@
+---
+import { adsPainBridge } from '../../data/ads';
+---
+
+<section class="ads-pain-bridge" aria-label={adsPainBridge.ariaLabel}>
+  <div class="mx-auto max-w-3xl px-4 md:px-6">
+    <p class="ads-pain-bridge__text">
+      <span class="ads-pain-bridge__lead">{adsPainBridge.lead}</span>
+      {' '}
+      {adsPainBridge.body}
+    </p>
+  </div>
+</section>
+
+<style>
+  .ads-pain-bridge {
+    padding: 1.25rem 0 0.5rem;
+    background: linear-gradient(180deg, #faf7fb 0%, #fff 100%);
+  }
+
+  .ads-pain-bridge__text {
+    margin: 0;
+    text-align: center;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #3a2a42;
+  }
+
+  .ads-pain-bridge__lead {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: #651561;
+  }
+
+  @media (min-width: 768px) {
+    .ads-pain-bridge__lead {
+      display: inline;
+      margin-bottom: 0;
+    }
+  }
+</style>

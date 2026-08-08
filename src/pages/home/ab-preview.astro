@@ -1,0 +1,238 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import PreviewHero from '../../components/preview/PreviewHero.astro';
+import NamedOffer from '../../components/NamedOffer.astro';
+import PreviewCampaignResults from '../../components/preview/PreviewCampaignResults.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import HomeAbPopup from '../../components/preview/HomeAbPopup.astro';
+import MidPageCta from '../../components/preview/MidPageCta.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<Layout
+  title="Home A/B Preview | Profit Media"
+  description="Internal preview of homepage AB variants"
+  noindex
+  blockAiCrawlers
+  enableGtm={false}
+>
+  <div class="preview-page ab-preview-page">
+    <div class="ab-preview-bar" role="region" aria-label="A/B preview controls">
+      <p class="ab-preview-bar__title">תצוגת וריאנטים · Home AB</p>
+      <div class="ab-preview-bar__grid">
+        <label>
+          Hero
+          <select id="pv-hero">
+            <option value="system">V2 — ברור / clear</option>
+            <option value="pain">V4 — כאב / pain</option>
+          </select>
+        </label>
+        <label>
+          Sticky
+          <select id="pv-sticky">
+            <option value="diagnosis">אבחון</option>
+            <option value="order_system">הזמנת מערכת</option>
+            <option value="start_work">התחלת עבודה</option>
+          </select>
+        </label>
+        <label>
+          Mid CTA
+          <select id="pv-mid">
+            <option value="diagnosis">אבחון</option>
+            <option value="order_system">הזמנת מערכת</option>
+          </select>
+        </label>
+        <label>
+          Offer
+          <select id="pv-offer">
+            <option value="diagnosis">אבחון</option>
+            <option value="order_system">הזמנת מערכת</option>
+          </select>
+        </label>
+        <label>
+          Bottom form
+          <select id="pv-bottom">
+            <option value="diagnosis">אבחון</option>
+            <option value="order_system">הזמנת מערכת</option>
+          </select>
+        </label>
+        <label>
+          Popup delay
+          <select id="pv-delay">
+            <option value="20s">20s</option>
+            <option value="25s">25s</option>
+          </select>
+        </label>
+        <label>
+          Popup scroll
+          <select id="pv-scroll">
+            <option value="50pct">50%</option>
+            <option value="65pct">65%</option>
+          </select>
+        </label>
+      </div>
+      <div class="ab-preview-bar__actions">
+        <button type="button" class="btn-yellow ab-preview-bar__btn" id="pv-apply">החל וריאנטים</button>
+        <button type="button" class="ab-preview-bar__btn-secondary" id="pv-open-quiz">פתח popup (quiz)</button>
+        <button type="button" class="ab-preview-bar__btn-secondary" id="pv-open-simple">פתח popup (sticky)</button>
+        <a class="ab-preview-bar__link" href="/home/ab-stats/?token=profitmedia-ab-stats&channel=all&preset=all_time"
+          >לדשבורד סטטיסטיקה</a
+        >
+      </div>
+    </div>
+
+    <Header />
+    <main id="main-content" class="ab-preview-main">
+      <PreviewHero />
+      <NamedOffer />
+      <div class="ab-preview-mid-wrap">
+        <MidPageCta />
+      </div>
+      <PreviewContactForm />
+    </main>
+    <Footer />
+    <LeadCaptureModal />
+    <HomeAbPopup />
+    <StickyMobileCta />
+  </div>
+
+  <script src="/scripts/pm-home-ab.js?v=20260729a" defer></script>
+  <script>
+    function syncSelectsFromAssignments() {
+      const a = window.pmHomeAb?.getAssignments?.();
+      if (!a) return;
+      const map = {
+        'pv-hero': a.hero_copy,
+        'pv-sticky': a.sticky_cta,
+        'pv-mid': a.mid_cta,
+        'pv-offer': a.offer_cta,
+        'pv-bottom': a.bottom_copy,
+        'pv-delay': a.popup_delay,
+        'pv-scroll': a.popup_scroll,
+      };
+      Object.entries(map).forEach(([id, value]) => {
+        const el = document.getElementById(id) as HTMLSelectElement | null;
+        if (el && value) el.value = value;
+      });
+    }
+
+    function applyFromSelects() {
+      const hero = (document.getElementById('pv-hero') as HTMLSelectElement).value;
+      const sticky = (document.getElementById('pv-sticky') as HTMLSelectElement).value;
+      const mid = (document.getElementById('pv-mid') as HTMLSelectElement).value;
+      const offer = (document.getElementById('pv-offer') as HTMLSelectElement).value;
+      const bottom = (document.getElementById('pv-bottom') as HTMLSelectElement).value;
+      const delay = (document.getElementById('pv-delay') as HTMLSelectElement).value;
+      const scroll = (document.getElementById('pv-scroll') as HTMLSelectElement).value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('force_hero', hero);
+      url.searchParams.set('force_sticky', sticky);
+      url.searchParams.set('force_mid', mid);
+      url.searchParams.set('force_offer', offer);
+      url.searchParams.set('force_bottom', bottom);
+      url.searchParams.set('force_delay', delay);
+      url.searchParams.set('force_scroll', scroll);
+      url.searchParams.set('ab_preview', '1');
+      window.location.href = url.toString();
+    }
+
+    window.addEventListener('load', () => {
+      window.pmHomeAb?.ready?.then(() => {
+        syncSelectsFromAssignments();
+        window.pmHomeAb?.applyAll?.(window.pmHomeAb.getAssignments());
+      });
+      document.getElementById('pv-apply')?.addEventListener('click', applyFromSelects);
+      document.getElementById('pv-open-quiz')?.addEventListener('click', () => {
+        try {
+          sessionStorage.removeItem('pm_home_popup_auto_seen');
+        } catch {}
+        window.pmHomeAb?.openPopup?.('scroll');
+      });
+      document.getElementById('pv-open-simple')?.addEventListener('click', () => {
+        window.pmHomeAb?.openPopup?.('sticky');
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  .ab-preview-bar {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    padding: 0.85rem 1rem 1rem;
+    background: #1a0a24;
+    color: #fff;
+    border-bottom: 2px solid #fcc000;
+  }
+  .ab-preview-bar__title {
+    margin: 0 0 0.75rem;
+    font-weight: 900;
+    text-align: center;
+  }
+  .ab-preview-bar__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  @media (min-width: 768px) {
+    .ab-preview-bar__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .ab-preview-bar label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #f3e8ff;
+  }
+  .ab-preview-bar select {
+    min-height: 40px;
+    border-radius: 0.5rem;
+    border: none;
+    padding: 0.35rem 0.5rem;
+    color: #111;
+    font-weight: 700;
+  }
+  .ab-preview-bar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.85rem;
+  }
+  .ab-preview-bar__btn {
+    border: none;
+    border-radius: 9999px;
+    padding: 0.55rem 1rem;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .ab-preview-bar__btn-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 9999px;
+    padding: 0.55rem 0.9rem;
+    background: transparent;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .ab-preview-bar__link {
+    align-self: center;
+    color: #fcc000;
+    font-weight: 800;
+    text-decoration: underline;
+  }
+  .ab-preview-main {
+    padding-bottom: 6rem;
+  }
+  .ab-preview-mid-wrap {
+    padding: 1rem 0;
+  }
+</style>

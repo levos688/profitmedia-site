@@ -25,7 +25,7 @@ const blogSchema = {
 };
 ---
 
-<Layout title={blogSeo.title} description={blogSeo.description} canonical={blogSeo.canonical} enableGtm={false}>
+<Layout title={blogSeo.title} description={blogSeo.description} canonical={blogSeo.canonical}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(blogSchema)} />
   <Header />
   <main id="main-content">
