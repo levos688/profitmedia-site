@@ -3,9 +3,11 @@ import SectionTitle from './SectionTitle.astro';
 import HorizontalCarousel from './HorizontalCarousel.astro';
 import Reveal from './Reveal.astro';
 import { clientLogos } from '../data/site';
+
+const MANIFEST_URL = 'https://crm.profitmedia.co.il/cdn/clients/manifest.json';
 ---
 
-<section id="clients" class="section-padding below-fold bg-white">
+<section id="clients" class="section-padding below-fold bg-white" data-client-logos data-manifest-url={MANIFEST_URL}>
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <SectionTitle title="לקוחות" class="mb-10 md:mb-16" />
@@ -25,36 +27,95 @@ import { clientLogos } from '../data/site';
   </div>
 </section>
 
+<script>
+  (() => {
+    const section = document.querySelector('[data-client-logos]');
+    if (!(section instanceof HTMLElement)) return;
+    const manifestUrl = section.dataset.manifestUrl;
+    if (!manifestUrl) return;
+
+    let started = false;
+    const load = async () => {
+      if (started) return;
+      started = true;
+      try {
+        const res = await fetch(manifestUrl, { credentials: 'omit' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const logos = Array.isArray(data?.logos) ? data.logos : [];
+        if (!logos.length) return;
+
+        const strip = section.querySelector('[data-carousel-strip]');
+        const root = section.querySelector('[data-carousel-root]');
+        if (!(strip instanceof HTMLElement) || !(root instanceof HTMLElement)) return;
+
+        strip.querySelectorAll(':scope > .carousel-item').forEach((el) => el.remove());
+        for (const logo of logos) {
+          if (!logo?.src) continue;
+          const item = document.createElement('div');
+          item.className = 'carousel-item client-logo';
+          const img = document.createElement('img');
+          img.src = String(logo.src);
+          img.alt = String(logo.alt || '');
+          img.loading = 'lazy';
+          item.appendChild(img);
+          strip.appendChild(item);
+        }
+        root.dispatchEvent(new CustomEvent('pm:carousel-reload'));
+      } catch {
+        // Keep SSR static fallback.
+      }
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      load();
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          load();
+        }
+      },
+      { rootMargin: '200px 0px' }
+    );
+    io.observe(section);
+  })();
+</script>
+
 <style>
-  .client-logo {
+  /* Soft framed tiles — same purple elevation language as audience cards */
+  [data-client-logos] :global(.client-logo) {
+    position: relative;
     display: flex;
     width: 200px;
     height: 120px;
+    box-sizing: border-box;
     align-items: center;
     justify-content: center;
-    padding: 1rem 1.25rem;
-    background: #fafafa;
-    border-radius: 0.75rem;
-    border: 1px solid #eee;
+    overflow: hidden;
+    padding: 0.85rem 1rem;
+    background: linear-gradient(160deg, #fdfbff 0%, #fff 55%, #faf8fc 100%);
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    border-radius: 12px;
+    box-shadow:
+      0 10px 28px rgba(101, 21, 97, 0.1),
+      0 0 26px rgba(198, 6, 145, 0.08);
   }
 
   @media (min-width: 768px) {
-    .client-logo {
+    [data-client-logos] :global(.client-logo) {
       width: 240px;
       height: 140px;
+      padding: 1rem 1.15rem;
     }
   }
 
-  .client-logo img {
-    max-height: 90px;
-    max-width: 200px;
+  [data-client-logos] :global(.client-logo img) {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-  }
-
-  @media (min-width: 768px) {
-    .client-logo img {
-      max-height: 110px;
-      max-width: 220px;
-    }
   }
 </style>
