@@ -268,12 +268,24 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       setX(-offsetForIndex(index), false);
       updatePeek();
       updateArrows();
+      root.setAttribute('data-carousel-ready', '');
       // Remeasure after images load.
       window.setTimeout(() => {
         setX(-offsetForIndex(index), false);
         updateArrows();
       }, 300);
     };
+
+    const rebuildFromDom = () => {
+      // Drop previous clones, keep real items as currently in strip.
+      getAllItems()
+        .filter((el) => el.hasAttribute('data-carousel-clone'))
+        .forEach((el) => el.remove());
+      busy = false;
+      boot();
+    };
+
+    root.addEventListener('pm:carousel-reload', rebuildFromDom);
 
     requestAnimationFrame(() => requestAnimationFrame(boot));
   })();
