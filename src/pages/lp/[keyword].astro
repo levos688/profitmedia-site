@@ -12,7 +12,7 @@ import Clients from '../../components/Clients.astro';
 import NamedOffer from '../../components/NamedOffer.astro';
 import VideoTestimonials from '../../components/VideoTestimonials.astro';
 import DealsContactForm from '../../components/deals/DealsContactForm.astro';
-import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import HomeAbPopup from '../../components/preview/HomeAbPopup.astro';
 import DealsStickyCta from '../../components/deals/DealsStickyCta.astro';
 import Footer from '../../components/Footer.astro';
 
@@ -52,19 +52,22 @@ const canonical = `https://profitmedia.co.il/lp/${keyword}/`;
   <Fragment slot="head">
     <script is:inline>
       (function () {
-        var key = 'pm_lp_order_v1';
+        var slug = (window.location.pathname.match(/\/lp\/([^/]+)/) || [])[1] || '';
+        var prefix = slug === 'digital-advertising-agency' ? 'agency' : 'office';
+        var key = 'pm_lp_ab_v2_' + prefix;
         var variants = ['proof_first', 'mechanism_first'];
         var params = new URL(window.location.href).searchParams;
         var forced = params.get('force_order');
         var value = variants.indexOf(forced) !== -1 ? forced : '';
+        var assignments = {};
         try {
-          if (!value) value = localStorage.getItem(key) || '';
+          assignments = JSON.parse(localStorage.getItem(key) || '{}');
+          if (!value) value = assignments.page_order || '';
           if (variants.indexOf(value) === -1) {
             value = variants[Math.random() < 0.5 ? 0 : 1];
-            localStorage.setItem(key, value);
-          } else if (forced) {
-            localStorage.setItem(key, value);
           }
+          assignments.page_order = value;
+          localStorage.setItem(key, JSON.stringify(assignments));
         } catch (e) {
           if (!value) value = variants[Math.random() < 0.5 ? 0 : 1];
         }
@@ -105,10 +108,26 @@ const canonical = `https://profitmedia.co.il/lp/${keyword}/`;
       <DealsContactForm />
     </main>
     <Footer minimal />
-    <LeadCaptureModal />
     <DealsStickyCta />
   </div>
-  <script src="/scripts/pm-lp-ab.js?v=20260806a" defer></script>
+
+  <script>
+    // Safe anchor scrolling without complex tracking for Google Ads compliance
+    document.querySelectorAll('[data-lead-modal-open]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: 'smooth' });
+          // Focus first input for accessibility
+          const firstInput = contactSection.querySelector('input:not([type="hidden"])');
+          if (firstInput) {
+            setTimeout(() => firstInput.focus(), 600);
+          }
+        }
+      });
+    });
+  </script>
 </Layout>
 
 <style is:global>
