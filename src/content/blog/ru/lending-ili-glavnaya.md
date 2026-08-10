@@ -9,7 +9,7 @@ excerpt: "Почему перегруженная главная может по
 category: "Лендинги"
 publishDate: 2026-07-21
 readingMinutes: 8
-author: "Лев Усиновский"
+author: "Лев Осиновский"
 image: "/images/blog/daf-nechita-mul-daf-habayit-square.png"
 imageAlt: "Два пути: перегруженная главная страница и сфокусированный лендинг с кнопкой действия"
 imageWide: "/images/blog/daf-nechita-mul-daf-habayit-wide.png"

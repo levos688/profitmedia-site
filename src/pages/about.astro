@@ -7,44 +7,40 @@ import AboutContent from '../components/AboutContent.astro';
 import LeadCaptureModal from '../components/preview/LeadCaptureModal.astro';
 import PreviewContactForm from '../components/preview/PreviewContactForm.astro';
 import { getContent } from '../i18n/content';
+import {
+  buildAboutPageSchema,
+  buildBreadcrumbListSchema,
+  buildPersonSchema,
+  buildSchemaGraph,
+} from '../lib/schema';
 
 const locale = 'he';
 const { about, home } = getContent(locale);
 const canonicalUrl = about.seo.canonical;
-const aboutSchema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'AboutPage',
-      '@id': `${canonicalUrl}#webpage`,
-      url: canonicalUrl,
-      name: about.seo.title,
-      description: about.seo.description,
-      inLanguage: 'he-IL',
-      isPartOf: { '@id': 'https://profitmedia.co.il/#website' },
-      about: { '@id': 'https://profitmedia.co.il/#organization' },
-      mainEntity: { '@id': `${canonicalUrl}#person` },
-    },
-    {
-      '@type': 'Person',
-      '@id': `${canonicalUrl}#person`,
-      name: about.founder.name,
-      url: `${canonicalUrl}#founder`,
-      jobTitle: about.founder.role,
-      worksFor: { '@type': 'Organization', name: 'Profit Media', url: 'https://profitmedia.co.il/' },
-      email: about.founder.email,
-      image: `https://profitmedia.co.il${about.founder.imageFallback}`,
-      description: about.founder.paragraphs.join(' '),
-    },
-    {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://profitmedia.co.il/' },
-        { '@type': 'ListItem', position: 2, name: 'מי אנחנו', item: canonicalUrl },
-      ],
-    },
-  ],
-};
+const aboutSchema = buildSchemaGraph([
+  buildAboutPageSchema({
+    locale,
+    canonical: canonicalUrl,
+    name: about.hero.title,
+    description: about.hero.subtitle,
+  }),
+  buildPersonSchema({
+    locale,
+    canonical: canonicalUrl,
+    name: about.founder.name,
+    jobTitle: about.founder.role,
+    email: about.founder.email,
+    image: `https://profitmedia.co.il${about.founder.imageFallback}`,
+    description: about.founder.paragraphs.join(' '),
+  }),
+  buildBreadcrumbListSchema({
+    locale,
+    items: [
+      { name: 'דף הבית', item: 'https://profitmedia.co.il/' },
+      { name: 'מי אנחנו', item: canonicalUrl },
+    ],
+  }),
+]);
 ---
 
 <Layout

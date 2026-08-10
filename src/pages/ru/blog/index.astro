@@ -9,6 +9,7 @@ import BlogCard from '../../../components/blog/BlogCard.astro';
 import { getBlogPosts } from '../../../lib/blog';
 import { getContent } from '../../../i18n/content';
 import { getLocalizedPath } from '../../../i18n/routes';
+import { buildBlogSchema, buildSchemaGraph } from '../../../lib/schema';
 
 const locale = 'ru';
 const { home, ui } = getContent(locale);
@@ -21,22 +22,22 @@ const blogSeo = {
     'Практические материалы о платной рекламе, выборе каналов, лендингах и A/B-тестах — с реальными кейсами, цифрами и важными оговорками.',
   canonical: 'https://profitmedia.co.il/ru/blog',
 };
-
-const blogSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Blog',
-  '@id': `${blogSeo.canonical}#blog`,
-  url: blogSeo.canonical,
-  name: blogSeo.title,
-  description: blogSeo.description,
-  inLanguage: 'ru',
-  blogPost: blogPosts.map((post) => ({
-    '@type': 'BlogPosting',
-    headline: post.data.title,
-    url: `https://profitmedia.co.il/ru/blog/${post.data.slug}`,
-    datePublished: post.data.publishDate.toISOString().slice(0, 10),
-  })),
-};
+const blogHeading = 'Практические материалы о рекламе и конверсии';
+const blogIntro =
+  'Разбираем рекламные кампании, лендинги и A/B-тесты без универсальных обещаний — на данных, реальных кейсах и практическом опыте.';
+const blogSchema = buildSchemaGraph([
+  buildBlogSchema({
+    locale,
+    canonical: blogSeo.canonical,
+    name: blogHeading,
+    description: blogIntro,
+    posts: blogPosts.map((post) => ({
+      title: post.data.title,
+      url: `https://profitmedia.co.il/ru/blog/${post.data.slug}`,
+      publishDate: post.data.publishDate.toISOString().slice(0, 10),
+    })),
+  }),
+]);
 ---
 
 <Layout
@@ -62,11 +63,8 @@ const blogSchema = {
           </svg>
         </span>
         <p class="blog-hero__eyebrow">Блог Profit Media</p>
-        <h1 class="blog-hero__title">Практические материалы о рекламе и конверсии</h1>
-        <p class="blog-hero__subtitle">
-          Разбираем рекламные кампании, лендинги и A/B-тесты без универсальных обещаний — на данных,
-          реальных кейсах и практическом опыте.
-        </p>
+        <h1 class="blog-hero__title">{blogHeading}</h1>
+        <p class="blog-hero__subtitle">{blogIntro}</p>
       </div>
     </section>
 

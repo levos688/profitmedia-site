@@ -9,7 +9,7 @@ excerpt: "Если тестировать только объявления, з�
 category: "Оптимизация конверсии"
 publishDate: 2026-07-25
 readingMinutes: 9
-author: "Лев Усиновский"
+author: "Лев Осиновский"
 image: "/images/blog/shipur-yahas-hamara-square.png"
 imageAlt: "Две версии страницы A и B с кнопками действия и стрелкой роста конверсии"
 imageWide: "/images/blog/shipur-yahas-hamara-wide.png"

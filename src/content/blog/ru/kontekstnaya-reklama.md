@@ -9,7 +9,7 @@ excerpt: "Чем бюджет площадки отличается от сто�
 category: "Рекламные кампании"
 publishDate: 2026-07-16
 readingMinutes: 7
-author: "Лев Усиновский"
+author: "Лев Осиновский"
 image: "/images/blog/kampeinim-memumanim-square-v4.png"
 imageAlt: "Мегафон, стрелка роста и монеты, символизирующие бюджет и результаты платной рекламы"
 imageWide: "/images/blog/kampeinim-memumanim-wide-v3.png"

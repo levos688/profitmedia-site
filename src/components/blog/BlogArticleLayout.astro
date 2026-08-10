@@ -11,6 +11,12 @@ import type { Locale } from '../../i18n/config';
 import { getLocalizedPath, type RouteId } from '../../i18n/routes';
 import { getBlogTranslation, type BlogPostData } from '../../lib/blog';
 import { hasBlogTranslationPair } from '../../lib/blog-pairing';
+import {
+  buildBlogPostingSchema,
+  buildBreadcrumbListSchema,
+  buildFaqPageSchema,
+  buildSchemaGraph,
+} from '../../lib/schema';
 import BlogFaq from './BlogFaq.astro';
 import BlogProse from './BlogProse.astro';
 
@@ -38,8 +44,8 @@ const formattedDate = post.publishDate.toLocaleDateString(locale === 'he' ? 'he-
 });
 const articleImage =
   post.translationKey === 'paid-campaigns-guide'
-    ? {}
-    : { image: [`https://profitmedia.co.il${post.imageWide}`, `https://profitmedia.co.il${post.image}`] };
+    ? undefined
+    : [`https://profitmedia.co.il${post.imageWide}`, `https://profitmedia.co.il${post.image}`];
 const contactCopy = locale === 'ru'
   ? {
       quote:
@@ -56,62 +62,34 @@ const contactCopy = locale === 'ru'
     }
   : undefined;
 
-const articleSchema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'BlogPosting',
-      '@id': `${canonicalUrl}#article`,
-      headline: post.title,
-      description: post.description,
-      datePublished: publishDate,
-      dateModified: modifiedDate,
-      inLanguage: locale === 'he' ? 'he-IL' : 'ru',
-      mainEntityOfPage: canonicalUrl,
-      url: canonicalUrl,
-      ...articleImage,
-      author: {
-        '@type': 'Person',
-        name: post.author,
-        url: `https://profitmedia.co.il${getLocalizedPath('about', locale)}#founder`,
+const articleSchema = buildSchemaGraph([
+  buildBlogPostingSchema({
+    locale,
+    canonical: canonicalUrl,
+    headline: post.title,
+    description: post.description,
+    publishDate,
+    modifiedDate,
+    author: post.author,
+    authorUrl: `https://profitmedia.co.il${getLocalizedPath('about', locale)}#founder`,
+    images: articleImage,
+  }),
+  buildBreadcrumbListSchema({
+    locale,
+    items: [
+      {
+        name: locale === 'he' ? 'דף הבית' : 'Главная',
+        item: `https://profitmedia.co.il${getLocalizedPath('home', locale)}`,
       },
-      publisher: {
-        '@type': 'Organization',
-        name: 'Profit Media',
-        logo: {
-          '@type': 'ImageObject',
-          url: 'https://profitmedia.co.il/icons/site-icon.png',
-        },
+      {
+        name: locale === 'he' ? 'בלוג' : 'Блог',
+        item: `https://profitmedia.co.il${blogPath}`,
       },
-    },
-    {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: locale === 'he' ? 'דף הבית' : 'Главная',
-          item: `https://profitmedia.co.il${getLocalizedPath('home', locale)}`,
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: locale === 'he' ? 'בלוג' : 'Блог',
-          item: `https://profitmedia.co.il${blogPath}`,
-        },
-        { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
-      ],
-    },
-    {
-      '@type': 'FAQPage',
-      mainEntity: post.faq.map((item) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    },
-  ],
-};
+      { name: post.title, item: canonicalUrl },
+    ],
+  }),
+  buildFaqPageSchema({ locale, canonical: canonicalUrl, items: post.faq }),
+]);
 ---
 
 <Layout
@@ -162,9 +140,13 @@ const articleSchema = {
         <BlogProse class="mt-8">
           <slot />
         </BlogProse>
-
-        <BlogFaq items={post.faq} />
       </div>
+
+      <section class="blog-faq__section section-padding" aria-label={locale === 'he' ? 'שאלות נפוצות' : 'Частые вопросы'}>
+        <div class="mx-auto max-w-3xl px-4 md:px-6">
+          <BlogFaq items={post.faq} />
+        </div>
+      </section>
 
       <PreviewContactForm
         locale={locale}
@@ -284,6 +266,11 @@ const articleSchema = {
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  .blog-faq__section {
+    margin-top: 2rem;
+    background: #f7f5f8;
   }
 
   @media (min-width: 768px) {

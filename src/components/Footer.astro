@@ -1,7 +1,6 @@
 ---
 import { normalizeLocale, type Locale } from '../i18n/config';
 import { getLocalizedPath, type RouteId } from '../i18n/routes';
-import LanguageSwitcher from './LanguageSwitcher.astro';
 
 interface Props {
   /** LP mode: only legal links (no About / Blog exits). */
@@ -10,7 +9,7 @@ interface Props {
   routeId?: RouteId;
 }
 
-const { minimal = false, routeId } = Astro.props;
+const { minimal = false } = Astro.props;
 const locale = normalizeLocale(Astro.props.locale);
 const labels = locale === 'he'
   ? {
@@ -55,7 +54,6 @@ const labels = locale === 'he'
           {labels.privacy}
         </a>
       </nav>
-      {!minimal && <LanguageSwitcher locale={locale} routeId={routeId} />}
     </div>
   </div>
 </footer>

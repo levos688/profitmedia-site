@@ -47,7 +47,7 @@ const labels = locale === 'he'
 ---
 
 <header class="site-header sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur transition-shadow duration-300" id="site-header">
-  <div class="header-bar mx-auto flex w-full max-w-6xl min-w-0 items-center gap-4 px-4 py-3 md:px-6 lg:flex-row">
+  <div class="header-bar mx-auto flex w-full max-w-6xl min-w-0 items-center gap-3 px-4 py-3 md:gap-4 md:px-6 lg:flex-row">
     <a href={homePath} class="header-logo block shrink-0" aria-label={labels.home}>
       <img
         src="/logo.svg"
@@ -58,7 +58,7 @@ const labels = locale === 'he'
       />
     </a>
 
-    <nav class="hidden min-w-0 flex-1 items-center justify-end gap-1 lg:flex" aria-label={labels.primaryNav}>
+    <nav class="hidden min-w-0 flex-1 items-center justify-end gap-0.5 lg:flex" aria-label={labels.primaryNav}>
       {
         nav.map((item) => (
           <a href={localizeNavHref(item.href)} class="nav-link" data-nav-link={navLinkId(item.href)}>
@@ -68,17 +68,9 @@ const labels = locale === 'he'
       }
     </nav>
 
-    <div class="hidden shrink-0 lg:block">
+    <div class="header-lang hidden shrink-0 lg:block">
       <LanguageSwitcher locale={locale} routeId={routeId} />
     </div>
-
-    <button
-      type="button"
-      class="btn-yellow hidden shrink-0 items-center justify-center rounded-full px-6 py-2 text-[0.96rem] font-black lg:inline-flex"
-      data-lead-modal-open
-    >
-      {cta}
-    </button>
 
     <button
       type="button"
@@ -251,8 +243,15 @@ const labels = locale === 'he'
 
   @media (min-width: 1024px) {
     .header-logo__img {
-      height: 4.375rem; /* 70px */
-      max-width: 240px;
+      height: 3.75rem; /* 60px — frees horizontal room for larger nav */
+      max-width: 200px;
+    }
+
+    .header-bar :global(.nav-link) {
+      font-size: 1.0625rem;
+      font-weight: 800;
+      padding-inline: 0.65rem;
+      white-space: nowrap;
     }
   }
 

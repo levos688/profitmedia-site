@@ -9,6 +9,16 @@ import {
 } from '../data/site';
 import type { Locale } from '../i18n/config';
 import type { HomeContent } from '../i18n/he/home';
+import {
+  buildFaqPageSchema,
+  buildHowToSchema,
+  buildItemListSchema,
+  buildOrganizationSchema,
+  buildSchemaGraph,
+  buildServiceSchema,
+  buildWebPageSchema,
+  buildWebsiteSchema,
+} from '../lib/schema';
 
 interface Props {
   locale?: Locale;
@@ -25,145 +35,48 @@ const content = Astro.props.content ?? {
   services: defaultServices,
 };
 const { targetAudience, processSteps, hero, seo: homeSeo, faqs, services } = content;
-const inLanguage = locale === 'he' ? 'he-IL' : 'ru';
-const pageId = `${homeSeo.canonical}#webpage`;
-
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  '@id': 'https://profitmedia.co.il/#organization',
-  name: 'Profit Media',
-  alternateName: 'פרופיט מדיה',
-  url: 'https://profitmedia.co.il/',
-  logo: 'https://profitmedia.co.il/icons/site-icon.png',
-  image: 'https://profitmedia.co.il/icons/site-icon.png',
-  description: homeSeo.description,
-  inLanguage,
-  areaServed: {
-    '@type': locale === 'he' ? 'Country' : 'AdministrativeArea',
-    name: locale === 'he' ? 'Israel' : 'Worldwide',
-  },
-  serviceType: services.map((service) => service.title),
-  knowsAbout: [
-    'Facebook Ads',
-    'Google Ads',
-    'Instagram Ads',
-    'Landing pages',
-    'Conversion rate optimization',
-    'Deal CRM',
-    'Offline conversions / lead quality feedback (Meta, Google, TikTok)',
-    'A/B testing',
-    'High-ticket sales',
-  ],
-  audience: {
-    '@type': 'BusinessAudience',
-    audienceType: targetAudience.subtitle,
-  },
-  availableLanguage: ['he', 'ru'],
-};
-
-const audienceListSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  '@id': `${homeSeo.canonical}#for-whom`,
-  name: targetAudience.title,
-  description: targetAudience.subtitle,
-  itemListElement: targetAudience.items.map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    name: item.title,
-    description: `${item.situation} ${item.outcome}`,
-  })),
-};
-
-const howToSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'HowTo',
-  '@id': `${homeSeo.canonical}#how-it-works`,
-  name: processSteps.title,
-  description: processSteps.subtitle,
-  step: processSteps.steps.map((step, index) => ({
-    '@type': 'HowToStep',
-    position: index + 1,
-    name: step.title,
-    text: step.description,
-  })),
-};
-
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  '@id': 'https://profitmedia.co.il/#website',
-  url: 'https://profitmedia.co.il/',
-  name: 'Profit Media',
-  description: homeSeo.description,
-  inLanguage,
-  publisher: {
-    '@id': 'https://profitmedia.co.il/#organization',
-  },
-};
-
-const webPageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  '@id': pageId,
-  url: homeSeo.canonical,
-  name: homeSeo.title,
-  description: homeSeo.description,
-  inLanguage,
-  isPartOf: {
-    '@id': 'https://profitmedia.co.il/#website',
-  },
-  about: {
-    '@id': 'https://profitmedia.co.il/#organization',
-  },
-  primaryImageOfPage: {
-    '@type': 'ImageObject',
-    url: 'https://profitmedia.co.il/images/hero/photo-min.svg',
-  },
-};
-
-const serviceSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: hero.title,
-  description: hero.subtitle,
-  provider: {
-    '@id': 'https://profitmedia.co.il/#organization',
-  },
-  areaServed: {
-    '@type': locale === 'he' ? 'Country' : 'AdministrativeArea',
-    name: locale === 'he' ? 'Israel' : 'Worldwide',
-  },
-  serviceType: services.map((service) => service.title),
-};
-
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  '@id': `${homeSeo.canonical}#faq`,
-  mainEntity: faqs.map((item) => ({
-    '@type': 'Question',
-    name: item.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: item.answer,
-    },
-  })),
-};
-
-const schemaGraph = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    organizationSchema,
-    websiteSchema,
-    webPageSchema,
-    serviceSchema,
-    audienceListSchema,
-    howToSchema,
-    faqSchema,
-  ],
-};
+const serviceTypes = services.map((service) => service.title);
+const heroTitle = hero.title.replace(/\n+/g, ' ');
+const schemaGraph = buildSchemaGraph([
+  buildOrganizationSchema({
+    locale,
+    description: homeSeo.description,
+    serviceTypes,
+    audience: targetAudience.subtitle,
+  }),
+  buildWebsiteSchema({ locale, description: homeSeo.description }),
+  buildWebPageSchema({
+    locale,
+    canonical: homeSeo.canonical,
+    name: heroTitle,
+    description: hero.subtitle,
+    image: 'https://profitmedia.co.il/images/hero/photo-min.svg',
+  }),
+  buildServiceSchema({
+    locale,
+    name: heroTitle,
+    description: hero.subtitle,
+    serviceTypes,
+  }),
+  buildItemListSchema({
+    locale,
+    canonical: homeSeo.canonical,
+    name: targetAudience.title,
+    description: targetAudience.subtitle,
+    items: targetAudience.items.map((item) => ({
+      title: item.title,
+      description: `${item.situation} ${item.outcome}`,
+    })),
+  }),
+  buildHowToSchema({
+    locale,
+    canonical: homeSeo.canonical,
+    name: processSteps.title,
+    description: processSteps.subtitle,
+    steps: processSteps.steps,
+  }),
+  buildFaqPageSchema({ locale, canonical: homeSeo.canonical, items: faqs }),
+]);
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(schemaGraph)} />
