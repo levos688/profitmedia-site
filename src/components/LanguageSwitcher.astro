@@ -1,0 +1,30 @@
+---
+import { localeMeta, normalizeLocale, type Locale } from '../i18n/config';
+import { findRouteId, getLocalizedPath, type RouteId } from '../i18n/routes';
+
+interface Props {
+  locale?: Locale;
+  routeId?: RouteId;
+}
+
+const locale = normalizeLocale(Astro.props.locale);
+const routeId = Astro.props.routeId ?? findRouteId(Astro.url.pathname);
+const targetRouteId = routeId ?? 'home';
+const languageLabel = locale === 'he' ? 'בחירת שפה' : 'Выбор языка';
+---
+
+<nav class="language-switcher" aria-label={languageLabel}>
+  {
+    (['he', 'ru'] as const).map((targetLocale) => (
+      <a
+        class="language-switcher__link"
+        href={getLocalizedPath(targetRouteId, targetLocale)}
+        hreflang={localeMeta[targetLocale].hreflang}
+        lang={targetLocale}
+        aria-current={targetLocale === locale ? 'page' : undefined}
+      >
+        {localeMeta[targetLocale].label}
+      </a>
+    ))
+  }
+</nav>

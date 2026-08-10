@@ -1,8 +1,24 @@
 ---
+interface Props {
+  label?: string;
+  ariaLabel?: string;
+  opensLeadModal?: boolean;
+}
+
+const {
+  label = 'קבלו אבחון קמפיין חינם',
+  ariaLabel = 'קריאה לפעולה',
+  opensLeadModal = false,
+} = Astro.props;
 ---
 
-<div class="sticky-cta" aria-label="קריאה לפעולה">
-  <button type="button" class="btn-yellow sticky-cta__btn" data-ab-sticky-label>
-    קבלו אבחון קמפיין חינם
+<div class="sticky-cta" aria-label={ariaLabel}>
+  <button
+    type="button"
+    class="btn-yellow sticky-cta__btn"
+    data-ab-sticky-label
+    data-lead-modal-open={opensLeadModal || undefined}
+  >
+    {label}
   </button>
 </div>

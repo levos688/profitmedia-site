@@ -1,0 +1,172 @@
+---
+import type { AboutContent as AboutContentData } from '../i18n/he/about';
+
+interface Props {
+  content: AboutContentData;
+}
+
+const { content } = Astro.props;
+const {
+  hero,
+  what,
+  audience,
+  system,
+  channels,
+  principles,
+  stats,
+  founder,
+  cta,
+} = content;
+---
+
+<main id="main-content" class="about-page">
+  <section class="about-hero section-padding">
+    <div class="mx-auto max-w-3xl px-4 text-center md:px-6">
+      <p class="about-hero__eyebrow">{hero.eyebrow}</p>
+      <h1 class="about-hero__title">{hero.title}</h1>
+      <p class="about-hero__subtitle">{hero.subtitle}</p>
+    </div>
+  </section>
+
+  <section class="about-section section-padding pt-0" aria-labelledby="about-what-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-what-title" class="about-section__title">{what.title}</h2>
+      {what.paragraphs.map((paragraph) => <p class="about-section__text">{paragraph}</p>)}
+    </div>
+  </section>
+
+  <section class="about-section about-section--soft section-padding" aria-labelledby="about-audience-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-audience-title" class="about-section__title">{audience.title}</h2>
+      <p class="about-section__text">{audience.intro}</p>
+      <ul class="about-list">{audience.items.map((item) => <li>{item}</li>)}</ul>
+      <p class="about-section__text about-section__text--muted">{audience.notFor}</p>
+    </div>
+  </section>
+
+  <section class="about-section section-padding" aria-labelledby="about-system-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-system-title" class="about-section__title">{system.title}</h2>
+      <p class="about-section__text">{system.intro}</p>
+      {system.blocks.map((block) => (
+        <div class="about-block">
+          <h3 class="about-block__title">{block.title}</h3>
+          <p class="about-section__text">{block.body}</p>
+          {block.items.length > 0 && <ul class="about-list">{block.items.map((item) => <li>{item}</li>)}</ul>}
+          {block.note && <p class="about-section__text about-section__text--emphasis">{block.note}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="about-section about-section--soft section-padding" aria-labelledby="about-channels-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-channels-title" class="about-section__title">{channels.title}</h2>
+      <p class="about-section__text">{channels.body}</p>
+    </div>
+  </section>
+
+  <section class="about-section section-padding" aria-labelledby="about-principles-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-principles-title" class="about-section__title">{principles.title}</h2>
+      <ul class="about-principles">
+        {principles.items.map((item) => <li><strong>{item.title}.</strong> {item.description}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="about-section about-section--soft section-padding" aria-labelledby="about-stats-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-stats-title" class="about-section__title">{stats.title}</h2>
+      <div class="about-stats">
+        {stats.items.map((item) => (
+          <div class="about-stat">
+            <p class="about-stat__value">{item.value}</p>
+            <p class="about-stat__label">{item.label}</p>
+          </div>
+        ))}
+      </div>
+      <p class="about-section__text about-section__text--muted">{stats.disclaimer}</p>
+    </div>
+  </section>
+
+  <section class="about-founder section-padding" id="founder" aria-labelledby="about-founder-title">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <div class="about-founder__grid">
+        <div class="about-founder__portrait" aria-hidden="false">
+          <div class="about-founder__glow" aria-hidden="true"></div>
+          <div class="about-founder__ring">
+            <picture>
+              <source srcset={founder.image} type="image/webp" />
+              <img src={founder.imageFallback} alt={founder.imageAlt} width="720" height="1200" loading="lazy" decoding="async" class="about-founder__photo" />
+            </picture>
+          </div>
+          <div class="about-founder__badge">
+            <p class="about-founder__name">{founder.name}</p>
+            <p class="about-founder__role">{founder.role}</p>
+          </div>
+        </div>
+        <div class="about-founder__copy">
+          <h2 id="about-founder-title" class="about-section__title">{founder.title}</h2>
+          {founder.paragraphs.map((paragraph) => <p class="about-section__text">{paragraph}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-cta-band section-padding" aria-labelledby="about-cta-title">
+    <div class="mx-auto max-w-3xl px-4 text-center md:px-6">
+      <h2 id="about-cta-title" class="about-cta-band__title">{cta.title}</h2>
+      <p class="about-cta-band__text">{cta.body}</p>
+      <a href="#contact" class="btn-yellow inline-flex rounded-full px-8 py-3.5 text-base font-black">{cta.button}</a>
+    </div>
+  </section>
+  <slot />
+</main>
+
+<style>
+  .about-hero { background: linear-gradient(160deg, #faf8fc 0%, #fff 55%, #f8f4fa 100%); }
+  .about-hero__eyebrow { margin: 0; color: #c60691; font-size: .9375rem; font-weight: 800; }
+  .about-hero__title { margin: .5rem 0 0; font-size: 2.125rem; line-height: 1.25; font-weight: 900; color: #111827; }
+  .about-hero__subtitle { margin: 1.1rem auto 0; max-width: 40rem; font-size: 1.125rem; line-height: 1.7; color: #4b5563; }
+  .about-section__title { margin: 0 0 1.25rem; font-size: 1.625rem; line-height: 1.3; font-weight: 900; color: #29102c; }
+  .about-section__text { margin: 0 0 1.1rem; font-size: 1.0625rem; line-height: 1.8; color: #374151; }
+  .about-section__text--muted { color: #6b7280; }
+  .about-section__text--emphasis { color: #29102c; font-weight: 600; }
+  .about-section--soft { background: #faf8fc; }
+  .about-list { margin: 0 0 1.25rem; padding: 0; list-style: none; }
+  .about-list li { position: relative; margin: 0 0 .65rem; padding-inline-start: 1.35rem; font-size: 1.0625rem; line-height: 1.65; color: #374151; }
+  .about-list li::before { content: ''; position: absolute; top: .55rem; inset-inline-start: 0; width: .5rem; height: .5rem; border-radius: 50%; background: #651561; }
+  .about-block { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e8e0ec; }
+  .about-block:first-of-type { margin-top: 1.5rem; }
+  .about-block__title { margin: 0 0 .75rem; font-size: 1.2rem; font-weight: 800; color: #29102c; }
+  .about-principles { margin: 0; padding: 0; list-style: none; }
+  .about-principles li { margin: 0 0 1rem; padding: 1rem 1.15rem; border-radius: 4px; background: #faf8fc; font-size: 1.0625rem; line-height: 1.7; color: #374151; }
+  .about-principles strong { color: #29102c; }
+  .about-stats { display: grid; gap: 1rem; margin-bottom: 1.25rem; }
+  .about-stat { padding: 1.15rem 1rem; border-radius: 4px; background: #fff; border: 1px solid #e8e0ec; text-align: center; }
+  .about-stat__value { margin: 0; font-size: 1.75rem; font-weight: 900; color: #651561; line-height: 1.2; }
+  .about-stat__label { margin: .4rem 0 0; font-size: .875rem; line-height: 1.45; color: #4b5563; }
+  .about-founder { background: linear-gradient(165deg, #faf8fc 0%, #fff 45%, #f7f2f8 100%); overflow: hidden; }
+  .about-founder__grid { display: grid; gap: 2.5rem; align-items: center; }
+  .about-founder__portrait { position: relative; max-width: 280px; margin-inline: auto; }
+  .about-founder__glow { position: absolute; inset: -12% -18% -8%; background: radial-gradient(ellipse at 30% 20%, rgba(198,6,145,.18), transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(101,21,97,.22), transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(252,192,0,.16), transparent 50%); filter: blur(2px); z-index: 0; pointer-events: none; }
+  .about-founder__ring { position: relative; z-index: 1; padding: 4px; border-radius: 18px; background: linear-gradient(145deg, #c60691 0%, #651561 42%, #5a1c73 72%, #fcc000 100%); box-shadow: 0 18px 40px rgba(101,21,97,.18), 0 2px 0 rgba(255,255,255,.35) inset; }
+  .about-founder__ring::before { content: ''; position: absolute; top: -10px; inset-inline-end: -10px; width: 52px; height: 52px; border-radius: 50%; border: 2px solid rgba(252,192,0,.55); z-index: 2; pointer-events: none; }
+  .about-founder__ring::after { content: ''; position: absolute; bottom: 18%; inset-inline-start: -14px; width: 10px; height: 10px; border-radius: 50%; background: #fcc000; box-shadow: 0 0 0 6px rgba(252,192,0,.2); z-index: 2; pointer-events: none; }
+  .about-founder__photo { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; object-position: 42% 0%; border-radius: 14px; background: #f3eef4; }
+  .about-founder__badge { position: relative; z-index: 1; margin-top: -1.25rem; margin-inline: 1rem 0; padding: .85rem 1.1rem; border-radius: 12px; background: rgba(255,255,255,.96); border: 1px solid rgba(101,21,97,.1); box-shadow: 0 10px 28px rgba(41,16,44,.1); text-align: start; }
+  .about-founder__name { margin: 0; font-size: 1.0625rem; font-weight: 900; color: #29102c; }
+  .about-founder__role { margin: .2rem 0 0; font-size: .875rem; font-weight: 600; color: #c60691; }
+  .about-founder__copy .about-section__title { margin-top: 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    .about-founder__ring { transition: transform 250ms ease-out, box-shadow 250ms ease-out; }
+    .about-founder__portrait:hover .about-founder__ring { transform: translateY(-3px); box-shadow: 0 22px 48px rgba(101,21,97,.22), 0 2px 0 rgba(255,255,255,.35) inset; }
+  }
+  .about-cta-band { background: linear-gradient(160deg, #651561 0%, #5a1c73 55%, #4a1558 100%); color: #fff; }
+  .about-cta-band__title { margin: 0; font-size: 1.75rem; font-weight: 900; }
+  .about-cta-band__text { margin: 1rem auto 1.5rem; max-width: 38rem; font-size: 1.0625rem; line-height: 1.75; color: rgba(255,255,255,.9); }
+  @media (min-width: 640px) { .about-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 768px) { .about-hero__title { font-size: 2.75rem; } .about-section__title { font-size: 1.875rem; } }
+  @media (min-width: 900px) { .about-founder__grid { grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); gap: 3.5rem; } .about-founder__portrait { max-width: none; margin-inline: 0; } }
+</style>

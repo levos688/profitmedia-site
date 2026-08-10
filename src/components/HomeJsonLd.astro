@@ -1,5 +1,32 @@
 ---
-import { targetAudience, processSteps, hero, homeSeo, faqs } from '../data/site';
+import {
+  targetAudience as defaultTargetAudience,
+  processSteps as defaultProcessSteps,
+  hero as defaultHero,
+  homeSeo as defaultSeo,
+  faqs as defaultFaqs,
+  services as defaultServices,
+} from '../data/site';
+import type { Locale } from '../i18n/config';
+import type { HomeContent } from '../i18n/he/home';
+
+interface Props {
+  locale?: Locale;
+  content?: Pick<HomeContent, 'targetAudience' | 'processSteps' | 'hero' | 'seo' | 'faqs' | 'services'>;
+}
+
+const { locale = 'he' } = Astro.props;
+const content = Astro.props.content ?? {
+  targetAudience: defaultTargetAudience,
+  processSteps: defaultProcessSteps,
+  hero: defaultHero,
+  seo: defaultSeo,
+  faqs: defaultFaqs,
+  services: defaultServices,
+};
+const { targetAudience, processSteps, hero, seo: homeSeo, faqs, services } = content;
+const inLanguage = locale === 'he' ? 'he-IL' : 'ru';
+const pageId = `${homeSeo.canonical}#webpage`;
 
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -11,20 +38,12 @@ const organizationSchema = {
   logo: 'https://profitmedia.co.il/icons/site-icon.png',
   image: 'https://profitmedia.co.il/icons/site-icon.png',
   description: homeSeo.description,
-  inLanguage: 'he-IL',
+  inLanguage,
   areaServed: {
-    '@type': 'Country',
-    name: 'Israel',
+    '@type': locale === 'he' ? 'Country' : 'AdministrativeArea',
+    name: locale === 'he' ? 'Israel' : 'Worldwide',
   },
-  serviceType: [
-    'מערכת עסקאות מהפרסום',
-    'ניהול קמפיינים בפייסבוק',
-    'ניהול קמפיינים באינסטגרם',
-    'ניהול קמפיינים בגוגל',
-    'דפי נחיתה עם בדיקות חכמות',
-    'CRM עסקאות',
-    'פידבק איכות ליד לפלטפורמות הפרסום',
-  ],
+  serviceType: services.map((service) => service.title),
   knowsAbout: [
     'Facebook Ads',
     'Google Ads',
@@ -38,15 +57,15 @@ const organizationSchema = {
   ],
   audience: {
     '@type': 'BusinessAudience',
-    audienceType: 'עסקים עם עסקאות גבוהות שנמכרים בשיחה, בוואטסאפ או בפגישה',
+    audienceType: targetAudience.subtitle,
   },
-  availableLanguage: ['he', 'en'],
+  availableLanguage: ['he', 'ru'],
 };
 
 const audienceListSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  '@id': 'https://profitmedia.co.il/#for-whom',
+  '@id': `${homeSeo.canonical}#for-whom`,
   name: targetAudience.title,
   description: targetAudience.subtitle,
   itemListElement: targetAudience.items.map((item, index) => ({
@@ -60,8 +79,8 @@ const audienceListSchema = {
 const howToSchema = {
   '@context': 'https://schema.org',
   '@type': 'HowTo',
-  '@id': 'https://profitmedia.co.il/#how-it-works',
-  name: 'איך Profit Media מביאה עסקאות מהפרסום',
+  '@id': `${homeSeo.canonical}#how-it-works`,
+  name: processSteps.title,
   description: processSteps.subtitle,
   step: processSteps.steps.map((step, index) => ({
     '@type': 'HowToStep',
@@ -78,7 +97,7 @@ const websiteSchema = {
   url: 'https://profitmedia.co.il/',
   name: 'Profit Media',
   description: homeSeo.description,
-  inLanguage: 'he-IL',
+  inLanguage,
   publisher: {
     '@id': 'https://profitmedia.co.il/#organization',
   },
@@ -87,11 +106,11 @@ const websiteSchema = {
 const webPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  '@id': 'https://profitmedia.co.il/#webpage',
+  '@id': pageId,
   url: homeSeo.canonical,
   name: homeSeo.title,
   description: homeSeo.description,
-  inLanguage: 'he-IL',
+  inLanguage,
   isPartOf: {
     '@id': 'https://profitmedia.co.il/#website',
   },
@@ -113,16 +132,16 @@ const serviceSchema = {
     '@id': 'https://profitmedia.co.il/#organization',
   },
   areaServed: {
-    '@type': 'Country',
-    name: 'Israel',
+    '@type': locale === 'he' ? 'Country' : 'AdministrativeArea',
+    name: locale === 'he' ? 'Israel' : 'Worldwide',
   },
-  serviceType: 'ניהול קמפיינים ולידים לעסקים עם עסקאות גבוהות',
+  serviceType: services.map((service) => service.title),
 };
 
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  '@id': 'https://profitmedia.co.il/#faq',
+  '@id': `${homeSeo.canonical}#faq`,
   mainEntity: faqs.map((item) => ({
     '@type': 'Question',
     name: item.question,

@@ -1,0 +1,294 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import LeadCaptureModal from '../preview/LeadCaptureModal.astro';
+import PreviewContactForm from '../preview/PreviewContactForm.astro';
+import StickyMobileCta from '../preview/StickyMobileCta.astro';
+import { getContent } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+import { getLocalizedPath, type RouteId } from '../../i18n/routes';
+import { getBlogTranslation, type BlogPostData } from '../../lib/blog';
+import { hasBlogTranslationPair } from '../../lib/blog-pairing';
+import BlogFaq from './BlogFaq.astro';
+import BlogProse from './BlogProse.astro';
+
+interface Props {
+  post: BlogPostData;
+  routeId: RouteId;
+}
+
+const { post, routeId } = Astro.props;
+const locale: Locale = post.locale;
+const pairedLocale: Locale = locale === 'he' ? 'ru' : 'he';
+const pairedPost = await getBlogTranslation(post.translationKey, pairedLocale);
+const hasTranslation = hasBlogTranslationPair(post, pairedPost ? [pairedPost.data] : []);
+const { home, ui } = getContent(locale);
+const blogPath = getLocalizedPath('blog', locale);
+const thankYouPath = getLocalizedPath('thankYou', locale);
+const privacyPath = getLocalizedPath('privacy', locale);
+const canonicalUrl = `https://profitmedia.co.il${blogPath}/${post.slug}`;
+const publishDate = post.publishDate.toISOString().slice(0, 10);
+const modifiedDate = (post.updatedDate ?? post.publishDate).toISOString().slice(0, 10);
+const formattedDate = post.publishDate.toLocaleDateString(locale === 'he' ? 'he-IL' : 'ru-RU', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const articleImage =
+  post.translationKey === 'paid-campaigns-guide'
+    ? {}
+    : { image: [`https://profitmedia.co.il${post.imageWide}`, `https://profitmedia.co.il${post.image}`] };
+const contactCopy = locale === 'ru'
+  ? {
+      quote:
+        '«Когда реклама, страница и CRM связаны, видно, где вложения в рекламу действительно приводят к встречам и сделкам».',
+      quoteFooter: 'Так работает система, которая измеряет ценность, а не только лиды',
+      benefitsLabel: ui.modal.benefitsLabel,
+      benefits: [
+        'Сопоставление расходов со встречами и сделками',
+        'Рекомендации по аналитике и оптимизации',
+        'Личный ответ в течение 24 часов',
+      ],
+      eyebrow: 'Без обязательств',
+      title: 'Оставьте контакты и получите бесплатную диагностику рекламы',
+    }
+  : undefined;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${canonicalUrl}#article`,
+      headline: post.title,
+      description: post.description,
+      datePublished: publishDate,
+      dateModified: modifiedDate,
+      inLanguage: locale === 'he' ? 'he-IL' : 'ru',
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      ...articleImage,
+      author: {
+        '@type': 'Person',
+        name: post.author,
+        url: `https://profitmedia.co.il${getLocalizedPath('about', locale)}#founder`,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Profit Media',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://profitmedia.co.il/icons/site-icon.png',
+        },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: locale === 'he' ? 'דף הבית' : 'Главная',
+          item: `https://profitmedia.co.il${getLocalizedPath('home', locale)}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: locale === 'he' ? 'בלוג' : 'Блог',
+          item: `https://profitmedia.co.il${blogPath}`,
+        },
+        { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: post.faq.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    },
+  ],
+};
+---
+
+<Layout
+  title={post.seoTitle}
+  description={post.description}
+  canonical={canonicalUrl}
+  locale={locale}
+  routeId={routeId}
+  emitAlternates={hasTranslation}
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleSchema)} />
+  <Header locale={locale} routeId={routeId} nav={home.nav} cta={home.cta} />
+  <main id="main-content">
+    <article
+      class={`blog-article blog-article--${post.visual.variant}`}
+      data-visual-variant={post.visual.variant}
+    >
+      <div class="mx-auto max-w-3xl px-4 pt-10 md:px-6 md:pt-14">
+        <nav
+          class="blog-breadcrumbs"
+          data-breadcrumb-decoration={post.visual.breadcrumb}
+          aria-label={locale === 'he' ? 'פירורי לחם' : 'Навигационная цепочка'}
+        >
+          <a href={blogPath}>{locale === 'he' ? 'בלוג' : 'Блог'}</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{post.category}</span>
+        </nav>
+
+        <p class="blog-article__eyebrow">{post.category}</p>
+        <h1 class="blog-article__title" data-title-treatment={post.visual.title}>{post.title}</h1>
+
+        <div class="blog-article__meta">
+          <span>{formattedDate}</span>
+          <span aria-hidden="true">·</span>
+          <span>{ui.blog.readingMinutes(post.readingMinutes)}</span>
+        </div>
+
+        <figure class="blog-article__figure" data-hero-treatment={post.visual.hero}>
+          <img
+            src={post.imageWide}
+            alt={post.imageWideAlt}
+            width={post.visual.heroWidth}
+            height={post.visual.heroHeight}
+            loading="eager"
+          />
+        </figure>
+
+        <BlogProse class="mt-8">
+          <slot />
+        </BlogProse>
+
+        <BlogFaq items={post.faq} />
+      </div>
+
+      <PreviewContactForm
+        locale={locale}
+        strings={ui.form}
+        thankYouUrl={thankYouPath}
+        cta={home.cta}
+        privacyHref={privacyPath}
+        copy={contactCopy}
+      />
+
+      <div class="mx-auto max-w-3xl px-4 py-10 md:px-6 md:py-14">
+        <p>
+          <a href={blogPath} class="font-medium text-brand-purple underline">
+            {locale === 'he' ? `← ${ui.blog.back}` : `${ui.blog.back} →`}
+          </a>
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} routeId={routeId} />
+  <LeadCaptureModal
+    locale={locale}
+    strings={ui.form}
+    thankYouUrl={thankYouPath}
+    modal={ui.modal}
+    privacyHref={privacyPath}
+  />
+  <StickyMobileCta label={home.cta} ariaLabel={ui.accessibility.ctaRegion} />
+</Layout>
+
+<style>
+  .blog-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .blog-breadcrumbs a {
+    color: #651561;
+  }
+
+  .blog-article--standard .blog-breadcrumbs a {
+    font-weight: 600;
+  }
+
+  .blog-article--conversion .blog-breadcrumbs a {
+    text-decoration: underline;
+  }
+
+  .blog-article--standard .blog-article__eyebrow {
+    margin: 0;
+    color: #c60691;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .blog-article--conversion .blog-article__eyebrow {
+    margin: 0 0 0.75rem;
+    color: #c60691;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .blog-article--standard .blog-article__title {
+    margin: 0.6rem 0 0;
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1.3;
+  }
+
+  .blog-article--conversion .blog-article__title {
+    margin: 0 0 1rem;
+    color: #651561;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  .blog-article--standard .blog-article__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+    color: #6b7280;
+    font-size: 0.9375rem;
+  }
+
+  .blog-article--conversion .blog-article__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .blog-article--standard .blog-article__figure {
+    margin: 1.75rem 0 0;
+    padding: 1.5rem;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-radius: 4px;
+    background: linear-gradient(160deg, #faf8fc 0%, #f3edf5 100%);
+  }
+
+  .blog-article--conversion .blog-article__figure {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #faf8fc;
+  }
+
+  .blog-article__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (min-width: 768px) {
+    .blog-article--standard .blog-article__title {
+      font-size: 2.5rem;
+    }
+  }
+</style>

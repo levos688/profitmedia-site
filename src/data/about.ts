@@ -132,3 +132,17 @@ export const aboutCta = {
   body: 'רוצים לבדוק אם זה מתאים גם אצלכם? באבחון החינם אבדוק את הפרסום והמסר, אצביע על נקודות לשיפור ואציע כיוון מעשי — מענה אישי תוך 24 שעות, בלי התחייבות.',
   button: 'קבלו אבחון קמפיין חינם',
 };
+
+/** Complete source bundle for locale-safe About page rendering. */
+export const about = {
+  seo: aboutSeo,
+  hero: aboutHero,
+  what: aboutWhat,
+  audience: aboutAudience,
+  system: aboutSystem,
+  channels: aboutChannels,
+  principles: aboutPrinciples,
+  stats: aboutStats,
+  founder: aboutFounder,
+  cta: aboutCta,
+};

@@ -1,13 +1,21 @@
 ---
 import HeroIllustration from '../HeroIllustration.astro';
 import PremiumAtmosphere from './PremiumAtmosphere.astro';
-import { hero } from '../../data/site';
+import { hero as defaultHero } from '../../data/site';
+import type { HomeContent } from '../../i18n/he/home';
 
 interface Props {
   overrideTitle?: string;
+  content?: HomeContent['hero'];
+  illustrationAlt?: string;
 }
 
-const { overrideTitle } = Astro.props;
+const {
+  overrideTitle,
+  content = defaultHero,
+  illustrationAlt = 'פרסום דיגיטלי — איור',
+} = Astro.props;
+const hero = content;
 const displayTitle = overrideTitle || hero.title;
 ---
 
@@ -37,7 +45,7 @@ const displayTitle = overrideTitle || hero.title;
       </h1>
 
       <div class="hero-visual">
-        <HeroIllustration />
+        <HeroIllustration alt={illustrationAlt} />
       </div>
 
       <div class="hero-more text-white">

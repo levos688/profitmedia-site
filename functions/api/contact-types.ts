@@ -35,6 +35,7 @@ export interface ContactPayload {
   referrer?: string;
   utm?: UtmParams;
   tracking?: Record<string, string>;
+  locale?: 'he' | 'ru';
   language?: string;
   client?: string;
   quizAnswer?: string;
@@ -51,6 +52,7 @@ export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'
   referrer: string;
   utm: UtmParams;
   tracking: Record<string, string>;
+  locale: 'he' | 'ru' | '';
   language: string;
   client: string;
   quizAnswer: string;

@@ -1,7 +1,20 @@
 ---
 import Reveal from './Reveal.astro';
 import CheckIcon from './icons/CheckIcon.astro';
-import { namedOffer, homeCta } from '../data/site';
+import { namedOffer as defaultNamedOffer, homeCta as defaultCta } from '../data/site';
+import type { HomeContent } from '../i18n/he/home';
+
+interface Props {
+  content?: HomeContent['namedOffer'];
+  fallbackCta?: string;
+  includesTitle?: string;
+}
+
+const {
+  content = defaultNamedOffer,
+  fallbackCta = defaultCta,
+  includesTitle = 'מה כלול',
+} = Astro.props;
 ---
 
 <section id="offer" class="named-offer section-padding below-fold" aria-labelledby="named-offer-title">
@@ -9,17 +22,17 @@ import { namedOffer, homeCta } from '../data/site';
     <Reveal>
       <div class="named-offer__panel">
         <header class="named-offer__header">
-          <p class="named-offer__eyebrow">{namedOffer.eyebrow}</p>
-          <h2 id="named-offer-title" class="named-offer__title">{namedOffer.title}</h2>
-          <p class="named-offer__subtitle">{namedOffer.subtitle}</p>
+          <p class="named-offer__eyebrow">{content.eyebrow}</p>
+          <h2 id="named-offer-title" class="named-offer__title">{content.title}</h2>
+          <p class="named-offer__subtitle">{content.subtitle}</p>
         </header>
 
         <div class="named-offer__grid">
           <div class="named-offer__block">
-            <h3 class="named-offer__block-title">מה כלול</h3>
+            <h3 class="named-offer__block-title">{includesTitle}</h3>
             <ul class="named-offer__list">
               {
-                namedOffer.includes.map((item) => (
+                content.includes.map((item) => (
                   <li>
                     <span class="named-offer__check" aria-hidden="true">
                       <CheckIcon />
@@ -32,10 +45,10 @@ import { namedOffer, homeCta } from '../data/site';
           </div>
 
           <div class="named-offer__block named-offer__block--accent" data-ab-offer>
-            <h3 class="named-offer__block-title" data-ab-offer-title>{namedOffer.diagnosisTitle}</h3>
+            <h3 class="named-offer__block-title" data-ab-offer-title>{content.diagnosisTitle}</h3>
             <ul class="named-offer__list" data-ab-offer-items>
               {
-                namedOffer.diagnosisItems.map((item) => (
+                content.diagnosisItems.map((item) => (
                   <li>
                     <span class="named-offer__check" aria-hidden="true">
                       <CheckIcon />
@@ -52,7 +65,7 @@ import { namedOffer, homeCta } from '../data/site';
               data-ab-open="offer"
               data-ab-offer-button
             >
-              {namedOffer.cta || homeCta}
+              {content.cta || fallbackCta}
             </button>
           </div>
         </div>

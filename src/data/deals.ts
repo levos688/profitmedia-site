@@ -248,3 +248,13 @@ export const dealsFaqs = [
 export const dealsMicro = {
   stickyCta: 'אבחון חינם תוך 24 שעות',
 };
+
+/**
+ * Homepage-only slices from the Deals-from-Ads product story.
+ * Paid landing-page content remains separate and Hebrew-only.
+ */
+export const homepageDeals = {
+  contrast: dealsContrast,
+  process: dealsProcess,
+  results: dealsResults,
+};

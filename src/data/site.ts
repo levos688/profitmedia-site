@@ -1,3 +1,5 @@
+import { homepageDeals } from './deals';
+
 export const hero = {
   eyebrow: 'מערכת עסקאות מהפרסום — לא סוכנות רגילה',
   title: 'הליד הכי זול שלכם יכול להיות היקר ביותר',
@@ -435,3 +437,32 @@ export const clientLogos = [
   { src: '/images/clients/13.svg', alt: 'לקוח' },
   { src: '/images/clients/14.svg', alt: 'לקוח' },
 ];
+
+/** Complete source bundle for locale-safe homepage rendering. */
+export const home = {
+  hero,
+  heroPain,
+  seo: homeSeo,
+  targetAudience,
+  processSteps,
+  services,
+  brand,
+  agencyStats,
+  whyUs,
+  namedOffer,
+  cta: homeCta,
+  nav: homeNav,
+  faqs,
+  midPageCta,
+  modal: modalConfig,
+  formPlaceholders,
+  formLabels,
+  campaignResults,
+  videoTestimonials,
+  portfolioImageSpec,
+  landings,
+  clientLogos,
+  dealsContrast: homepageDeals.contrast,
+  dealsProcess: homepageDeals.process,
+  dealsResults: homepageDeals.results,
+};

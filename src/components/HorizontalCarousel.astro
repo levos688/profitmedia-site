@@ -11,9 +11,19 @@ interface Props {
   loop?: boolean;
   /** Fade keeps every card whole; slide is the default for visual galleries. */
   motion?: 'slide' | 'fade';
+  nextLabel?: string;
+  previousLabel?: string;
 }
 
-const { ariaLabel, gap = 'normal', shuffle = false, loop = true, motion = 'slide' } = Astro.props;
+const {
+  ariaLabel,
+  gap = 'normal',
+  shuffle = false,
+  loop = true,
+  motion = 'slide',
+  nextLabel = 'גלול קדימה',
+  previousLabel = 'גלול אחורה',
+} = Astro.props;
 const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -26,7 +36,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   <button
     type="button"
     class="carousel-arrow carousel-arrow--edge-start"
-    aria-label="גלול קדימה"
+    aria-label={nextLabel}
     data-carousel-next={uid}
   >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -48,7 +58,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   <button
     type="button"
     class="carousel-arrow carousel-arrow--edge-end"
-    aria-label="גלול אחורה"
+    aria-label={previousLabel}
     data-carousel-prev={uid}
   >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">

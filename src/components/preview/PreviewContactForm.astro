@@ -3,6 +3,59 @@ import CheckIcon from '../icons/CheckIcon.astro';
 import Reveal from '../Reveal.astro';
 import PremiumAtmosphere from './PremiumAtmosphere.astro';
 import { homeCta, formPlaceholders, formLabels } from '../../data/site';
+import type { Locale } from '../../i18n/config';
+import type { UiStrings } from '../../i18n/he/ui';
+
+interface Props {
+  locale?: Locale;
+  strings?: UiStrings['form'];
+  thankYouUrl?: string;
+  cta?: string;
+  privacyHref?: string;
+  copy?: {
+    quote: string;
+    quoteFooter: string;
+    benefitsLabel: string;
+    benefits: readonly string[];
+    eyebrow: string;
+    title: string;
+  };
+}
+
+const {
+  locale = 'he',
+  strings = {
+    name: formLabels.name,
+    phone: formLabels.phone,
+    email: 'מייל',
+    vertical: formLabels.vertical,
+    namePlaceholder: formPlaceholders.name,
+    phonePlaceholder: formPlaceholders.phone,
+    emailPlaceholder: 'מייל',
+    verticalPlaceholder: formPlaceholders.vertical,
+    submit: homeCta,
+    sending: 'שולח…',
+    nameError: 'נא להזין שם מלא',
+    phoneError: 'נא להזין מספר טלפון תקין',
+    verticalError: 'נא להזין את תחום העסק',
+    privacyError: 'יש לאשר את מדיניות הפרטיות',
+    genericError: 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il',
+    privacyPrefix: 'קראתי ואני מאשר/ת את ',
+    privacyLink: 'מדיניות הפרטיות',
+    privacySuffix: ', ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)',
+  },
+  thankYouUrl,
+  cta = homeCta,
+  privacyHref = '/prat',
+  copy = {
+    quote: '"כשמחברים את הפרסום לדף ול־CRM, רואים איפה ההשקעה באמת מייצרת פגישות ועסקאות."',
+    quoteFooter: 'כך נראית מערכת שמודדת ערך, לא רק לידים',
+    benefitsLabel: 'מה מקבלים',
+    benefits: ['מיפוי ההשקעה מול פגישות ועסקאות', 'המלצות לחיבור המדידה והאופטימיזציה', 'מענה תוך 24 שעות'],
+    eyebrow: 'ללא כל התחייבות',
+    title: 'השאירו פרטים וקבלו אבחון קמפיין חינם',
+  },
+} = Astro.props;
 ---
 
 <section id="contact" class="preview-contact-depth contact-section section-padding below-fold relative overflow-hidden">
@@ -11,33 +64,27 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
   <div class="relative mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-        <div class="order-2 flex flex-col justify-center text-right text-white max-lg:items-center max-lg:text-center lg:order-none lg:min-h-[28rem]">
+        <div class="order-2 flex flex-col justify-center text-start text-white max-lg:items-center max-lg:text-center lg:order-none lg:min-h-[28rem]">
           <blockquote class="mb-8 max-w-md text-lg font-bold leading-relaxed text-white/95 md:text-xl">
-            "כשמחברים את הפרסום לדף ול־CRM, רואים איפה ההשקעה באמת מייצרת פגישות ועסקאות."
-            <footer class="mt-3 text-base font-semibold text-white/75">כך נראית מערכת שמודדת ערך, לא רק לידים</footer>
+            {copy.quote}
+            <footer class="mt-3 text-base font-semibold text-white/75">{copy.quoteFooter}</footer>
           </blockquote>
 
-          <ul class="contact-benefits space-y-5 text-lg text-white/90 md:text-xl lg:space-y-6" aria-label="מה מקבלים">
-            <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
-              <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
-              <span>מיפוי ההשקעה מול פגישות ועסקאות</span>
-            </li>
-            <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
-              <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
-              <span>המלצות לחיבור המדידה והאופטימיזציה</span>
-            </li>
-            <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
-              <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
-              <span>מענה תוך 24 שעות</span>
-            </li>
+          <ul class="contact-benefits space-y-5 text-lg text-white/90 md:text-xl lg:space-y-6" aria-label={copy.benefitsLabel}>
+            {copy.benefits.map((benefit) => (
+              <li class="flex items-center justify-start gap-3.5 max-lg:justify-center">
+                <span class="contact-check" aria-hidden="true"><CheckIcon /></span>
+                <span>{benefit}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
         <div class="contact-form-column order-1 w-full max-w-lg justify-self-center lg:order-none lg:max-w-none lg:justify-self-auto">
-          <div class="contact-form-heading mb-8 w-full text-center text-white md:mb-10 lg:text-right">
-            <p class="contact-form-eyebrow mb-3 font-semibold text-white/85" data-ab-bottom-eyebrow>ללא כל התחייבות</p>
+          <div class="contact-form-heading mb-8 w-full text-center text-white md:mb-10 lg:text-start">
+            <p class="contact-form-eyebrow mb-3 font-semibold text-white/85" data-ab-bottom-eyebrow>{copy.eyebrow}</p>
             <h2 class="contact-form-title w-full font-black leading-tight" data-ab-bottom-title>
-              השאירו פרטים וקבלו אבחון קמפיין חינם
+              {copy.title}
             </h2>
           </div>
 
@@ -46,12 +93,21 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
             method="POST"
             action="#"
             id="preview-contact-form"
+            data-locale={locale}
+            data-thank-you={thankYouUrl}
+            data-sending={strings.sending}
+            data-name-error={strings.nameError}
+            data-phone-error={strings.phoneError}
+            data-vertical-error={strings.verticalError}
+            data-privacy-error={strings.privacyError}
+            data-generic-error={strings.genericError}
+            data-submit-label={cta}
             novalidate
             autocomplete="off"
           >
             <div class="space-y-2.5 md:space-y-3.5">
               <div class="field-group">
-                <label for="preview-name" class="preview-contact-label">{formLabels.name}</label>
+                <label for="preview-name" class="preview-contact-label">{strings.name}</label>
                 <input
                   type="text"
                   id="preview-name"
@@ -59,14 +115,14 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
                   required
                   autocomplete="name"
                   class="contact-input"
-                  placeholder={formPlaceholders.name}
+                  placeholder={strings.namePlaceholder}
                   aria-describedby="preview-name-error"
                 />
                 <p id="preview-name-error" class="field-error hidden" role="alert"></p>
               </div>
 
               <div class="field-group">
-                <label for="preview-phone" class="preview-contact-label">{formLabels.phone}</label>
+                <label for="preview-phone" class="preview-contact-label">{strings.phone}</label>
                 <input
                   type="tel"
                   id="preview-phone"
@@ -76,14 +132,14 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
                   autocomplete="tel"
                   pattern="[0-9\-+() ]{9,15}"
                   class="contact-input"
-                  placeholder={formPlaceholders.phone}
+                  placeholder={strings.phonePlaceholder}
                   aria-describedby="preview-phone-error"
                 />
                 <p id="preview-phone-error" class="field-error hidden" role="alert"></p>
               </div>
 
               <div class="field-group">
-                <label for="preview-vertical" class="preview-contact-label">{formLabels.vertical}</label>
+                <label for="preview-vertical" class="preview-contact-label">{strings.vertical}</label>
                 <input
                   type="text"
                   id="preview-vertical"
@@ -91,7 +147,7 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
                   required
                   autocomplete="organization-title"
                   class="contact-input"
-                  placeholder={formPlaceholders.vertical}
+                  placeholder={strings.verticalPlaceholder}
                   aria-describedby="preview-vertical-error"
                 />
                 <p id="preview-vertical-error" class="field-error hidden" role="alert"></p>
@@ -107,16 +163,16 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
                 class="contact-checkbox mt-0.5 shrink-0"
                 aria-describedby="preview-privacy-error"
               />
-              <span class="text-right text-sm leading-relaxed text-white/75">
-                קראתי ואני מאשר/ת את{' '}
-                <a href="/prat" class="text-brand-yellow underline underline-offset-2 hover:text-white"
-                  >מדיניות הפרטיות</a>, ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)
+              <span class="text-start text-sm leading-relaxed text-white/75">
+                {strings.privacyPrefix}
+                <a href={privacyHref} class="text-brand-yellow underline underline-offset-2 hover:text-white"
+                  >{strings.privacyLink}</a>{strings.privacySuffix}
               </span>
             </label>
-            <p id="preview-privacy-error" class="field-error mt-2 hidden text-right" role="alert"></p>
+            <p id="preview-privacy-error" class="field-error mt-2 hidden text-start" role="alert"></p>
 
             <button type="submit" id="preview-contact-submit" class="btn-yellow contact-submit mt-6 w-full rounded-full">
-              <span id="preview-contact-submit-label" data-ab-bottom-submit>{homeCta}</span>
+              <span id="preview-contact-submit-label" data-ab-bottom-submit>{cta}</span>
             </button>
 
             <p
@@ -137,10 +193,10 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
     return window.pmAdsAb || window.pmHomeAb;
   }
   function getLeadPageMeta() {
-    const el = document.querySelector('[data-lead-page]') as HTMLElement | null;
+    const pageRoot = document.querySelector('[data-lead-page]') as HTMLElement | null;
     return {
-      formSource: el?.dataset.leadSource || 'homepage-contact-form',
-      thankYou: el?.dataset.thankYou || '/thank-you',
+      formSource: pageRoot?.dataset.leadSource || 'homepage-contact-form',
+      thankYou: form?.dataset.thankYou || pageRoot?.dataset.thankYou || '/thank-you',
     };
   }
 
@@ -153,22 +209,22 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
     name: {
       input: document.getElementById('preview-name') as HTMLInputElement | null,
       error: document.getElementById('preview-name-error'),
-      message: 'נא להזין שם מלא',
+      message: form?.dataset.nameError || '',
     },
     phone: {
       input: document.getElementById('preview-phone') as HTMLInputElement | null,
       error: document.getElementById('preview-phone-error'),
-      message: 'נא להזין מספר טלפון תקין',
+      message: form?.dataset.phoneError || '',
     },
     vertical: {
       input: document.getElementById('preview-vertical') as HTMLInputElement | null,
       error: document.getElementById('preview-vertical-error'),
-      message: 'נא להזין את תחום העסק',
+      message: form?.dataset.verticalError || '',
     },
     privacy: {
       input: document.getElementById('preview-privacy') as HTMLInputElement | null,
       error: document.getElementById('preview-privacy-error'),
-      message: 'יש לאשר את מדיניות הפרטיות',
+      message: form?.dataset.privacyError || '',
     },
   };
 
@@ -227,9 +283,10 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
     }
 
     if (submitBtn) submitBtn.disabled = true;
-    if (submitLabel) submitLabel.textContent = 'שולח…';
+    if (submitLabel) submitLabel.textContent = form.dataset.sending || '';
 
     const meta = getLeadPageMeta();
+    const thankYou = meta.thankYou;
     const ab = getPageAb();
     const attr =
       typeof window.pmGetLeadAttribution === 'function'
@@ -246,7 +303,8 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
       utm: attr.utm,
       source: meta.formSource,
       referrer: document.referrer || '',
-      language: navigator.language || '',
+      language: navigator.language,
+      locale: form.dataset.locale || 'he',
     };
 
     try {
@@ -259,10 +317,10 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
-      window.location.href = meta.thankYou;
+      window.location.href = thankYou;
     } catch {
       if (status) {
-        status.textContent = 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il';
+        status.textContent = form.dataset.genericError || '';
         status.classList.remove('hidden');
         status.setAttribute('role', 'alert');
       }
@@ -271,9 +329,9 @@ import { homeCta, formPlaceholders, formLabels } from '../../data/site';
       if (submitLabel && ab) {
         const id = ab.getAssignments().bottom_copy;
         const copy = ab.findVariant('bottom_copy', id);
-        submitLabel.textContent = copy?.submitLabel || 'קבלו אבחון קמפיין חינם';
+        submitLabel.textContent = copy?.submitLabel || form.dataset.submitLabel || '';
       } else if (submitLabel) {
-        submitLabel.textContent = 'קבלו אבחון קמפיין חינם';
+        submitLabel.textContent = form.dataset.submitLabel || '';
       }
     }
   });

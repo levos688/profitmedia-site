@@ -1,7 +1,18 @@
 ---
 import Reveal from '../Reveal.astro';
-import { dealsContrast } from '../../data/deals';
+import { dealsContrast as defaultDealsContrast } from '../../data/deals';
+import type { HomeContent } from '../../i18n/he/home';
 
+interface Props {
+  content?: HomeContent['dealsContrast'];
+  versusLabel?: string;
+}
+
+const {
+  content = defaultDealsContrast,
+  versusLabel = 'מול',
+} = Astro.props;
+const dealsContrast = content;
 const [adsCol, crmCol] = dealsContrast.columns;
 ---
 
@@ -30,7 +41,7 @@ const [adsCol, crmCol] = dealsContrast.columns;
       </Reveal>
 
       <div class="deals-contrast__vs" aria-hidden="true">
-        <span>מול</span>
+        <span>{versusLabel}</span>
       </div>
 
       <Reveal delay={100}>

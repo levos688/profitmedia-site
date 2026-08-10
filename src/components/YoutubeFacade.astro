@@ -4,9 +4,10 @@ interface Props {
   title: string;
   /** portrait = vertical phone videos (testimonials); landscape = standard 16:9 */
   aspect?: 'portrait' | 'landscape';
+  playLabel?: string;
 }
 
-const { youtubeId, title, aspect = 'landscape' } = Astro.props;
+const { youtubeId, title, aspect = 'landscape', playLabel = `נגן — ${title}` } = Astro.props;
 const isPortrait = aspect === 'portrait';
 /*
   YouTube still serves landscape thumbs for vertical uploads (center strip + blurred sides).
@@ -26,7 +27,7 @@ const thumbFallback = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
       class="youtube-facade__btn group"
       data-youtube-id={youtubeId}
       data-youtube-title={title}
-      aria-label={`נגן — ${title}`}
+      aria-label={playLabel}
     >
       <img
         src={thumb}

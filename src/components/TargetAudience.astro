@@ -1,25 +1,36 @@
 ---
 import SectionTitle from './SectionTitle.astro';
-import { targetAudience } from '../data/site';
+import { targetAudience as defaultTargetAudience } from '../data/site';
+import type { HomeContent } from '../i18n/he/home';
+
+interface Props {
+  content?: HomeContent['targetAudience'];
+  outcomeLabel?: string;
+}
+
+const {
+  content = defaultTargetAudience,
+  outcomeLabel = 'למה זה חשוב:',
+} = Astro.props;
 ---
 
 <section id="for-whom" class="target-audience section-padding below-fold bg-white reveal" data-reveal aria-labelledby="for-whom-title">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <SectionTitle
       id="for-whom-title"
-      title={targetAudience.title}
-      subtitle={targetAudience.subtitle}
+      title={content.title}
+      subtitle={content.subtitle}
       class="mb-12 md:mb-14"
     />
 
     <div class="target-audience__grid grid gap-5 sm:grid-cols-2">
       {
-        targetAudience.items.map((item, index) => (
+        content.items.map((item, index) => (
           <div class="audience-card" style={`--card-delay: ${index * 0.08}s`}>
             <h3 class="audience-card__title">{item.title}</h3>
             <p class="audience-card__situation">{item.situation}</p>
             <p class="audience-card__outcome">
-              <strong class="audience-card__outcome-label">למה זה חשוב:</strong> {item.outcome}
+              <strong class="audience-card__outcome-label">{outcomeLabel}</strong> {item.outcome}
             </p>
           </div>
         ))
@@ -27,8 +38,8 @@ import { targetAudience } from '../data/site';
     </div>
 
     {
-      targetAudience.notFor && (
-        <p class="target-audience__not-for">{targetAudience.notFor}</p>
+      content.notFor && (
+        <p class="target-audience__not-for">{content.notFor}</p>
       )
     }
   </div>
@@ -57,7 +68,7 @@ import { targetAudience } from '../data/site';
     gap: 0.75rem;
     height: 100%;
     padding: 1.5rem;
-    text-align: right;
+    text-align: start;
     background: linear-gradient(160deg, #fdfbff 0%, #fff 55%, #faf8fc 100%);
     border: 1px solid rgba(101, 21, 97, 0.1);
     border-radius: 4px;

@@ -6,7 +6,18 @@ import Footer from '../../components/Footer.astro';
 import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
 import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
-import { blogPosts, blogSeo } from '../../data/blog';
+import { getBlogPosts } from '../../lib/blog';
+import { getContent } from '../../i18n/content';
+
+const locale = 'he';
+const { home, ui } = getContent(locale);
+const blogPosts = await getBlogPosts(locale);
+const blogSeo = {
+  title: 'בלוג Profit Media — מדריכים על פרסום ממומן וקמפיינים',
+  description:
+    'מדריכים מעשיים על קמפיינים ממומנים בפייסבוק, אינסטגרם וגוגל — עלויות, קייסים אמיתיים וטעויות נפוצות לעסקים בישראל.',
+  canonical: 'https://profitmedia.co.il/blog',
+};
 
 const blogSchema = {
   '@context': 'https://schema.org',
@@ -18,16 +29,22 @@ const blogSchema = {
   inLanguage: 'he-IL',
   blogPost: blogPosts.map((post) => ({
     '@type': 'BlogPosting',
-    headline: post.title,
-    url: `https://profitmedia.co.il/blog/${post.slug}`,
-    datePublished: post.publishDate,
+    headline: post.data.title,
+    url: `https://profitmedia.co.il/blog/${post.data.slug}`,
+    datePublished: post.data.publishDate.toISOString().slice(0, 10),
   })),
 };
 ---
 
-<Layout title={blogSeo.title} description={blogSeo.description} canonical={blogSeo.canonical}>
+<Layout
+  title={blogSeo.title}
+  description={blogSeo.description}
+  canonical={blogSeo.canonical}
+  locale={locale}
+  routeId="blog"
+>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(blogSchema)} />
-  <Header />
+  <Header locale={locale} routeId="blog" nav={home.nav} cta={home.cta} />
   <main id="main-content">
     <section class="blog-hero section-padding">
       <div class="mx-auto max-w-3xl px-4 text-center md:px-6">
@@ -52,14 +69,20 @@ const blogSchema = {
     <section class="section-padding pt-0">
       <div class="mx-auto max-w-6xl px-4 md:px-6">
         <div class="blog-grid">
-          {blogPosts.map((post) => <BlogCard post={post} />)}
+          {blogPosts.map((post) => <BlogCard post={post.data} locale={locale} />)}
         </div>
       </div>
     </section>
   </main>
-  <Footer />
-  <LeadCaptureModal />
-  <StickyMobileCta />
+  <Footer locale={locale} routeId="blog" />
+  <LeadCaptureModal
+    locale={locale}
+    strings={ui.form}
+    thankYouUrl="/thank-you"
+    modal={ui.modal}
+    privacyHref="/prat"
+  />
+  <StickyMobileCta label={home.cta} ariaLabel={ui.accessibility.ctaRegion} />
 </Layout>
 
 <style>

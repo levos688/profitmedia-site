@@ -2,7 +2,24 @@
 import SectionTitle from './SectionTitle.astro';
 import HorizontalCarousel from './HorizontalCarousel.astro';
 import Reveal from './Reveal.astro';
-import { clientLogos } from '../data/site';
+import { clientLogos as defaultClientLogos } from '../data/site';
+import type { HomeContent } from '../i18n/he/home';
+
+interface Props {
+  logos?: HomeContent['clientLogos'];
+  title?: string;
+  ariaLabel?: string;
+  nextLabel?: string;
+  previousLabel?: string;
+}
+
+const {
+  logos = defaultClientLogos,
+  title = 'לקוחות',
+  ariaLabel = 'לוגואים של לקוחות',
+  nextLabel = 'גלול קדימה',
+  previousLabel = 'גלול אחורה',
+} = Astro.props;
 
 const MANIFEST_URL = 'https://crm.profitmedia.co.il/cdn/clients/manifest.json';
 ---
@@ -10,13 +27,13 @@ const MANIFEST_URL = 'https://crm.profitmedia.co.il/cdn/clients/manifest.json';
 <section id="clients" class="section-padding below-fold bg-white" data-client-logos data-manifest-url={MANIFEST_URL}>
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
-      <SectionTitle title="לקוחות" class="mb-10 md:mb-16" />
+      <SectionTitle title={title} class="mb-10 md:mb-16" />
     </Reveal>
 
     <Reveal delay={100}>
-      <HorizontalCarousel ariaLabel="לוגואים של לקוחות" motion="fade">
+      <HorizontalCarousel ariaLabel={ariaLabel} nextLabel={nextLabel} previousLabel={previousLabel} motion="fade">
       {
-        clientLogos.map((logo) => (
+        logos.map((logo) => (
           <div class="carousel-item client-logo">
             <img src={logo.src} alt={logo.alt} width="176" height="88" loading="lazy" decoding="async" />
           </div>

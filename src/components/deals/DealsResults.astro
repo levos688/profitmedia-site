@@ -1,6 +1,18 @@
 ---
 import Reveal from '../Reveal.astro';
-import { dealsResults } from '../../data/deals';
+import { dealsResults as defaultDealsResults } from '../../data/deals';
+import type { HomeContent } from '../../i18n/he/home';
+
+interface Props {
+  content?: HomeContent['dealsResults'];
+  chartLabel?: string;
+}
+
+const {
+  content = defaultDealsResults,
+  chartLabel = 'השוואת עסקאות לחודש לפני ואחרי',
+} = Astro.props;
+const dealsResults = content;
 ---
 
 <section id="results" class="deals-results section-padding below-fold" aria-labelledby="deals-results-title">
@@ -18,7 +30,7 @@ import { dealsResults } from '../../data/deals';
       </Reveal>
 
       <Reveal class="deals-results__chart-wrap" delay={120}>
-        <figure class="deals-results__chart" aria-label="השוואת עסקאות לחודש לפני ואחרי">
+        <figure class="deals-results__chart" aria-label={chartLabel}>
           <div class="deals-results__cols">
             {
               dealsResults.bars.map((bar) => (

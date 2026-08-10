@@ -1,12 +1,15 @@
 ---
 import Reveal from '../../Reveal.astro';
-import { dealsProcess } from '../../../data/deals';
+import { dealsProcess as defaultDealsProcess } from '../../../data/deals';
+import type { HomeContent } from '../../../i18n/he/home';
 
 interface Props {
   sectionId?: string;
+  content?: HomeContent['dealsProcess'];
 }
 
-const { sectionId = 'process' } = Astro.props;
+const { sectionId = 'process', content = defaultDealsProcess } = Astro.props;
+const dealsProcess = content;
 const titleId = `${sectionId}-title`;
 ---
 

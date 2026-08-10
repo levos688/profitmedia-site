@@ -4,8 +4,32 @@ import HorizontalCarousel from '../HorizontalCarousel.astro';
 import Reveal from '../Reveal.astro';
 import OptimizedImage from '../OptimizedImage.astro';
 import { getPortfolioLandings } from '../../data/site';
+import type { HomeContent } from '../../i18n/he/home';
+import type { UiStrings } from '../../i18n/he/ui';
 
-const portfolioLandings = getPortfolioLandings();
+interface Props {
+  landings?: HomeContent['landings'];
+  labels?: UiStrings['portfolio'];
+  carouselLabel?: string;
+  nextLabel?: string;
+  previousLabel?: string;
+}
+
+const {
+  landings = getPortfolioLandings(),
+  labels = {
+    title: 'דפי נחיתה ממירים במיוחד',
+    subtitle: 'מבחר דפי נחיתה שבנינו לקמפיינים בתחומים שונים',
+    enlarge: (title: string) => `הגדל — ${title}`,
+    close: 'סגור',
+    previous: 'דף נחיתה קודם',
+    next: 'דף נחיתה הבא',
+  },
+  carouselLabel = 'גלריית דפי נחיתה',
+  nextLabel = 'גלול קדימה',
+  previousLabel = 'גלול אחורה',
+} = Astro.props;
+const portfolioLandings = landings;
 const slidesJson = JSON.stringify(
   portfolioLandings.map((item) => ({ image: item.image, title: item.title }))
 );
@@ -15,14 +39,20 @@ const slidesJson = JSON.stringify(
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <SectionTitle
-        title="דפי נחיתה ממירים במיוחד"
-        subtitle="מבחר דפי נחיתה שבנינו לקמפיינים בתחומים שונים"
+        title={labels.title}
+        subtitle={labels.subtitle}
         class="mb-10 md:mb-14"
       />
     </Reveal>
 
     <Reveal delay={100}>
-      <HorizontalCarousel ariaLabel="גלריית דפי נחיתה" shuffle loop>
+      <HorizontalCarousel
+        ariaLabel={carouselLabel}
+        nextLabel={nextLabel}
+        previousLabel={previousLabel}
+        shuffle
+        loop
+      >
         {
           portfolioLandings.map((item, i) => (
             <article class="carousel-item landing-card">
@@ -33,7 +63,7 @@ const slidesJson = JSON.stringify(
                 data-lightbox-index={String(i)}
                 data-image={item.image}
                 data-title={item.title}
-                aria-label={`הגדל — ${item.title}`}
+                aria-label={labels.enlarge(item.title)}
               >
                 <div class="landing-card__frame">
                   <OptimizedImage src={item.image} alt={item.title} width={700} height={1050} />
@@ -57,14 +87,14 @@ const slidesJson = JSON.stringify(
   >
     <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
     <div class="lightbox__panel">
-      <button type="button" class="lightbox__close" data-lightbox-close aria-label="סגור">
+      <button type="button" class="lightbox__close" data-lightbox-close aria-label={labels.close}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
         </svg>
       </button>
 
       <div class="lightbox__stage" dir="ltr">
-        <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="דף נחיתה קודם">
+        <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label={labels.previous}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
@@ -74,7 +104,7 @@ const slidesJson = JSON.stringify(
           <img id="lightbox-image" class="lightbox__image" src="" alt="" />
         </div>
 
-        <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="דף נחיתה הבא">
+        <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label={labels.next}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
