@@ -1,5 +1,47 @@
 ---
 import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
+import type { Locale } from '../../i18n/config';
+import type { UiStrings } from '../../i18n/he/ui';
+
+interface Props {
+  locale?: Locale;
+  strings?: UiStrings['form'];
+  thankYouUrl?: string;
+  modal?: UiStrings['modal'];
+  privacyHref?: string;
+}
+
+const {
+  locale = 'he',
+  strings: formCopy = {
+    name: formLabels.name,
+    phone: formLabels.phone,
+    email: 'מייל',
+    vertical: formLabels.vertical,
+    namePlaceholder: formPlaceholders.name,
+    phonePlaceholder: formPlaceholders.phone,
+    emailPlaceholder: 'מייל',
+    verticalPlaceholder: formPlaceholders.vertical,
+    submit: modalConfig.submit,
+    sending: 'שולח…',
+    nameError: 'נא להזין שם מלא',
+    phoneError: 'נא להזין מספר טלפון תקין',
+    verticalError: 'נא להזין את תחום העסק',
+    privacyError: 'יש לאשר את מדיניות הפרטיות',
+    genericError: 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il',
+    privacyPrefix: 'קראתי ואני מאשר/ת את ',
+    privacyLink: 'מדיניות הפרטיות',
+    privacySuffix: ', ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)',
+  },
+  thankYouUrl,
+  modal: modalCopy = {
+    close: 'סגור',
+    title: modalConfig.step2Title,
+    subtitle: modalConfig.step2Subtitle,
+    benefitsLabel: 'מה מקבלים',
+  },
+  privacyHref = '/prat',
+} = Astro.props;
 ---
 
 <div
@@ -8,23 +50,32 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
   role="dialog"
   aria-modal="true"
   aria-labelledby="lead-modal-title"
+  data-locale={locale}
+  data-thank-you={thankYouUrl}
+  data-name-error={formCopy.nameError}
+  data-phone-error={formCopy.phoneError}
+  data-vertical-error={formCopy.verticalError}
+  data-privacy-error={formCopy.privacyError}
+  data-generic-error={formCopy.genericError}
+  data-sending={formCopy.sending}
+  data-submit-label={formCopy.submit}
   hidden
 >
   <div class="lead-modal__backdrop" data-lead-modal-close></div>
   <div class="lead-modal__panel">
-    <button type="button" class="lead-modal__close" data-lead-modal-close aria-label="סגור">
+    <button type="button" class="lead-modal__close" data-lead-modal-close aria-label={modalCopy.close}>
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
       </svg>
     </button>
 
     <div class="lead-modal__step">
-      <h2 id="lead-modal-title" class="lead-modal__title">{modalConfig.step2Title}</h2>
-      <p class="lead-modal__subtitle">{modalConfig.step2Subtitle}</p>
+      <h2 id="lead-modal-title" class="lead-modal__title">{modalCopy.title}</h2>
+      <p class="lead-modal__subtitle">{modalCopy.subtitle}</p>
 
       <form id="lead-modal-form" novalidate>
         <div class="lead-modal__field">
-          <label for="lead-modal-name" class="lead-modal__label">{formLabels.name}</label>
+          <label for="lead-modal-name" class="lead-modal__label">{formCopy.name}</label>
           <input
             type="text"
             id="lead-modal-name"
@@ -32,13 +83,13 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
             class="lead-modal__input"
             required
             autocomplete="name"
-            placeholder={formPlaceholders.name}
+            placeholder={formCopy.namePlaceholder}
           />
           <p id="lead-modal-name-error" class="lead-modal__error" hidden role="alert"></p>
         </div>
 
         <div class="lead-modal__field">
-          <label for="lead-modal-phone" class="lead-modal__label">{formLabels.phone}</label>
+          <label for="lead-modal-phone" class="lead-modal__label">{formCopy.phone}</label>
           <input
             type="tel"
             id="lead-modal-phone"
@@ -47,13 +98,13 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
             required
             inputmode="tel"
             autocomplete="tel"
-            placeholder={formPlaceholders.phone}
+            placeholder={formCopy.phonePlaceholder}
           />
           <p id="lead-modal-phone-error" class="lead-modal__error" hidden role="alert"></p>
         </div>
 
         <div class="lead-modal__field">
-          <label for="lead-modal-vertical" class="lead-modal__label">{formLabels.vertical}</label>
+          <label for="lead-modal-vertical" class="lead-modal__label">{formCopy.vertical}</label>
           <input
             type="text"
             id="lead-modal-vertical"
@@ -61,7 +112,7 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
             class="lead-modal__input"
             required
             autocomplete="organization-title"
-            placeholder={formPlaceholders.vertical}
+            placeholder={formCopy.verticalPlaceholder}
           />
           <p id="lead-modal-vertical-error" class="lead-modal__error" hidden role="alert"></p>
         </div>
@@ -69,15 +120,14 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
         <label class="lead-modal__privacy">
           <input type="checkbox" id="lead-modal-privacy" name="privacy" required class="mt-1 shrink-0" />
           <span>
-            קראתי ואני מאשר/ת את{' '}
-            <a href="/prat" target="_blank" rel="noopener">מדיניות הפרטיות</a>
-            , ומסכים/ה לשמירת המידע לצורך טיפול בפנייתי (חובה)
+            {formCopy.privacyPrefix}
+            <a href={privacyHref} target="_blank" rel="noopener">{formCopy.privacyLink}</a>{formCopy.privacySuffix}
           </span>
         </label>
         <p id="lead-modal-privacy-error" class="lead-modal__error" hidden role="alert"></p>
 
         <button type="submit" id="lead-modal-submit" class="btn-yellow lead-modal__submit">
-          {modalConfig.submit}
+          {formCopy.submit}
         </button>
       </form>
     </div>
@@ -144,24 +194,24 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
     const privacy = (document.getElementById('lead-modal-privacy') as HTMLInputElement).checked;
 
     if (!name) {
-      setError('lead-modal-name', 'נא להזין שם מלא', true);
+      setError('lead-modal-name', modal?.dataset.nameError || '', true);
       valid = false;
     } else setError('lead-modal-name', '', false);
 
     if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) {
-      setError('lead-modal-phone', 'נא להזין מספר טלפון תקין', true);
+      setError('lead-modal-phone', modal?.dataset.phoneError || '', true);
       valid = false;
     } else setError('lead-modal-phone', '', false);
 
     if (!vertical) {
-      setError('lead-modal-vertical', 'נא להזין את תחום העסק', true);
+      setError('lead-modal-vertical', modal?.dataset.verticalError || '', true);
       valid = false;
     } else setError('lead-modal-vertical', '', false);
 
     const privacyError = document.getElementById('lead-modal-privacy-error');
     if (!privacy) {
       if (privacyError) {
-        privacyError.textContent = 'יש לאשר את מדיניות הפרטיות';
+        privacyError.textContent = modal?.dataset.privacyError || '';
         privacyError.hidden = false;
       }
       valid = false;
@@ -173,12 +223,12 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
 
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'שולח…';
+      submitBtn.textContent = modal?.dataset.sending || '';
     }
 
     const pageRoot = document.querySelector('[data-lead-page]') as HTMLElement | null;
     const formSource = pageRoot?.dataset.leadSource || 'homepage-lead-modal';
-    const thankYou = pageRoot?.dataset.thankYou || '/thank-you';
+    const thankYou = modal?.dataset.thankYou || pageRoot?.dataset.thankYou || '/thank-you';
     const ab = window.pmLpAb || window.pmAdsAb || window.pmHomeAb;
 
     const attr =
@@ -196,7 +246,8 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
       utm: attr.utm,
       source: formSource,
       referrer: document.referrer || '',
-      language: navigator.language || '',
+      language: navigator.language,
+      locale: modal?.dataset.locale || 'he',
     };
 
     try {
@@ -211,11 +262,11 @@ import { modalConfig, formPlaceholders, formLabels } from '../../data/site';
       await ab?.trackConversion?.(source);
       window.location.href = thankYou;
     } catch {
-      alert('שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
+      alert(modal?.dataset.genericError || '');
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'כן, שלחו לי אבחון חינם';
+        submitBtn.textContent = modal?.dataset.submitLabel || '';
       }
     }
   });

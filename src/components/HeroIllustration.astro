@@ -1,3 +1,11 @@
+---
+interface Props {
+  alt?: string;
+}
+
+const { alt = 'פרסום דיגיטלי — איור' } = Astro.props;
+---
+
 <div class="hero-illustration">
   <div class="hero-illustration__glow" aria-hidden="true"></div>
   <div class="hero-illustration__ring hero-illustration__ring--one" aria-hidden="true"></div>
@@ -5,7 +13,7 @@
 
   <img
     src="/images/hero/photo-min.svg"
-    alt="פרסום דיגיטלי — איור"
+    alt={alt}
     class="hero-illustration__img"
     width="578"
     height="385"

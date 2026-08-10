@@ -1,5 +1,13 @@
 ---
 import '../styles/global.css';
+import { localeMeta, normalizeLocale, type Locale } from '../i18n/config';
+import type { RouteId } from '../i18n/routes';
+import { getOgLocale, getRouteAlternates } from '../i18n/seo';
+
+type AlternateLink = {
+  hreflang: string;
+  href: string;
+};
 
 interface Props {
   title?: string;
@@ -12,8 +20,15 @@ interface Props {
   enableGtm?: boolean;
   metaPixelId?: string;
   metaPixelLead?: boolean;
-  lang?: string;
+  locale?: Locale;
+  /** @deprecated Use locale. Kept while existing internal dashboards migrate. */
+  lang?: Locale;
+  /** @deprecated Direction is derived from locale. */
   dir?: 'ltr' | 'rtl';
+  routeId?: RouteId;
+  alternates?: AlternateLink[];
+  /** SEO language alternates default off for noindex pages; routeId still supports UI routing. */
+  emitAlternates?: boolean;
   enableA11y?: boolean;
 }
 
@@ -23,16 +38,24 @@ const {
   canonical,
   ogImage = 'https://profitmedia.co.il/icons/site-icon.png',
   noindex = false,
+  emitAlternates = !noindex,
   blockAiCrawlers = false,
   preloadImage = '/images/hero/photo-min.svg',
   enableGtm = true,
   metaPixelId,
   metaPixelLead = false,
-  lang = 'he',
-  dir = 'rtl',
+  locale: localeProp,
+  routeId,
+  alternates: providedAlternates,
   enableA11y = true,
 } = Astro.props;
 
+const locale = normalizeLocale(localeProp ?? Astro.props.lang);
+const lang = locale;
+const dir = localeMeta[locale].dir;
+const alternates = emitAlternates
+  ? (providedAlternates ?? (routeId ? getRouteAlternates(routeId) : []))
+  : [];
 const canonicalUrl = canonical ?? Astro.url.href;
 ---
 
@@ -59,9 +82,18 @@ const canonicalUrl = canonical ?? Astro.url.href;
     }
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+    {
+      alternates.map(({ hreflang, href }) => (
+        <link rel="alternate" hreflang={hreflang} href={href} />
+      ))
+    }
     <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site context" />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="he_IL" />
+    <meta property="og:locale" content={getOgLocale(locale)} />
+    <meta
+      property="og:locale:alternate"
+      content={locale === 'he' ? localeMeta.ru.ogLocale : localeMeta.he.ogLocale}
+    />
     <meta property="og:site_name" content="Profit Media" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -123,6 +155,14 @@ const canonicalUrl = canonical ?? Astro.url.href;
       crossorigin
     />
     <title>{title}</title>
+    {
+      enableGtm && (
+        <script is:inline define:vars={{ locale }}>
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'page_context', page_language: locale });
+        </script>
+      )
+    }
     {
       metaPixelId && (
         <>
@@ -234,7 +274,9 @@ const canonicalUrl = canonical ?? Astro.url.href;
         </noscript>
       )
     }
-    <a href="#main-content" class="skip-link">דילוג לתוכן</a>
+    <a href="#main-content" class="skip-link">
+      {locale === 'he' ? 'דילוג לתוכן' : 'Перейти к содержанию'}
+    </a>
     <slot />
     <slot name="scripts" />
     {

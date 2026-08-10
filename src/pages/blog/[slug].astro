@@ -1,0 +1,34 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BlogArticleLayout from '../../components/blog/BlogArticleLayout.astro';
+import { getBlogPosts, type BlogTranslationKey } from '../../lib/blog';
+import type { RouteId } from '../../i18n/routes';
+
+export async function getStaticPaths() {
+  const routeIdByTranslationKey = {
+    'conversion-improvement': 'conversionArticle',
+    'landing-vs-homepage': 'landingArticle',
+    'paid-campaigns-guide': 'paidCampaignsArticle',
+  } satisfies Record<BlogTranslationKey, RouteId>;
+  const posts = await getBlogPosts('he');
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: {
+      post,
+      routeId: routeIdByTranslationKey[post.data.translationKey],
+    },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  routeId: RouteId;
+}
+
+const { post, routeId } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogArticleLayout post={post.data} routeId={routeId}>
+  <Content />
+</BlogArticleLayout>

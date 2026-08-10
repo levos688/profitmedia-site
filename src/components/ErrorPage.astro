@@ -1,24 +1,45 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import type { Locale } from '../i18n/config';
+import type { UiStrings } from '../i18n/he/ui';
+
+interface Props {
+  locale: Locale;
+  strings: UiStrings['notFound'];
+  homeHref: string;
+  secondaryHeading?: string;
+  noindex?: boolean;
+  canonical?: string;
+}
+
+const { locale, strings, homeHref, secondaryHeading, noindex = true, canonical } = Astro.props;
 ---
 
 <Layout
-  title="404 — דף לא נמצא | Profit Media"
-  description="הדף שחיפשת לא נמצא."
+  title={strings.title}
+  description={strings.description}
+  locale={locale}
+  routeId="notFound"
+  noindex={noindex}
+  canonical={canonical}
 >
   <main
     id="main-content"
     class="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-12 text-center"
   >
-    <a href="/" class="mb-8 block" aria-label="Profit Media — דף הבית">
+    <a
+      href={homeHref}
+      class="mb-8 block"
+      aria-label={locale === 'ru' ? 'Profit Media, главная' : 'Profit Media — דף הבית'}
+    >
       <img src="/logo.svg" alt="Profit Media" class="mx-auto h-12 w-auto md:h-16" width="200" height="64" />
     </a>
 
     <p class="text-7xl font-black tracking-tight text-brand-purple md:text-8xl" aria-hidden="true">404</p>
 
     <div class="mt-2 space-y-1 text-lg text-gray-700 md:text-xl">
-      <p lang="en">Page not Found</p>
-      <p>דף לא נמצא</p>
+      {secondaryHeading && <p lang="en">{secondaryHeading}</p>}
+      <p>{strings.heading}</p>
     </div>
 
     <img
@@ -31,10 +52,10 @@ import Layout from '../layouts/Layout.astro';
     />
 
     <a
-      href="/"
+      href={homeHref}
       class="btn-yellow mt-10 inline-flex rounded-full px-8 py-3 text-base font-black"
     >
-      חזרה לדף הבית
+      {strings.backHome}
     </a>
   </main>
 </Layout>

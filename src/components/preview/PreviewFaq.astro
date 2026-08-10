@@ -2,8 +2,19 @@
 import SectionTitle from '../SectionTitle.astro';
 import Reveal from '../Reveal.astro';
 import { faqs as defaultFaqs } from '../../data/site';
+import type { HomeContent } from '../../i18n/he/home';
 
-const { items = defaultFaqs } = Astro.props;
+interface Props {
+  items?: HomeContent['faqs'];
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  items = defaultFaqs,
+  title = 'שאלות נפוצות',
+  subtitle = 'תשובות ברורות לפני שמתחילים',
+} = Astro.props;
 ---
 
 <section id="faq" class="faq section-padding below-fold" aria-labelledby="faq-title">
@@ -11,8 +22,8 @@ const { items = defaultFaqs } = Astro.props;
     <Reveal>
       <SectionTitle
         id="faq-title"
-        title="שאלות נפוצות"
-        subtitle="תשובות ברורות לפני שמתחילים"
+        title={title}
+        subtitle={subtitle}
         class="mb-10 md:mb-12"
       />
     </Reveal>

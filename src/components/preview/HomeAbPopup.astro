@@ -1,10 +1,54 @@
 ---
 /**
  * Homepage AB popup: quiz (timer/scroll) or simple form (sticky).
+ *
+ * Hebrew-only A/B UI in this release. Optional locale/formStrings props only
+ * enrich the lead payload or allow an explicit form-copy override; omitting
+ * them preserves the legacy paid/internal popup markup, copy, and redirects.
  */
+import type { Locale } from '../../i18n/config';
+import type { UiStrings } from '../../i18n/he/ui';
+
+interface Props {
+  locale?: Locale;
+  formStrings?: UiStrings['form'];
+  thankYouUrl?: string;
+  privacyHref?: string;
+}
+
+const {
+  locale = 'he',
+  formStrings,
+  thankYouUrl,
+  privacyHref = '/prat',
+} = Astro.props;
+
+const nameLabel = formStrings?.name ?? 'שם מלא';
+const phoneLabel = formStrings?.phone ?? 'טלפון נייד';
+const verticalLabel = formStrings?.vertical ?? 'תחום העסק';
+const privacyPrefix = formStrings?.privacyPrefix ?? 'קראתי ואני מאשר/ת את ';
+const privacyLink = formStrings?.privacyLink ?? 'מדיניות הפרטיות';
+const privacySuffix = formStrings?.privacySuffix ?? '';
+const submitLabel = formStrings?.submit ?? 'המשך';
 ---
 
-<div id="pm-home-popup" class="pm-home-popup" hidden role="dialog" aria-modal="true" aria-labelledby="pm-home-popup-title">
+<div
+  id="pm-home-popup"
+  class="pm-home-popup"
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pm-home-popup-title"
+  data-locale={locale}
+  data-thank-you={thankYouUrl}
+  data-name-error={formStrings?.nameError ?? 'נא להזין שם'}
+  data-phone-error={formStrings?.phoneError ?? 'נא להזין טלפון תקין'}
+  data-vertical-error={formStrings?.verticalError ?? 'נא להזין תחום'}
+  data-privacy-error={formStrings?.privacyError ?? 'יש לאשר את מדיניות הפרטיות'}
+  data-generic-error={formStrings?.genericError ?? 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il'}
+  data-sending={formStrings?.sending ?? 'שולח…'}
+  data-submit-label={submitLabel}
+>
   <div class="pm-home-popup__backdrop" data-pm-popup-close></div>
   <div class="pm-home-popup__panel">
     <button type="button" class="pm-home-popup__close" data-pm-popup-close aria-label="סגור">
@@ -29,25 +73,49 @@
       <p class="pm-home-popup__subtitle">ללא התחייבות · בלי הבטחות מכירות</p>
       <form id="pm-home-popup-form" novalidate>
         <input type="hidden" name="quizAnswer" id="pm-home-popup-quiz-answer" value="" />
-        <label class="pm-home-popup__label" for="pm-home-popup-name">שם מלא</label>
-        <input class="pm-home-popup__input" id="pm-home-popup-name" name="name" required autocomplete="name" />
+        <label class="pm-home-popup__label" for="pm-home-popup-name">{nameLabel}</label>
+        <input
+          class="pm-home-popup__input"
+          id="pm-home-popup-name"
+          name="name"
+          required
+          autocomplete="name"
+          placeholder={formStrings?.namePlaceholder}
+        />
         <p class="pm-home-popup__error" id="pm-home-popup-name-error" hidden></p>
 
-        <label class="pm-home-popup__label" for="pm-home-popup-phone">טלפון נייד</label>
-        <input class="pm-home-popup__input" id="pm-home-popup-phone" name="phone" required inputmode="tel" autocomplete="tel" />
+        <label class="pm-home-popup__label" for="pm-home-popup-phone">{phoneLabel}</label>
+        <input
+          class="pm-home-popup__input"
+          id="pm-home-popup-phone"
+          name="phone"
+          required
+          inputmode="tel"
+          autocomplete="tel"
+          placeholder={formStrings?.phonePlaceholder}
+        />
         <p class="pm-home-popup__error" id="pm-home-popup-phone-error" hidden></p>
 
-        <label class="pm-home-popup__label" for="pm-home-popup-vertical">תחום העסק</label>
-        <input class="pm-home-popup__input" id="pm-home-popup-vertical" name="vertical" required autocomplete="organization-title" />
+        <label class="pm-home-popup__label" for="pm-home-popup-vertical">{verticalLabel}</label>
+        <input
+          class="pm-home-popup__input"
+          id="pm-home-popup-vertical"
+          name="vertical"
+          required
+          autocomplete="organization-title"
+          placeholder={formStrings?.verticalPlaceholder}
+        />
         <p class="pm-home-popup__error" id="pm-home-popup-vertical-error" hidden></p>
 
         <label class="pm-home-popup__privacy">
           <input type="checkbox" id="pm-home-popup-privacy" required />
-          <span>קראתי ואני מאשר/ת את <a href="/prat" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
+          <span>
+            {privacyPrefix}<a href={privacyHref} target="_blank" rel="noopener">{privacyLink}</a>{privacySuffix}
+          </span>
         </label>
         <p class="pm-home-popup__error" id="pm-home-popup-privacy-error" hidden></p>
 
-        <button type="submit" class="btn-yellow pm-home-popup__submit" id="pm-home-popup-submit">המשך</button>
+        <button type="submit" class="btn-yellow pm-home-popup__submit" id="pm-home-popup-submit">{submitLabel}</button>
       </form>
     </div>
   </div>
@@ -275,32 +343,32 @@
     const quizAnswer = quizAnswerInput?.value || '';
     let ok = true;
     if (!name) {
-      setErr('pm-home-popup-name', 'נא להזין שם', true);
+      setErr('pm-home-popup-name', popup?.dataset.nameError || 'נא להזין שם', true);
       ok = false;
     } else setErr('pm-home-popup-name', '', false);
     if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) {
-      setErr('pm-home-popup-phone', 'נא להזין טלפון תקין', true);
+      setErr('pm-home-popup-phone', popup?.dataset.phoneError || 'נא להזין טלפון תקין', true);
       ok = false;
     } else setErr('pm-home-popup-phone', '', false);
     if (!vertical) {
-      setErr('pm-home-popup-vertical', 'נא להזין תחום', true);
+      setErr('pm-home-popup-vertical', popup?.dataset.verticalError || 'נא להזין תחום', true);
       ok = false;
     } else setErr('pm-home-popup-vertical', '', false);
     if (!privacy) {
-      setErr('pm-home-popup-privacy', 'יש לאשר את מדיניות הפרטיות', true);
+      setErr('pm-home-popup-privacy', popup?.dataset.privacyError || 'יש לאשר את מדיניות הפרטיות', true);
       ok = false;
     } else setErr('pm-home-popup-privacy', '', false);
     if (!ok) return;
 
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'שולח…';
+      submitBtn.textContent = popup?.dataset.sending || 'שולח…';
     }
 
     const ab = getPageAb();
     const pageRoot = document.querySelector('[data-lead-page]') as HTMLElement | null;
     const formSource = pageRoot?.dataset.leadSource || 'homepage-popup';
-    const thankYou = pageRoot?.dataset.thankYou || '/thank-you';
+    const thankYou = popup?.dataset.thankYou || pageRoot?.dataset.thankYou || '/thank-you';
     const source = ab?.getLeadSource?.() || 'popup_quiz';
     try {
       await ab?.trackConversion?.(source);
@@ -323,18 +391,19 @@
           source: formSource,
           quizAnswer,
           referrer: document.referrer || '',
-          language: navigator.language || '',
+          language: navigator.language,
+          locale: popup?.dataset.locale || 'he',
         }),
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('fail');
       window.location.href = thankYou;
     } catch {
-      alert('שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
+      alert(popup?.dataset.genericError || 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'המשך';
+        submitBtn.textContent = popup?.dataset.submitLabel || 'המשך';
       }
     }
   });

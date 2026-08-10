@@ -11,9 +11,19 @@ interface Props {
   loop?: boolean;
   /** Fade keeps every card whole; slide is the default for visual galleries. */
   motion?: 'slide' | 'fade';
+  nextLabel?: string;
+  previousLabel?: string;
 }
 
-const { ariaLabel, gap = 'normal', shuffle = false, loop = true, motion = 'slide' } = Astro.props;
+const {
+  ariaLabel,
+  gap = 'normal',
+  shuffle = false,
+  loop = true,
+  motion = 'slide',
+  nextLabel = 'גלול קדימה',
+  previousLabel = 'גלול אחורה',
+} = Astro.props;
 const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -25,13 +35,13 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 >
   <button
     type="button"
-    class="carousel-arrow carousel-arrow--edge-start"
-    aria-label="גלול קדימה"
-    data-carousel-next={uid}
+    class="carousel-arrow carousel-arrow--prev"
+    aria-label={previousLabel}
+    data-carousel-prev={uid}
   >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
-        d="M9 6l6 6-6 6"
+        d="M15 6l-6 6 6 6"
         stroke="currentColor"
         stroke-width="2.5"
         stroke-linecap="round"
@@ -47,13 +57,13 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
   <button
     type="button"
-    class="carousel-arrow carousel-arrow--edge-end"
-    aria-label="גלול אחורה"
-    data-carousel-prev={uid}
+    class="carousel-arrow carousel-arrow--next"
+    aria-label={nextLabel}
+    data-carousel-next={uid}
   >
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
-        d="M15 6l-6 6 6 6"
+        d="M9 6l6 6-6 6"
         stroke="currentColor"
         stroke-width="2.5"
         stroke-linecap="round"
@@ -310,10 +320,12 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
   .carousel-outer {
     position: relative;
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 0.75rem;
     max-width: 100%;
     min-width: 0;
+    direction: ltr; /* physical order [prev][content][next] on both locales */
   }
 
   .carousel-outer--wide {
@@ -409,12 +421,12 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       background: rgb(255 255 255 / 0.96);
     }
 
-    .carousel-arrow--edge-start {
-      right: 0.35rem;
+    .carousel-arrow--prev {
+      left: 0.35rem;
     }
 
-    .carousel-arrow--edge-end {
-      left: 0.35rem;
+    .carousel-arrow--next {
+      right: 0.35rem;
     }
 
     .carousel-strip :global(.carousel-item) {

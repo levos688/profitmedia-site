@@ -1,0 +1,15 @@
+---
+import ErrorPage from '../../components/ErrorPage.astro';
+import { getUi } from '../../i18n/content';
+
+const locale = 'ru';
+const { notFound } = getUi(locale);
+---
+
+<ErrorPage
+  locale={locale}
+  strings={notFound}
+  homeHref="/ru/"
+  canonical="https://profitmedia.co.il/ru/404/"
+  noindex
+/>

@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import AboutContent from '../../components/AboutContent.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import { getContent } from '../../i18n/content';
+import {
+  buildAboutPageSchema,
+  buildBreadcrumbListSchema,
+  buildPersonSchema,
+  buildSchemaGraph,
+} from '../../lib/schema';
+
+const locale = 'ru';
+const { about, home, ui } = getContent(locale);
+const canonicalUrl = about.seo.canonical;
+const aboutSchema = buildSchemaGraph([
+  buildAboutPageSchema({
+    locale,
+    canonical: canonicalUrl,
+    name: about.hero.title,
+    description: about.hero.subtitle,
+  }),
+  buildPersonSchema({
+    locale,
+    canonical: canonicalUrl,
+    name: about.founder.name,
+    jobTitle: about.founder.role,
+    email: about.founder.email,
+    image: `https://profitmedia.co.il${about.founder.imageFallback}`,
+    description: about.founder.paragraphs.join(' '),
+  }),
+  buildBreadcrumbListSchema({
+    locale,
+    items: [
+      { name: 'Главная', item: 'https://profitmedia.co.il/ru/' },
+      { name: 'О нас', item: canonicalUrl },
+    ],
+  }),
+]);
+
+const contactCopy = {
+  quote: '«Когда реклама, страница и CRM связаны, видно, где инвестиции действительно создают встречи и сделки».',
+  quoteFooter: 'Так работает система, которая измеряет ценность, а не только лиды',
+  benefitsLabel: ui.modal.benefitsLabel,
+  benefits: ['Сопоставление расходов со встречами и сделками', 'Рекомендации по аналитике и оптимизации', 'Личный ответ в течение 24 часов'],
+  eyebrow: 'Без обязательств',
+  title: 'Оставьте контакты и получите бесплатную диагностику рекламы',
+};
+---
+
+<Layout
+  title={about.seo.title}
+  description={about.seo.description}
+  canonical={canonicalUrl}
+  preloadImage={false}
+  locale={locale}
+  routeId="about"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(aboutSchema)} />
+  <div
+    data-lead-page
+    data-locale={locale}
+    data-lead-source="about"
+    data-lead-source-prefix="about"
+    data-thank-you="/ru/thank-you"
+  >
+    <Header locale={locale} routeId="about" nav={home.nav} cta={home.cta} />
+    <AboutContent content={about}>
+      <PreviewContactForm
+        locale={locale}
+        cta={home.cta}
+        strings={ui.form}
+        thankYouUrl="/ru/thank-you"
+        privacyHref="/ru/prat"
+        copy={contactCopy}
+      />
+    </AboutContent>
+    <Footer locale={locale} routeId="about" />
+    <LeadCaptureModal
+      locale={locale}
+      strings={ui.form}
+      thankYouUrl="/ru/thank-you"
+      modal={ui.modal}
+      privacyHref="/ru/prat"
+    />
+  </div>
+</Layout>

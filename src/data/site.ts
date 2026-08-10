@@ -1,6 +1,8 @@
+import { homepageDeals } from './deals';
+
 export const hero = {
   eyebrow: 'מערכת עסקאות מהפרסום — לא סוכנות רגילה',
-  title: 'הליד הכי זול שלכם יכול להיות היקר ביותר',
+  title: 'הליד הכי זול שלכם\nיכול להיות\nהיקר ביותר',
   /** Default / AB `system` = V2 clear list */
   subtitle:
     'פרסום, דף נחיתה ו־CRM אישי מתחברים למערכת אחת, כדי לזהות מה מביא פגישות ועסקאות — לא רק לידים.',
@@ -13,7 +15,7 @@ export const hero = {
 /** A/B challenger `pain` = V4 — same H1, pain-framed subtitle. */
 export const heroPain = {
   eyebrow: 'מערכת עסקאות מהפרסום — לא סוכנות רגילה',
-  title: 'הליד הכי זול שלכם יכול להיות היקר ביותר',
+  title: 'הליד הכי זול שלכם\nיכול להיות\nהיקר ביותר',
   subtitle:
     'מחברים את נתוני הפרסום למה שקורה בשיחות, בפגישות ובעסקאות — כדי להשקיע במה שמתקדם, לא רק במה שנראה טוב בדוח.',
   cta: 'קבלו אבחון קמפיין חינם',
@@ -435,3 +437,32 @@ export const clientLogos = [
   { src: '/images/clients/13.svg', alt: 'לקוח' },
   { src: '/images/clients/14.svg', alt: 'לקוח' },
 ];
+
+/** Complete source bundle for locale-safe homepage rendering. */
+export const home = {
+  hero,
+  heroPain,
+  seo: homeSeo,
+  targetAudience,
+  processSteps,
+  services,
+  brand,
+  agencyStats,
+  whyUs,
+  namedOffer,
+  cta: homeCta,
+  nav: homeNav,
+  faqs,
+  midPageCta,
+  modal: modalConfig,
+  formPlaceholders,
+  formLabels,
+  campaignResults,
+  videoTestimonials,
+  portfolioImageSpec,
+  landings,
+  clientLogos,
+  dealsContrast: homepageDeals.contrast,
+  dealsProcess: homepageDeals.process,
+  dealsResults: homepageDeals.results,
+};

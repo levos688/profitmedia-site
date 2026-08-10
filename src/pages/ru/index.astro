@@ -1,0 +1,107 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/preview.css';
+import Header from '../../components/Header.astro';
+import PreviewHero from '../../components/preview/PreviewHero.astro';
+import HomeJsonLd from '../../components/HomeJsonLd.astro';
+import AgencyStats from '../../components/AgencyStats.astro';
+import DealsContrast from '../../components/deals/DealsContrast.astro';
+import DealsSystemProcess from '../../components/deals/system/DealsSystemProcess.astro';
+import DealsResults from '../../components/deals/DealsResults.astro';
+import TargetAudience from '../../components/TargetAudience.astro';
+import Clients from '../../components/Clients.astro';
+import NamedOffer from '../../components/NamedOffer.astro';
+import VideoTestimonials from '../../components/VideoTestimonials.astro';
+import PreviewPortfolio from '../../components/preview/PreviewPortfolio.astro';
+import PreviewFaq from '../../components/preview/PreviewFaq.astro';
+import BlogPreview from '../../components/BlogPreview.astro';
+import PreviewContactForm from '../../components/preview/PreviewContactForm.astro';
+import LeadCaptureModal from '../../components/preview/LeadCaptureModal.astro';
+import StickyMobileCta from '../../components/preview/StickyMobileCta.astro';
+import Footer from '../../components/Footer.astro';
+import { getContent } from '../../i18n/content';
+
+const locale = 'ru';
+const { home, ui } = getContent(locale);
+const contactCopy = {
+  quote: '«Когда реклама, страница и CRM связаны, видно, где инвестиции действительно создают встречи и сделки».',
+  quoteFooter: 'Так работает система, которая измеряет ценность, а не только лиды',
+  benefitsLabel: ui.modal.benefitsLabel,
+  benefits: ['Сопоставление расходов со встречами и сделками', 'Рекомендации по аналитике и оптимизации', 'Личный ответ в течение 24 часов'],
+  eyebrow: 'Без обязательств',
+  title: 'Оставьте контакты и получите бесплатную диагностику рекламы',
+};
+---
+
+<Layout
+  title={home.seo.title}
+  description={home.seo.description}
+  canonical={home.seo.canonical}
+  preloadImage="/images/hero/photo-min.svg"
+  locale={locale}
+  routeId="home"
+>
+  <HomeJsonLd slot="head" locale={locale} content={home} />
+  <div
+    class="preview-page"
+    data-lead-page
+    data-locale={locale}
+    data-lead-source="homepage"
+    data-lead-source-prefix="home"
+    data-thank-you="/ru/thank-you"
+  >
+    <Header locale={locale} routeId="home" nav={home.nav} cta={home.cta} />
+    <main id="main-content">
+      <PreviewHero content={home.hero} illustrationAlt="Иллюстрация цифровой рекламы" />
+      <AgencyStats
+        stats={home.agencyStats}
+        eyebrow="Данные о нашей работе"
+        title="Опыт и результаты в цифрах"
+        ariaLabel="Показатели Profit Media"
+      />
+      <DealsContrast content={home.dealsContrast} versusLabel="и" />
+      <DealsSystemProcess sectionId="how-it-works" content={home.dealsProcess} locale={locale} />
+      <DealsResults content={home.dealsResults} chartLabel="Сравнение количества сделок в месяц до и после" />
+      <NamedOffer content={home.namedOffer} fallbackCta={home.cta} includesTitle={ui.sections.offerIncludes} />
+      <Clients
+        logos={home.clientLogos}
+        title={ui.sections.clients}
+        ariaLabel={ui.accessibility.carouselClients}
+        nextLabel={ui.accessibility.carouselNext}
+        previousLabel={ui.accessibility.carouselPrevious}
+      />
+      <TargetAudience content={home.targetAudience} outcomeLabel={ui.sections.audienceOutcome} />
+      <VideoTestimonials videos={home.videoTestimonials} title={ui.sections.videoTestimonials} videoPlayerLabel={ui.accessibility.videoPlayer} />
+      <PreviewPortfolio
+        landings={home.landings}
+        labels={ui.portfolio}
+        carouselLabel={ui.accessibility.carouselLandings}
+        nextLabel={ui.accessibility.carouselNext}
+        previousLabel={ui.accessibility.carouselPrevious}
+      />
+      <PreviewFaq items={home.faqs} title={ui.sections.faqTitle} subtitle={ui.sections.faqSubtitle} />
+      <PreviewContactForm
+        locale={locale}
+        cta={home.cta}
+        strings={ui.form}
+        thankYouUrl="/ru/thank-you"
+        privacyHref="/ru/prat"
+        copy={contactCopy}
+      />
+      <BlogPreview locale={locale} labels={ui.blog} />
+    </main>
+    <Footer locale={locale} routeId="home" />
+    <LeadCaptureModal
+      locale={locale}
+      strings={ui.form}
+      thankYouUrl="/ru/thank-you"
+      modal={ui.modal}
+      privacyHref="/ru/prat"
+    />
+    <StickyMobileCta
+      label={home.cta}
+      ariaLabel={ui.accessibility.ctaRegion}
+      opensLeadModal
+    />
+  </div>
+</Layout>

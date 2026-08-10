@@ -1,21 +1,27 @@
 ---
-import type { BlogPost } from '../../data/blog';
+import { getUi } from '../../i18n/content';
+import type { Locale } from '../../i18n/config';
+import { getLocalizedPath } from '../../i18n/routes';
+import type { BlogPostData } from '../../lib/blog';
 
 interface Props {
-  post: BlogPost;
+  post: BlogPostData;
+  locale?: Locale;
   eager?: boolean;
 }
 
-const { post, eager = false } = Astro.props;
+const { post, locale = post.locale, eager = false } = Astro.props;
+const labels = getUi(locale).blog;
+const href = `${getLocalizedPath('blog', locale)}/${post.slug}`;
 
-const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
+const formattedDate = post.publishDate.toLocaleDateString(locale === 'he' ? 'he-IL' : 'ru-RU', {
   day: 'numeric',
   month: 'long',
   year: 'numeric',
 });
 ---
 
-<a href={`/blog/${post.slug}`} class="blog-card">
+<a href={href} class="blog-card">
   <span class="blog-card__image-frame">
     <img
       src={post.image}
@@ -32,13 +38,13 @@ const formattedDate = new Date(post.publishDate).toLocaleDateString('he-IL', {
     <span class="blog-card__meta">
       <span>{formattedDate}</span>
       <span aria-hidden="true">·</span>
-      <span>{post.readingMinutes} דקות קריאה</span>
+      <span>{labels.readingMinutes(post.readingMinutes)}</span>
     </span>
 
     <span class="blog-card__title">{post.title}</span>
     <span class="blog-card__excerpt">{post.excerpt}</span>
 
-    <span class="blog-card__cta">המשך קריאה</span>
+    <span class="blog-card__cta">{labels.readMore}</span>
   </span>
 </a>
 

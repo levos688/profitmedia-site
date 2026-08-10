@@ -32,7 +32,7 @@ export const dealsPixelId = import.meta.env.PUBLIC_META_PIXEL_ID || '';
 
 export const dealsHero = {
   eyebrow: 'מערכת עסקאות מהפרסום, לא סוכנות רגילה',
-  title: 'הליד הכי זול שלכם יכול להיות היקר ביותר',
+    title: 'הליד הכי זול שלכם\nיכול להיות\nהיקר ביותר',
   subtitle:
     'פרסום, דף נחיתה ו־CRM אישי מתחברים למערכת אחת, כדי לזהות מה מביא פגישות ועסקאות ולא רק לידים זולים.',
   proofChip: 'מקרה לקוח בתחום המטבחים: מ־0-3 עסקאות בחודש ל־6-8 עסקאות בחודש',
@@ -247,4 +247,14 @@ export const dealsFaqs = [
 
 export const dealsMicro = {
   stickyCta: 'אבחון חינם תוך 24 שעות',
+};
+
+/**
+ * Homepage-only slices from the Deals-from-Ads product story.
+ * Paid landing-page content remains separate and Hebrew-only.
+ */
+export const homepageDeals = {
+  contrast: dealsContrast,
+  process: dealsProcess,
+  results: dealsResults,
 };

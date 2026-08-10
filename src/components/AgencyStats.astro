@@ -1,20 +1,35 @@
 ---
-import { agencyStats } from '../data/site';
+import { agencyStats as defaultStats } from '../data/site';
+import type { HomeContent } from '../i18n/he/home';
 import Reveal from './Reveal.astro';
+
+interface Props {
+  stats?: HomeContent['agencyStats'];
+  eyebrow?: string;
+  title?: string;
+  ariaLabel?: string;
+}
+
+const {
+  stats = defaultStats,
+  eyebrow = 'נתונים מהפעילות שלנו',
+  title = 'ניסיון ותוצאות במספרים',
+  ariaLabel = 'מספרים על העסק',
+} = Astro.props;
 ---
 
-<section class="agency-stats section-padding below-fold" aria-label="מספרים על העסק">
+<section class="agency-stats section-padding below-fold" aria-label={ariaLabel}>
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
       <div class="agency-stats__panel">
         <header class="agency-stats__header">
-          <p class="agency-stats__eyebrow">נתונים מהפעילות שלנו</p>
-          <h2 class="agency-stats__title">ניסיון ותוצאות במספרים</h2>
+          <p class="agency-stats__eyebrow">{eyebrow}</p>
+          <h2 class="agency-stats__title">{title}</h2>
         </header>
 
         <div class="agency-stats__row">
           {
-            agencyStats.map((item) => (
+            stats.map((item) => (
               <div class="agency-stats__item">
                 <p
                   class="agency-stats__value"

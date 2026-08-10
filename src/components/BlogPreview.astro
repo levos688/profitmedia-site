@@ -1,12 +1,34 @@
 ---
 import BlogCard from './blog/BlogCard.astro';
-import { blogPosts } from '../data/blog';
+import { getBlogPosts, type BlogPostData } from '../lib/blog';
+import type { Locale } from '../i18n/config';
+import type { UiStrings } from '../i18n/he/ui';
+import { getUi } from '../i18n/content';
+import { getLocalizedPath } from '../i18n/routes';
 
-const posts = blogPosts.slice(0, 3);
+interface Props {
+  posts?: readonly BlogPostData[];
+  locale?: Locale;
+  labels?: UiStrings['blog'];
+  blogHref?: string;
+  showWhenEmpty?: boolean;
+}
+
+const {
+  posts: providedPosts,
+  locale = 'he',
+  labels: providedLabels,
+  blogHref: providedBlogHref,
+  showWhenEmpty = false,
+} = Astro.props;
+const labels = providedLabels ?? getUi(locale).blog;
+const blogHref = providedBlogHref ?? getLocalizedPath('blog', locale);
+const defaultPosts = providedPosts ?? (await getBlogPosts(locale)).map(({ data }) => data);
+const posts = defaultPosts.slice(0, 3);
 ---
 
 {
-  posts.length > 0 && (
+  (posts.length > 0 || showWhenEmpty) && (
     <section id="blog" class="blog-preview section-padding" aria-labelledby="blog-preview-title">
       <div class="mx-auto max-w-6xl px-4 md:px-6">
         <div class="blog-preview__header">
@@ -20,21 +42,21 @@ const posts = blogPosts.slice(0, 3);
                 stroke-linejoin="round"></path>
             </svg>
           </span>
-          <p class="blog-preview__eyebrow">מהבלוג של Profit Media</p>
-          <h2 class="blog-preview__title" id="blog-preview-title">בלוג על פרסום ושיווק באינטרנט</h2>
-          <p class="blog-preview__subtitle">מדריכים ותובנות על קמפיינים ממומנים — בלי הבטחות גורפות.</p>
+          <p class="blog-preview__eyebrow">{labels.eyebrow}</p>
+          <h2 class="blog-preview__title" id="blog-preview-title">{labels.title}</h2>
+          <p class="blog-preview__subtitle">{labels.subtitle}</p>
         </div>
 
         <div class:list={['blog-preview__grid', { 'blog-preview__grid--single': posts.length === 1 }]}>
           {posts.map((post) => (
             <div class="blog-preview__card-wrap">
-              <BlogCard post={post} eager />
+              <BlogCard post={post} locale={locale} eager />
             </div>
           ))}
         </div>
 
         <div class="mt-10 text-center">
-          <a href="/blog" class="blog-preview__link">לכל המאמרים בבלוג</a>
+          <a href={blogHref} class="blog-preview__link">{labels.allPosts}</a>
         </div>
       </div>
     </section>

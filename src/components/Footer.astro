@@ -1,10 +1,31 @@
 ---
+import { normalizeLocale, type Locale } from '../i18n/config';
+import { getLocalizedPath, type RouteId } from '../i18n/routes';
+
 interface Props {
   /** LP mode: only legal links (no About / Blog exits). */
   minimal?: boolean;
+  locale?: Locale;
+  routeId?: RouteId;
 }
 
 const { minimal = false } = Astro.props;
+const locale = normalizeLocale(Astro.props.locale);
+const labels = locale === 'he'
+  ? {
+      nav: 'קישורים משפטיים',
+      about: 'מי אנחנו',
+      blog: 'בלוג',
+      accessibility: 'הצהרת נגישות',
+      privacy: 'מדיניות הפרטיות',
+    }
+  : {
+      nav: 'Юридическая информация',
+      about: 'О нас',
+      blog: 'Блог',
+      accessibility: 'Заявление о доступности',
+      privacy: 'Политика конфиденциальности',
+    };
 ---
 
 <footer class="border-t border-gray-200 bg-white py-10">
@@ -12,22 +33,26 @@ const { minimal = false } = Astro.props;
     <div class="flex flex-col items-center gap-6 text-center">
       <nav
         class="flex flex-wrap justify-center gap-6 text-base font-medium text-gray-800 md:gap-8 md:text-lg"
-        aria-label="קישורים משפטיים"
+        aria-label={labels.nav}
       >
         {
           !minimal && (
             <>
-              <a href="/about" class="footer-link">
-                מי אנחנו
+              <a href={getLocalizedPath('about', locale)} class="footer-link">
+                {labels.about}
               </a>
-              <a href="/blog" class="footer-link">
-                בלוג
+              <a href={getLocalizedPath('blog', locale)} class="footer-link">
+                {labels.blog}
               </a>
             </>
           )
         }
-        <a href="/hatzara" class="footer-link">הצהרת נגישות</a>
-        <a href="/prat" class="footer-link">מדיניות הפרטיות</a>
+        <a href={getLocalizedPath('accessibility', locale)} class="footer-link">
+          {labels.accessibility}
+        </a>
+        <a href={getLocalizedPath('privacy', locale)} class="footer-link">
+          {labels.privacy}
+        </a>
       </nav>
     </div>
   </div>

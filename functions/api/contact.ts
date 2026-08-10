@@ -52,6 +52,7 @@ function buildDefaultLeadText(lead: LeadData): string {
     'Additional:',
     'Country: ' + (lead.country || '(unknown)'),
     'IP: ' + (lead.ip || '(unknown)'),
+    'Locale: ' + (lead.locale || '(unknown)'),
     'Language: ' + (lead.language || '(unknown)'),
     'User-Agent: ' + (lead.userAgent || '(unknown)'),
   ]
@@ -135,6 +136,7 @@ async function sendTelegram(env: Env, lead: LeadData) {
       : '',
     Object.keys(lead.utm).length ? `UTM: ${formatUtm(lead.utm)}` : '',
     lead.country ? `Country: ${lead.country}` : '',
+    lead.locale ? `Locale: ${lead.locale}` : '',
   ]
     .filter(Boolean)
     .join('\n');
@@ -204,7 +206,11 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
     vertical: lead.vertical || undefined,
     page_url: lead.pageUrl || undefined,
     landing_url: lead.landingUrl || undefined,
-    notes: [lead.formType && `form:${lead.formType}`, lead.source && `source:${lead.source}`]
+    notes: [
+      lead.formType && `form:${lead.formType}`,
+      lead.source && `source:${lead.source}`,
+      lead.locale && `locale:${lead.locale}`,
+    ]
       .filter(Boolean)
       .join(' | '),
   };
@@ -295,6 +301,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     referrer: body.referrer?.trim().slice(0, 2000) || '',
     utm: pickUtm(body),
     tracking: pickTracking(body),
+    locale: body.locale === 'ru' || body.locale === 'he' ? body.locale : '',
     language: body.language?.trim().slice(0, 64) || '',
     client: body.client?.trim().slice(0, 64) || '',
     quizAnswer: body.quizAnswer?.trim().slice(0, 64) || '',

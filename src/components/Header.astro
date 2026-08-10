@@ -1,15 +1,54 @@
 ---
-import { homeNav, homeCta } from '../data/site';
+import { homeNav as defaultNav, homeCta as defaultCta } from '../data/site';
+import { normalizeLocale, type Locale } from '../i18n/config';
+import type { HomeContent } from '../i18n/he/home';
+import { getLocalizedPath, type RouteId } from '../i18n/routes';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  locale?: Locale;
+  routeId?: RouteId;
+  nav?: HomeContent['nav'];
+  cta?: string;
+}
+
+const locale = normalizeLocale(Astro.props.locale);
+const { routeId, nav = defaultNav, cta = defaultCta } = Astro.props;
+const homePath = getLocalizedPath('home', locale);
 
 const navLinkId = (href: string) => {
   const hash = href.includes('#') ? href.split('#')[1] : '';
   return hash || undefined;
 };
+
+const localizeNavHref = (href: string) => {
+  const hashIndex = href.indexOf('#');
+  if (hashIndex >= 0) return `${homePath}${href.slice(hashIndex)}`;
+  if (href === '/about') return getLocalizedPath('about', locale);
+  if (href === '/blog') return getLocalizedPath('blog', locale);
+  return href;
+};
+
+const labels = locale === 'he'
+  ? {
+      home: 'Profit Media — דף הבית',
+      primaryNav: 'ניווט ראשי',
+      mobileNav: 'ניווט נייד',
+      menuOpen: 'פתיחת תפריט',
+      menuClose: 'סגירת תפריט',
+    }
+  : {
+      home: 'Profit Media — главная',
+      primaryNav: 'Основная навигация',
+      mobileNav: 'Мобильная навигация',
+      menuOpen: 'Открыть меню',
+      menuClose: 'Закрыть меню',
+    };
 ---
 
 <header class="site-header sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur transition-shadow duration-300" id="site-header">
-  <div class="header-bar mx-auto flex w-full max-w-6xl min-w-0 items-center gap-4 px-4 py-3 md:px-6 lg:flex-row">
-    <a href="/" class="header-logo block shrink-0" aria-label="Profit Media — דף הבית">
+  <div class="header-bar mx-auto flex w-full max-w-6xl min-w-0 items-center gap-3 px-4 py-3 md:gap-4 md:px-6 lg:flex-row">
+    <a href={homePath} class="header-logo block shrink-0" aria-label={labels.home}>
       <img
         src="/logo.svg"
         alt="Profit Media"
@@ -19,23 +58,19 @@ const navLinkId = (href: string) => {
       />
     </a>
 
-    <nav class="hidden min-w-0 flex-1 items-center justify-end gap-1 lg:flex" aria-label="ניווט ראשי">
+    <nav class="hidden min-w-0 flex-1 items-center justify-end gap-0.5 lg:flex" aria-label={labels.primaryNav}>
       {
-        homeNav.map((item) => (
-          <a href={item.href} class="nav-link" data-nav-link={navLinkId(item.href)}>
+        nav.map((item) => (
+          <a href={localizeNavHref(item.href)} class="nav-link" data-nav-link={navLinkId(item.href)}>
             {item.label}
           </a>
         ))
       }
     </nav>
 
-    <button
-      type="button"
-      class="btn-yellow hidden shrink-0 items-center justify-center rounded-full px-6 py-2 text-[0.96rem] font-black lg:inline-flex"
-      data-lead-modal-open
-    >
-      {homeCta}
-    </button>
+    <div class="header-lang hidden shrink-0 lg:block">
+      <LanguageSwitcher locale={locale} routeId={routeId} />
+    </div>
 
     <button
       type="button"
@@ -43,7 +78,9 @@ const navLinkId = (href: string) => {
       class="mobile-menu-btn ms-auto lg:hidden"
       aria-expanded="false"
       aria-controls="mobile-menu"
-      aria-label="פתיחת תפריט"
+      aria-label={labels.menuOpen}
+      data-open-label={labels.menuOpen}
+      data-close-label={labels.menuClose}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path
@@ -58,15 +95,15 @@ const navLinkId = (href: string) => {
   <nav
     id="mobile-menu"
     class="mobile-menu hidden border-t border-gray-100 bg-white lg:hidden"
-    aria-label="ניווט נייד"
+    aria-label={labels.mobileNav}
     hidden
   >
     <div class="mx-auto max-w-6xl px-4 py-4">
       <ul class="space-y-1">
         {
-          homeNav.map((item) => (
+          nav.map((item) => (
             <li>
-              <a href={item.href} class="mobile-nav-link" data-nav-link={navLinkId(item.href)}>
+              <a href={localizeNavHref(item.href)} class="mobile-nav-link" data-nav-link={navLinkId(item.href)}>
                 {item.label}
               </a>
             </li>
@@ -78,8 +115,11 @@ const navLinkId = (href: string) => {
         class="btn-yellow mt-4 flex w-full items-center justify-center rounded-full py-3 text-base font-black"
         data-lead-modal-open
       >
-        {homeCta}
+        {cta}
       </button>
+      <div class="mt-4 flex justify-center">
+        <LanguageSwitcher locale={locale} routeId={routeId} />
+      </div>
     </div>
   </nav>
 </header>
@@ -91,7 +131,10 @@ const navLinkId = (href: string) => {
   const setMenuOpen = (open: boolean) => {
     if (!menuBtn || !mobileMenu) return;
     menuBtn.setAttribute('aria-expanded', String(open));
-    menuBtn.setAttribute('aria-label', open ? 'סגירת תפריט' : 'פתיחת תפריט');
+    menuBtn.setAttribute(
+      'aria-label',
+      open ? menuBtn.dataset.closeLabel || '' : menuBtn.dataset.openLabel || ''
+    );
     mobileMenu.hidden = !open;
     mobileMenu.classList.toggle('hidden', !open);
   };
@@ -200,8 +243,15 @@ const navLinkId = (href: string) => {
 
   @media (min-width: 1024px) {
     .header-logo__img {
-      height: 4.375rem; /* 70px */
-      max-width: 240px;
+      height: 3.75rem; /* 60px — frees horizontal room for larger nav */
+      max-width: 200px;
+    }
+
+    .header-bar :global(.nav-link) {
+      font-size: 1.0625rem;
+      font-weight: 800;
+      padding-inline: 0.65rem;
+      white-space: nowrap;
     }
   }
 

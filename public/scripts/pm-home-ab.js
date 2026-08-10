@@ -25,7 +25,7 @@
         {
           id: 'system',
           eyebrow: 'מערכת עסקאות מהפרסום — לא סוכנות רגילה',
-          title: 'הליד הכי זול שלכם יכול להיות היקר ביותר',
+          title: 'הליד הכי זול שלכם\nיכול להיות\nהיקר ביותר',
           subtitle:
             'פרסום, דף נחיתה ו־CRM אישי מתחברים למערכת אחת, כדי לזהות מה מביא פגישות ועסקאות — לא רק לידים.',
           cta: 'קבלו אבחון קמפיין חינם',
@@ -36,7 +36,7 @@
         {
           id: 'pain',
           eyebrow: 'מערכת עסקאות מהפרסום — לא סוכנות רגילה',
-          title: 'הליד הכי זול שלכם יכול להיות היקר ביותר',
+          title: 'הליד הכי זול שלכם\nיכול להיות\nהיקר ביותר',
           subtitle:
             'מחברים את נתוני הפרסום למה שקורה בשיחות, בפגישות ובעסקאות — כדי להשקיע במה שמתקדם, לא רק במה שנראה טוב בדוח.',
           cta: 'קבלו אבחון קמפיין חינם',
@@ -296,7 +296,19 @@
   }
 
   function setText(el, value) {
-    if (el && typeof value === 'string') el.textContent = value;
+    if (!el || typeof value !== 'string') return;
+    if (value.indexOf('\n') === -1) {
+      el.textContent = value;
+      return;
+    }
+    el.textContent = '';
+    value.split('\n').forEach(function (line, index) {
+      if (index > 0) el.appendChild(document.createElement('br'));
+      var span = document.createElement('span');
+      span.className = 'hero-title__line';
+      span.textContent = line;
+      el.appendChild(span);
+    });
   }
 
   function applyBottomCopy(variantId) {

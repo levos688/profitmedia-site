@@ -20,43 +20,62 @@ import LeadCaptureModal from '../components/preview/LeadCaptureModal.astro';
 import StickyMobileCta from '../components/preview/StickyMobileCta.astro';
 import HomeAbPopup from '../components/preview/HomeAbPopup.astro';
 import Footer from '../components/Footer.astro';
-import { homeSeo } from '../data/site';
+import { getContent } from '../i18n/content';
+
+const locale = 'he';
+const { home, ui } = getContent(locale);
 ---
 
 <Layout
-  title={homeSeo.title}
-  description={homeSeo.description}
-  canonical={homeSeo.canonical}
+  title={home.seo.title}
+  description={home.seo.description}
+  canonical={home.seo.canonical}
   preloadImage="/images/hero/photo-min.svg"
+  locale={locale}
+  routeId="home"
 >
-  <HomeJsonLd slot="head" />
+  <HomeJsonLd slot="head" locale={locale} content={home} />
   <div
     class="preview-page"
     data-lead-page
+    data-locale={locale}
     data-lead-source="homepage"
     data-lead-source-prefix="home"
+    data-thank-you="/thank-you"
   >
-    <Header />
+    <Header locale={locale} routeId="home" nav={home.nav} cta={home.cta} />
     <main id="main-content">
       {/* CRO order: mechanism → proof → qualify → objections → CTA; blog last (SEO, low conversion weight) */}
-      <PreviewHero />
-      <AgencyStats />
-      <DealsContrast />
-      <DealsSystemProcess sectionId="how-it-works" />
-      <DealsResults />
-      <NamedOffer />
-      <Clients />
-      <TargetAudience />
-      <VideoTestimonials />
-      <PreviewPortfolio />
-      <PreviewFaq />
+      <PreviewHero content={home.hero} illustrationAlt="פרסום דיגיטלי — איור" />
+      <AgencyStats stats={home.agencyStats} />
+      <DealsContrast content={home.dealsContrast} />
+      <DealsSystemProcess sectionId="how-it-works" content={home.dealsProcess} />
+      <DealsResults content={home.dealsResults} />
+      <NamedOffer content={home.namedOffer} fallbackCta={home.cta} includesTitle={ui.sections.offerIncludes} />
+      <Clients
+        logos={home.clientLogos}
+        title={ui.sections.clients}
+        ariaLabel={ui.accessibility.carouselClients}
+        nextLabel={ui.accessibility.carouselNext}
+        previousLabel={ui.accessibility.carouselPrevious}
+      />
+      <TargetAudience content={home.targetAudience} outcomeLabel={ui.sections.audienceOutcome} />
+      <VideoTestimonials videos={home.videoTestimonials} title={ui.sections.videoTestimonials} videoPlayerLabel={ui.accessibility.videoPlayer} />
+      <PreviewPortfolio
+        landings={home.landings}
+        labels={ui.portfolio}
+        carouselLabel={ui.accessibility.carouselLandings}
+        nextLabel={ui.accessibility.carouselNext}
+        previousLabel={ui.accessibility.carouselPrevious}
+      />
+      <PreviewFaq items={home.faqs} title={ui.sections.faqTitle} subtitle={ui.sections.faqSubtitle} />
       <PreviewContactForm />
-      <BlogPreview />
+      <BlogPreview labels={ui.blog} />
     </main>
-    <Footer />
+    <Footer locale={locale} routeId="home" />
     <LeadCaptureModal />
-    <HomeAbPopup />
-    <StickyMobileCta />
+    <HomeAbPopup locale={locale} />
+    <StickyMobileCta label={home.cta} ariaLabel={ui.accessibility.ctaRegion} />
   </div>
-  <script src="/scripts/pm-home-ab.js?v=20260729a" defer></script>
+  <script src="/scripts/pm-home-ab.js?v=20260810a" defer></script>
 </Layout>

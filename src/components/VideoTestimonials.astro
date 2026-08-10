@@ -2,21 +2,39 @@
 import SectionTitle from './SectionTitle.astro';
 import Reveal from './Reveal.astro';
 import YoutubeFacade from './YoutubeFacade.astro';
-import { videoTestimonials } from '../data/site';
+import { videoTestimonials as defaultVideos } from '../data/site';
+import type { HomeContent } from '../i18n/he/home';
+
+interface Props {
+  videos?: HomeContent['videoTestimonials'];
+  title?: string;
+  videoPlayerLabel?: (title: string) => string;
+}
+
+const {
+  videos = defaultVideos,
+  title = 'עדויות וידאו',
+  videoPlayerLabel = (videoTitle: string) => `נגן — ${videoTitle}`,
+} = Astro.props;
 ---
 
 <section id="video-testimonials" class="section-padding below-fold bg-white" aria-labelledby="video-testimonials-title">
   <div class="mx-auto max-w-6xl px-4 md:px-6">
     <Reveal>
-      <SectionTitle title="עדויות וידאו" id="video-testimonials-title" class="mb-10 md:mb-14" />
+      <SectionTitle title={title} id="video-testimonials-title" class="mb-10 md:mb-14" />
     </Reveal>
 
     <Reveal delay={120}>
       <div class="video-testimonials__grid">
         {
-          videoTestimonials.map((video) => (
+          videos.map((video) => (
             <figure class="video-card">
-              <YoutubeFacade youtubeId={video.youtubeId} title={video.title} aspect="portrait" />
+              <YoutubeFacade
+                youtubeId={video.youtubeId}
+                title={video.title}
+                playLabel={videoPlayerLabel(video.title)}
+                aspect="portrait"
+              />
               <figcaption class="video-card__caption">{video.title}</figcaption>
             </figure>
           ))
