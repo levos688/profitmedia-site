@@ -245,6 +245,7 @@ const {
       landingUrl: attr.landingUrl,
       utm: attr.utm,
       source: formSource,
+      formType: ab?.getLeadSource?.() || 'lead_modal',
       referrer: document.referrer || '',
       language: navigator.language,
       locale: modal?.dataset.locale || 'he',
