@@ -114,7 +114,7 @@ import { dealsForm } from '../../data/deals';
             <p id="deals-privacy-error" class="field-error mt-2 hidden text-right" role="alert"></p>
 
             <button type="submit" id="deals-contact-submit" class="btn-yellow contact-submit mt-6 w-full rounded-full">
-              <span id="deals-contact-submit-label">{dealsForm.submit}</span>
+              <span id="deals-contact-submit-label" data-ab-bottom-submit>{dealsForm.submit}</span>
             </button>
 
             <p
@@ -253,7 +253,7 @@ import { dealsForm } from '../../data/deals';
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
-      await window.pmLpAb?.trackConversion?.();
+      await window.pmLpAb?.trackConversion?.('inline_form');
       window.location.href = meta.thankYou;
     } catch {
       if (status) {

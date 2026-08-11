@@ -15,30 +15,15 @@ import DealsContactForm from '../../components/deals/DealsContactForm.astro';
 import DealsStickyCta from '../../components/deals/DealsStickyCta.astro';
 import Footer from '../../components/Footer.astro';
 
-export function getStaticPaths() {
-  return [
-    {
-      params: { keyword: 'digital-advertising-agency' },
-      props: {
-        title: 'סוכנות פרסום דיגיטלי | אבחון קמפיין חינם | Profit Media',
-        h1: 'סוכנות פרסום דיגיטלי לעסקאות, לא רק ללידים',
-      },
-    },
-    {
-      params: { keyword: 'digital-advertising-office' },
-      props: {
-        title: 'משרד פרסום דיגיטלי | אבחון קמפיין חינם | Profit Media',
-        h1: 'משרד פרסום דיגיטלי לעסקאות, לא רק ללידים',
-      },
-    },
-  ];
-}
-
-const { keyword } = Astro.params;
-const { title, h1 } = Astro.props;
-
-const description = 'מערכת שמחברת פרסום לעסקאות: מחקר מתחרים, קמפיינים, דף נחיתה ו־CRM. אבחון קמפיין חינם תוך 24 שעות, בלי התחייבות.';
-const canonical = `https://profitmedia.co.il/lp/${keyword}/`;
+/**
+ * Clean Google Ads landing page — same content as the keyword LP,
+ * without client-side A/B, popups, or DOM reordering (policy-safe).
+ */
+const title = 'סוכנות פרסום דיגיטלי | אבחון קמפיין חינם | Profit Media';
+const h1 = 'סוכנות פרסום דיגיטלי לעסקאות, לא רק ללידים';
+const description =
+  'מערכת שמחברת פרסום לעסקאות: מחקר מתחרים, קמפיינים, דף נחיתה ו־CRM. אבחון קמפיין חינם תוך 24 שעות, בלי התחייבות.';
+const canonical = 'https://profitmedia.co.il/lp/agency/';
 ---
 
 <Layout
@@ -51,7 +36,7 @@ const canonical = `https://profitmedia.co.il/lp/${keyword}/`;
   <div
     class="preview-page"
     data-lead-page
-    data-lead-source={`lp-${keyword}`}
+    data-lead-source="lp-agency"
     data-lead-source-prefix="lp"
     data-thank-you="/thank-you"
   >

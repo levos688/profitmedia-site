@@ -131,6 +131,30 @@ const MANIFEST_URL = 'https://crm.profitmedia.co.il/cdn/clients/manifest.json';
       0 0 28px rgba(198, 6, 145, 0.12);
   }
 
+  @media (max-width: 767px) {
+    #clients .carousel-outer {
+      gap: 0.5rem;
+    }
+
+    #clients .carousel-viewport {
+      padding-inline: 0;
+    }
+
+    #clients .client-logo {
+      width: calc((100% - 1rem) / 2);
+      height: 88px;
+      padding: 0.5rem 0.6rem;
+      opacity: 1 !important;
+    }
+
+    #clients .carousel-arrow {
+      position: static;
+      inset: auto;
+      flex: 0 0 2.5rem;
+      transform: none;
+    }
+  }
+
   @media (min-width: 768px) {
     #clients .client-logo {
       width: calc((100% - 4.5rem) / 4);

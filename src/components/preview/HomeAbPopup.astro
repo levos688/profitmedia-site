@@ -282,7 +282,14 @@ const submitLabel = formStrings?.submit ?? 'המשך';
 
 <script>
   function getPageAb() {
-    return window.pmAdsAb || window.pmHomeAb;
+    return window.pmLpAb || window.pmAdsAb || window.pmHomeAb;
+  }
+
+  function getAbCta(ab: any) {
+    const assignments = ab?.getAssignments?.() || {};
+    const slot = assignments.cta_copy ? 'cta_copy' : 'sticky_cta';
+    const id = assignments.cta_copy || assignments.sticky_cta;
+    return id ? ab?.findVariant?.(slot, id) : null;
   }
 
   const popup = document.getElementById('pm-home-popup');
@@ -305,22 +312,22 @@ const submitLabel = formStrings?.submit ?? 'המשך';
       const quiz = popup.querySelector('[data-pm-popup-quiz]') as HTMLElement | null;
       const formStep = popup.querySelector('[data-pm-popup-form]') as HTMLElement | null;
       const ab = getPageAb();
+      ab?.trackPopupInteraction?.();
       if (quiz) quiz.hidden = true;
       if (formStep) formStep.hidden = false;
       const title = popup.querySelector('[data-pm-popup-form-title]');
       if (title && ab) {
-        const stickyId = ab.getAssignments().sticky_cta;
-        const sticky = ab.findVariant('sticky_cta', stickyId);
+        const sticky = getAbCta(ab);
         title.textContent =
-          sticky?.id === 'opt_plan'
+          ab.getPopupFormTitle?.() ||
+          (sticky?.id === 'opt_plan'
             ? 'השאירו פרטים לתוכנית אופטימיזציה אישית'
             : sticky?.label?.includes('הזמנת') || sticky?.id === 'order_system' || sticky?.id === 'start_work'
               ? 'השאירו פרטים להזמנת המערכת'
-              : 'השאירו פרטים לאבחון חינם';
+              : 'השאירו פרטים לאבחון חינם');
       }
       if (submitBtn && ab) {
-        const stickyId = ab.getAssignments().sticky_cta;
-        const sticky = ab.findVariant('sticky_cta', stickyId);
+        const sticky = getAbCta(ab);
         submitBtn.textContent = sticky?.label || 'המשך';
       }
       document.getElementById('pm-home-popup-name')?.focus();
@@ -371,7 +378,6 @@ const submitLabel = formStrings?.submit ?? 'המשך';
     const thankYou = popup?.dataset.thankYou || pageRoot?.dataset.thankYou || '/thank-you';
     const source = ab?.getLeadSource?.() || 'popup_quiz';
     try {
-      await ab?.trackConversion?.(source);
       const attr =
         typeof window.pmGetLeadAttribution === 'function'
           ? window.pmGetLeadAttribution()
@@ -397,13 +403,14 @@ const submitLabel = formStrings?.submit ?? 'המשך';
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('fail');
+      await ab?.trackConversion?.(source);
       window.location.href = thankYou;
     } catch {
       alert(popup?.dataset.genericError || 'שגיאה בשליחה. נסו שוב או כתבו ל-info@profitmedia.co.il');
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = popup?.dataset.submitLabel || 'המשך';
+        submitBtn.textContent = getAbCta(ab)?.label || popup?.dataset.submitLabel || 'המשך';
       }
     }
   });
