@@ -1,9 +1,12 @@
 import { isAbStatsAuthorized } from '../lib/ab-stats-auth';
 import {
+  computeLpAllocation,
+  LP_PAGE_PREFIXES,
   lpPageSummary,
   readLpAbStats,
   withLpRates,
   type LpAbChannel,
+  type LpPageSlug,
 } from './lp-ab-stats-core';
 
 interface Env {
@@ -32,13 +35,25 @@ export async function onRequestGet(context: { request: Request; env: Env }) {
   const from = fromParam && DATE_RE.test(fromParam) ? fromParam : undefined;
   const to = toParam && DATE_RE.test(toParam) ? toParam : undefined;
   const stats = await readLpAbStats(context.env.AB_DB, channel, from, to);
+  const pageParam = url.searchParams.get('page') as LpPageSlug | null;
+  const pagePrefix = pageParam ? LP_PAGE_PREFIXES[pageParam] : undefined;
+  const allExperiments = withLpRates(stats);
+  const experiments = pagePrefix
+    ? allExperiments.filter((experiment) => experiment.experiment.startsWith(`${pagePrefix}_`))
+    : allExperiments;
 
   return json({
     ok: true,
     updatedAt: new Date().toISOString(),
     channel,
     range: { from: from || null, to: to || null },
-    page: lpPageSummary(stats),
-    experiments: withLpRates(stats),
+    page: pagePrefix ? lpPageSummary(stats, pagePrefix) : lpPageSummary(stats),
+    selectedPage: pagePrefix ? pageParam : null,
+    pages: Object.entries(LP_PAGE_PREFIXES).map(([slug, prefix]) => ({
+      slug,
+      ...lpPageSummary(stats, prefix),
+    })),
+    allocation: pagePrefix ? computeLpAllocation(stats, pagePrefix) : null,
+    experiments,
   });
 }

@@ -156,6 +156,13 @@ async function sendTelegram(env: Env, lead: LeadData) {
   }
 }
 
+function normalizeContactDevice(raw?: string): string {
+  const v = String(raw || '').trim().toLowerCase();
+  if (v === 'mob' || v === 'mobile' || v === 'm') return 'Mob';
+  if (v === 'desk' || v === 'desktop' || v === 'd') return 'Desk';
+  return '';
+}
+
 /** Map site form → pm-crm page bucket (home | ads | deals | lp). Skip client LPs (donhin, avhun, …). */
 function shouldDualWritePmCrm(lead: LeadData): boolean {
   const client = (lead.client || '').toLowerCase();
@@ -165,10 +172,9 @@ function shouldDualWritePmCrm(lead: LeadData): boolean {
   return true;
 }
 
-function pmCrmLeadSource(lead: LeadData): string {
+function pmCrmPageBucket(lead: LeadData): string {
   const blob = `${lead.source} ${lead.pageUrl} ${lead.landingUrl}`.toLowerCase();
   if (blob.includes('/lp/')) {
-    // Extract the keyword part for better tracking (e.g. "lp/digital-advertising-agency")
     const match = blob.match(/\/lp\/([^\/?#]+)/);
     if (match) return `lp_${match[1]}`;
     return 'lp';
@@ -179,7 +185,76 @@ function pmCrmLeadSource(lead: LeadData): string {
   if (blob.includes('/ads') || /(^|[^a-z])ads([^a-z]|$)/.test(blob) || blob.includes('ads-meta')) {
     return 'ads';
   }
+  if (blob.includes('/about')) return 'about';
   return 'home';
+}
+
+/** Pretty acquisition channel for CRM «מקור» column (ChatGPT, Google, …). */
+function pmCrmAcquisitionSource(lead: LeadData): string {
+  const utm = (lead.utm.utm_source || '').trim().toLowerCase();
+  const medium = (lead.utm.utm_medium || '').trim().toLowerCase();
+  const ref = `${lead.referrer || ''} ${lead.refererHeader || ''}`.toLowerCase();
+  const blob = `${utm} ${ref} ${lead.pageUrl} ${lead.landingUrl}`.toLowerCase();
+
+  if (lead.utm.gclid || lead.utm.gbraid || lead.utm.wbraid) return 'Google';
+  if (lead.utm.fbclid) return 'Facebook';
+
+  if (blob.includes('chatgpt')) return 'ChatGPT';
+  if (blob.includes('perplexity')) return 'Perplexity';
+  if (blob.includes('claude.ai') || blob.includes('anthropic')) return 'Claude';
+  if (blob.includes('gemini.google') || utm.includes('gemini')) return 'Gemini';
+
+  if (
+    utm === 'fb' ||
+    utm === 'facebook' ||
+    utm === 'ig' ||
+    utm === 'instagram' ||
+    utm.startsWith('ri_') ||
+    medium === 'facebook' ||
+    medium === 'paidsocial' ||
+    ref.includes('facebook.com') ||
+    ref.includes('instagram.com')
+  ) {
+    if (utm === 'ig' || utm === 'instagram' || ref.includes('instagram.com')) return 'Instagram';
+    return 'Facebook';
+  }
+
+  if (utm === 'google' || utm === 'google_ads' || utm === 'adwords' || ref.includes('google.')) {
+    return 'Google';
+  }
+  if (utm === 'tiktok' || ref.includes('tiktok.com')) return 'TikTok';
+  if (utm === 'linkedin' || ref.includes('linkedin.com')) return 'LinkedIn';
+  if (utm === 'youtube' || ref.includes('youtube.com')) return 'YouTube';
+  if (utm === 'bing' || ref.includes('bing.com')) return 'Bing';
+
+  if (utm) {
+    // chatgpt.com → ChatGPT already handled; strip common suffixes
+    const cleaned = utm.replace(/\.com$/, '').replace(/[._-]+/g, ' ');
+    return cleaned.replace(/\b\w/g, (c) => c.toUpperCase()).slice(0, 64);
+  }
+
+  try {
+    if (lead.referrer) {
+      const host = new URL(lead.referrer).hostname.replace(/^www\./, '');
+      if (host && !host.includes('profitmedia')) return host.slice(0, 64);
+    }
+  } catch {
+    /* ignore bad referrer */
+  }
+
+  return 'Direct';
+}
+
+function hasGoogleAdsClickId(lead: LeadData): boolean {
+  return Boolean(lead.utm.gclid || lead.utm.gbraid || lead.utm.wbraid);
+}
+
+function pmCrmFormElement(lead: LeadData): string {
+  const form = (lead.formType || '').trim();
+  if (form) return form.slice(0, 64);
+  const src = (lead.source || '').trim();
+  if (src) return src.slice(0, 64);
+  return 'form';
 }
 
 /** Best-effort dual-write into Profit Media CRM. Never fails the contact response. */
@@ -189,14 +264,25 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
   if (!url || !key) return;
   if (!shouldDualWritePmCrm(lead)) return;
 
+  const pageBucket = pmCrmPageBucket(lead);
+  const acquisition = pmCrmAcquisitionSource(lead);
+  const formElement = pmCrmFormElement(lead);
+  const googleClick = hasGoogleAdsClickId(lead);
+
+  // Reuse CRM columns: source = acquisition, audience = channel (Web), ad = on-page element.
+  // Exception: Google Ads click IDs keep campaign/audience/term for Ads reporting joins.
   const payload = {
     name: lead.name,
     phone: lead.phone,
     email: lead.email || undefined,
-    lead_source: pmCrmLeadSource(lead),
-    lead_audience: lead.utm.utm_content || undefined,
-    lead_ad_id: lead.utm.utm_term || undefined,
-    lead_campaign: lead.utm.utm_campaign || undefined,
+    lead_source: acquisition,
+    lead_audience: googleClick ? lead.utm.utm_content || undefined : 'Web',
+    lead_ad_id: googleClick
+      ? lead.utm.utm_term || formElement
+      : formElement,
+    lead_campaign: googleClick
+      ? lead.utm.utm_campaign || undefined
+      : lead.utm.utm_campaign || pageBucket,
     utm_source: lead.utm.utm_source || undefined,
     utm_medium: lead.utm.utm_medium || undefined,
     gclid: lead.utm.gclid || undefined,
@@ -206,10 +292,18 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
     vertical: lead.vertical || undefined,
     page_url: lead.pageUrl || undefined,
     landing_url: lead.landingUrl || undefined,
+    device: lead.device || undefined,
+    cta_label: lead.ctaLabel || undefined,
     notes: [
-      lead.formType && `form:${lead.formType}`,
+      `channel:Web`,
+      `page:${pageBucket}`,
+      formElement && `element:${formElement}`,
+      lead.device && `device:${lead.device}`,
+      lead.ctaLabel && `cta:${lead.ctaLabel}`,
       lead.source && `source:${lead.source}`,
+      lead.formType && `form:${lead.formType}`,
       lead.locale && `locale:${lead.locale}`,
+      lead.referrer && `ref:${lead.referrer.slice(0, 180)}`,
     ]
       .filter(Boolean)
       .join(' | '),
@@ -305,9 +399,11 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     language: body.language?.trim().slice(0, 64) || '',
     client: body.client?.trim().slice(0, 64) || '',
     quizAnswer: body.quizAnswer?.trim().slice(0, 64) || '',
-    formType: body.formType?.trim().slice(0, 32) || '',
+    formType: body.formType?.trim().slice(0, 64) || '',
     vertical: body.vertical?.trim().slice(0, 200) || '',
     source: body.source?.trim().slice(0, 64) || '',
+    device: normalizeContactDevice(body.device),
+    ctaLabel: body.ctaLabel?.trim().slice(0, 160) || '',
     ip: request.headers.get('CF-Connecting-IP') || '',
     country: request.headers.get('CF-IPCountry') || '',
     userAgent: request.headers.get('User-Agent') || '',

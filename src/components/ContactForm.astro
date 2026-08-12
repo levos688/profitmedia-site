@@ -274,7 +274,11 @@ import Reveal from './Reveal.astro';
       landingUrl,
       referrer: document.referrer || '',
       utm,
+      source: 'homepage',
+      formType: 'contact_form',
+      ctaLabel: (submitLabel?.textContent || submitBtn?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160),
       language: navigator.language || '',
+      device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };
 
     try {

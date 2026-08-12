@@ -25,6 +25,11 @@ import Layout from '../../layouts/Layout.astro';
         <button type="button" class="is-active" data-channel="google_ads">Только Google Ads</button>
         <button type="button" data-channel="all">Все визиты</button>
       </nav>
+      <nav class="lp-stats__tabs lp-stats__tabs--pages" aria-label="Посадочная страница">
+        <button type="button" data-page="all">Все посадочные</button>
+        <button type="button" class="is-active" data-page="digital-advertising-agency">סוכנות פרסום דיגיטלי</button>
+        <button type="button" data-page="digital-advertising-office">משרד פרסום דיגיטלי</button>
+      </nav>
 
       <p id="lp-stats-status">Загрузка…</p>
       <div id="lp-stats-summary" class="lp-stats__summary"></div>
@@ -41,12 +46,41 @@ import Layout from '../../layouts/Layout.astro';
   const updated = document.getElementById('lp-stats-updated');
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token') || '';
+  let currentChannel = params.get('channel') === 'all' ? 'all' : 'google_ads';
+  let currentPage = ['all', 'digital-advertising-agency', 'digital-advertising-office'].includes(
+    params.get('page') || '',
+  )
+    ? params.get('page') || 'digital-advertising-agency'
+    : 'digital-advertising-agency';
 
   const names: Record<string, string> = {
     page_order: 'Порядок блоков',
     landing_keyword: 'Посадочная по ключевой фразе',
     proof_first: 'Сначала результат клиента',
     mechanism_first: 'Сначала механизм системы',
+    agency_page_order: 'סוכנות — порядок блоков',
+    agency_cta_copy: 'סוכנות — текст кнопок',
+    agency_popup_mode: 'סוכנות — формат popup',
+    agency_popup_trigger: 'סוכנות — триггер popup',
+    agency_lead_source: 'סוכנות — источник заявки',
+    office_page_order: 'משרד — порядок блоков',
+    office_cta_copy: 'משרד — текст кнопок',
+    office_popup_mode: 'משרד — формат popup',
+    office_popup_trigger: 'משרד — триггер popup',
+    office_lead_source: 'משרד — источник заявки',
+    diagnosis: 'קבלו אבחון קמפיין חינם',
+    deal_map: 'קבלו מפת הזדמנויות לעסקאות',
+    media_plan: 'קבלו תוכנית פרסום ממוקדת',
+    quiz: 'Popup с вопросом',
+    direct: 'Сразу форма',
+    time_30s: 'Через 30 секунд',
+    scroll_50pct: 'После 50% страницы',
+    exit_intent: 'При намерении уйти',
+    hero: 'Hero CTA',
+    offer: 'Блок предложения',
+    sticky: 'Нижняя кнопка',
+    auto_popup: 'Автоматический popup',
+    inline_form: 'Форма внизу',
     'digital-advertising-agency': 'סוכנות פרסום דיגיטלי',
     'digital-advertising-office': 'משרד פרסום דיגיטלי',
   };
@@ -69,6 +103,11 @@ import Layout from '../../layouts/Layout.astro';
         (experiment: any) => `
           <section class="lp-stats__experiment">
             <h2>${names[experiment.experiment] || experiment.experiment}</h2>
+            ${
+              data.allocation?.[experiment.experiment]
+                ? `<p class="lp-stats__allocation">${data.allocation[experiment.experiment].reason}</p>`
+                : ''
+            }
             <div class="lp-stats__table-wrap">
               <table>
                 <thead><tr><th>Вариант</th><th>Показы</th><th>Клики</th><th>Лиды</th><th>CTR</th><th>CVR</th></tr></thead>
@@ -95,26 +134,39 @@ import Layout from '../../layouts/Layout.astro';
     if (updated) updated.textContent = `Обновлено: ${new Date(data.updatedAt).toLocaleString('ru-RU')}`;
   }
 
-  async function load(channel = 'google_ads') {
+  async function load() {
     if (status) status.textContent = 'Загрузка…';
-    const query = new URLSearchParams({ channel });
+    const query = new URLSearchParams({ channel: currentChannel });
+    if (currentPage !== 'all') query.set('page', currentPage);
     if (token) query.set('token', token);
     try {
       const response = await fetch(`/api/lp-ab-stats?${query.toString()}`);
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.error || 'Ошибка загрузки');
       render(data);
-      if (status) status.textContent = channel === 'google_ads' ? 'Трафик Google Ads' : 'Все визиты';
+      if (status) status.textContent = currentChannel === 'google_ads' ? 'Трафик Google Ads' : 'Все визиты';
     } catch (error) {
       if (status) status.textContent = error instanceof Error ? error.message : 'Ошибка загрузки';
     }
   }
 
   document.querySelectorAll<HTMLButtonElement>('[data-channel]').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.channel === currentChannel);
     button.addEventListener('click', () => {
       document.querySelectorAll('[data-channel]').forEach((item) => item.classList.remove('is-active'));
       button.classList.add('is-active');
-      load(button.dataset.channel || 'google_ads');
+      currentChannel = button.dataset.channel || 'google_ads';
+      load();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-page]').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.page === currentPage);
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-page]').forEach((item) => item.classList.remove('is-active'));
+      button.classList.add('is-active');
+      currentPage = button.dataset.page || 'all';
+      load();
     });
   });
 
@@ -167,6 +219,12 @@ import Layout from '../../layouts/Layout.astro';
     display: flex;
     gap: 0.6rem;
     margin: 1.25rem 0;
+  }
+
+  .lp-stats__tabs--pages {
+    margin-top: -0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
   }
 
   .lp-stats__tabs button {
@@ -230,6 +288,12 @@ import Layout from '../../layouts/Layout.astro';
   .lp-stats__experiment h2 {
     margin: 0 0 0.8rem;
     font-size: 1.15rem;
+  }
+
+  .lp-stats__allocation {
+    margin: -0.35rem 0 0.8rem;
+    color: #766b79;
+    font-size: 0.84rem;
   }
 
   .lp-stats__table-wrap {

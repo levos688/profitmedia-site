@@ -32,7 +32,7 @@ const { variant = 'editorial' } = Astro.props;
         <p class="deals-hero__subtitle">{dealsHero.subtitle}</p>
 
         <div class="deals-hero__cta-wrap">
-          <button type="button" class="btn-yellow deals-hero__cta rounded-full font-black" data-lead-modal-open>
+          <button type="button" class="btn-yellow deals-hero__cta rounded-full font-black" data-lead-modal-open data-cta="hero_cta">
             {dealsHero.cta}
           </button>
           <p class="deals-hero__note">{dealsHero.ctaNote}</p>

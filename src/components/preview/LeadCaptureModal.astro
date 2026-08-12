@@ -140,9 +140,42 @@ const {
   const verticalInput = document.getElementById('lead-modal-vertical') as HTMLInputElement | null;
   const submitBtn = document.getElementById('lead-modal-submit') as HTMLButtonElement | null;
   let lastFocus: HTMLElement | null = null;
+  /** Which CTA opened the modal — written to CRM «element» column. */
+  let openedFromCta = 'unknown_cta';
+  let openedFromLabel = '';
 
-  const openModal = () => {
+  const resolveCtaId = (trigger: Element): string => {
+    const el = trigger as HTMLElement;
+    const explicit = el.dataset.cta || el.getAttribute('data-cta');
+    if (explicit) return explicit;
+    const ab = el.dataset.abOpen || el.getAttribute('data-ab-open');
+    if (ab === 'hero') return 'hero_cta';
+    if (ab === 'mid') return 'mid_cta';
+    if (ab === 'offer') return 'offer_cta';
+    if (el.hasAttribute('data-ab-sticky-label') || el.closest('.sticky-cta')) return 'sticky';
+    if (el.closest('header') || el.classList.contains('header-cta')) return 'header_cta';
+    return 'lead_modal';
+  };
+
+  const resolveCtaLabel = (formType: string, trigger?: Element | null): string => {
+    const ab = window.pmLpAb || window.pmAdsAb || window.pmHomeAb;
+    const fromAb = ab?.getCtaLabel?.(formType);
+    if (fromAb) return String(fromAb).trim().slice(0, 160);
+    if (openedFromLabel) return openedFromLabel;
+    if (trigger) {
+      const text = (trigger as HTMLElement).innerText || (trigger as HTMLElement).textContent || '';
+      return text.replace(/\s+/g, ' ').trim().slice(0, 160);
+    }
+    return '';
+  };
+
+  const openModal = (trigger?: Element | null) => {
     if (!modal) return;
+    if (trigger) {
+      openedFromCta = resolveCtaId(trigger);
+      const text = (trigger as HTMLElement).innerText || (trigger as HTMLElement).textContent || '';
+      openedFromLabel = text.replace(/\s+/g, ' ').trim().slice(0, 160);
+    }
     lastFocus = document.activeElement as HTMLElement;
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -163,7 +196,7 @@ const {
   };
 
   document.querySelectorAll('[data-lead-modal-open]').forEach((trigger) => {
-    trigger.addEventListener('click', openModal);
+    trigger.addEventListener('click', () => openModal(trigger));
   });
 
   modal?.querySelectorAll('[data-lead-modal-close]').forEach((el) => {
@@ -230,6 +263,10 @@ const {
     const formSource = pageRoot?.dataset.leadSource || 'homepage-lead-modal';
     const thankYou = modal?.dataset.thankYou || pageRoot?.dataset.thankYou || '/thank-you';
     const ab = window.pmLpAb || window.pmAdsAb || window.pmHomeAb;
+    const formType =
+      openedFromCta && openedFromCta !== 'lead_modal'
+        ? openedFromCta
+        : ab?.getLeadSource?.() || openedFromCta || 'lead_modal';
 
     const attr =
       typeof window.pmGetLeadAttribution === 'function'
@@ -245,9 +282,12 @@ const {
       landingUrl: attr.landingUrl,
       utm: attr.utm,
       source: formSource,
+      formType,
+      ctaLabel: resolveCtaLabel(formType),
       referrer: document.referrer || '',
       language: navigator.language,
       locale: modal?.dataset.locale || 'he',
+      device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };
 
     try {
@@ -258,7 +298,7 @@ const {
       });
       const data = (await res.json()) as { ok?: boolean };
       if (!res.ok || !data.ok) throw new Error('submit failed');
-      const source = ab?.getLeadSource?.() || 'mid_cta';
+      const source = formType || ab?.getLeadSource?.() || 'mid_cta';
       await ab?.trackConversion?.(source);
       window.location.href = thankYou;
     } catch {

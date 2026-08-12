@@ -33,7 +33,12 @@ export async function onRequest(context: { request: Request; env: Env; next: () 
     });
   }
 
-  if (path !== '/donhin/ab-stats' && path !== '/home/ab-stats' && path !== '/ads/ab-stats') {
+  if (
+    path !== '/donhin/ab-stats' &&
+    path !== '/home/ab-stats' &&
+    path !== '/ads/ab-stats' &&
+    path !== '/lp/ab-stats'
+  ) {
     return next();
   }
 
