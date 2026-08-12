@@ -244,6 +244,7 @@ import { dealsForm } from '../../data/deals';
       formType: 'inline_form',
       referrer: document.referrer || '',
       language: navigator.language || '',
+      device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };
 
     try {

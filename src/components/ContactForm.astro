@@ -277,6 +277,7 @@ import Reveal from './Reveal.astro';
       source: 'homepage',
       formType: 'contact_form',
       language: navigator.language || '',
+      device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };
 
     try {

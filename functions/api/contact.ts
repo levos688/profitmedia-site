@@ -156,6 +156,13 @@ async function sendTelegram(env: Env, lead: LeadData) {
   }
 }
 
+function normalizeContactDevice(raw?: string): string {
+  const v = String(raw || '').trim().toLowerCase();
+  if (v === 'mob' || v === 'mobile' || v === 'm') return 'Mob';
+  if (v === 'desk' || v === 'desktop' || v === 'd') return 'Desk';
+  return '';
+}
+
 /** Map site form → pm-crm page bucket (home | ads | deals | lp). Skip client LPs (donhin, avhun, …). */
 function shouldDualWritePmCrm(lead: LeadData): boolean {
   const client = (lead.client || '').toLowerCase();
@@ -285,10 +292,12 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
     vertical: lead.vertical || undefined,
     page_url: lead.pageUrl || undefined,
     landing_url: lead.landingUrl || undefined,
+    device: lead.device || undefined,
     notes: [
       `channel:Web`,
       `page:${pageBucket}`,
       formElement && `element:${formElement}`,
+      lead.device && `device:${lead.device}`,
       lead.source && `source:${lead.source}`,
       lead.formType && `form:${lead.formType}`,
       lead.locale && `locale:${lead.locale}`,
@@ -391,6 +400,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     formType: body.formType?.trim().slice(0, 64) || '',
     vertical: body.vertical?.trim().slice(0, 200) || '',
     source: body.source?.trim().slice(0, 64) || '',
+    device: normalizeContactDevice(body.device),
     ip: request.headers.get('CF-Connecting-IP') || '',
     country: request.headers.get('CF-IPCountry') || '',
     userAgent: request.headers.get('User-Agent') || '',

@@ -306,6 +306,7 @@ const {
       referrer: document.referrer || '',
       language: navigator.language,
       locale: form.dataset.locale || 'he',
+      device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };
 
     try {

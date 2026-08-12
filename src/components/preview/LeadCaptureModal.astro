@@ -269,6 +269,7 @@ const {
       referrer: document.referrer || '',
       language: navigator.language,
       locale: modal?.dataset.locale || 'he',
+      device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };
 
     try {

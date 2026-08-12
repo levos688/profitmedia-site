@@ -400,6 +400,7 @@ const submitLabel = formStrings?.submit ?? 'המשך';
           referrer: document.referrer || '',
           language: navigator.language,
           locale: popup?.dataset.locale || 'he',
+          device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
         }),
       });
       const data = (await res.json()) as { ok?: boolean };

@@ -423,6 +423,15 @@ const canonicalUrl = canonical ?? Astro.url.href;
           };
         };
 
+        /** Desk | Mob — match site mobile breakpoint used by sticky CTA. */
+        window.pmDeviceClass = function () {
+          try {
+            return window.matchMedia('(max-width: 767px)').matches ? 'Mob' : 'Desk';
+          } catch (e) {
+            return 'Desk';
+          }
+        };
+
         function initReveal() {
           var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           var revealEls = document.querySelectorAll('[data-reveal]');

@@ -43,6 +43,8 @@ export interface ContactPayload {
   source?: string;
   formType?: string;
   eventId?: string;
+  /** Viewport class at submit: Desk | Mob */
+  device?: string;
 }
 
 export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
@@ -59,6 +61,7 @@ export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'
   formType: string;
   vertical: string;
   source: string;
+  device: string;
   ip: string;
   country: string;
   userAgent: string;
