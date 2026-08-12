@@ -97,16 +97,70 @@ CPL — עלות לליד — מראה כמה תקציב פרסום נדרש ב�
 
 <p>ניקח דוגמה פשוטה לשני קמפיינים. המספרים להמחשה, אבל החישוב אמיתי לחלוטין:</p>
 
-<ul>
-<li>
-<strong>קמפיין א׳:</strong> 100 לידים במחיר 50 ₪. ההשקעה היא 5,000 ₪. רק 2% מהפניות הופכות ללקוחות
-משלמים — כלומר 2 לקוחות. הוצאות הפרסום ללקוח הן 2,500 ₪.
-</li>
-<li>
-<strong>קמפיין ב׳:</strong> 50 לידים במחיר 80 ₪. ההשקעה היא 4,000 ₪. 10% מהפניות הופכות ללקוחות
-משלמים — כלומר 5 לקוחות. הוצאות הפרסום ללקוח הן 800 ₪.
-</li>
-</ul>
+<figure class="blog-cpl-compare">
+<p class="blog-cpl-compare__legend"><span><span class="blog-cpl-swatch blog-cpl-swatch--lead"></span>ליד</span><span><span class="blog-cpl-swatch blog-cpl-swatch--paid"></span>לקוח משלם</span></p>
+<div class="blog-cpl-compare__grid">
+<article class="blog-cpl-card blog-cpl-card--trap">
+<p class="blog-cpl-card__kicker">נראה מנצח לפי CPL</p>
+<p class="blog-cpl-card__name">קמפיין א׳</p>
+<svg viewBox="0 0 99 99" role="img" aria-label="100 לידים, מתוכם 2 לקוחות משלמים">
+<title>100 לידים, 2 לקוחות משלמים</title>
+<defs>
+<pattern id="cpl-dots-a-he" width="10" height="10" patternUnits="userSpaceOnUse">
+<rect width="9" height="9" rx="1.5" fill="#e4d4e8"/>
+</pattern>
+</defs>
+<rect width="99" height="99" fill="url(#cpl-dots-a-he)"/>
+<rect x="80" y="90" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="90" y="90" width="9" height="9" rx="1.5" fill="#fcc000"/>
+</svg>
+<p class="blog-cpl-card__flow">100 לידים → 2% סגירה → 2 לקוחות</p>
+<dl>
+<div><dt>CPL</dt><dd>50 ₪</dd></div>
+<div><dt>השקעה</dt><dd>5,000 ₪</dd></div>
+<div class="is-warn"><dt>עלות לקוח מהפרסום</dt><dd>2,500 ₪</dd></div>
+<div><dt>הכנסה</dt><dd>8,000 ₪</dd></div>
+</dl>
+<div class="blog-cpl-roas">
+<p class="blog-cpl-roas__label">ROAS 1.6 מתוך 5</p>
+<div class="blog-cpl-roas__track" aria-hidden="true"><span style="width:32%"></span></div>
+</div>
+<p class="blog-cpl-card__foot">ליד זול, אבל לקוח יקר פי שלושה</p>
+</article>
+<p class="blog-cpl-compare__vs">מול</p>
+<article class="blog-cpl-card blog-cpl-card--win">
+<p class="blog-cpl-card__kicker">מנצח לפי לקוחות ו-ROAS</p>
+<p class="blog-cpl-card__name">קמפיין ב׳</p>
+<svg viewBox="0 0 99 49" role="img" aria-label="50 לידים, מתוכם 5 לקוחות משלמים">
+<title>50 לידים, 5 לקוחות משלמים</title>
+<defs>
+<pattern id="cpl-dots-b-he" width="10" height="10" patternUnits="userSpaceOnUse">
+<rect width="9" height="9" rx="1.5" fill="#e4d4e8"/>
+</pattern>
+</defs>
+<rect width="99" height="49" fill="url(#cpl-dots-b-he)"/>
+<rect x="50" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="60" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="70" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="80" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="90" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+</svg>
+<p class="blog-cpl-card__flow">50 לידים → 10% סגירה → 5 לקוחות</p>
+<dl>
+<div><dt>CPL</dt><dd>80 ₪</dd></div>
+<div><dt>השקעה</dt><dd>4,000 ₪</dd></div>
+<div><dt>עלות לקוח מהפרסום</dt><dd>800 ₪</dd></div>
+<div class="is-win"><dt>הכנסה</dt><dd>20,000 ₪</dd></div>
+</dl>
+<div class="blog-cpl-roas">
+<p class="blog-cpl-roas__label">ROAS 5 מתוך 5</p>
+<div class="blog-cpl-roas__track" aria-hidden="true"><span style="width:100%"></span></div>
+</div>
+<p class="blog-cpl-card__foot">פחות לידים, יותר לקוחות משלמים</p>
+</article>
+</div>
+<figcaption>הנחה להמחשה: הכנסה ממוצעת מעסקה 4,000 ₪. ROAS לפי תקציב המדיה בלבד, בלי עלות ניהול ומכירות.</figcaption>
+</figure>
 
 <p>
 לפי מחיר הליד, קמפיין א׳ נראה כמו המנצח: 50 ₪ לעומת 80 ₪. בפועל, לקוח משלם ממנו עולה יותר מפי שלושה.
@@ -253,11 +307,11 @@ CPL — עלות לליד — מראה כמה תקציב פרסום נדרש ב�
 <p>המערכת מחברת כמה שכבות:</p>
 
 <ul>
-<li><strong>קמפיינים</strong> בערוצים שמתאימים לפרויקט;</li>
-<li><strong>דף נחיתה או שאלון</strong> עם בדיקות של בלוקים וגרסאות הצעה;</li>
-<li><strong>CRM</strong> עם סטטוסים, תזכורות ומעקב אחר סכום העסקה;</li>
-<li><strong>ניתוח איכות</strong> לפי פלטפורמה, קמפיין, קהל ומודעה;</li>
-<li><strong>אותות חזרה לפלטפורמות,</strong> כאשר ערוץ הפרסום והגדרת הפרויקט תומכים בכך.</li>
+<li><strong>קמפיינים</strong> בערוצים שמתאימים לפרויקט</li>
+<li><strong>דף נחיתה או שאלון</strong> עם בדיקות של בלוקים וגרסאות הצעה</li>
+<li><strong>CRM</strong> עם סטטוסים, תזכורות ומעקב אחר סכום העסקה</li>
+<li><strong>ניתוח איכות</strong> לפי פלטפורמה, קמפיין, קהל ומודעה</li>
+<li><strong>אותות חזרה לפלטפורמות</strong>, כאשר ערוץ הפרסום והגדרת הפרויקט תומכים בכך</li>
 </ul>
 
 <p>
@@ -290,15 +344,15 @@ CPL — עלות לליד — מראה כמה תקציב פרסום נדרש ב�
 <p>לפני שבוחרים סוכנות פרסום דיגיטלי, ודאו שיש לכם תשובות ברורות:</p>
 
 <ul>
-<li>ה-KPI המרכזי מחובר לתוצאה עסקית;</li>
-<li>יש הגדרה מוסכמת לפנייה איכותית;</li>
-<li>ה-CRM שומר מקור, סטטוס וסכום עסקה;</li>
-<li>ברור איך נתוני האיכות משפיעים על האופטימיזציה;</li>
-<li>החשבונות וההיסטוריה שייכים לעסק;</li>
-<li>המחיר והיקף העבודה מוצגים בנפרד ובשקיפות;</li>
-<li>ידוע מי מנהל את הפרויקט ואילו בדיקות הוא מריץ;</li>
-<li>הוגדרו תקופה ונפח נתונים לקבלת מסקנות;</li>
-<li>הסוכנות מדברת גם על מגבלות ולא רק על יתרונות.</li>
+<li>ה-KPI המרכזי מחובר לתוצאה עסקית</li>
+<li>יש הגדרה מוסכמת לפנייה איכותית</li>
+<li>ה-CRM שומר מקור, סטטוס וסכום עסקה</li>
+<li>ברור איך נתוני האיכות משפיעים על האופטימיזציה</li>
+<li>החשבונות וההיסטוריה שייכים לעסק</li>
+<li>המחיר והיקף העבודה מוצגים בנפרד ובשקיפות</li>
+<li>ידוע מי מנהל את הפרויקט ואילו בדיקות הוא מריץ</li>
+<li>הוגדרו תקופה ונפח נתונים לקבלת מסקנות</li>
+<li>הסוכנות מדברת גם על מגבלות ולא רק על יתרונות</li>
 </ul>
 
 <p>

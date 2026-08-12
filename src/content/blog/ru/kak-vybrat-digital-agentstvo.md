@@ -100,16 +100,70 @@ CPL — cost per lead — показывает, сколько рекламно�
 
 <p>Рассмотрим условный пример двух кампаний. Цифры иллюстративные, но расчёт полностью реальный:</p>
 
-<ul>
-<li>
-<strong>Кампания A:</strong> 100 лидов по 50 ₪. Расход — 5 000 ₪. В оплату переходят 2% обращений:
-получено 2 клиента. Рекламные расходы на одного клиента — 2 500 ₪.
-</li>
-<li>
-<strong>Кампания B:</strong> 50 лидов по 80 ₪. Расход — 4 000 ₪. В оплату переходят 10% обращений:
-получено 5 клиентов. Рекламные расходы на одного клиента — 800 ₪.
-</li>
-</ul>
+<figure class="blog-cpl-compare">
+<p class="blog-cpl-compare__legend"><span><span class="blog-cpl-swatch blog-cpl-swatch--lead"></span>лид</span><span><span class="blog-cpl-swatch blog-cpl-swatch--paid"></span>оплаченный клиент</span></p>
+<div class="blog-cpl-compare__grid">
+<article class="blog-cpl-card blog-cpl-card--trap">
+<p class="blog-cpl-card__kicker">По CPL кажется победителем</p>
+<p class="blog-cpl-card__name">Кампания A</p>
+<svg viewBox="0 0 99 99" role="img" aria-label="100 лидов, из них 2 оплаченных клиента">
+<title>100 лидов, 2 оплаченных клиента</title>
+<defs>
+<pattern id="cpl-dots-a-ru" width="10" height="10" patternUnits="userSpaceOnUse">
+<rect width="9" height="9" rx="1.5" fill="#e4d4e8"/>
+</pattern>
+</defs>
+<rect width="99" height="99" fill="url(#cpl-dots-a-ru)"/>
+<rect x="80" y="90" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="90" y="90" width="9" height="9" rx="1.5" fill="#fcc000"/>
+</svg>
+<p class="blog-cpl-card__flow">100 лидов → 2% в оплату → 2 клиента</p>
+<dl>
+<div><dt>CPL</dt><dd>50 ₪</dd></div>
+<div><dt>Расход</dt><dd>5 000 ₪</dd></div>
+<div class="is-warn"><dt>Реклама на клиента</dt><dd>2 500 ₪</dd></div>
+<div><dt>Выручка</dt><dd>8 000 ₪</dd></div>
+</dl>
+<div class="blog-cpl-roas">
+<p class="blog-cpl-roas__label">ROAS 1,6 из 5</p>
+<div class="blog-cpl-roas__track" aria-hidden="true"><span style="width:32%"></span></div>
+</div>
+<p class="blog-cpl-card__foot">Дешёвый лид, но клиент дороже втрое</p>
+</article>
+<p class="blog-cpl-compare__vs">против</p>
+<article class="blog-cpl-card blog-cpl-card--win">
+<p class="blog-cpl-card__kicker">Победитель по клиентам и ROAS</p>
+<p class="blog-cpl-card__name">Кампания B</p>
+<svg viewBox="0 0 99 49" role="img" aria-label="50 лидов, из них 5 оплаченных клиентов">
+<title>50 лидов, 5 оплаченных клиентов</title>
+<defs>
+<pattern id="cpl-dots-b-ru" width="10" height="10" patternUnits="userSpaceOnUse">
+<rect width="9" height="9" rx="1.5" fill="#e4d4e8"/>
+</pattern>
+</defs>
+<rect width="99" height="49" fill="url(#cpl-dots-b-ru)"/>
+<rect x="50" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="60" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="70" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="80" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+<rect x="90" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
+</svg>
+<p class="blog-cpl-card__flow">50 лидов → 10% в оплату → 5 клиентов</p>
+<dl>
+<div><dt>CPL</dt><dd>80 ₪</dd></div>
+<div><dt>Расход</dt><dd>4 000 ₪</dd></div>
+<div><dt>Реклама на клиента</dt><dd>800 ₪</dd></div>
+<div class="is-win"><dt>Выручка</dt><dd>20 000 ₪</dd></div>
+</dl>
+<div class="blog-cpl-roas">
+<p class="blog-cpl-roas__label">ROAS 5 из 5</p>
+<div class="blog-cpl-roas__track" aria-hidden="true"><span style="width:100%"></span></div>
+</div>
+<p class="blog-cpl-card__foot">Меньше лидов — больше оплаченных клиентов</p>
+</article>
+</div>
+<figcaption>Допущение для примера: средняя выручка со сделки 4 000 ₪. ROAS считается только по медиабюджету, без стоимости ведения и продаж.</figcaption>
+</figure>
 
 <p>
 По CPL кампания A выглядит победителем: 50 ₪ против 80 ₪. Но один оплаченный клиент из неё стоит более
@@ -265,11 +319,11 @@ CPL — cost per lead — показывает, сколько рекламно�
 <p>Система объединяет несколько уровней:</p>
 
 <ul>
-<li><strong>кампании</strong> в подходящих для проекта рекламных каналах;</li>
-<li><strong>посадочную страницу или опрос</strong> с тестированием отдельных блоков и вариантов предложения;</li>
-<li><strong>CRM</strong> со статусами, напоминаниями и фиксацией суммы сделки;</li>
-<li><strong>анализ качества</strong> по платформе, кампании, аудитории и объявлению;</li>
-<li><strong>обратные сигналы рекламным платформам,</strong> когда это поддерживается настройкой проекта.</li>
+<li><strong>кампании</strong> в подходящих для проекта рекламных каналах</li>
+<li><strong>посадочную страницу или опрос</strong> с тестированием отдельных блоков и вариантов предложения</li>
+<li><strong>CRM</strong> со статусами, напоминаниями и фиксацией суммы сделки</li>
+<li><strong>анализ качества</strong> по платформе, кампании, аудитории и объявлению</li>
+<li><strong>обратные сигналы рекламным платформам</strong>, когда это поддерживается настройкой проекта</li>
 </ul>
 
 <p>
@@ -306,15 +360,15 @@ CPL — cost per lead — показывает, сколько рекламно�
 <p>Перед решением проверьте, что у вас есть конкретные ответы:</p>
 
 <ul>
-<li>главный KPI связан с бизнес-результатом;</li>
-<li>определено, что такое качественный лид;</li>
-<li>CRM хранит источник, статус и сумму сделки;</li>
-<li>понятно, как данные возвращаются в оптимизацию;</li>
-<li>аккаунты и история принадлежат бизнесу;</li>
-<li>стоимость и объём работ разделены прозрачно;</li>
-<li>известно, кто ведёт проект и какие тесты запускает;</li>
-<li>согласован период и объём данных для выводов;</li>
-<li>агентство говорит не только о преимуществах, но и об ограничениях.</li>
+<li>главный KPI связан с бизнес-результатом</li>
+<li>определено, что такое качественный лид</li>
+<li>CRM хранит источник, статус и сумму сделки</li>
+<li>понятно, как данные возвращаются в оптимизацию</li>
+<li>аккаунты и история принадлежат бизнесу</li>
+<li>стоимость и объём работ разделены прозрачно</li>
+<li>известно, кто ведёт проект и какие тесты запускает</li>
+<li>согласован период и объём данных для выводов</li>
+<li>агентство говорит не только о преимуществах, но и об ограничениях</li>
 </ul>
 
 <p>
