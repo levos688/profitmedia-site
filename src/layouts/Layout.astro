@@ -317,9 +317,19 @@ const canonicalUrl = canonical ?? Astro.url.href;
           </script>
           <script is:inline>
             (function () {
-              var STYLE_ID = 'pm-a11y-midleft-fix';
+              var STYLE_ID = 'pm-a11y-edge-fab';
+              var FAB_TOP = '66.666%';
 
-              function applyMidLeft(shadow) {
+              function pinVertical(el, left) {
+                el.style.setProperty('top', FAB_TOP, 'important');
+                el.style.setProperty('bottom', 'auto', 'important');
+                el.style.setProperty('left', left, 'important');
+                el.style.setProperty('right', 'auto', 'important');
+                el.style.setProperty('transform', 'translateY(-50%)', 'important');
+                el.style.setProperty('margin', '0', 'important');
+              }
+
+              function applyEdgeFab(shadow) {
                 if (!shadow) return false;
                 var fab = shadow.querySelector('.pm-fab');
                 var panel = shadow.querySelector('.pm-panel');
@@ -329,30 +339,28 @@ const canonicalUrl = canonical ?? Astro.url.href;
                   var style = document.createElement('style');
                   style.id = STYLE_ID;
                   style.textContent =
-                    '.pm-fab,.pm-panel{top:50%!important;bottom:auto!important;left:10px!important;right:auto!important;' +
+                    '.pm-fab{top:66.666%!important;bottom:auto!important;left:0!important;right:auto!important;' +
+                    'transform:translateY(-50%)!important;margin:0!important;width:46px!important;height:46px!important;' +
+                    'border-radius:0 999px 999px 0!important;box-shadow:2px 2px 10px rgba(0,0,0,.2)!important;}' +
+                    '.pm-fab:hover,.pm-fab:focus{transform:translateY(-50%) scale(1.05)!important;}' +
+                    '.pm-fab-icon svg{width:26px!important;height:26px!important;}' +
+                    '.pm-panel{top:66.666%!important;bottom:auto!important;left:8px!important;right:auto!important;' +
                     'transform:translateY(-50%)!important;margin:0!important;}' +
-                    '@media (max-width:480px){.pm-fab,.pm-panel{top:50%!important;bottom:auto!important;left:8px!important;right:auto!important;' +
-                    'transform:translateY(-50%)!important;}' +
+                    '@media (max-width:480px){.pm-fab{width:36px!important;height:36px!important;}' +
+                    '.pm-fab-icon svg{width:20px!important;height:20px!important;}' +
                     '.pm-panel{width:min(370px,calc(100vw - 16px))!important;max-width:calc(100vw - 16px)!important;}}';
                   shadow.appendChild(style);
                 }
 
-                [fab, panel].forEach(function (el) {
-                  if (!el) return;
-                  el.style.setProperty('top', '50%', 'important');
-                  el.style.setProperty('bottom', 'auto', 'important');
-                  el.style.setProperty('left', window.innerWidth <= 480 ? '8px' : '10px', 'important');
-                  el.style.setProperty('right', 'auto', 'important');
-                  el.style.setProperty('transform', 'translateY(-50%)', 'important');
-                  el.style.setProperty('margin', '0', 'important');
-                });
+                pinVertical(fab, '0');
+                if (panel) pinVertical(panel, '8px');
                 return true;
               }
 
               function positionA11yWidget() {
                 var root = document.getElementById('pm-a11y-widget-root');
                 if (!root || !root.shadowRoot) return false;
-                return applyMidLeft(root.shadowRoot);
+                return applyEdgeFab(root.shadowRoot);
               }
 
               var ticks = 0;
