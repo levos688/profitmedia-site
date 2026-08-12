@@ -8,6 +8,7 @@ const blog = defineCollection({
     locale: z.enum(['he', 'ru']),
     translationKey: z.enum([
       'conversion-improvement',
+      'digital-agency-choice',
       'landing-vs-homepage',
       'paid-campaigns-guide',
     ]),
