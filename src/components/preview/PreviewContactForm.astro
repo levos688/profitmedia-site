@@ -303,6 +303,10 @@ const {
       utm: attr.utm,
       source: meta.formSource,
       formType: 'inline_form',
+      ctaLabel:
+        (typeof ab?.getCtaLabel === 'function' && ab.getCtaLabel('simple')) ||
+        (submitLabel?.textContent || submitBtn?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160) ||
+        '',
       referrer: document.referrer || '',
       language: navigator.language,
       locale: form.dataset.locale || 'he',

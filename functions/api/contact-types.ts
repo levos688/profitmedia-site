@@ -45,6 +45,8 @@ export interface ContactPayload {
   eventId?: string;
   /** Viewport class at submit: Desk | Mob */
   device?: string;
+  /** Visible CTA / A/B button copy that opened or submitted the form */
+  ctaLabel?: string;
 }
 
 export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
@@ -62,6 +64,7 @@ export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'
   vertical: string;
   source: string;
   device: string;
+  ctaLabel: string;
   ip: string;
   country: string;
   userAgent: string;

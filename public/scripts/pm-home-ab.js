@@ -563,6 +563,34 @@
       });
   }
 
+  function getCtaLabel(sourceOverride) {
+    var source = String(sourceOverride || lastLeadSource || '').trim();
+    var a = getAssignments();
+    if (source === 'sticky' || source === 'sticky_cta') {
+      var sticky = findVariant('sticky_cta', a.sticky_cta);
+      return (sticky && sticky.label) || '';
+    }
+    if (source === 'mid_cta') {
+      var mid = findVariant('mid_cta', a.mid_cta);
+      return (mid && mid.button) || '';
+    }
+    if (source === 'offer_cta') {
+      var offer = findVariant('offer_cta', a.offer_cta);
+      return (offer && offer.button) || '';
+    }
+    if (source === 'hero_cta') {
+      var hero = findVariant('hero_copy', a.hero_copy);
+      return (hero && hero.cta) || '';
+    }
+    if (source === 'simple' || source === 'inline_form' || source === 'contact_form') {
+      var bottom = findVariant('bottom_copy', a.bottom_copy);
+      return (bottom && bottom.submitLabel) || '';
+    }
+    // Popup / unknown: sticky label is what submit usually mirrors
+    var fallback = findVariant('sticky_cta', a.sticky_cta);
+    return (fallback && fallback.label) || '';
+  }
+
   function trackConversion(sourceOverride) {
     var assignments = getAssignments();
     var source = sourceOverride || lastLeadSource || 'simple';
@@ -586,6 +614,7 @@
     applyAll: applyAll,
     findVariant: findVariant,
     trackConversion: trackConversion,
+    getCtaLabel: getCtaLabel,
     setLeadSource: function (source) {
       lastLeadSource = source || lastLeadSource;
     },

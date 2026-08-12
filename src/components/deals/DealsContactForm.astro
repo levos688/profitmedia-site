@@ -242,6 +242,7 @@ import { dealsForm } from '../../data/deals';
       utm: attr.utm,
       source: meta.formSource,
       formType: 'inline_form',
+      ctaLabel: (submitLabel?.textContent || submitBtn?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160),
       referrer: document.referrer || '',
       language: navigator.language || '',
       device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',

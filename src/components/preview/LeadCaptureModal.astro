@@ -142,6 +142,7 @@ const {
   let lastFocus: HTMLElement | null = null;
   /** Which CTA opened the modal — written to CRM «element» column. */
   let openedFromCta = 'unknown_cta';
+  let openedFromLabel = '';
 
   const resolveCtaId = (trigger: Element): string => {
     const el = trigger as HTMLElement;
@@ -156,9 +157,25 @@ const {
     return 'lead_modal';
   };
 
+  const resolveCtaLabel = (formType: string, trigger?: Element | null): string => {
+    const ab = window.pmLpAb || window.pmAdsAb || window.pmHomeAb;
+    const fromAb = ab?.getCtaLabel?.(formType);
+    if (fromAb) return String(fromAb).trim().slice(0, 160);
+    if (openedFromLabel) return openedFromLabel;
+    if (trigger) {
+      const text = (trigger as HTMLElement).innerText || (trigger as HTMLElement).textContent || '';
+      return text.replace(/\s+/g, ' ').trim().slice(0, 160);
+    }
+    return '';
+  };
+
   const openModal = (trigger?: Element | null) => {
     if (!modal) return;
-    if (trigger) openedFromCta = resolveCtaId(trigger);
+    if (trigger) {
+      openedFromCta = resolveCtaId(trigger);
+      const text = (trigger as HTMLElement).innerText || (trigger as HTMLElement).textContent || '';
+      openedFromLabel = text.replace(/\s+/g, ' ').trim().slice(0, 160);
+    }
     lastFocus = document.activeElement as HTMLElement;
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -266,6 +283,7 @@ const {
       utm: attr.utm,
       source: formSource,
       formType,
+      ctaLabel: resolveCtaLabel(formType),
       referrer: document.referrer || '',
       language: navigator.language,
       locale: modal?.dataset.locale || 'he',
