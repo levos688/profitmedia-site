@@ -8,6 +8,10 @@ export const routePairs = {
     he: '/blog/shipur-yahas-hamara',
     ru: '/ru/blog/povyshenie-konversii',
   },
+  digitalAgencyArticle: {
+    he: '/blog/ekh-livkhor-sohnut-pirsum-digitali',
+    ru: '/ru/blog/kak-vybrat-digital-agentstvo',
+  },
   landingArticle: {
     he: '/blog/daf-nechita-mul-daf-habayit',
     ru: '/ru/blog/lending-ili-glavnaya',

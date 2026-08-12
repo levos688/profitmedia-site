@@ -41,8 +41,8 @@ async function getIndexablePairs(): Promise<LocalizedPaths[]> {
       return { he: pair.he, ru: pair.ru };
     });
 
-  if (fixedPairs.length + articlePairs.length !== 6) {
-    throw new Error(`Sitemap must contain exactly six indexable route pairs`);
+  if (fixedPairs.length + articlePairs.length !== 7) {
+    throw new Error(`Sitemap must contain exactly seven indexable route pairs`);
   }
 
   return [...fixedPairs, ...articlePairs];

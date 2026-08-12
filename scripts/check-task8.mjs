@@ -15,12 +15,11 @@ const decodeHtml = (value) =>
     .replace(/&gt;/g, '>')
     .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
     .replace(/&#x([\da-f]+);/gi, (_, code) => String.fromCodePoint(Number.parseInt(code, 16)));
+const normalizeSpace = (value) => value.replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
 const text = (html) =>
-  decodeHtml(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+  normalizeSpace(decodeHtml(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' '))
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/<[^>]+>/g, ' ')));
 const firstTagText = (html, tag) => {
   const match = html.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
   assert.ok(match, `Missing <${tag}>`);
@@ -37,7 +36,7 @@ const nodeOfType = (nodes, type, path) => {
 };
 const assertVisible = (visible, value, label) => {
   assert.equal(typeof value, 'string', `${label}: expected schema string`);
-  assert.ok(visible.includes(value), `${label}: schema copy is not visible verbatim`);
+  assert.ok(normalizeSpace(visible).includes(normalizeSpace(value)), `${label}: schema copy is not visible verbatim`);
 };
 
 const routePairs = [
@@ -45,6 +44,7 @@ const routePairs = [
   ['/about', '/ru/about'],
   ['/blog', '/ru/blog'],
   ['/blog/shipur-yahas-hamara', '/ru/blog/povyshenie-konversii'],
+  ['/blog/ekh-livkhor-sohnut-pirsum-digitali', '/ru/blog/kak-vybrat-digital-agentstvo'],
   ['/blog/daf-nechita-mul-daf-habayit', '/ru/blog/lending-ili-glavnaya'],
   ['/blog/kampeinim-memumanim-madrich', '/ru/blog/kontekstnaya-reklama'],
 ];
@@ -78,8 +78,8 @@ for (const page of pageDescriptors) {
   if (page.path === '/' || page.path === '/ru/') {
     const webPage = nodeOfType(nodes, 'WebPage', page.file);
     const service = nodeOfType(nodes, 'Service', page.file);
-    assert.equal(webPage.name, h1, `${page.file}: WebPage name must equal visible H1`);
-    assert.equal(service.name, h1, `${page.file}: Service name must equal visible H1`);
+    assert.equal(normalizeSpace(webPage.name), h1, `${page.file}: WebPage name must equal visible H1`);
+    assert.equal(normalizeSpace(service.name), h1, `${page.file}: Service name must equal visible H1`);
     assertVisible(visible, service.description, `${page.file}: Service description`);
     const organization = nodeOfType(nodes, 'ProfessionalService', page.file);
     assert.equal(organization.address?.addressCountry, 'IL', `${page.file}: Organization must remain in Israel`);
@@ -100,21 +100,21 @@ for (const page of pageDescriptors) {
   } else if (page.path.endsWith('/about')) {
     const about = nodeOfType(nodes, 'AboutPage', page.file);
     const person = nodeOfType(nodes, 'Person', page.file);
-    assert.equal(about.name, h1, `${page.file}: AboutPage name must equal visible H1`);
+    assert.equal(normalizeSpace(about.name), h1, `${page.file}: AboutPage name must equal visible H1`);
     assertVisible(visible, about.description, `${page.file}: AboutPage description`);
     assertVisible(visible, person.name, `${page.file}: founder name`);
     assertVisible(visible, person.jobTitle, `${page.file}: founder role`);
     assertVisible(visible, person.description, `${page.file}: founder biography`);
   } else if (page.path === '/blog' || page.path === '/ru/blog') {
     const blog = nodeOfType(nodes, 'Blog', page.file);
-    assert.equal(blog.name, h1, `${page.file}: Blog name must equal visible H1`);
+    assert.equal(normalizeSpace(blog.name), h1, `${page.file}: Blog name must equal visible H1`);
     assertVisible(visible, blog.description, `${page.file}: Blog description`);
     for (const post of blog.blogPost) {
       assertVisible(visible, post.headline, `${page.file}: blog card title`);
     }
   } else {
     const posting = nodeOfType(nodes, 'BlogPosting', page.file);
-    assert.equal(posting.headline, h1, `${page.file}: BlogPosting headline must equal visible H1`);
+    assert.equal(normalizeSpace(posting.headline), h1, `${page.file}: BlogPosting headline must equal visible H1`);
     const metaDescription = html.match(/<meta\b[^>]*name="description"[^>]*content="([^"]*)"/i)?.[1];
     assert.equal(posting.description, decodeHtml(metaDescription ?? ''), `${page.file}: schema and meta descriptions differ`);
     const faq = nodeOfType(nodes, 'FAQPage', page.file);
@@ -130,11 +130,11 @@ assert.ok(existsSync(sitemapPath), 'Generated sitemap is missing');
 execFileSync('xmllint', ['--noout', sitemapPath], { stdio: 'pipe' });
 const sitemap = read('dist/sitemap.xml');
 const urlBlocks = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
-assert.equal(urlBlocks.length, 12, 'Sitemap must contain exactly 12 URL entries');
+assert.equal(urlBlocks.length, 14, 'Sitemap must contain exactly 14 URL entries');
 const actualUrls = urlBlocks.map((block) => decodeHtml(block.match(/<loc>(.*?)<\/loc>/)?.[1] ?? ''));
 const expectedUrls = routePairs.flatMap(([he, ru]) => [`${site}${he}`, `${site}${ru}`]);
 assert.deepEqual([...actualUrls].sort(), [...expectedUrls].sort(), 'Sitemap URL set is not exact');
-assert.equal(new Set(actualUrls).size, 12, 'Sitemap contains duplicate URLs');
+assert.equal(new Set(actualUrls).size, 14, 'Sitemap contains duplicate URLs');
 
 for (const [he, ru] of routePairs) {
   for (const path of [he, ru]) {
@@ -182,8 +182,8 @@ const russianLinks = [...russianSection.matchAll(/\]\((https:\/\/profitmedia\.co
 assert.deepEqual(
   russianLinks,
   routePairs.map(([, ru]) => `${site}${ru}`),
-  'llms.txt Russian section must link exactly the six indexable Russian pages',
+  'llms.txt Russian section must link exactly the seven indexable Russian pages',
 );
 assert.doesNotMatch(russianSection, /\bофис(?:а|ы|ов|ом|е)?\s+(?:в|на)\s+(?:России|Европе|США|СНГ)\b/i, 'llms.txt invents a non-Israeli office');
 
-console.log('Task 8 checks passed: JSON-LD fidelity, exact 12-URL sitemap, reciprocal alternates, and crawler files.');
+console.log('Task 8 checks passed: JSON-LD fidelity, exact 14-URL sitemap, reciprocal alternates, and crawler files.');
