@@ -114,7 +114,7 @@ CPL — עלות לליד — מראה כמה תקציב פרסום נדרש ב�
 <rect x="80" y="90" width="9" height="9" rx="1.5" fill="#fcc000"/>
 <rect x="90" y="90" width="9" height="9" rx="1.5" fill="#fcc000"/>
 </svg>
-<p class="blog-cpl-card__flow">100 לידים → 2% סגירה → 2 לקוחות</p>
+<p class="blog-cpl-card__flow">100 לידים ← 2% סגירה ← 2 לקוחות</p>
 <dl>
 <div><dt>CPL</dt><dd>50 ₪</dd></div>
 <div><dt>השקעה</dt><dd>5,000 ₪</dd></div>
@@ -145,7 +145,7 @@ CPL — עלות לליד — מראה כמה תקציב פרסום נדרש ב�
 <rect x="80" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
 <rect x="90" y="40" width="9" height="9" rx="1.5" fill="#fcc000"/>
 </svg>
-<p class="blog-cpl-card__flow">50 לידים → 10% סגירה → 5 לקוחות</p>
+<p class="blog-cpl-card__flow">50 לידים ← 10% סגירה ← 5 לקוחות</p>
 <dl>
 <div><dt>CPL</dt><dd>80 ₪</dd></div>
 <div><dt>השקעה</dt><dd>4,000 ₪</dd></div>
