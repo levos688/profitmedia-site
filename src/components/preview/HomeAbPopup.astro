@@ -381,7 +381,7 @@ const submitLabel = formStrings?.submit ?? 'המשך';
       const attr =
         typeof window.pmGetLeadAttribution === 'function'
           ? window.pmGetLeadAttribution()
-          : { utm: {}, landingUrl: window.location.href };
+          : { utm: {}, landingUrl: window.location.href, referrer: document.referrer || '' };
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -401,7 +401,7 @@ const submitLabel = formStrings?.submit ?? 'המשך';
             (submitBtn?.innerText || submitBtn?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160) ||
             '',
           quizAnswer,
-          referrer: document.referrer || '',
+          referrer: attr.referrer || document.referrer || '',
           language: navigator.language,
           locale: popup?.dataset.locale || 'he',
           device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',

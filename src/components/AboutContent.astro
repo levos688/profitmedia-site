@@ -9,6 +9,7 @@ const { content } = Astro.props;
 const {
   hero,
   what,
+  guides,
   audience,
   system,
   channels,
@@ -35,7 +36,21 @@ const {
     </div>
   </section>
 
-  <section class="about-section about-section--soft section-padding" aria-labelledby="about-audience-title">
+  <section class="about-section about-section--soft section-padding" aria-labelledby="about-guides-title">
+    <div class="mx-auto max-w-3xl px-4 md:px-6">
+      <h2 id="about-guides-title" class="about-section__title">{guides.title}</h2>
+      <p class="about-section__text">{guides.intro}</p>
+      <ul class="about-list about-list--links">
+        {guides.items.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="about-section section-padding" aria-labelledby="about-audience-title">
     <div class="mx-auto max-w-3xl px-4 md:px-6">
       <h2 id="about-audience-title" class="about-section__title">{audience.title}</h2>
       <p class="about-section__text">{audience.intro}</p>
@@ -136,6 +151,8 @@ const {
   .about-list { margin: 0 0 1.25rem; padding: 0; list-style: none; }
   .about-list li { position: relative; margin: 0 0 .65rem; padding-inline-start: 1.35rem; font-size: 1.0625rem; line-height: 1.65; color: #374151; }
   .about-list li::before { content: ''; position: absolute; top: .55rem; inset-inline-start: 0; width: .5rem; height: .5rem; border-radius: 50%; background: #651561; }
+  .about-list--links a { color: #651561; font-weight: 700; text-decoration: underline; text-underline-offset: .15em; }
+  .about-list--links a:hover { color: #5a1c73; }
   .about-block { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e8e0ec; }
   .about-block:first-of-type { margin-top: 1.5rem; }
   .about-block__title { margin: 0 0 .75rem; font-size: 1.2rem; font-weight: 800; color: #29102c; }

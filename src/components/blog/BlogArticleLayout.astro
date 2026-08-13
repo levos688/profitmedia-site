@@ -99,6 +99,10 @@ const articleSchema = buildSchemaGraph([
   locale={locale}
   routeId={routeId}
   emitAlternates={hasTranslation}
+  ogType="article"
+  ogImage={`https://profitmedia.co.il${post.imageWide}`}
+  twitterCard="summary_large_image"
+  preloadImage={post.imageWide}
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleSchema)} />
   <Header locale={locale} routeId={routeId} nav={home.nav} cta={home.cta} />

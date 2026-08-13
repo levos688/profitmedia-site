@@ -291,7 +291,7 @@ const {
     const attr =
       typeof window.pmGetLeadAttribution === 'function'
         ? window.pmGetLeadAttribution()
-        : { utm: {}, landingUrl: window.location.href };
+        : { utm: {}, landingUrl: window.location.href, referrer: document.referrer || '' };
     const payload = {
       name: fields.name.input?.value.trim(),
       phone: fields.phone.input?.value.trim(),
@@ -307,7 +307,7 @@ const {
         (typeof ab?.getCtaLabel === 'function' && ab.getCtaLabel('simple')) ||
         (submitLabel?.textContent || submitBtn?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160) ||
         '',
-      referrer: document.referrer || '',
+      referrer: attr.referrer || document.referrer || '',
       language: navigator.language,
       locale: form.dataset.locale || 'he',
       device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',

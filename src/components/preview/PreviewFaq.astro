@@ -44,6 +44,13 @@ const {
                 itemtype="https://schema.org/Answer"
               >
                 <p itemprop="text">{item.answer}</p>
+                {
+                  item.relatedLink && (
+                    <p class="faq__related">
+                      <a href={item.relatedLink.href}>{item.relatedLink.label}</a>
+                    </p>
+                  )
+                }
               </div>
             </details>
           </Reveal>
@@ -154,6 +161,22 @@ const {
     color: #4b5563;
     font-size: 1rem;
     line-height: 1.75;
+  }
+
+  .faq__related {
+    border-top: none !important;
+    padding-top: 0.75rem !important;
+  }
+
+  .faq__related a {
+    color: #651561;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .faq__related a:hover {
+    color: #5a1c73;
   }
 
   @media (min-width: 768px) {

@@ -14,6 +14,8 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article';
+  twitterCard?: 'summary' | 'summary_large_image';
   noindex?: boolean;
   blockAiCrawlers?: boolean;
   preloadImage?: string | false;
@@ -32,11 +34,15 @@ interface Props {
   enableA11y?: boolean;
 }
 
+const DEFAULT_OG_IMAGE = 'https://profitmedia.co.il/icons/site-icon.png';
+
 const {
   title = 'פרסום באינטרנט | פרסום שמביא רווחים | Profit Media',
   description = 'פרסום באינטרנט | פרסום בגוגל | פרסום בפייסבוק | פרסום באינסטגרם | הקמה דפי נחיתה',
   canonical,
-  ogImage = 'https://profitmedia.co.il/icons/site-icon.png',
+  ogImage = DEFAULT_OG_IMAGE,
+  ogType = 'website',
+  twitterCard,
   noindex = false,
   emitAlternates = !noindex,
   blockAiCrawlers = false,
@@ -49,6 +55,9 @@ const {
   alternates: providedAlternates,
   enableA11y = true,
 } = Astro.props;
+
+const resolvedTwitterCard =
+  twitterCard ?? (ogImage !== DEFAULT_OG_IMAGE ? 'summary_large_image' : 'summary');
 
 const locale = normalizeLocale(localeProp ?? Astro.props.lang);
 const lang = locale;
@@ -88,7 +97,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
       ))
     }
     <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site context" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={getOgLocale(locale)} />
     <meta
       property="og:locale:alternate"
@@ -99,7 +108,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content={resolvedTwitterCard} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
@@ -142,7 +151,15 @@ const canonicalUrl = canonical ?? Astro.url.href;
           rel="preload"
           href={preloadImage}
           as="image"
-          type={preloadImage.endsWith('.webp') ? 'image/webp' : 'image/svg+xml'}
+          type={
+            preloadImage.endsWith('.webp')
+              ? 'image/webp'
+              : preloadImage.endsWith('.png')
+                ? 'image/png'
+                : preloadImage.endsWith('.jpg') || preloadImage.endsWith('.jpeg')
+                  ? 'image/jpeg'
+                  : 'image/svg+xml'
+          }
           fetchpriority="high"
         />
       )
@@ -402,10 +419,13 @@ const canonicalUrl = canonical ?? Astro.url.href;
             if (Object.keys(utm).length) {
               sessionStorage.setItem('pm_first_utm', JSON.stringify(utm));
             }
+            if (document.referrer) {
+              sessionStorage.setItem('pm_first_referrer', document.referrer);
+            }
           }
         } catch (e) {}
 
-        /** First-touch UTM + landing for CRM attribution (utm_content→audience, utm_term→ad). */
+        /** First-touch UTM + landing + referrer for CRM attribution. */
         window.pmGetLeadAttribution = function () {
           var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid'];
           var currentUtm = {};
@@ -422,12 +442,15 @@ const canonicalUrl = canonical ?? Astro.url.href;
             if (stored) firstUtm = JSON.parse(stored);
           } catch (e) {}
           var landingUrl = window.location.href;
+          var referrer = document.referrer || '';
           try {
             landingUrl = sessionStorage.getItem('pm_first_landing') || window.location.href;
+            referrer = sessionStorage.getItem('pm_first_referrer') || document.referrer || '';
           } catch (e) {}
           return {
             utm: Object.assign({}, currentUtm, firstUtm),
             landingUrl: landingUrl,
+            referrer: referrer,
           };
         };
 

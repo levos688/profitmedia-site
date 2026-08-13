@@ -260,8 +260,10 @@ import Reveal from './Reveal.astro';
     const utm = { ...currentUtm, ...firstUtm };
 
     let landingUrl = window.location.href;
+    let firstReferrer = document.referrer || '';
     try {
       landingUrl = sessionStorage.getItem('pm_first_landing') || window.location.href;
+      firstReferrer = sessionStorage.getItem('pm_first_referrer') || document.referrer || '';
     } catch {
       /* ignore */
     }
@@ -272,7 +274,7 @@ import Reveal from './Reveal.astro';
       email: (document.getElementById('email') as HTMLInputElement | null)?.value.trim() || '',
       pageUrl: window.location.href,
       landingUrl,
-      referrer: document.referrer || '',
+      referrer: firstReferrer,
       utm,
       source: 'homepage',
       formType: 'contact_form',

@@ -5,7 +5,7 @@ import { getBlogPosts, type BlogTranslationKey } from '../lib/blog';
 const SITE_URL = 'https://profitmedia.co.il';
 const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
-type LocalizedPaths = { he: string; ru: string };
+type LocalizedPaths = { he: string; ru: string; lastmod?: string };
 
 const escapeXml = (value: string): string =>
   value
@@ -17,6 +17,8 @@ const escapeXml = (value: string): string =>
 
 const absoluteUrl = (path: string): string => `${SITE_URL}${path}`;
 
+const toLastmod = (date: Date): string => date.toISOString().slice(0, 10);
+
 async function getIndexablePairs(): Promise<LocalizedPaths[]> {
   const fixedPairs: LocalizedPaths[] = [
     routePairs.home,
@@ -24,11 +26,16 @@ async function getIndexablePairs(): Promise<LocalizedPaths[]> {
     routePairs.blog,
   ];
   const posts = await Promise.all([getBlogPosts('he'), getBlogPosts('ru')]);
-  const articles = new Map<BlogTranslationKey, Partial<LocalizedPaths>>();
+  const articles = new Map<
+    BlogTranslationKey,
+    Partial<LocalizedPaths> & { lastmodMs?: number }
+  >();
 
   for (const post of posts.flat()) {
     const pair = articles.get(post.data.translationKey) ?? {};
     pair[post.data.locale] = `${routePairs.blog[post.data.locale]}/${post.data.slug}`;
+    const stamp = (post.data.updatedDate ?? post.data.publishDate).getTime();
+    pair.lastmodMs = Math.max(pair.lastmodMs ?? 0, stamp);
     articles.set(post.data.translationKey, pair);
   }
 
@@ -38,7 +45,11 @@ async function getIndexablePairs(): Promise<LocalizedPaths[]> {
       if (!pair.he || !pair.ru) {
         throw new Error(`Sitemap cannot include incomplete blog pair: ${translationKey}`);
       }
-      return { he: pair.he, ru: pair.ru };
+      return {
+        he: pair.he,
+        ru: pair.ru,
+        lastmod: pair.lastmodMs ? toLastmod(new Date(pair.lastmodMs)) : undefined,
+      };
     });
 
   if (fixedPairs.length + articlePairs.length !== 7) {
@@ -51,14 +62,20 @@ async function getIndexablePairs(): Promise<LocalizedPaths[]> {
 function renderUrl(path: string, pair: LocalizedPaths): string {
   const heUrl = absoluteUrl(pair.he);
   const ruUrl = absoluteUrl(pair.ru);
-  return [
+  const lines = [
     '  <url>',
     `    <loc>${escapeXml(absoluteUrl(path))}</loc>`,
+  ];
+  if (pair.lastmod) {
+    lines.push(`    <lastmod>${pair.lastmod}</lastmod>`);
+  }
+  lines.push(
     `    <xhtml:link rel="alternate" hreflang="he-IL" href="${escapeXml(heUrl)}" />`,
     `    <xhtml:link rel="alternate" hreflang="ru" href="${escapeXml(ruUrl)}" />`,
     `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(heUrl)}" />`,
     '  </url>',
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 export const GET: APIRoute = async () => {

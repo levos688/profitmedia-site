@@ -21,6 +21,25 @@ export const aboutWhat = {
   ],
 };
 
+export const aboutGuides = {
+  title: 'מדריכים לבחירה והשוואה',
+  intro: 'לפני שסוגרים עם סוכנות, כדאי להגדיר איך מודדים הצלחה ומה שואלים בפגישה הראשונה.',
+  items: [
+    {
+      href: '/blog/ekh-livkhor-sohnut-pirsum-digitali',
+      label: 'איך לבחור סוכנות פרסום דיגיטלי לפי עסקאות — לא רק לפי לידים',
+    },
+    {
+      href: '/blog/shipur-yahas-hamara',
+      label: 'שיפור יחס המרה: למה בדיקת מודעות בלבד כבר לא מספיקה',
+    },
+    {
+      href: '/blog/kampeinim-memumanim-madrich',
+      label: 'קמפיינים ממומנים: כמה זה באמת עולה ולמי זה מתאים',
+    },
+  ],
+};
+
 export const aboutAudience = {
   title: 'למי זה מתאים',
   intro: 'לעסקים עם עסקה בעלת ערך גבוה, שבה הלקוח בודק לפני שהוא קונה:',
@@ -138,6 +157,7 @@ export const about = {
   seo: aboutSeo,
   hero: aboutHero,
   what: aboutWhat,
+  guides: aboutGuides,
   audience: aboutAudience,
   system: aboutSystem,
   channels: aboutChannels,

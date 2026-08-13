@@ -230,7 +230,7 @@ import { dealsForm } from '../../data/deals';
     const attr =
       typeof window.pmGetLeadAttribution === 'function'
         ? window.pmGetLeadAttribution()
-        : { utm: {}, landingUrl: window.location.href };
+        : { utm: {}, landingUrl: window.location.href, referrer: document.referrer || '' };
     const payload = {
       name: fields.name.input?.value.trim(),
       phone: fields.phone.input?.value.trim(),
@@ -243,7 +243,7 @@ import { dealsForm } from '../../data/deals';
       source: meta.formSource,
       formType: 'inline_form',
       ctaLabel: (submitLabel?.textContent || submitBtn?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160),
-      referrer: document.referrer || '',
+      referrer: attr.referrer || document.referrer || '',
       language: navigator.language || '',
       device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
     };

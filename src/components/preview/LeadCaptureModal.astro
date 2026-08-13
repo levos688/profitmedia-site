@@ -271,7 +271,7 @@ const {
     const attr =
       typeof window.pmGetLeadAttribution === 'function'
         ? window.pmGetLeadAttribution()
-        : { utm: {}, landingUrl: window.location.href };
+        : { utm: {}, landingUrl: window.location.href, referrer: document.referrer || '' };
     const payload = {
       name,
       phone,
@@ -284,7 +284,7 @@ const {
       source: formSource,
       formType,
       ctaLabel: resolveCtaLabel(formType),
-      referrer: document.referrer || '',
+      referrer: attr.referrer || document.referrer || '',
       language: navigator.language,
       locale: modal?.dataset.locale || 'he',
       device: typeof window.pmDeviceClass === 'function' ? window.pmDeviceClass() : 'Desk',
