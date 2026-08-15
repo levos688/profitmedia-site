@@ -76,47 +76,56 @@ const slidesJson = JSON.stringify(
       </HorizontalCarousel>
     </Reveal>
   </div>
+</section>
 
-  <div
-    id="landing-lightbox"
-    class="lightbox"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="lightbox-title"
-    hidden
-  >
-    <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
-    <div class="lightbox__panel">
-      <button type="button" class="lightbox__close" data-lightbox-close aria-label={labels.close}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+{/* Lightbox must NOT sit inside .below-fold. content-visibility:auto applies
+    contain:paint, which becomes the containing block for position:fixed.
+    On iOS that combination freezes the page after opening a gallery image. */}
+<div
+  id="landing-lightbox"
+  class="lightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="lightbox-title"
+  hidden
+>
+  <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
+  <div class="lightbox__panel">
+    <button type="button" class="lightbox__close" data-lightbox-close aria-label={labels.close}>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+    </button>
+
+    <div class="lightbox__stage" dir="ltr">
+      <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label={labels.previous}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
       </button>
 
-      <div class="lightbox__stage" dir="ltr">
-        <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label={labels.previous}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </button>
-
-        <div class="lightbox__media">
-          <img id="lightbox-image" class="lightbox__image" src="" alt="" />
-        </div>
-
-        <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label={labels.next}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </button>
+      <div class="lightbox__media">
+        <img
+          id="lightbox-image"
+          class="lightbox__image"
+          src=""
+          alt=""
+          draggable="false"
+        />
       </div>
 
-      <p id="lightbox-title" class="lightbox__title"></p>
+      <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label={labels.next}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
     </div>
-  </div>
 
-  <script type="application/json" id="portfolio-slides" is:inline set:html={slidesJson}></script>
-</section>
+    <p id="lightbox-title" class="lightbox__title"></p>
+  </div>
+</div>
+
+<script type="application/json" id="portfolio-slides" is:inline set:html={slidesJson}></script>
 
 <script is:inline>
   (() => {
@@ -126,10 +135,17 @@ const slidesJson = JSON.stringify(
     const lightboxTitle = document.getElementById('lightbox-title');
     if (!portfolio || !lightbox || !lightboxImage || !lightboxTitle) return;
 
+    // Escape any ancestor with content-visibility / transform / overflow clip.
+    // Those create a containing block for position:fixed and freeze iOS Safari.
+    if (lightbox.parentElement !== document.body) {
+      document.body.appendChild(lightbox);
+    }
+
     let slides = [];
     let currentIndex = 0;
     let isOpen = false;
     let touchStartX = 0;
+    let lockY = 0;
 
     const syncSlidesFromDom = () => {
       const buttons = portfolio.querySelectorAll(
@@ -151,9 +167,28 @@ const slidesJson = JSON.stringify(
       lightboxTitle.textContent = item.title;
     };
 
+    // iOS: overflow:hidden on html/body does not lock scroll and can freeze
+    // the page after an image opens. position:fixed + restore scrollY does.
+    const lockPage = () => {
+      lockY = window.scrollY || window.pageYOffset || 0;
+      document.documentElement.classList.add('lightbox-open');
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + lockY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    };
+
     const unlockPage = () => {
       document.documentElement.classList.remove('lightbox-open');
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
+      window.scrollTo(0, lockY);
     };
 
     const openLightbox = (index) => {
@@ -161,11 +196,14 @@ const slidesJson = JSON.stringify(
       if (!slides.length) return;
       isOpen = true;
       lightbox.hidden = false;
-      document.documentElement.classList.add('lightbox-open');
-      document.body.style.overflow = 'hidden';
+      lockPage();
     };
 
     const closeLightbox = () => {
+      if (!isOpen && lightbox.hidden) {
+        unlockPage();
+        return;
+      }
       isOpen = false;
       lightbox.hidden = true;
       unlockPage();
@@ -245,14 +283,28 @@ const slidesJson = JSON.stringify(
       if (e.key === 'ArrowRight') step(1);
     });
 
+    // iOS pauses JS while the native image viewer is up; always unlock on return.
     window.addEventListener('pagehide', unlockPage);
+    window.addEventListener('pageshow', () => {
+      if (!isOpen) unlockPage();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !isOpen) unlockPage();
+    });
   })();
 </script>
 
 <style is:global>
+  /* Keep skipped below-fold sections painted while the overlay is open,
+     otherwise iOS can unrender the page under overflow lock and freeze. */
+  html.lightbox-open .below-fold {
+    content-visibility: visible;
+  }
+
   html.lightbox-open,
   html.lightbox-open body {
     overflow: hidden;
+    overscroll-behavior: none;
   }
 </style>
 
@@ -328,6 +380,8 @@ const slidesJson = JSON.stringify(
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
+    overscroll-behavior: contain;
+    touch-action: manipulation;
   }
 
   .lightbox[hidden] {
@@ -368,6 +422,21 @@ const slidesJson = JSON.stringify(
     align-items: center;
     justify-content: center;
     z-index: 2;
+  }
+
+  @media (max-width: 767px) {
+    .lightbox {
+      padding: 4rem 0.5rem 1.25rem;
+    }
+
+    /* Keep close inside the visual viewport — top:-2.75rem was off-screen on phones. */
+    .lightbox__close {
+      position: fixed;
+      top: max(0.75rem, env(safe-area-inset-top, 0px));
+      right: 0.75rem;
+      left: auto;
+      inset-inline-end: 0.75rem;
+    }
   }
 
   /* Arrows sit beside the image — never overlaid on top of it.
@@ -426,6 +495,12 @@ const slidesJson = JSON.stringify(
     object-fit: contain;
     border-radius: 4px;
     box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
+    /* iOS Safari opens a native image viewer on <img> tap; returning from it
+       left overflow:hidden stuck and froze the page. */
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .lightbox__title {

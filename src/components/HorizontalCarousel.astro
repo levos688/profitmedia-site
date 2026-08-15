@@ -233,6 +233,10 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
         return;
       }
       window.setTimeout(done, 420);
+      // Failsafe: iOS pauses timeouts while a native image sheet is open.
+      window.setTimeout(() => {
+        busy = false;
+      }, 800);
     };
 
     const step = (delta) => {
@@ -268,6 +272,11 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       'touchend',
       (e) => {
         if (busy) return;
+        // Opening the lightbox must not also count as a swipe (iOS then pauses
+        // timers and `busy` stays true → gallery looks frozen).
+        if (document.documentElement.classList.contains('lightbox-open')) return;
+        const from = e.target && e.target.closest ? e.target : e.target && e.target.parentElement;
+        if (from && from.closest && from.closest('[data-lightbox-trigger]')) return;
         const t = e.changedTouches[0];
         if (!t) return;
         const dx = t.clientX - touchX;
@@ -312,6 +321,14 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
     root.addEventListener('pm:carousel-reload', rebuildFromDom);
 
+    const clearBusy = () => {
+      busy = false;
+    };
+    window.addEventListener('pageshow', clearBusy);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') clearBusy();
+    });
+
     requestAnimationFrame(() => requestAnimationFrame(boot));
   })();
 </script>
@@ -355,6 +372,14 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
   .carousel-strip :global(.carousel-item) {
     flex: 0 0 auto;
+  }
+
+  /* Stop iOS from opening the native image viewer on gallery/logo taps. */
+  .carousel-strip :global(img) {
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .carousel-arrow {
