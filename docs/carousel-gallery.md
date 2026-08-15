@@ -1,19 +1,22 @@
 # Gallery carousel — working recipe (do not regress)
 
-**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15  
+**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15 (`pm-release` `2026-08-15-gallery-ios-2`)  
 **Files:**
 - `src/components/HorizontalCarousel.astro` — logos + portfolio strip
 - `src/components/preview/PreviewPortfolio.astro` — lightbox enlarge
+- `src/styles/global.css` — `.below-fold` must not use `content-visibility` on touch
 - `src/layouts/Layout.astro` — `<meta name="pm-release">` (prod version pin)
 
 If gallery breaks again, restore behavior from this doc (and git history around this date), not by reinventing scroll.
 
 **Do not roll back** by deploying an old `dist/` from `profitmedia-site-ru` or another worktree. Always:
 
-1. Commit on `main` in `/Users/lev/Desktop/work/profitmedia-site`
+1. Commit on `main` in `/Users/lev/Desktop/work/profitmedia-site` (not `profitmedia-site-ru`)
 2. Fresh `npm run build` from that commit
 3. `npx wrangler pages deploy dist --project-name=profitmedia-site`
-4. Confirm live HTML has `<meta name="pm-release" content="2026-08-15-gallery-ios">`
+4. Confirm live HTML has `<meta name="pm-release" content="2026-08-15-gallery-ios-2">`
+
+Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Preview deploys from `feature/russian-localization` must never be promoted over this pin. Merge that branch only after it contains this gallery fix.
 
 ---
 
@@ -60,11 +63,13 @@ If gallery breaks again, restore behavior from this doc (and git history around 
   - **Center** = image
   - **Right** = next (`›` SVG path pointing right) — outside the image, pointing **outward**
 - Do **not** drop `dir="ltr"` on the stage: on an RTL page, flex reverses the row and chevrons look like they point **into** the image.
-- Lightbox markup lives **outside** `#portfolio.below-fold`, then JS appends it to `document.body`. Never put `position:fixed` inside `content-visibility: auto` (contain:paint → iOS freeze after opening an image).
-- Lock scroll with `position:fixed` + saved `scrollY`, not `overflow:hidden` alone.
-- Lightbox `<img>`: `pointer-events: none` + `-webkit-touch-callout: none` so iOS does not open its native image viewer.
+- Lightbox markup lives **outside** `#portfolio.below-fold`. JS appends it to `document.documentElement` (`<html>`), never `document.body`. `body` has `overflow-x: clip` + `position: relative`; in iOS that contains `position:fixed` and freezes the page.
+- Do **not** set `overflow: hidden` / `clip` on `html` while the overlay is open (same containing-block freeze).
+- Lock background scroll with `body { position:fixed; top: -scrollY }` plus a non-passive `touchmove` preventDefault. Restore `scrollY` on close.
+- On touch / coarse pointer / mobile, `.below-fold` must stay `content-visibility: visible` (see `global.css`).
+- Lightbox `<img>`: `pointer-events: none` + `-webkit-touch-callout: none` so iOS does not open its native image viewer. Open the overlay on rAF so the same tap cannot hit the large image.
 - Close button on mobile is `position:fixed` inside the viewport (not `top: -2.75rem`).
-- Unlock on close, `pagehide`, `pageshow`, and `visibilitychange`.
+- Unlock on close, `pagehide`, `pageshow`, and `visibilitychange`. Dispatch `pm:lightbox` so the carousel clears `busy`.
 
 ---
 
@@ -76,7 +81,7 @@ If gallery breaks again, restore behavior from this doc (and git history around 
 - [ ] Logos carousel: same behavior
 - [ ] Tap card → enlarge; arrows **outside** image and pointing **outward** (‹ left, › right); next/prev work; close unlocks scroll
 - [ ] Mobile: open a landing image, close it, page still scrolls and arrows still work (no freeze)
-- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-15-gallery-ios`
+- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-15-gallery-ios-2`
 
 ---
 

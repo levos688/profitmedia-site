@@ -328,6 +328,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') clearBusy();
     });
+    document.addEventListener('pm:lightbox', clearBusy);
 
     requestAnimationFrame(() => requestAnimationFrame(boot));
   })();

@@ -36,6 +36,16 @@ textarea {
   contain-intrinsic-size: auto 600px;
 }
 
+/* iOS Safari: content-visibility:auto uses contain:paint, which becomes the
+   containing block for position:fixed. Opening the gallery lightbox then
+   freezes the page. Keep the PageSpeed skip on hover-capable desktops only. */
+@media (hover: none), (pointer: coarse), (max-width: 767px) {
+  .below-fold {
+    content-visibility: visible;
+    contain: none;
+  }
+}
+
 @media (min-width: 768px) {
   .section-padding {
     padding-block: 4rem;

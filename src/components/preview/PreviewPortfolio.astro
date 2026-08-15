@@ -135,10 +135,11 @@ const slidesJson = JSON.stringify(
     const lightboxTitle = document.getElementById('lightbox-title');
     if (!portfolio || !lightbox || !lightboxImage || !lightboxTitle) return;
 
-    // Escape any ancestor with content-visibility / transform / overflow clip.
-    // Those create a containing block for position:fixed and freeze iOS Safari.
-    if (lightbox.parentElement !== document.body) {
-      document.body.appendChild(lightbox);
+    // Park the overlay on <html>, not <body>. body has overflow-x:clip and
+    // position:relative; in iOS Safari that contains position:fixed and freezes
+    // the page after a gallery image opens.
+    if (lightbox.parentElement !== document.documentElement) {
+      document.documentElement.appendChild(lightbox);
     }
 
     let slides = [];
@@ -146,6 +147,7 @@ const slidesJson = JSON.stringify(
     let isOpen = false;
     let touchStartX = 0;
     let lockY = 0;
+    let preventMove = null;
 
     const syncSlidesFromDom = () => {
       const buttons = portfolio.querySelectorAll(
@@ -167,27 +169,42 @@ const slidesJson = JSON.stringify(
       lightboxTitle.textContent = item.title;
     };
 
-    // iOS: overflow:hidden on html/body does not lock scroll and can freeze
-    // the page after an image opens. position:fixed + restore scrollY does.
+    // Lock background scroll without overflow:hidden/clip on <html> — that
+    // would contain this position:fixed overlay and freeze iOS again.
     const lockPage = () => {
       lockY = window.scrollY || window.pageYOffset || 0;
       document.documentElement.classList.add('lightbox-open');
+      document.documentElement.style.overflow = 'visible';
       document.body.style.position = 'fixed';
       document.body.style.top = '-' + lockY + 'px';
       document.body.style.left = '0';
       document.body.style.right = '0';
       document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'visible';
+      document.body.style.touchAction = 'none';
+      if (!preventMove) {
+        preventMove = (e) => {
+          if (!isOpen) return;
+          e.preventDefault();
+        };
+        document.addEventListener('touchmove', preventMove, { passive: false });
+      }
     };
 
     const unlockPage = () => {
       document.documentElement.classList.remove('lightbox-open');
+      document.documentElement.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.left = '';
       document.body.style.right = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      if (preventMove) {
+        document.removeEventListener('touchmove', preventMove);
+        preventMove = null;
+      }
       window.scrollTo(0, lockY);
     };
 
@@ -197,6 +214,8 @@ const slidesJson = JSON.stringify(
       isOpen = true;
       lightbox.hidden = false;
       lockPage();
+      // Release carousel `busy` — iOS pauses timers while the overlay is up.
+      document.dispatchEvent(new CustomEvent('pm:lightbox', { detail: 'open' }));
     };
 
     const closeLightbox = () => {
@@ -229,7 +248,10 @@ const slidesJson = JSON.stringify(
       const image = btn.getAttribute('data-image') || '';
       let index = slides.findIndex((s) => s.image === image);
       if (index < 0) index = 0;
-      openLightbox(index);
+      // Open on the next frame so the same iOS tap cannot hit the large <img>
+      // and spawn Safari's native image viewer (that viewer pauses JS and
+      // leaves the page frozen after it closes).
+      window.requestAnimationFrame(() => openLightbox(index));
     });
 
     lightbox.querySelectorAll('[data-lightbox-close]').forEach((el) => {
@@ -295,16 +317,22 @@ const slidesJson = JSON.stringify(
 </script>
 
 <style is:global>
-  /* Keep skipped below-fold sections painted while the overlay is open,
-     otherwise iOS can unrender the page under overflow lock and freeze. */
-  html.lightbox-open .below-fold {
-    content-visibility: visible;
+  /* Overlay lives on <html>. html/body overflow:hidden|clip would contain
+     position:fixed and freeze iOS Safari after opening a gallery image. */
+  html.lightbox-open {
+    overflow: visible !important;
+    overflow-x: visible !important;
   }
 
-  html.lightbox-open,
+  html.lightbox-open .below-fold {
+    content-visibility: visible;
+    contain: none;
+  }
+
   html.lightbox-open body {
-    overflow: hidden;
+    overflow: visible;
     overscroll-behavior: none;
+    touch-action: none;
   }
 </style>
 
@@ -496,11 +524,12 @@ const slidesJson = JSON.stringify(
     border-radius: 4px;
     box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
     /* iOS Safari opens a native image viewer on <img> tap; returning from it
-       left overflow:hidden stuck and froze the page. */
+       left overflow:hidden stuck and froze the page. Keep the photo untappable. */
     pointer-events: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-user-drag: none;
   }
 
   .lightbox__title {
