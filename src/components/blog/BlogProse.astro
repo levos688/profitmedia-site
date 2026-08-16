@@ -144,6 +144,67 @@ const { class: className = '' } = Astro.props;
     gap: 0.5rem;
   }
 
+  .blog-prose :global(.blog-scope-ladder) {
+    margin: 1.6rem 0 1.9rem;
+    padding: 1.1rem 1rem 1rem;
+    border: 1px solid rgba(101, 21, 97, 0.12);
+    border-radius: 8px;
+    background: #faf8fc;
+  }
+
+  .blog-prose :global(.blog-scope-ladder__legend) {
+    margin: 0 0 0.85rem;
+    color: #651561;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+  }
+
+  .blog-prose :global(.blog-scope-ladder ol) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .blog-prose :global(.blog-scope-ladder li) {
+    display: grid;
+    gap: 0.12rem;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border: 1px solid rgba(101, 21, 97, 0.1);
+    border-inline-start: 4px solid rgba(101, 21, 97, 0.22);
+    border-radius: 4px;
+  }
+
+  .blog-prose :global(.blog-scope-ladder li:last-child) {
+    border-inline-start-color: #fcc000;
+    background: #fffdf3;
+  }
+
+  .blog-prose :global(.blog-scope-ladder__level) {
+    color: #6b7280;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .blog-prose :global(.blog-scope-ladder__level--peak) {
+    color: #651561;
+  }
+
+  .blog-prose :global(.blog-scope-ladder li strong) {
+    font-size: 1.05rem;
+  }
+
+  .blog-prose :global(.blog-scope-ladder li span:last-child) {
+    color: #4b5563;
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
   .blog-prose :global(.blog-cpl-compare) {
     margin: 1.6rem 0 1.85rem;
     padding: 1.15rem 1rem 1.05rem;

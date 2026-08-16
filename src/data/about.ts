@@ -30,6 +30,14 @@ export const aboutGuides = {
       label: 'איך לבחור סוכנות פרסום דיגיטלי לפי עסקאות — לא רק לפי לידים',
     },
     {
+      href: '/blog/kamah-oleh-sohnut-pirsum-digitali',
+      label: 'כמה עולה סוכנות פרסום דיגיטלי — ועל מה באמת משלמים',
+    },
+    {
+      href: '/blog/hatzaat-mehir-ve-hozeh-sohnut',
+      label: 'מה חייב להיות בהצעת מחיר ובחוזה עם סוכנות',
+    },
+    {
       href: '/blog/shipur-yahas-hamara',
       label: 'שיפור יחס המרה: למה בדיקת מודעות בלבד כבר לא מספיקה',
     },
