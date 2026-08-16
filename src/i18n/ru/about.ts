@@ -30,6 +30,14 @@ export const about = {
         label: 'Как выбрать digital-агентство по сделкам, а не только по CPL',
       },
       {
+        href: '/ru/blog/skolko-stoit-digital-agentstvo',
+        label: 'Сколько стоит digital-агентство — и за что вы реально платите',
+      },
+      {
+        href: '/ru/blog/kommercheskoe-predlozhenie-i-dogovor',
+        label: 'Что должно быть в КП и договоре с агентством',
+      },
+      {
         href: '/ru/blog/povyshenie-konversii',
         label: 'Как повысить конверсию: почему тестов объявлений уже недостаточно',
       },

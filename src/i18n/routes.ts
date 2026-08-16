@@ -12,6 +12,14 @@ export const routePairs = {
     he: '/blog/ekh-livkhor-sohnut-pirsum-digitali',
     ru: '/ru/blog/kak-vybrat-digital-agentstvo',
   },
+  agencyPricingArticle: {
+    he: '/blog/kamah-oleh-sohnut-pirsum-digitali',
+    ru: '/ru/blog/skolko-stoit-digital-agentstvo',
+  },
+  agencyProposalArticle: {
+    he: '/blog/hatzaat-mehir-ve-hozeh-sohnut',
+    ru: '/ru/blog/kommercheskoe-predlozhenie-i-dogovor',
+  },
   landingArticle: {
     he: '/blog/daf-nechita-mul-daf-habayit',
     ru: '/ru/blog/lending-ili-glavnaya',

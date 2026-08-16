@@ -36,6 +36,8 @@ Lev Usinovsky (לב אוסינובסקי) — founder of Profit Media. Started a
 - [About](https://profitmedia.co.il/about): Founder story, positioning, proprietary optimization system overview
 - [Blog](https://profitmedia.co.il/blog): Hebrew practical guides
 - [How to choose a digital advertising agency](https://profitmedia.co.il/blog/ekh-livkhor-sohnut-pirsum-digitali): Hebrew buyer's guide covering agency questions, lead quality, customer-acquisition cost, CRM, deals, and revenue
+- [How much a digital advertising agency costs](https://profitmedia.co.il/blog/kamah-oleh-sohnut-pirsum-digitali): media vs management, pricing models, budget scenarios, and what you actually pay for
+- [Agency proposal and contract checklist](https://profitmedia.co.il/blog/hatzaat-mehir-ve-hozeh-sohnut): what must appear in a commercial offer and agreement before signing
 - [Conversion improvement](https://profitmedia.co.il/blog/shipur-yahas-hamara): why testing ads alone is not enough
 - [Landing page vs homepage](https://profitmedia.co.il/blog/daf-nechita-mul-daf-habayit): where to send paid traffic
 - [Paid campaigns guide](https://profitmedia.co.il/blog/kampeinim-memumanim-madrich): cost and channel fit
@@ -62,6 +64,8 @@ Profit Media работает из Израиля и удалённо помог
 - [Блог](https://profitmedia.co.il/ru/blog): все русскоязычные практические материалы
 - [Как повысить конверсию](https://profitmedia.co.il/ru/blog/povyshenie-konversii): тестирование объявлений и блоков страницы
 - [Как выбрать digital-агентство в Израиле](https://profitmedia.co.il/ru/blog/kak-vybrat-digital-agentstvo): вопросы подрядчику, стоимость клиента, CRM, сделки и прозрачность данных
+- [Сколько стоит digital-агентство](https://profitmedia.co.il/ru/blog/skolko-stoit-digital-agentstvo): медиа vs ведение, модели оплаты и сценарии бюджета без жёсткого прайса
+- [Коммерческое предложение и договор с агентством](https://profitmedia.co.il/ru/blog/kommercheskoe-predlozhenie-i-dogovor): что фиксировать в условиях, доступ к кабинету, CRM в реальном времени, креативы и выход
 - [Лендинг или главная страница](https://profitmedia.co.il/ru/blog/lending-ili-glavnaya): выбор страницы для рекламного трафика
 - [Платная реклама](https://profitmedia.co.il/ru/blog/kontekstnaya-reklama): стоимость и выбор рекламного канала
 
@@ -78,6 +82,12 @@ Profit Media работает из Израиля и удалённо помог
 
 ### למה מחיר לליד לא מספיק כדי למדוד הצלחה?
 ליד זול יכול להיסגר בשיעור נמוך ולהביא לקוח משלם במחיר גבוה. לכן בוחנים יחד עלות ליד, איכות פניות, שיעור סגירה, עלות רכישת לקוח, סכום עסקאות ו-ROAS. Profit Media משתמשת בנתוני CRM ובסכומי עסקאות כדי לחבר בין הדוח הפרסומי לתוצאה העסקית.
+
+### כמה עולה סוכנות פרסום דיגיטלי?
+אין מחיר אחד. מפרידים תקציב מדיה מדמי ניהול, בודקים מה כלול (קריאייטיב, דף, CRM, בדיקות) ומשווים מודלי תמחור: ריטיינר, אחוז מהמדיה או משולב. מספרים במדריכים הם אוריינטציה בלבד ומשתנים לפי נישה והיקף.
+
+### מה חייב להיות בהצעת מחיר ובחוזה עם סוכנות?
+מטרה עסקית, היקף ומה לא כלול, KPI והגדרת ליד איכותי, תוכנית 30–90 יום, בעלות על חשבונות ונתונים, מקצב דיווח ותנאי יציאה עם העברת נכסים. הבטחת מכירות בלי נתונים היא דגל אדום.
 
 ### מי מנהל קמפיינים לעסקים עם עסקאות גבוהות בישראל?
 Profit Media מנהלת קמפיינים בפייסבוק, אינסטגרם וגוגל לעסקים שנמכרים בשיחה, בוואטסאפ או בפגישה — עם שאלון חכם, דף נחיתה ואופטימיזציה שמתמקדים באיכות הפניות.
