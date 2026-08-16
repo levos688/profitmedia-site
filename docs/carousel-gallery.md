@@ -1,6 +1,6 @@
 # Gallery carousel — working recipe (do not regress)
 
-**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15, zoom + close-in-place 2026-08-16 (`pm-release` `2026-08-16-gallery-zoom`)  
+**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15, zoom + close-in-place 2026-08-16, a11y contrast + left full-height panel 2026-08-16 (`pm-release` `2026-08-16-a11y-contrast`)  
 **Files:**
 - `src/components/HorizontalCarousel.astro` — logos + portfolio strip
 - `src/components/preview/PreviewPortfolio.astro` — lightbox enlarge
@@ -14,7 +14,7 @@ If gallery breaks again, restore behavior from this doc (and git history around 
 1. Commit on `main` in `/Users/lev/Desktop/work/profitmedia-site` (not `profitmedia-site-ru`)
 2. Fresh `npm run build` from that commit
 3. `npx wrangler pages deploy dist --project-name=profitmedia-site`
-4. Confirm live HTML has `<meta name="pm-release" content="2026-08-16-gallery-zoom">`
+4. Confirm live HTML has `<meta name="pm-release" content="2026-08-16-a11y-contrast">`
 
 Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Preview deploys from `feature/russian-localization` must never be promoted over this pin. Merge that branch only after it contains this gallery fix.
 
@@ -67,10 +67,11 @@ Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Previ
 - Do **not** set `overflow: hidden` / `clip` on `html` while the overlay is open (same containing-block freeze).
 - Lock background scroll with `body { position:fixed; top: -scrollY }` plus a non-passive `touchmove` preventDefault. Restore `scrollY` on close.
 - On touch / coarse pointer / mobile, `.below-fold` must stay `content-visibility: visible` (see `global.css`).
-- Lightbox `<img>`: pinch/double-tap zoom (custom transform, not Safari’s native viewer). One-finger swipe left/right changes slide when not zoomed.
-- Close (X or tap on the dark backdrop) must leave the page and carousel exactly where they were. Do not `hidden` the overlay on the same tap — iOS retargets that touch onto the carousel and the strip jumps.
-- Close button on mobile is `position:fixed` inside the viewport (not `top: -2.75rem`). Mobile nav arrows overlay the image and stay small (~28px).
-- Unlock on close, `pagehide`, `pageshow`, and `visibilitychange`. Dispatch `pm:lightbox` so the carousel clears `busy` and ignores the leftover touch.
+- Lightbox `<img>`: pinch zooms **only the photo** (custom transform). Double-tap toggles photo zoom and **must** `preventDefault` so Safari does not zoom the whole page. Pinch out or double-tap again resets. Never leave the document scaled.
+- While open, temporarily set viewport `maximum-scale=1` and block `gesturestart` / double-tap on `document`. Restore the original viewport on close.
+- Close (X, backdrop, Escape) must leave the page and carousel exactly where they were. Do not `hidden` the overlay on the same tap — iOS retargets that touch onto the carousel and the strip jumps.
+- Close button on mobile is `position:fixed` inside the viewport. Mobile nav arrows look small but keep a 44px hit area.
+- Unlock on close, `pagehide`, `pageshow`, and `visibilitychange`. Dispatch `pm:lightbox` so the carousel clears `busy` and ignores the leftover touch. Return focus to the trigger.
 
 ---
 
@@ -82,7 +83,7 @@ Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Previ
 - [ ] Logos carousel: same behavior
 - [ ] Tap card → enlarge; arrows **outside** image and pointing **outward** (‹ left, › right); next/prev work; close unlocks scroll
 - [ ] Mobile: open a landing image, pinch-zoom, swipe to the next image, close via backdrop — page stays put, carousel does not jump
-- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-16-gallery-zoom`
+- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-16-a11y-contrast`
 
 ---
 

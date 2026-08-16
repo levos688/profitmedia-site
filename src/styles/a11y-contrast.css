@@ -1,0 +1,117 @@
+/* Widget JS only paints `body`. Tailwind sections keep their own colors, so
+   light/dark look like a no-op and high contrast can turn text white-on-white.
+   These rules restyle the whole page when the widget toggles html classes. */
+
+html.pm-a11y-contrast-light {
+  color-scheme: light;
+  background: #fff !important;
+}
+
+html.pm-a11y-contrast-dark {
+  color-scheme: dark;
+  background: #121212 !important;
+}
+
+html.pm-a11y-contrast-high {
+  color-scheme: dark;
+  background: #000 !important;
+}
+
+html.pm-a11y-contrast-light body,
+html.pm-a11y-contrast-light body *:not(
+    #pm-a11y-widget-root,
+    #pm-a11y-reading-guide,
+    #pm-a11y-line-mask,
+    img,
+    video,
+    picture,
+    canvas,
+    svg,
+    iframe
+  ),
+html.pm-a11y-contrast-light body *:not(#pm-a11y-widget-root, #pm-a11y-reading-guide, #pm-a11y-line-mask)::before,
+html.pm-a11y-contrast-light body *:not(#pm-a11y-widget-root, #pm-a11y-reading-guide, #pm-a11y-line-mask)::after {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #111111 !important;
+  border-color: #111111 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html.pm-a11y-contrast-light body a {
+  color: #003f8c !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+html.pm-a11y-contrast-dark body,
+html.pm-a11y-contrast-dark body *:not(
+    #pm-a11y-widget-root,
+    #pm-a11y-reading-guide,
+    #pm-a11y-line-mask,
+    img,
+    video,
+    picture,
+    canvas,
+    svg,
+    iframe
+  ),
+html.pm-a11y-contrast-dark body *:not(#pm-a11y-widget-root, #pm-a11y-reading-guide, #pm-a11y-line-mask)::before,
+html.pm-a11y-contrast-dark body *:not(#pm-a11y-widget-root, #pm-a11y-reading-guide, #pm-a11y-line-mask)::after {
+  background-color: #121212 !important;
+  background-image: none !important;
+  color: #f5f5f5 !important;
+  border-color: #f5f5f5 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html.pm-a11y-contrast-dark body a {
+  color: #8ab4ff !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+/* Yellow on black — the high-contrast profile users expect from Israeli a11y menus. */
+html.pm-a11y-contrast-high body,
+html.pm-a11y-contrast-high body *:not(
+    #pm-a11y-widget-root,
+    #pm-a11y-reading-guide,
+    #pm-a11y-line-mask,
+    img,
+    video,
+    picture,
+    canvas,
+    svg,
+    iframe
+  ),
+html.pm-a11y-contrast-high body *:not(#pm-a11y-widget-root, #pm-a11y-reading-guide, #pm-a11y-line-mask)::before,
+html.pm-a11y-contrast-high body *:not(#pm-a11y-widget-root, #pm-a11y-reading-guide, #pm-a11y-line-mask)::after {
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffff00 !important;
+  border-color: #ffff00 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html.pm-a11y-contrast-high body a {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  background-color: #000000 !important;
+}
+
+html.pm-a11y-contrast-high body :is(button, input, select, textarea) {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+}
+
+html.pm-a11y-contrast-light body :is(img, video, picture, canvas, svg, iframe),
+html.pm-a11y-contrast-dark body :is(img, video, picture, canvas, svg, iframe),
+html.pm-a11y-contrast-high body :is(img, video, picture, canvas, svg, iframe) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
