@@ -259,6 +259,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
     let touchX = 0;
     let touchY = 0;
+    let ignoreTouchUntil = 0;
     viewport.addEventListener(
       'touchstart',
       (e) => {
@@ -272,6 +273,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
       'touchend',
       (e) => {
         if (busy) return;
+        if (Date.now() < ignoreTouchUntil) return;
         // Opening the lightbox must not also count as a swipe (iOS then pauses
         // timers and `busy` stays true → gallery looks frozen).
         if (document.documentElement.classList.contains('lightbox-open')) return;
@@ -323,6 +325,7 @@ const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
     const clearBusy = () => {
       busy = false;
+      ignoreTouchUntil = Date.now() + 500;
     };
     window.addEventListener('pageshow', clearBusy);
     document.addEventListener('visibilitychange', () => {

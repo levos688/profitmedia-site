@@ -104,7 +104,7 @@ const slidesJson = JSON.stringify(
         </svg>
       </button>
 
-      <div class="lightbox__media">
+      <div class="lightbox__media" data-lightbox-media>
         <img
           id="lightbox-image"
           class="lightbox__image"
@@ -133,7 +133,8 @@ const slidesJson = JSON.stringify(
     const lightbox = document.getElementById('landing-lightbox');
     const lightboxImage = document.getElementById('lightbox-image');
     const lightboxTitle = document.getElementById('lightbox-title');
-    if (!portfolio || !lightbox || !lightboxImage || !lightboxTitle) return;
+    const media = lightbox && lightbox.querySelector('[data-lightbox-media]');
+    if (!portfolio || !lightbox || !lightboxImage || !lightboxTitle || !media) return;
 
     // Park the overlay on <html>, not <body>. body has overflow-x:clip and
     // position:relative; in iOS Safari that contains position:fixed and freezes
@@ -145,9 +146,43 @@ const slidesJson = JSON.stringify(
     let slides = [];
     let currentIndex = 0;
     let isOpen = false;
-    let touchStartX = 0;
     let lockY = 0;
     let preventMove = null;
+    let hideTimer = 0;
+    let swallowUntil = 0;
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let startScale = 1;
+    let startPanX = 0;
+    let startPanY = 0;
+    let pinchStartDist = 0;
+    let gestureX = 0;
+    let gestureY = 0;
+    let didPinch = false;
+    let didPan = false;
+    let lastTapAt = 0;
+    let overlayX = 0;
+    let overlayY = 0;
+    let skipBackdropClickUntil = 0;
+
+    const dist = (a, b) => {
+      const dx = a.clientX - b.clientX;
+      const dy = a.clientY - b.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const applyZoom = () => {
+      lightboxImage.style.transform =
+        'translate3d(' + panX + 'px,' + panY + 'px,0) scale(' + scale + ')';
+    };
+
+    const resetZoom = () => {
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      applyZoom();
+    };
 
     const syncSlidesFromDom = () => {
       const buttons = portfolio.querySelectorAll(
@@ -164,9 +199,17 @@ const slidesJson = JSON.stringify(
       if (!slides.length) return;
       currentIndex = ((index % slides.length) + slides.length) % slides.length;
       const item = slides[currentIndex];
+      resetZoom();
       lightboxImage.src = item.image;
       lightboxImage.alt = item.title;
       lightboxTitle.textContent = item.title;
+    };
+
+    const restoreScroll = () => {
+      const y = lockY || 0;
+      window.scrollTo(0, y);
+      document.documentElement.scrollTop = y;
+      document.body.scrollTop = y;
     };
 
     // Lock background scroll without overflow:hidden/clip on <html> — that
@@ -185,6 +228,9 @@ const slidesJson = JSON.stringify(
       if (!preventMove) {
         preventMove = (e) => {
           if (!isOpen) return;
+          if (e.touches && e.touches.length > 1) return;
+          const t = e.target;
+          if (t && lightbox.contains(t)) return;
           e.preventDefault();
         };
         document.addEventListener('touchmove', preventMove, { passive: false });
@@ -205,29 +251,49 @@ const slidesJson = JSON.stringify(
         document.removeEventListener('touchmove', preventMove);
         preventMove = null;
       }
-      window.scrollTo(0, lockY);
+      restoreScroll();
+      window.requestAnimationFrame(restoreScroll);
     };
 
     const openLightbox = (index) => {
       showSlide(index);
       if (!slides.length) return;
+      if (hideTimer) {
+        window.clearTimeout(hideTimer);
+        hideTimer = 0;
+      }
       isOpen = true;
       lightbox.hidden = false;
+      lightbox.classList.remove('is-closing');
+      lightbox.style.pointerEvents = '';
       lockPage();
-      // Release carousel `busy` — iOS pauses timers while the overlay is up.
       document.dispatchEvent(new CustomEvent('pm:lightbox', { detail: 'open' }));
     };
 
     const closeLightbox = () => {
-      if (!isOpen && lightbox.hidden) {
-        unlockPage();
+      if (!isOpen) {
+        restoreScroll();
         return;
       }
       isOpen = false;
-      lightbox.hidden = true;
+      resetZoom();
+      // Keep the overlay in the DOM for a beat. Hiding it immediately lets iOS
+      // retarget the same touch onto the carousel → the strip scrolls away.
+      lightbox.classList.add('is-closing');
+      lightbox.style.pointerEvents = 'none';
+      swallowUntil = Date.now() + 450;
+      document.dispatchEvent(new CustomEvent('pm:lightbox', { detail: 'close' }));
       unlockPage();
-      lightboxImage.removeAttribute('src');
-      lightboxImage.src = '';
+      if (hideTimer) window.clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(() => {
+        lightbox.hidden = true;
+        lightbox.classList.remove('is-closing');
+        lightbox.style.pointerEvents = '';
+        lightboxImage.removeAttribute('src');
+        lightboxImage.src = '';
+        restoreScroll();
+        hideTimer = 0;
+      }, 400);
     };
 
     const step = (delta) => {
@@ -248,9 +314,6 @@ const slidesJson = JSON.stringify(
       const image = btn.getAttribute('data-image') || '';
       let index = slides.findIndex((s) => s.image === image);
       if (index < 0) index = 0;
-      // Open on the next frame so the same iOS tap cannot hit the large <img>
-      // and spawn Safari's native image viewer (that viewer pauses JS and
-      // leaves the page frozen after it closes).
       window.requestAnimationFrame(() => openLightbox(index));
     });
 
@@ -258,6 +321,9 @@ const slidesJson = JSON.stringify(
       el.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (Date.now() < skipBackdropClickUntil && el.hasAttribute('data-lightbox-close') && !el.classList.contains('lightbox__close')) {
+          return;
+        }
         closeLightbox();
       });
     });
@@ -279,23 +345,136 @@ const slidesJson = JSON.stringify(
       });
     }
 
-    lightbox.addEventListener(
+    media.addEventListener(
       'touchstart',
       (e) => {
-        touchStartX = e.changedTouches[0] ? e.changedTouches[0].clientX : 0;
+        if (!isOpen) return;
+        const t0 = e.touches[0];
+        if (!t0) return;
+        gestureX = t0.clientX;
+        gestureY = t0.clientY;
+        startPanX = panX;
+        startPanY = panY;
+        didPinch = e.touches.length >= 2;
+        didPan = false;
+        if (e.touches.length >= 2) {
+          pinchStartDist = dist(e.touches[0], e.touches[1]) || 1;
+          startScale = scale;
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    media.addEventListener(
+      'touchmove',
+      (e) => {
+        if (!isOpen) return;
+        if (e.touches.length >= 2) {
+          didPinch = true;
+          const d = dist(e.touches[0], e.touches[1]) || 1;
+          scale = Math.min(4, Math.max(1, startScale * (d / pinchStartDist)));
+          if (scale <= 1.02) {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+          }
+          applyZoom();
+          e.preventDefault();
+          return;
+        }
+        if (scale > 1.02 && e.touches[0]) {
+          didPan = true;
+          panX = startPanX + (e.touches[0].clientX - gestureX);
+          panY = startPanY + (e.touches[0].clientY - gestureY);
+          applyZoom();
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    media.addEventListener(
+      'touchend',
+      (e) => {
+        if (!isOpen) return;
+        if (didPinch) {
+          if (scale <= 1.02) resetZoom();
+          didPinch = e.touches.length >= 2;
+          return;
+        }
+        if (didPan) {
+          if (scale <= 1.02) resetZoom();
+          return;
+        }
+        const t = e.changedTouches[0];
+        if (!t) return;
+        const dx = t.clientX - gestureX;
+        const dy = t.clientY - gestureY;
+        if (scale <= 1.02 && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+          step(dx < 0 ? 1 : -1);
+          return;
+        }
+        if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+          const now = Date.now();
+          if (now - lastTapAt < 280) {
+            lastTapAt = 0;
+            if (scale > 1.02) resetZoom();
+            else {
+              scale = 2.2;
+              applyZoom();
+            }
+          } else {
+            lastTapAt = now;
+          }
+        }
       },
       { passive: true }
     );
+
+    lightbox.addEventListener(
+      'touchstart',
+      (e) => {
+        const t = e.changedTouches[0];
+        if (!t) return;
+        overlayX = t.clientX;
+        overlayY = t.clientY;
+      },
+      { passive: true }
+    );
+
     lightbox.addEventListener(
       'touchend',
       (e) => {
         if (!isOpen) return;
-        const x = e.changedTouches[0] ? e.changedTouches[0].clientX : 0;
-        const delta = x - touchStartX;
-        if (Math.abs(delta) < 40) return;
-        step(delta < 0 ? 1 : -1);
+        const target = e.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest('[data-lightbox-media]')) return;
+        if (target.closest('.lightbox__nav') || target.closest('.lightbox__close')) return;
+        const t = e.changedTouches[0];
+        if (!t) return;
+        const dx = t.clientX - overlayX;
+        const dy = t.clientY - overlayY;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+          skipBackdropClickUntil = Date.now() + 400;
+          step(dx < 0 ? 1 : -1);
+          return;
+        }
+        if (target.closest('[data-lightbox-close]') && Math.abs(dx) < 40 && Math.abs(dy) < 40) {
+          closeLightbox();
+        }
       },
       { passive: true }
+    );
+
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (Date.now() >= swallowUntil) return;
+        e.preventDefault();
+        e.stopPropagation();
+      },
+      true
     );
 
     document.addEventListener('keydown', (e) => {
@@ -305,13 +484,15 @@ const slidesJson = JSON.stringify(
       if (e.key === 'ArrowRight') step(1);
     });
 
-    // iOS pauses JS while the native image viewer is up; always unlock on return.
-    window.addEventListener('pagehide', unlockPage);
+    window.addEventListener('pagehide', () => {
+      if (isOpen) closeLightbox();
+      else restoreScroll();
+    });
     window.addEventListener('pageshow', () => {
-      if (!isOpen) unlockPage();
+      if (!isOpen) restoreScroll();
     });
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && !isOpen) unlockPage();
+      if (document.visibilityState === 'visible' && !isOpen) restoreScroll();
     });
   })();
 </script>
@@ -416,6 +597,11 @@ const slidesJson = JSON.stringify(
     display: none !important;
   }
 
+  .lightbox.is-closing {
+    opacity: 0;
+    /* Stay in the layer so iOS cannot retarget the closing tap onto the carousel. */
+  }
+
   .lightbox__backdrop {
     position: absolute;
     inset: 0;
@@ -454,7 +640,7 @@ const slidesJson = JSON.stringify(
 
   @media (max-width: 767px) {
     .lightbox {
-      padding: 4rem 0.5rem 1.25rem;
+      padding: 3.5rem 0.35rem 1rem;
     }
 
     /* Keep close inside the visual viewport — top:-2.75rem was off-screen on phones. */
@@ -464,6 +650,41 @@ const slidesJson = JSON.stringify(
       right: 0.75rem;
       left: auto;
       inset-inline-end: 0.75rem;
+    }
+
+    .lightbox__stage {
+      position: relative;
+      gap: 0;
+    }
+
+    .lightbox__media {
+      max-width: 100%;
+    }
+
+    .lightbox__nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.75rem;
+      height: 1.75rem;
+      min-width: 28px;
+      min-height: 28px;
+      background: rgb(255 255 255 / 0.72);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.22);
+      z-index: 3;
+    }
+
+    .lightbox__nav--prev {
+      left: 0.2rem;
+    }
+
+    .lightbox__nav--next {
+      right: 0.2rem;
+    }
+
+    .lightbox__nav svg {
+      width: 14px;
+      height: 14px;
     }
   }
 
@@ -487,6 +708,8 @@ const slidesJson = JSON.stringify(
     max-width: calc(100% - 6.5rem);
     display: flex;
     justify-content: center;
+    overflow: hidden;
+    touch-action: none;
   }
 
   .lightbox__nav {
@@ -523,9 +746,8 @@ const slidesJson = JSON.stringify(
     object-fit: contain;
     border-radius: 4px;
     box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
-    /* iOS Safari opens a native image viewer on <img> tap; returning from it
-       left overflow:hidden stuck and froze the page. Keep the photo untappable. */
-    pointer-events: none;
+    transform-origin: center center;
+    touch-action: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
