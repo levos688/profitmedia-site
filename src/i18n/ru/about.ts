@@ -35,7 +35,7 @@ export const about = {
       },
       {
         href: '/ru/blog/kommercheskoe-predlozhenie-i-dogovor',
-        label: 'Что должно быть в КП и договоре с агентством',
+        label: 'Как проверить коммерческое предложение: встречи, сделки и возврат денег',
       },
       {
         href: '/ru/blog/povyshenie-konversii',

@@ -35,7 +35,7 @@ export const aboutGuides = {
     },
     {
       href: '/blog/hatzaat-mehir-ve-hozeh-sohnut',
-      label: 'מה חייב להיות בהצעת מחיר ובחוזה עם סוכנות',
+      label: 'מה לבדוק בהצעת מחיר: פגישות, עסקאות והחזר כסף מהפרסום',
     },
     {
       href: '/blog/shipur-yahas-hamara',
