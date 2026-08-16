@@ -75,7 +75,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {/* Bump this when shipping a site fix so we can confirm prod did not roll back. */}
-    <meta name="pm-release" content="2026-08-16-gallery-noscale" />
+    <meta name="pm-release" content="2026-08-16-a11y-statement" />
     {
       enableGtm && (
         <script is:inline>
@@ -305,7 +305,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
           <script is:inline>
             (function () {
               var loaded = false;
-              var LOAD_DELAY_MS = 4000;
+              var LOAD_DELAY_MS = 400;
 
               function loadA11y() {
                 if (loaded) return;
@@ -362,6 +362,19 @@ const canonicalUrl = canonical ?? Astro.url.href;
                 el.style.setProperty('max-height', '100dvh', 'important');
               }
 
+              function relabelContrast(shadow) {
+                var tile = shadow.querySelector('[data-tile="contrast-high"] span:last-of-type');
+                if (!tile) return;
+                var active = shadow.querySelector('.pm-lang-chip.active');
+                var lang = active ? active.getAttribute('data-lang') : 'he';
+                var labels = {
+                  he: 'צהוב על שחור',
+                  en: 'Yellow on black',
+                  ru: 'Жёлтый на чёрном',
+                };
+                tile.textContent = labels[lang] || labels.he;
+              }
+
               function applyEdgeFab(shadow) {
                 if (!shadow) return false;
                 var fab = shadow.querySelector('.pm-fab');
@@ -382,6 +395,8 @@ const canonicalUrl = canonical ?? Astro.url.href;
                     'width:min(370px,100vw)!important;max-width:min(370px,100vw)!important;border-radius:0!important;}' +
                     '#pm-a11y-panel-inner{height:100%!important;max-height:100%!important;}' +
                     '.pm-brand{border-radius:0!important}' +
+                    '.pm-cat-ico{display:none!important}' +
+                    '[data-tile="keyboard"],[data-tile="mute"],[data-tile="tts-page"],[data-tile="tts-select"]{display:none!important}' +
                     '@media (max-width:480px){.pm-fab{width:36px!important;height:36px!important;}' +
                     '.pm-fab-icon svg{width:20px!important;height:20px!important;}' +
                     '.pm-panel{width:100vw!important;max-width:100vw!important;}}';
@@ -390,6 +405,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
 
                 pinFab(fab);
                 if (panel) pinPanel(panel);
+                relabelContrast(shadow);
                 return true;
               }
 
