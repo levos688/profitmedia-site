@@ -50,7 +50,7 @@ const labels = locale === 'he'
   <div class="header-bar mx-auto flex w-full max-w-6xl min-w-0 items-center gap-3 px-4 py-3 md:gap-4 md:px-6 lg:flex-row">
     <a href={homePath} class="header-logo block shrink-0" aria-label={labels.home}>
       <img
-        src="/logo.svg"
+        src="/logo.svg?v=20260816"
         alt="Profit Media"
         class="header-logo__img"
         width="200"
@@ -228,11 +228,17 @@ const labels = locale === 'he'
     border-color: rgba(101, 21, 97, 0.08);
   }
 
+  .header-logo {
+    background: transparent;
+    line-height: 0;
+  }
+
   .header-logo__img {
     display: block;
     width: auto;
     height: 2rem; /* 32px — mobile */
     max-width: min(148px, 42vw);
+    background: transparent;
   }
 
   @media (min-width: 768px) {
