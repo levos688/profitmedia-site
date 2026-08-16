@@ -6,17 +6,17 @@
 - `src/components/preview/PreviewPortfolio.astro` — lightbox enlarge
 - `src/styles/global.css` — `.below-fold` must not use `content-visibility` on touch
 - `src/layouts/Layout.astro` — `<meta name="pm-release">` (prod version pin)
-- `scripts/ship.sh` — `npm run ship -- "commit message"`
+- `scripts/ship.sh` / `запуск` — one command: commit, push, deploy, verify pin
 
 If gallery breaks again, restore behavior from this doc (and git history around this date), not by reinventing scroll.
 
 **Do not roll back** by deploying an old `dist/` from `profitmedia-site-ru` or another worktree. Always:
 
 ```sh
-npm run ship -- "short commit message"
+запуск
 ```
 
-That command commits tracked changes, pushes `main`, builds, deploys Pages, and fails if live `pm-release` does not match `Layout.astro`.
+That command commits tracked changes (or uses «Выгрузка на прод» if you skip a message), pushes `main`, builds, deploys Pages, and fails if live `pm-release` does not match `Layout.astro`. Optional custom comment: `запуск "короткий комментарий"`.
 
 Manual equivalent:
 

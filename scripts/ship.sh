@@ -23,17 +23,11 @@ if [[ -z "$PIN" ]]; then
   exit 1
 fi
 
-MSG="${1:-}"
+MSG="${1:-Выгрузка на прод}"
 if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
-  if [[ -z "$MSG" ]]; then
-    echo "Dirty tree. Pass a commit message:" >&2
-    echo "  npm run ship -- \"your message\"" >&2
-    git status -sb
-    exit 1
-  fi
   # Tracked edits only — never scoop untracked dumps like docs/meta-ads-creatives.
   git add -u -- src docs scripts public package.json wrangler.toml astro.config.mjs
-  git add -- scripts/ship.sh package.json
+  git add -- scripts/ship.sh package.json запуск
   if git diff --cached --quiet; then
     echo "Nothing staged under src/docs/scripts/public. Stage files, then retry." >&2
     git status -sb

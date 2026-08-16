@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Short command: commit → push → deploy → verify the live pin did not roll back.
+exec bash "$(cd "$(dirname "$0")" && pwd)/scripts/ship.sh" "$@"

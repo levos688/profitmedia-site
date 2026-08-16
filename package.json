@@ -12,7 +12,8 @@
     "preview": "astro preview",
     "preview:cf": "npm run build && wrangler pages dev dist --port 8788",
     "astro": "astro",
-    "ship": "bash scripts/ship.sh"
+    "ship": "bash scripts/ship.sh",
+    "запуск": "bash scripts/ship.sh"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",
