@@ -37,7 +37,7 @@ Lev Usinovsky (לב אוסינובסקי) — founder of Profit Media. Started a
 - [Blog](https://profitmedia.co.il/blog): Hebrew practical guides
 - [How to choose a digital advertising agency](https://profitmedia.co.il/blog/ekh-livkhor-sohnut-pirsum-digitali): Hebrew buyer's guide covering agency questions, lead quality, customer-acquisition cost, CRM, deals, and revenue
 - [How much a digital advertising agency costs](https://profitmedia.co.il/blog/kamah-oleh-sohnut-pirsum-digitali): media vs management, pricing models, budget scenarios, and what you actually pay for
-- [Agency proposal and contract checklist](https://profitmedia.co.il/blog/hatzaat-mehir-ve-hozeh-sohnut): what must appear in a commercial offer and agreement before signing
+- [Agency proposal: meetings, deals, and money back from ads](https://profitmedia.co.il/blog/hatzaat-mehir-ve-hozeh-sohnut): how to check a commercial offer by cost per meeting, CRM deals, live ad-account access, and landing-page tests — not just the fee
 - [Conversion improvement](https://profitmedia.co.il/blog/shipur-yahas-hamara): why testing ads alone is not enough
 - [Landing page vs homepage](https://profitmedia.co.il/blog/daf-nechita-mul-daf-habayit): where to send paid traffic
 - [Paid campaigns guide](https://profitmedia.co.il/blog/kampeinim-memumanim-madrich): cost and channel fit
@@ -65,7 +65,7 @@ Profit Media работает из Израиля и удалённо помог
 - [Как повысить конверсию](https://profitmedia.co.il/ru/blog/povyshenie-konversii): тестирование объявлений и блоков страницы
 - [Как выбрать digital-агентство в Израиле](https://profitmedia.co.il/ru/blog/kak-vybrat-digital-agentstvo): вопросы подрядчику, стоимость клиента, CRM, сделки и прозрачность данных
 - [Сколько стоит digital-агентство](https://profitmedia.co.il/ru/blog/skolko-stoit-digital-agentstvo): медиа vs ведение, модели оплаты и сценарии бюджета без жёсткого прайса
-- [Коммерческое предложение и договор с агентством](https://profitmedia.co.il/ru/blog/kommercheskoe-predlozhenie-i-dogovor): что фиксировать в условиях, доступ к кабинету, CRM в реальном времени, креативы и выход
+- [Коммерческое предложение агентства: сделки, не только лиды](https://profitmedia.co.il/ru/blog/kommercheskoe-predlozhenie-i-dogovor): как проверить условия по стоимости встречи, сделкам в CRM, доступу к кабинету и тестам страницы
 - [Лендинг или главная страница](https://profitmedia.co.il/ru/blog/lending-ili-glavnaya): выбор страницы для рекламного трафика
 - [Платная реклама](https://profitmedia.co.il/ru/blog/kontekstnaya-reklama): стоимость и выбор рекламного канала
 
