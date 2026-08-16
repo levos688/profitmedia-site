@@ -1,6 +1,6 @@
 # Gallery carousel — working recipe (do not regress)
 
-**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15, zoom + close-in-place 2026-08-16, a11y contrast + left full-height panel 2026-08-16 (`pm-release` `2026-08-16-a11y-contrast`)  
+**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15, zoom + close-in-place 2026-08-16, a11y contrast + left full-height panel 2026-08-16 (`pm-release` `2026-08-16-gallery-noscale`)  
 **Files:**
 - `src/components/HorizontalCarousel.astro` — logos + portfolio strip
 - `src/components/preview/PreviewPortfolio.astro` — lightbox enlarge
@@ -14,7 +14,7 @@ If gallery breaks again, restore behavior from this doc (and git history around 
 1. Commit on `main` in `/Users/lev/Desktop/work/profitmedia-site` (not `profitmedia-site-ru`)
 2. Fresh `npm run build` from that commit
 3. `npx wrangler pages deploy dist --project-name=profitmedia-site`
-4. Confirm live HTML has `<meta name="pm-release" content="2026-08-16-a11y-contrast">`
+4. Confirm live HTML has `<meta name="pm-release" content="2026-08-16-gallery-noscale">`
 
 Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Preview deploys from `feature/russian-localization` must never be promoted over this pin. Merge that branch only after it contains this gallery fix.
 
@@ -82,8 +82,8 @@ Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Previ
 - [ ] Many left/right presses: no freeze, no empty left hole
 - [ ] Logos carousel: same behavior
 - [ ] Tap card → enlarge; arrows **outside** image and pointing **outward** (‹ left, › right); next/prev work; close unlocks scroll
-- [ ] Mobile: open a landing image, pinch-zoom, swipe to the next image, close via backdrop — page stays put, carousel does not jump
-- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-16-a11y-contrast`
+- [ ] Mobile: open a landing image, pinch-zoom the photo only (not the page), double-tap toggles photo zoom, swipe to next, close via backdrop — page stays put
+- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-16-gallery-noscale`
 
 ---
 
