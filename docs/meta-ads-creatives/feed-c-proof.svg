@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img">
+  <defs>
+    <linearGradient id="bgc" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a0a24"/>
+      <stop offset="55%" stop-color="#3d1248"/>
+      <stop offset="100%" stop-color="#5a1c73"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bgc)"/>
+  <text x="540" y="140" text-anchor="middle" fill="#ffffff" fill-opacity="0.85" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">תוצאות מהשטח — לא הבטחות</text>
+  <rect x="100" y="220" width="880" height="240" rx="28" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.2"/>
+  <text x="540" y="330" text-anchor="middle" fill="#fcc000" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="900">₪200K+</text>
+  <text x="540" y="400" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">מכירות שדווחו בחודש · לקוח מטבחים</text>
+  <rect x="100" y="500" width="880" height="240" rx="28" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.2"/>
+  <text x="540" y="610" text-anchor="middle" fill="#fcc000" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="900">עד 46%</text>
+  <text x="540" y="680" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">ירידה בעלות לליד · מקרה מתועד</text>
+  <rect x="250" y="820" width="580" height="96" rx="48" fill="#fcc000"/>
+  <text x="540" y="882" text-anchor="middle" fill="#651561" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="900">אבחון קמפיין חינם</text>
+  <text x="540" y="980" text-anchor="middle" fill="#ffffff" fill-opacity="0.7" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600">223+ לקוחות · מענה תוך 24 שעות</text>
+</svg>

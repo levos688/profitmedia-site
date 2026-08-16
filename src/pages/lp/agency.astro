@@ -20,7 +20,7 @@ import Footer from '../../components/Footer.astro';
  * without client-side A/B, popups, or DOM reordering (policy-safe).
  */
 const title = 'סוכנות פרסום דיגיטלי | אבחון קמפיין חינם | Profit Media';
-const h1 = 'סוכנות פרסום דיגיטלי לעסקאות, לא רק ללידים';
+const h1 = 'סוכנות פרסום דיגיטלי\nלעסקאות, לא רק ללידים';
 const description =
   'מערכת שמחברת פרסום לעסקאות: מחקר מתחרים, קמפיינים, דף נחיתה ו־CRM. אבחון קמפיין חינם תוך 24 שעות, בלי התחייבות.';
 const canonical = 'https://profitmedia.co.il/lp/agency/';
@@ -30,7 +30,7 @@ const canonical = 'https://profitmedia.co.il/lp/agency/';
   title={title}
   description={description}
   canonical={canonical}
-  noindex
+  enableA11y={false}
   preloadImage="/images/hero/photo-min.svg"
 >
   <div

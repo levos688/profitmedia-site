@@ -1,20 +1,29 @@
 # Gallery carousel — working recipe (do not regress)
 
-**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15, zoom + close-in-place 2026-08-16, a11y contrast + statement 2026-08-16 (`pm-release` `2026-08-16-a11y-statement`)  
+**Status:** production-proven (2026-07-26), iOS lightbox freeze patched 2026-08-15, zoom + close-in-place 2026-08-16, a11y contrast + statement 2026-08-16 (`pm-release` `2026-08-16-gallery-x-right`)  
 **Files:**
 - `src/components/HorizontalCarousel.astro` — logos + portfolio strip
 - `src/components/preview/PreviewPortfolio.astro` — lightbox enlarge
 - `src/styles/global.css` — `.below-fold` must not use `content-visibility` on touch
 - `src/layouts/Layout.astro` — `<meta name="pm-release">` (prod version pin)
+- `scripts/ship.sh` — `npm run ship -- "commit message"`
 
 If gallery breaks again, restore behavior from this doc (and git history around this date), not by reinventing scroll.
 
 **Do not roll back** by deploying an old `dist/` from `profitmedia-site-ru` or another worktree. Always:
 
+```sh
+npm run ship -- "short commit message"
+```
+
+That command commits tracked changes, pushes `main`, builds, deploys Pages, and fails if live `pm-release` does not match `Layout.astro`.
+
+Manual equivalent:
+
 1. Commit on `main` in `/Users/lev/Desktop/work/profitmedia-site` (not `profitmedia-site-ru`)
 2. Fresh `npm run build` from that commit
 3. `npx wrangler pages deploy dist --project-name=profitmedia-site`
-4. Confirm live HTML has `<meta name="pm-release" content="2026-08-16-a11y-statement">`
+4. Confirm live HTML has `<meta name="pm-release" content="2026-08-16-gallery-x-right">`
 
 Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Preview deploys from `feature/russian-localization` must never be promoted over this pin. Merge that branch only after it contains this gallery fix.
 
@@ -70,7 +79,7 @@ Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Previ
 - Lightbox `<img>`: pinch zooms **only the photo** (custom transform). Double-tap toggles photo zoom and **must** `preventDefault` so Safari does not zoom the whole page. Pinch out or double-tap again resets. Never leave the document scaled.
 - While open, temporarily set viewport `maximum-scale=1` and block `gesturestart` / double-tap on `document`. Restore the original viewport on close.
 - Close (X, backdrop, Escape) must leave the page and carousel exactly where they were. Do not `hidden` the overlay on the same tap — iOS retargets that touch onto the carousel and the strip jumps.
-- Close button on mobile is `position:fixed` inside the viewport. Mobile nav arrows look small but keep a 44px hit area.
+- Close button is always on the **physical right** (Hebrew and Russian). Never `inset-inline-end` — RTL puts that on the left. On mobile it is `position:fixed` inside the viewport. Mobile nav arrows look small but keep a 44px hit area.
 - Unlock on close, `pagehide`, `pageshow`, and `visibilitychange`. Dispatch `pm:lightbox` so the carousel clears `busy` and ignores the leftover touch. Return focus to the trigger.
 
 ---
@@ -83,7 +92,7 @@ Cloudflare Pages Git is connected to `levos688/profitmedia-site` **main**. Previ
 - [ ] Logos carousel: same behavior
 - [ ] Tap card → enlarge; arrows **outside** image and pointing **outward** (‹ left, › right); next/prev work; close unlocks scroll
 - [ ] Mobile: open a landing image, pinch-zoom the photo only (not the page), double-tap toggles photo zoom, swipe to next, close via backdrop — page stays put
-- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-16-a11y-statement`
+- [ ] Live `https://profitmedia.co.il/` HTML includes `pm-release` = `2026-08-16-gallery-x-right`
 
 ---
 

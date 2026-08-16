@@ -118,6 +118,7 @@ const displayTitle = overrideTitle || hero.title;
     width: 100%;
     max-width: 52rem;
     text-wrap: balance;
+    min-width: 0;
   }
 
   .hero-title__line {
@@ -181,7 +182,7 @@ const displayTitle = overrideTitle || hero.title;
   @media (min-width: 1024px) {
     .hero-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(22rem, 1fr);
       grid-template-areas:
         'eyebrow visual'
         'title visual'
@@ -207,6 +208,8 @@ const displayTitle = overrideTitle || hero.title;
       grid-area: visual;
       margin: 0;
       justify-content: center;
+      width: 100%;
+      min-width: 0;
     }
 
     .hero-more {

@@ -667,7 +667,11 @@ const slidesJson = JSON.stringify(
   .lightbox__close {
     position: absolute;
     top: -2.75rem;
-    inset-inline-end: 0;
+    /* Physical right on Hebrew and Russian — do not use inset-inline-end (RTL flips it left). */
+    right: 0;
+    left: auto;
+    inset-inline-start: auto;
+    inset-inline-end: auto;
     width: 2.75rem;
     height: 2.75rem;
     min-width: 44px;
@@ -694,7 +698,8 @@ const slidesJson = JSON.stringify(
       top: max(0.75rem, env(safe-area-inset-top, 0px));
       right: 0.75rem;
       left: auto;
-      inset-inline-end: 0.75rem;
+      inset-inline-start: auto;
+      inset-inline-end: auto;
     }
 
     .lightbox__stage {

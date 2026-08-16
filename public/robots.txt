@@ -1,19 +1,18 @@
+# Google Ads review crawlers must see the same pages as users.
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
 User-agent: *
 Allow: /
 Disallow: /donhin/ab-stats
+Disallow: /donhin/
+Disallow: /adv_lp3/
 
 # LLM context: https://profitmedia.co.il/llms.txt
 Sitemap: https://profitmedia.co.il/sitemap.xml
-
-
-User-agent: Googlebot
-Disallow: /prat/
-Disallow: /hatzara/
-Disallow: /ru/prat
-Disallow: /ru/hatzara
-Disallow: /donhin/
-Disallow: /donhin/ab-stats
-Disallow: /adv_lp3/
 
 User-agent: Google-Extended
 Disallow: /prat/
