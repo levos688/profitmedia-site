@@ -28,6 +28,10 @@ export const routePairs = {
     he: '/blog/kampeinim-memumanim-madrich',
     ru: '/ru/blog/kontekstnaya-reklama',
   },
+  cacVsCplArticle: {
+    he: '/blog/lama-cpl-namukh-lo-maspik',
+    ru: '/ru/blog/pochemu-deshevyy-lid-ne-vygoda',
+  },
   thankYou: { he: '/thank-you', ru: '/ru/thank-you' },
   privacy: { he: '/prat', ru: '/ru/prat' },
   accessibility: { he: '/hatzara', ru: '/ru/hatzara' },

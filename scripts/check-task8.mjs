@@ -49,6 +49,7 @@ const routePairs = [
   ['/blog/hatzaat-mehir-ve-hozeh-sohnut', '/ru/blog/kommercheskoe-predlozhenie-i-dogovor'],
   ['/blog/daf-nechita-mul-daf-habayit', '/ru/blog/lending-ili-glavnaya'],
   ['/blog/kampeinim-memumanim-madrich', '/ru/blog/kontekstnaya-reklama'],
+  ['/blog/lama-cpl-namukh-lo-maspik', '/ru/blog/pochemu-deshevyy-lid-ne-vygoda'],
 ];
 const outputPath = (path) => path === '/' ? 'dist/index.html' : `dist${path}/index.html`;
 const pageDescriptors = routePairs.flatMap(([he, ru]) => [
@@ -132,11 +133,11 @@ assert.ok(existsSync(sitemapPath), 'Generated sitemap is missing');
 execFileSync('xmllint', ['--noout', sitemapPath], { stdio: 'pipe' });
 const sitemap = read('dist/sitemap.xml');
 const urlBlocks = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
-assert.equal(urlBlocks.length, 18, 'Sitemap must contain exactly 18 URL entries');
+assert.equal(urlBlocks.length, 20, 'Sitemap must contain exactly 20 URL entries');
 const actualUrls = urlBlocks.map((block) => decodeHtml(block.match(/<loc>(.*?)<\/loc>/)?.[1] ?? ''));
 const expectedUrls = routePairs.flatMap(([he, ru]) => [`${site}${he}`, `${site}${ru}`]);
 assert.deepEqual([...actualUrls].sort(), [...expectedUrls].sort(), 'Sitemap URL set is not exact');
-assert.equal(new Set(actualUrls).size, 18, 'Sitemap contains duplicate URLs');
+assert.equal(new Set(actualUrls).size, 20, 'Sitemap contains duplicate URLs');
 
 for (const [he, ru] of routePairs) {
   for (const path of [he, ru]) {
@@ -184,8 +185,8 @@ const russianLinks = [...russianSection.matchAll(/\]\((https:\/\/profitmedia\.co
 assert.deepEqual(
   russianLinks,
   routePairs.map(([, ru]) => `${site}${ru}`),
-  'llms.txt Russian section must link exactly the nine indexable Russian pages',
+  'llms.txt Russian section must link exactly the ten indexable Russian pages',
 );
 assert.doesNotMatch(russianSection, /\bофис(?:а|ы|ов|ом|е)?\s+(?:в|на)\s+(?:России|Европе|США|СНГ)\b/i, 'llms.txt invents a non-Israeli office');
 
-console.log('Task 8 checks passed: JSON-LD fidelity, exact 18-URL sitemap, reciprocal alternates, and crawler files.');
+console.log('Task 8 checks passed: JSON-LD fidelity, exact 20-URL sitemap, reciprocal alternates, and crawler files.');

@@ -9,6 +9,7 @@ const blog = defineCollection({
     translationKey: z.enum([
       'agency-pricing-guide',
       'agency-proposal-guide',
+      'cac-vs-cpl-guide',
       'conversion-improvement',
       'digital-agency-choice',
       'landing-vs-homepage',

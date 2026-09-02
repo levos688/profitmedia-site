@@ -2,12 +2,13 @@
 locale: ru
 translationKey: paid-campaigns-guide
 slug: kontekstnaya-reklama
-title: "Платная реклама: сколько она стоит и как выбрать подходящий канал"
-seoTitle: "Платная реклама в 2026 году: стоимость и выбор канала | Profit Media"
+title: "Платная реклама: сколько стоит и как выбрать канал"
+seoTitle: "Платная реклама в 2026: стоимость, каналы, ошибки | Profit Media"
 description: "Практическое руководство по рекламе в Facebook, Instagram, Google и TikTok: бюджет, стоимость ведения, выбор канала, ошибки и подтверждённые кейсы."
 excerpt: "Чем бюджет площадки отличается от стоимости ведения, как выбирать между Meta, Google и TikTok и какие выводы дают реальные клиентские кейсы."
 category: "Рекламные кампании"
 publishDate: 2026-07-16
+updatedDate: 2026-09-02
 readingMinutes: 7
 author: "Лев Осиновский"
 image: "/images/blog/kampeinim-memumanim-square-v4.png"
