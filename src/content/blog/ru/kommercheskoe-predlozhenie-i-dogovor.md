@@ -107,6 +107,11 @@ faq:
 </p>
 </div>
 
+<figure class="blog-inline-figure">
+<img src="/images/blog/hatzaat-inline-measure.png" alt="Средний CPL против точной связки объявление → встреча → сделка" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>Средний CPL одинаков у двух историй. Деньги видны только когда встреча и сделка привязаны к источнику.</figcaption>
+</figure>
+
 <h2>Что спросить о будущей системе измерения</h2>
 
 <p>
@@ -173,6 +178,11 @@ faq:
 <p>
 Тогда не нужно ждать презентации, чтобы понять, что принесла реклама. В Profit Media кабинет открыт клиенту, а результативность видна в CRM сразу. Это постоянная картина. Расход и деньги, которые вернулись, видны вместе.
 </p>
+
+<figure class="blog-inline-figure">
+<img src="/images/blog/hatzaat-inline-transparency.png" alt="Живой доступ к кабинету и CRM вместо ежемесячного PDF-отчёта" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>Отчёт раз в месяц не отвечает на страх «куда ушли деньги». Нужен живой кабинет и CRM.</figcaption>
+</figure>
 
 <h2>Кто пишет тексты и собирает объявления</h2>
 

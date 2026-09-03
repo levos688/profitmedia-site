@@ -107,6 +107,11 @@ faq:
 </p>
 </div>
 
+<figure class="blog-inline-figure">
+<img src="/images/blog/hatzaat-inline-measure.png" alt="CPL ממוצע מול קישור מדויק מודעה → פגישה → עסקה" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>CPL ממוצע יכול להיות זהה בשני סיפורים. כסף רואים רק כשפגישה ועסקה מקושרות למקור.</figcaption>
+</figure>
+
 <h2>מה לשאול על מערכת המדידה העתידית</h2>
 
 <p>
@@ -173,6 +178,11 @@ CPL ממוצע מפסיק להיות השופט הראשי. ליד יקר יות
 <p>
 אז אין צורך לחכות למצגת כדי להבין מה הפרסום הביא. ב-Profit Media החשבון פתוח ללקוח, והתוצאה נראית ב-CRM מיד. זו תמונה מתמדת. הוצאה וכסף שחזר נראים יחד.
 </p>
+
+<figure class="blog-inline-figure">
+<img src="/images/blog/hatzaat-inline-transparency.png" alt="גישה חיה לחשבון ול-CRM במקום דוח PDF חודשי" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>דוח פעם בחודש לא עונה על החשש «לאן הלך הכסף». צריך חשבון חי ו-CRM.</figcaption>
+</figure>
 
 <h2>מי כותב טקסטים ומרכיב מודעות</h2>
 
