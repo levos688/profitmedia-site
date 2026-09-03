@@ -7,6 +7,13 @@ When creating blog covers or mid-article images, follow:
 
 Hybrid system: purple/yellow brand tones, Mode A simplified illustration (~70%) / Mode B photo duotone (~30%). Prefer no text on shared art; Latin industry acronyms only (`CPL`, `CAC`, `Meta`, `A/B`, `₪`).
 
+## Publish checklist (do not skip sitemap)
+
+Before declaring a blog/SEO publish done, follow:
+
+- Cursor rule: `.cursor/rules/blog-publish-checklist.mdc`
+- Must update sitemap pair/URL expectations, ship, verify live `sitemap.xml` + `pm-release`, GSC indexing, then mark CRM plan done (`/site.html?tab=plan`).
+
 ## Development
 
 When starting the dev server, use background mode:
