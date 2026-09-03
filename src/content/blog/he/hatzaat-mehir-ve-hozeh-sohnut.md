@@ -8,12 +8,13 @@ description: "מה לבדוק בהצעת מחיר של סוכנות: עלות ל
 excerpt: "לפני חתימה משווים לא את המחירון. בתנאים טובים רואים אילו מודעות וקהלים מביאים פגישות, עסקאות והכנסות. בחשבון וב-CRM, לא בקובץ פעם בחודש."
 category: "בחירת סוכנות דיגיטל"
 publishDate: 2026-08-13
+updatedDate: 2026-09-03
 readingMinutes: 13
 author: "לב אוסינובסקי"
-image: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-square.png"
-imageAlt: "צ'ק-ליסט להצעת מחיר: וי, מפתח לחשבונות ושקל"
-imageWide: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-wide.png"
-imageWideAlt: "חוזה עם סוכנות: גישה לחשבון הפרסום, תוצאות ב-CRM ותנאי בעלות על חשבונות"
+image: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-square-v2.png"
+imageAlt: "חתימה על הצעת מחיר והסכם עם סוכנות"
+imageWide: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-wide-v2.png"
+imageWideAlt: "מסמך הצעת מחיר על שולחן ליד מחשב נייד"
 visual:
   variant: standard
   breadcrumb: weighted

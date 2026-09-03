@@ -8,12 +8,13 @@ description: "Что смотреть в коммерческом предлож
 excerpt: "До подписи сравнивайте не прайс. В нормальных условиях видно, какие объявления и аудитории приводят встречи, сделки и выручку. В кабинете и CRM, а не в файле раз в месяц."
 category: "Выбор digital-агентства"
 publishDate: 2026-08-13
+updatedDate: 2026-09-03
 readingMinutes: 13
 author: "Лев Осиновский"
-image: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-square.png"
-imageAlt: "Чек-лист коммерческого предложения: галочки, ключ к аккаунтам и шекель"
-imageWide: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-wide.png"
-imageWideAlt: "Договор с агентством: доступ к рекламному кабинету, результативность в CRM и условия владения аккаунтами"
+image: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-square-v2.png"
+imageAlt: "Подписание коммерческого предложения и договора с агентством"
+imageWide: "/images/blog/hatzaat-mehir-ve-hozeh-sohnut-wide-v2.png"
+imageWideAlt: "Документ предложения на столе рядом с ноутбуком"
 visual:
   variant: standard
   breadcrumb: weighted

@@ -8,12 +8,13 @@ description: "Сравниваем лендинг и главную страни
 excerpt: "Почему перегруженная главная может повышать стоимость лида, когда она всё же подходит и какие элементы нужны эффективному лендингу."
 category: "Лендинги"
 publishDate: 2026-07-21
+updatedDate: 2026-09-03
 readingMinutes: 8
 author: "Лев Осиновский"
-image: "/images/blog/daf-nechita-mul-daf-habayit-square.png"
-imageAlt: "Два пути: перегруженная главная страница и сфокусированный лендинг с кнопкой действия"
-imageWide: "/images/blog/daf-nechita-mul-daf-habayit-wide.png"
-imageWideAlt: "Сравнение главной страницы с меню и лендинга с одним сообщением и призывом к действию"
+image: "/images/blog/daf-nechita-mul-daf-habayit-square-v2.png"
+imageAlt: "Перегруженная главная против сфокусированного лендинга с одной кнопкой"
+imageWide: "/images/blog/daf-nechita-mul-daf-habayit-wide-v2.png"
+imageWideAlt: "Сравнение: главная страница и лендинг для рекламы"
 visual:
   variant: standard
   breadcrumb: weighted

@@ -47,7 +47,14 @@ If the thumbnail cannot be understood in 1 second at phone size, simplify.
 
 ## Scope now
 
-1. **Meta CRM feedback** → Mode B (photo/duotone) — breaks monotony on the newest card  
-2. **CPL vs CAC** → Mode A simplified illustration — keeps brand language, less noise  
+1. **Meta CRM feedback** → Mode B (photo/duotone)
+2. **CPL vs CAC** → Mode A simplified illustration
+3. **Remaining 6 article pairs** (2026-09-03):
+   - Choose agency → photo
+   - Pricing → simplified
+   - Proposal/contract → photo
+   - Conversion A/B → simplified
+   - Landing vs homepage → simplified
+   - Paid campaigns → photo
 
-Later articles rotate A/B so the blog grid is not identical tiles.
+Later articles keep rotating A/B so the blog grid is not identical tiles.

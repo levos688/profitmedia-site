@@ -11,10 +11,10 @@ publishDate: 2026-07-25
 updatedDate: 2026-09-03
 readingMinutes: 9
 author: "לב אוסינובסקי"
-image: "/images/blog/shipur-yahas-hamara-square.png"
-imageAlt: "איור של שתי גרסאות דף A ו-B עם כפתורי פעולה וחץ המרה כלפי מעלה"
-imageWide: "/images/blog/shipur-yahas-hamara-wide.png"
-imageWideAlt: "איור זרימה: מודעה, דף נחיתה עם בדיקת A/B, כפתור ופופאפ, ואז המרה"
+image: "/images/blog/shipur-yahas-hamara-square-v2.png"
+imageAlt: "בדיקת A/B: גרסה מנצחת עם כפתור צהוב"
+imageWide: "/images/blog/shipur-yahas-hamara-wide-v2.png"
+imageWideAlt: "שתי גרסאות דף A ו-B עם חץ שיפור המרה"
 visual:
   variant: conversion
   breadcrumb: underlined

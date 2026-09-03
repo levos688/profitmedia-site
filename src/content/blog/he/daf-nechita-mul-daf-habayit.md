@@ -8,12 +8,13 @@ description: "האם לשלוח קמפיין ממומן לדף הבית או ל�
 excerpt: "למה תנועה בתשלום לדף בית עמוס מייקרת לידים, מתי דף הבית כן מתאים, ומה חייב להיות בדף נחיתה שממיר לפניות איכותיות."
 category: "דפי נחיתה"
 publishDate: 2026-07-21
+updatedDate: 2026-09-03
 readingMinutes: 8
 author: "לב אוסינובסקי"
-image: "/images/blog/daf-nechita-mul-daf-habayit-square.png"
-imageAlt: "איור של שני מסלולים — דף בית עמוס מול דף נחיתה ממוקד עם כפתור פעולה"
-imageWide: "/images/blog/daf-nechita-mul-daf-habayit-wide.png"
-imageWideAlt: "השוואה ויזואלית בין דף בית עם תפריט לבין דף נחיתה עם מסר אחד וקריאה לפעולה"
+image: "/images/blog/daf-nechita-mul-daf-habayit-square-v2.png"
+imageAlt: "דף בית עמוס מול דף נחיתה ממוקד עם כפתור אחד"
+imageWide: "/images/blog/daf-nechita-mul-daf-habayit-wide-v2.png"
+imageWideAlt: "השוואה: דף בית מול דף נחיתה לפרסום"
 visual:
   variant: standard
   breadcrumb: weighted

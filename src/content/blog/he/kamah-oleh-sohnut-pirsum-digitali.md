@@ -8,12 +8,13 @@ description: "מדריך לעלות סוכנות פרסום דיגיטלי בל�
 excerpt: "לא עוד מחירון 'החל מ־X ₪'. ממה מורכב התקציב, למה קריאייטיב ווידאו אינם שירות בסיסי, ומה ההבדל בין ניהול חשבון לבין מערכת עם פגישות, עסקאות וסכומים."
 category: "בחירת סוכנות דיגיטל"
 publishDate: 2026-08-13
+updatedDate: 2026-09-03
 readingMinutes: 13
 author: "לב אוסינובסקי"
-image: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-square.png"
-imageAlt: "כרטיס עסקה בשקלים מול טופס פנייה: ההבדל בין ליד ללקוח משלם"
-imageWide: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-wide.png"
-imageWideAlt: "שכבות עלות: מדיה וניהול, קריאייטיב, דף ו-CRM עם עסקאות שמחזירות אות לפרסום"
+image: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-square-v2.png"
+imageAlt: "מטבע שקל וחלוקת תקציב מדיה מול ניהול"
+imageWide: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-wide-v2.png"
+imageWideAlt: "איור פשוט של עלות סוכנות: מדיה מול ניהול"
 visual:
   variant: standard
   breadcrumb: weighted

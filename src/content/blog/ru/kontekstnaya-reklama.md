@@ -11,10 +11,10 @@ publishDate: 2026-07-16
 updatedDate: 2026-09-03
 readingMinutes: 7
 author: "Лев Осиновский"
-image: "/images/blog/kampeinim-memumanim-square-v4.png"
-imageAlt: "Мегафон, стрелка роста и монеты, символизирующие бюджет и результаты платной рекламы"
-imageWide: "/images/blog/kampeinim-memumanim-wide-v3.png"
-imageWideAlt: "Сравнение активного поиска в Google, таргетинга аудитории и формирования интереса в социальных сетях"
+image: "/images/blog/kampeinim-memumanim-square-v5.png"
+imageAlt: "Смартфон с рекламным объявлением и жёлтый мегафон"
+imageWide: "/images/blog/kampeinim-memumanim-wide-v4.png"
+imageWideAlt: "Стол со смартфоном и креативом платной кампании"
 visual:
   variant: standard
   breadcrumb: weighted

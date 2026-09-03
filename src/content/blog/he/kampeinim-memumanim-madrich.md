@@ -11,10 +11,10 @@ publishDate: 2026-07-16
 updatedDate: 2026-09-03
 readingMinutes: 7
 author: "לב אוסינובסקי"
-image: "/images/blog/kampeinim-memumanim-square-v4.png"
-imageAlt: "איור של מגפון עם חץ צמיחה ומטבעות שקל, המסמל תקציב ותוצאות מקמפיינים ממומנים"
-imageWide: "/images/blog/kampeinim-memumanim-wide-v3.png"
-imageWideAlt: "איור המשווה בין חיפוש פעיל בגוגל, טירגוט קהל יעד ותוכן שמעורר עניין ברשתות החברתיות"
+image: "/images/blog/kampeinim-memumanim-square-v5.png"
+imageAlt: "טלפון עם מודעה ממומנת ומגפון צהוב"
+imageWide: "/images/blog/kampeinim-memumanim-wide-v4.png"
+imageWideAlt: "שולחן עם סמארטפון וקריאייטיב לקמפיין ממומן"
 visual:
   variant: standard
   breadcrumb: weighted

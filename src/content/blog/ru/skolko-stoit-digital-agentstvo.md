@@ -8,12 +8,13 @@ description: "Разбор стоимости digital-агентства без 
 excerpt: "Не ещё один прайс «от X ₪». Из чего складывается бюджет, почему креатив и видео — не базовая услуга, и чем система со встречами, сделками и суммами отличается от ведения кабинета."
 category: "Выбор digital-агентства"
 publishDate: 2026-08-13
+updatedDate: 2026-09-03
 readingMinutes: 13
 author: "Лев Осиновский"
-image: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-square.png"
-imageAlt: "Карточка сделки в шекелях на фоне обычной заявки: разница между лидом и оплаченным клиентом"
-imageWide: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-wide.png"
-imageWideAlt: "Слои затрат: медиа и ведение, креатив, страница и CRM со сделками, которые возвращают сигнал в рекламу"
+image: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-square-v2.png"
+imageAlt: "Монета шекель и разделение бюджета медиа и ведения"
+imageWide: "/images/blog/kamah-oleh-sohnut-pirsum-digitali-wide-v2.png"
+imageWideAlt: "Простая иллюстрация стоимости агентства: медиа vs ведение"
 visual:
   variant: standard
   breadcrumb: weighted

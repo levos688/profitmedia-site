@@ -11,10 +11,10 @@ publishDate: 2026-08-12
 updatedDate: 2026-09-03
 readingMinutes: 14
 author: "לב אוסינובסקי"
-image: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-square-v2.png"
-imageAlt: "צ'ק-ליסט לבחירת סוכנות: פנייה חלשה מול לקוח משלם בשקלים"
-imageWide: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-wide-v2.png"
-imageWideAlt: "שרשרת מדידה: פרסום, דף נחיתה, CRM עם עסקה ואות חוזר לפי הכנסות"
+image: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-square-v3.png"
+imageAlt: "בעל עסק בודק צ׳ק־ליסט לבחירת סוכנות פרסום"
+imageWide: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-wide-v3.png"
+imageWideAlt: "שולחן עבודה עם רשימת בדיקה לבחירת סוכנות דיגיטל"
 visual:
   variant: standard
   breadcrumb: weighted

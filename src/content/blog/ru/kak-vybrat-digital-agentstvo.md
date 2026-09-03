@@ -11,10 +11,10 @@ publishDate: 2026-08-12
 updatedDate: 2026-09-03
 readingMinutes: 14
 author: "Лев Осиновский"
-image: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-square-v2.png"
-imageAlt: "Чек-лист выбора агентства: слабая заявка слева и оплаченный клиент в шекелях справа"
-imageWide: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-wide-v2.png"
-imageWideAlt: "Цепочка измерения: реклама, посадочная страница, CRM со сделкой и обратный сигнал по выручке"
+image: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-square-v3.png"
+imageAlt: "Владелец бизнеса проверяет чек-лист выбора digital-агентства"
+imageWide: "/images/blog/ekh-livkhor-sohnut-pirsum-digitali-wide-v3.png"
+imageWideAlt: "Рабочий стол с чек-листом для выбора digital-агентства"
 visual:
   variant: standard
   breadcrumb: weighted

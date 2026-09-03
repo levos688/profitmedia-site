@@ -11,10 +11,10 @@ publishDate: 2026-07-25
 updatedDate: 2026-09-03
 readingMinutes: 9
 author: "Лев Осиновский"
-image: "/images/blog/shipur-yahas-hamara-square.png"
-imageAlt: "Две версии страницы A и B с кнопками действия и стрелкой роста конверсии"
-imageWide: "/images/blog/shipur-yahas-hamara-wide.png"
-imageWideAlt: "Схема пути от объявления через A/B-тест лендинга, кнопку и попап к конверсии"
+image: "/images/blog/shipur-yahas-hamara-square-v2.png"
+imageAlt: "A/B-тест: победившая версия с жёлтой кнопкой"
+imageWide: "/images/blog/shipur-yahas-hamara-wide-v2.png"
+imageWideAlt: "Две версии страницы A и B со стрелкой роста конверсии"
 visual:
   variant: conversion
   breadcrumb: underlined
