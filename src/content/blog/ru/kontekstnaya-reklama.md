@@ -89,6 +89,11 @@ faq: [{"question":"Сколько стоит платная реклама дл�
 </strong>
 </p>
 
+<figure class="blog-inline-figure">
+<img src="/images/blog/kampeinim-inline-cost-split.png" alt="Две статьи расходов: медиабюджет и стоимость ведения кампании" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>Медиабюджет платит площадке. Ведение платит за стратегию, тесты и ежедневную работу.</figcaption>
+</figure>
+
 <h2>Facebook, Instagram, Google или TikTok: как выбрать канал</h2>
 <p>Универсально «лучшей» площадки нет. Выбор зависит от того, как ваши клиенты ищут и принимают решение:</p>
 <ul>
@@ -112,6 +117,11 @@ faq: [{"question":"Сколько стоит платная реклама дл�
 Если спрос нужно сформировать, стоит рассмотреть Meta — Facebook и Instagram.
 </p>
 </div>
+
+<figure class="blog-inline-figure">
+<img src="/images/blog/kampeinim-inline-channels.png" alt="Выбор канала: активный поиск против формирования интереса в соцсетях" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>Поиск — когда потребность уже есть. Meta — когда интерес ещё нужно создать.</figcaption>
+</figure>
 
 <h2>Реальные кейсы: что изменилось после смены подхода</h2>
 <p>

@@ -1,0 +1,48 @@
+---
+description: Blog cover + inline art system (hybrid purple/yellow)
+globs: src/content/blog/**/*,public/images/blog/**/*
+alwaysApply: true
+---
+
+# Blog visual system (Profit Media)
+
+**Spec:** `docs/superpowers/specs/2026-09-03-blog-cover-visual-system-design.md`
+
+When creating or replacing blog covers / mid-article figures, follow this system. Do not invent a new style.
+
+## Formats
+
+| Role | Size | Aspect |
+|------|------|--------|
+| Card / OG square | `1024×1024` | 1:1 |
+| Hero / OG wide | `1536×1024` | 3:2 |
+| Inline in article | `1200×675` | ~16:9 |
+
+Full-bleed. No white inset box on a lavender card frame.
+
+## Brand tones
+
+- Purple `#651561` family, yellow `#fcc000`, soft lilac wash
+- No generic teal/cyan SaaS rainbow looks
+
+## Modes (rotate)
+
+- **A (~70%)** simplified illustration: 1 idea, 3–5 large shapes, thumbnail-readable
+- **B (~30%)** editorial photo + purple/yellow duotone + at most one large graphic accent
+
+## Language on art (site is HE + RU)
+
+- Prefer **no words** on the image
+- Allowed Latin only for industry acronyms readers already use: `CPL`, `CAC`, `Meta`, `A/B`, `₪`
+- Do **not** put English UI words like `HOME`, `LANDING`, `MEDIA`, `MANAGEMENT`, full sentences
+- Do not put Hebrew-only or Russian-only labels on shared covers (one art file serves both locales)
+
+## Inline figures
+
+- Use `<figure class="blog-inline-figure">` + bilingual captions in each locale file
+- Place after a concept section (cost split, channel choice, funnel), not randomly
+- Same visual rules as covers: large shapes, brand tones, little/no text
+
+## Card test
+
+If the idea is unclear at ~300px phone width, simplify.

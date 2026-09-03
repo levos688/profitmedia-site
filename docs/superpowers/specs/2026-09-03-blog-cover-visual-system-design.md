@@ -45,6 +45,19 @@ Full-bleed scene. No white inset rectangle on lavender frame.
 
 If the thumbnail cannot be understood in 1 second at phone size, simplify.
 
+### Language on art (HE + RU site)
+
+- Prefer **no text** on covers/figures
+- Latin acronyms OK when industry-standard: `CPL`, `CAC`, `Meta`, `A/B`, currency `₪`
+- Avoid English words (`HOME`, `LANDING`, `MEDIA`, …) — they feel off on a Hebrew/Russian site and force one language onto shared assets
+- Shared image files must work for both locales (no HE-only or RU-only labels)
+
+### Inline mid-article figures
+
+- Format ~`1200×675`, class `blog-inline-figure`
+- Same Mode A/B rules; captions localized per article file
+- Use to break long sections (cost, channels, funnel), 1–2 per article max unless the piece is long
+
 ## Scope now
 
 1. **Meta CRM feedback** → Mode B (photo/duotone)
@@ -56,5 +69,6 @@ If the thumbnail cannot be understood in 1 second at phone size, simplify.
    - Conversion A/B → simplified
    - Landing vs homepage → simplified
    - Paid campaigns → photo
+4. **Cursor rule** `.cursor/rules/blog-visual-system.mdc` — persists for new chats
 
 Later articles keep rotating A/B so the blog grid is not identical tiles.

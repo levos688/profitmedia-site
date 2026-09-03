@@ -79,6 +79,11 @@ faq: [{"question":"כמה עולה קידום ממומן לעסק קטן?","answ
 </strong>
 </p>
 
+<figure class="blog-inline-figure">
+<img src="/images/blog/kampeinim-inline-cost-split.png" alt="שני מרכיבי עלות: תקציב מדיה ועלות ניהול הקמפיין" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>תקציב המדיה משולם לרשת. עלות הניהול משולמת על אסטרטגיה, בדיקות ועבודה שוטפת.</figcaption>
+</figure>
+
 <h2>פייסבוק, אינסטגרם, גוגל או טיקטוק — מה מתאים למי</h2>
 <p>אין פלטפורמה "הכי טובה". יש פלטפורמה מתאימה יותר לפי איך הלקוח שלך מחפש ומחליט:</p>
 <ul>
@@ -102,6 +107,11 @@ faq: [{"question":"כמה עולה קידום ממומן לעסק קטן?","answ
 הרצון אצלו, תתחיל במטא.
 </p>
 </div>
+
+<figure class="blog-inline-figure">
+<img src="/images/blog/kampeinim-inline-channels.png" alt="בחירת ערוץ: חיפוש פעיל מול יצירת עניין ברשתות" width="1200" height="675" loading="lazy" decoding="async" />
+<figcaption>חיפוש — כשיש צורך ברור. Meta — כשצריך לעורר עניין.</figcaption>
+</figure>
 
 <h2>קייס אמיתי: מה קרה כשהחלפנו גישה</h2>
 <p>
