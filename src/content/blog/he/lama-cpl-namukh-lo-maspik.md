@@ -2,7 +2,7 @@
 locale: he
 translationKey: cac-vs-cpl-guide
 slug: lama-cpl-namukh-lo-maspik
-title: "למה CPL נמוך לא מספיק — ואיך לבדוק אם הפרסום באמת מרוויח"
+title: "למה CPL נמוך לא מספיק: ואיך לבדוק אם הפרסום באמת מרוויח"
 seoTitle: "למה CPL נמוך לא מספיק: עלות לליד מול עלות לקוח | Profit Media"
 description: "מדריך מעשי: למה ליד ב-30 ₪ יכול להיות יקר יותר מליד ב-80 ₪, איך לחשב עלות לקוח מהפרסום, ומה לבדוק ב-CRM לפני שמגדילים תקציב."
 excerpt: "כשהמכירה נסגרת בשיחה או בפגישה, מחיר לליד מספר חלק קטן מהסיפור. הנה איך בודקים אם הקמפיין באמת מייצר כסף."
@@ -12,7 +12,7 @@ updatedDate: 2026-09-03
 readingMinutes: 11
 author: "לב אוסינובסקי"
 image: "/images/blog/lama-cpl-namukh-lo-maspik-square-v2.png"
-imageAlt: "השוואה: הרבה לידים זולים מול לקוח משלם אחד — CPL מול CAC"
+imageAlt: "השוואה: הרבה לידים זולים מול לקוח משלם אחד: CPL מול CAC"
 imageWide: "/images/blog/lama-cpl-namukh-lo-maspik-wide-v2.png"
 imageWideAlt: "שתי משפכים: הרבה לידים ומעט עסקאות לעומת פחות לידים ויותר לקוחות משלמים"
 visual:
@@ -136,7 +136,7 @@ CAC = כמה עלה לכם <strong>לקוח משלם</strong> מהפרסום. נ
 </p>
 
 <figure class="blog-scope-ladder">
-<p class="blog-scope-ladder__legend">שלבי מדידה — מה Ads Manager רואה ומה CRM צריך להשלים</p>
+<p class="blog-scope-ladder__legend">שלבי מדידה: מה Ads Manager רואה ומה CRM צריך להשלים</p>
 <ol>
 <li>
 <span class="blog-scope-ladder__level">שלב 1</span>
@@ -155,7 +155,7 @@ CAC = כמה עלה לכם <strong>לקוח משלם</strong> מהפרסום. נ
 </li>
 <li>
 <span class="blog-scope-ladder__level blog-scope-ladder__level--peak">שלב 4</span>
-<strong>CAC — לקוח משלם</strong>
+<strong>CAC: לקוח משלם</strong>
 <span>המספר שקובע אם הפרסום מחזיר את עצמו.</span>
 </li>
 </ol>
@@ -259,7 +259,7 @@ Meta ו-Google יכולים ללמוד ממה שקרה אחרי הליד. פגי
 
 <figure class="blog-inline-figure">
 <img src="/images/blog/lama-cpl-namukh-lo-maspik-inline-feedback.png" alt="CRM מעדכן סטטוסים ומחזיר אות איכות ל-Meta ו-Google" width="1200" height="675" loading="lazy" decoding="async" />
-<figcaption>כש-CRM מעדכן מה קרה לפנייה, האלגוריתם לומד לחפש לקוחות דומים — לא רק טפסים זולים.</figcaption>
+<figcaption>כש-CRM מעדכן מה קרה לפנייה, האלגוריתם לומד לחפש לקוחות דומים, לא רק טפסים זולים.</figcaption>
 </figure>
 
 <p>
@@ -268,7 +268,7 @@ Meta ו-Google יכולים ללמוד ממה שקרה אחרי הליד. פגי
 
 <p>
 זה בדיוק מה שבנינו במערכת עסקאות מהפרסום: קמפיין, דף עם בדיקות, CRM, ופידבק איכות חזרה לפלטפורמה.
-איך זה עובד בפועל —
+איך זה עובד בפועל:
 <a href="/blog/pidbak-eihut-me-crm-le-meta">פידבק איכות מ-CRM ל-Meta</a>.
 </p>
 
