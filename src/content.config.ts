@@ -13,6 +13,7 @@ const blog = defineCollection({
       'conversion-improvement',
       'digital-agency-choice',
       'landing-vs-homepage',
+      'meta-crm-quality-feedback',
       'paid-campaigns-guide',
     ]),
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),

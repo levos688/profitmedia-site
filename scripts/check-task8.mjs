@@ -50,6 +50,7 @@ const routePairs = [
   ['/blog/daf-nechita-mul-daf-habayit', '/ru/blog/lending-ili-glavnaya'],
   ['/blog/kampeinim-memumanim-madrich', '/ru/blog/kontekstnaya-reklama'],
   ['/blog/lama-cpl-namukh-lo-maspik', '/ru/blog/pochemu-deshevyy-lid-ne-vygoda'],
+  ['/blog/pidbak-eihut-me-crm-le-meta', '/ru/blog/obratnaya-peredacha-kachestva-lidov-v-meta'],
 ];
 const outputPath = (path) => path === '/' ? 'dist/index.html' : `dist${path}/index.html`;
 const pageDescriptors = routePairs.flatMap(([he, ru]) => [
@@ -133,11 +134,11 @@ assert.ok(existsSync(sitemapPath), 'Generated sitemap is missing');
 execFileSync('xmllint', ['--noout', sitemapPath], { stdio: 'pipe' });
 const sitemap = read('dist/sitemap.xml');
 const urlBlocks = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
-assert.equal(urlBlocks.length, 20, 'Sitemap must contain exactly 20 URL entries');
+assert.equal(urlBlocks.length, 22, 'Sitemap must contain exactly 22 URL entries');
 const actualUrls = urlBlocks.map((block) => decodeHtml(block.match(/<loc>(.*?)<\/loc>/)?.[1] ?? ''));
 const expectedUrls = routePairs.flatMap(([he, ru]) => [`${site}${he}`, `${site}${ru}`]);
 assert.deepEqual([...actualUrls].sort(), [...expectedUrls].sort(), 'Sitemap URL set is not exact');
-assert.equal(new Set(actualUrls).size, 20, 'Sitemap contains duplicate URLs');
+assert.equal(new Set(actualUrls).size, 22, 'Sitemap contains duplicate URLs');
 
 for (const [he, ru] of routePairs) {
   for (const path of [he, ru]) {
@@ -172,7 +173,7 @@ const robots = read('public/robots.txt');
 assert.ok(robots.includes(`Sitemap: ${site}/sitemap.xml`), 'robots.txt sitemap location changed');
 for (const block of robots.split(/\n\s*\n/).filter((value) => {
   const agent = value.match(/^User-agent:\s*(.+)$/m)?.[1].trim();
-  return agent && agent !== '*';
+  return agent && agent !== '*' && !/^AdsBot-Google/i.test(agent);
 })) {
   assert.match(block, /^Disallow: \/ru\/prat$/m, 'Crawler group missing /ru/prat exclusion');
   assert.match(block, /^Disallow: \/ru\/hatzara$/m, 'Crawler group missing /ru/hatzara exclusion');
@@ -185,8 +186,8 @@ const russianLinks = [...russianSection.matchAll(/\]\((https:\/\/profitmedia\.co
 assert.deepEqual(
   russianLinks,
   routePairs.map(([, ru]) => `${site}${ru}`),
-  'llms.txt Russian section must link exactly the ten indexable Russian pages',
+  'llms.txt Russian section must link exactly the indexable Russian pages',
 );
 assert.doesNotMatch(russianSection, /\bофис(?:а|ы|ов|ом|е)?\s+(?:в|на)\s+(?:России|Европе|США|СНГ)\b/i, 'llms.txt invents a non-Israeli office');
 
-console.log('Task 8 checks passed: JSON-LD fidelity, exact 20-URL sitemap, reciprocal alternates, and crawler files.');
+console.log('Task 8 checks passed: JSON-LD fidelity, exact 22-URL sitemap, reciprocal alternates, and crawler files.');

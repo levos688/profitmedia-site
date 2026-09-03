@@ -42,6 +42,7 @@ Lev Usinovsky (לב אוסינובסקי) — founder of Profit Media. Started a
 - [Landing page vs homepage](https://profitmedia.co.il/blog/daf-nechita-mul-daf-habayit): where to send paid traffic
 - [Paid campaigns guide](https://profitmedia.co.il/blog/kampeinim-memumanim-madrich): cost and channel fit
 - [Why low CPL is not enough (CAC vs CPL)](https://profitmedia.co.il/blog/lama-cpl-namukh-lo-maspik): when cheap leads cost more than expensive ones; how to measure customer acquisition cost from ads
+- [CRM quality feedback to Meta](https://profitmedia.co.il/blog/pidbak-eihut-me-crm-le-meta): how Meta learns from meetings and deals, not only lead forms
 - [Contact / free diagnosis](https://profitmedia.co.il/#contact): Free campaign diagnosis form
 - [FAQ](https://profitmedia.co.il/#faq): Common questions answered in Hebrew
 - [Privacy policy](https://profitmedia.co.il/prat)
@@ -70,6 +71,7 @@ Profit Media работает из Израиля и удалённо помог
 - [Лендинг или главная страница](https://profitmedia.co.il/ru/blog/lending-ili-glavnaya): выбор страницы для рекламного трафика
 - [Платная реклама](https://profitmedia.co.il/ru/blog/kontekstnaya-reklama): стоимость и выбор рекламного канала
 - [Почему дешёвый лид не делает рекламу выгодной](https://profitmedia.co.il/ru/blog/pochemu-deshevyy-lid-ne-vygoda): CPL vs стоимость клиента (CAC), что смотреть в CRM
+- [Обратная передача качества лидов в Meta из CRM](https://profitmedia.co.il/ru/blog/obratnaya-peredacha-kachestva-lidov-v-meta): как алгоритм учится на встречах и сделках, а не только на формах
 
 ## Proof points
 - 223+ clients served

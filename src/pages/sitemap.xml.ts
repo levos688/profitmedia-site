@@ -52,7 +52,7 @@ async function getIndexablePairs(): Promise<LocalizedPaths[]> {
       };
     });
 
-  const expectedPairs = 3 + 7; // home, about, blog index + seven article pairs
+  const expectedPairs = 3 + 8; // home, about, blog index + eight article pairs
   if (fixedPairs.length + articlePairs.length !== expectedPairs) {
     throw new Error(
       `Sitemap must contain exactly ${expectedPairs} indexable route pairs, got ${fixedPairs.length + articlePairs.length}`,

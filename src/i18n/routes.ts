@@ -32,6 +32,10 @@ export const routePairs = {
     he: '/blog/lama-cpl-namukh-lo-maspik',
     ru: '/ru/blog/pochemu-deshevyy-lid-ne-vygoda',
   },
+  metaCrmFeedbackArticle: {
+    he: '/blog/pidbak-eihut-me-crm-le-meta',
+    ru: '/ru/blog/obratnaya-peredacha-kachestva-lidov-v-meta',
+  },
   thankYou: { he: '/thank-you', ru: '/ru/thank-you' },
   privacy: { he: '/prat', ru: '/ru/prat' },
   accessibility: { he: '/hatzara', ru: '/ru/hatzara' },

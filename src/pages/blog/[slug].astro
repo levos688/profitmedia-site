@@ -12,6 +12,7 @@ export async function getStaticPaths() {
     'conversion-improvement': 'conversionArticle',
     'digital-agency-choice': 'digitalAgencyArticle',
     'landing-vs-homepage': 'landingArticle',
+    'meta-crm-quality-feedback': 'metaCrmFeedbackArticle',
     'paid-campaigns-guide': 'paidCampaignsArticle',
   } satisfies Record<BlogTranslationKey, RouteId>;
   const posts = await getBlogPosts('he');
