@@ -11,17 +11,17 @@ publishDate: 2026-09-03
 updatedDate: 2026-09-03
 readingMinutes: 10
 author: "Лев Осиновский"
-image: "/images/blog/pidbak-eihut-me-crm-le-meta-square.png"
+image: "/images/blog/pidbak-eihut-me-crm-le-meta-square-v2.png"
 imageAlt: "CRM обновляет статус сделки и возвращает сигнал качества в Meta"
-imageWide: "/images/blog/pidbak-eihut-me-crm-le-meta-wide.png"
-imageWideAlt: "Цепочка: лид из рекламы, статус в CRM и сигнал качества обратно в Meta"
+imageWide: "/images/blog/pidbak-eihut-me-crm-le-meta-wide-v2.png"
+imageWideAlt: "Рабочий стол с ноутбуком и телефоном: обратная передача качества из CRM в рекламу"
 visual:
   variant: standard
   breadcrumb: weighted
   title: standard
   hero: framed
-  heroWidth: 1200
-  heroHeight: 675
+  heroWidth: 1536
+  heroHeight: 1024
 faq:
   - question: "Что такое обратная передача качества лидов в Meta?"
     answer: "Это возврат в рекламную платформу данных о том, что произошло после формы: подходящий лид, назначенная или состоявшаяся встреча, закрытая сделка или сумма. Без этого Meta в основном учится на нажатии «отправить». С этим она может искать людей, похожих на тех, кто реально продвигается в продажах."

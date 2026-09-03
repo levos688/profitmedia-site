@@ -11,10 +11,10 @@ publishDate: 2026-09-02
 updatedDate: 2026-09-03
 readingMinutes: 11
 author: "לב אוסינובסקי"
-image: "/images/blog/lama-cpl-namukh-lo-maspik-square-v2.png"
-imageAlt: "השוואה: הרבה לידים זולים מול לקוח משלם אחד: CPL מול CAC"
-imageWide: "/images/blog/lama-cpl-namukh-lo-maspik-wide-v2.png"
-imageWideAlt: "שתי משפכים: הרבה לידים ומעט עסקאות לעומת פחות לידים ויותר לקוחות משלמים"
+image: "/images/blog/lama-cpl-namukh-lo-maspik-square-v3.png"
+imageAlt: "השוואה פשוטה: משפך לידים מול לקוח משלם — CPL מול CAC"
+imageWide: "/images/blog/lama-cpl-namukh-lo-maspik-wide-v3.png"
+imageWideAlt: "משפך CPL מול מטבע CAC על מאזניים"
 visual:
   variant: standard
   breadcrumb: weighted

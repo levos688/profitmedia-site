@@ -11,17 +11,17 @@ publishDate: 2026-09-03
 updatedDate: 2026-09-03
 readingMinutes: 10
 author: "לב אוסינובסקי"
-image: "/images/blog/pidbak-eihut-me-crm-le-meta-square.png"
+image: "/images/blog/pidbak-eihut-me-crm-le-meta-square-v2.png"
 imageAlt: "CRM מעדכן סטטוס עסקה ומחזיר אות איכות ל-Meta"
-imageWide: "/images/blog/pidbak-eihut-me-crm-le-meta-wide.png"
-imageWideAlt: "שרשרת: ליד בפרסום, סטטוס ב-CRM, ואות איכות שחוזר ל-Meta"
+imageWide: "/images/blog/pidbak-eihut-me-crm-le-meta-wide-v2.png"
+imageWideAlt: "שולחן עבודה עם מחשב וטלפון: פידבק איכות מ-CRM לפרסום"
 visual:
   variant: standard
   breadcrumb: weighted
   title: standard
   hero: framed
-  heroWidth: 1200
-  heroHeight: 675
+  heroWidth: 1536
+  heroHeight: 1024
 faq:
   - question: "מה זה פידבק איכות לידים ל-Meta?"
     answer: "זה החזרת מידע לפלטפורמה על מה שקרה אחרי הטופס: ליד מתאים, פגישה שהתקיימה, עסקה שנסגרה או סכום. בלי זה Meta ממשיכה ללמוד בעיקר מלחיצה על שליחה. עם זה היא יכולה לחפש אנשים דומים לאלה שהתקדמו במכירות."

@@ -11,10 +11,10 @@ publishDate: 2026-09-02
 updatedDate: 2026-09-03
 readingMinutes: 11
 author: "Лев Осиновский"
-image: "/images/blog/lama-cpl-namukh-lo-maspik-square-v2.png"
-imageAlt: "Сравнение: много дешёвых заявок против одного платящего клиента: CPL и CAC"
-imageWide: "/images/blog/lama-cpl-namukh-lo-maspik-wide-v2.png"
-imageWideAlt: "Две воронки: много заявок и мало сделок против меньше заявок и больше платящих клиентов"
+image: "/images/blog/lama-cpl-namukh-lo-maspik-square-v3.png"
+imageAlt: "Простое сравнение: воронка лидов против платящего клиента — CPL и CAC"
+imageWide: "/images/blog/lama-cpl-namukh-lo-maspik-wide-v3.png"
+imageWideAlt: "Воронка CPL против монеты CAC на весах"
 visual:
   variant: standard
   breadcrumb: weighted
