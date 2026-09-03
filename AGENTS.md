@@ -1,3 +1,12 @@
+## Blog visuals
+
+When creating blog covers or mid-article images, follow:
+
+- Spec: `docs/superpowers/specs/2026-09-03-blog-cover-visual-system-design.md`
+- Cursor rule: `.cursor/rules/blog-visual-system.mdc`
+
+Hybrid system: purple/yellow brand tones, Mode A simplified illustration (~70%) / Mode B photo duotone (~30%). Prefer no text on shared art; Latin industry acronyms only (`CPL`, `CAC`, `Meta`, `A/B`, `₪`).
+
 ## Development
 
 When starting the dev server, use background mode:
