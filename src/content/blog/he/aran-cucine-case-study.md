@@ -11,10 +11,10 @@ publishDate: 2026-09-10
 updatedDate: 2026-09-10
 readingMinutes: 8
 author: "לב אוסינובסקי"
-image: "/images/blog/aran-cucine-cover-square.png"
-imageAlt: "עלייה בהחזר ההשקעה בקמפיין פרסום"
-imageWide: "/images/blog/aran-cucine-cover-wide.png"
-imageWideAlt: "עלייה בהחזר השקעה ועסקאות מקמפיין"
+image: "/images/blog/aran-cucine-cover-square-v2.png"
+imageAlt: "פגישה באולם מטבחים: מליד לעסקה ב־₪"
+imageWide: "/images/blog/aran-cucine-cover-wide-v2.png"
+imageWideAlt: "ייעוץ במטבח מודרני עם מעבר מליד להכנסה ב־₪"
 visual:
   variant: standard
   breadcrumb: weighted
@@ -73,7 +73,7 @@ faq:
 </p>
 
 <figure class="blog-inline-figure">
-<img src="/images/blog/aran-cucine-inline.png" alt="תרשים של גידול בעסקאות דרך משפך סינון, מוביל לעסקאות בשווי גבוה" width="1200" height="675" loading="lazy" decoding="async" />
+<img src="/images/blog/aran-cucine-inline-v2.png" alt="משפך סינון שמוביל לעסקאות בשווי גבוה ב־₪" width="1200" height="675" loading="lazy" decoding="async" />
 <figcaption>מסננים רעש: איך כמות לידים קטנה יותר מובילה להכנסה גדולה הרבה יותר.</figcaption>
 </figure>
 

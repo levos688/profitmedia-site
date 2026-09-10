@@ -11,10 +11,10 @@ publishDate: 2026-09-10
 updatedDate: 2026-09-10
 readingMinutes: 8
 author: "Лев Осиновский"
-image: "/images/blog/aran-cucine-cover-square.png"
-imageAlt: "Рост ROI от рекламной кампании"
-imageWide: "/images/blog/aran-cucine-cover-wide.png"
-imageWideAlt: "Рост сделок и возврат инвестиций от рекламы"
+image: "/images/blog/aran-cucine-cover-square-v2.png"
+imageAlt: "Встреча в шоуруме кухонь: от лида к сделке в ₪"
+imageWide: "/images/blog/aran-cucine-cover-wide-v2.png"
+imageWideAlt: "Консультация на современной кухне: лид превращается в выручку в ₪"
 visual:
   variant: standard
   breadcrumb: weighted
@@ -73,7 +73,7 @@ faq:
 </p>
 
 <figure class="blog-inline-figure">
-<img src="/images/blog/aran-cucine-inline.png" alt="График роста сделок через фильтрацию аудитории" width="1200" height="675" loading="lazy" decoding="async" />
+<img src="/images/blog/aran-cucine-inline-v2.png" alt="Воронка фильтрации, ведущая к сделкам с высоким чеком в ₪" width="1200" height="675" loading="lazy" decoding="async" />
 <figcaption>Фильтр от шума: как меньшее количество лидов приводит к кратному росту выручки.</figcaption>
 </figure>
 
