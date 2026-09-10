@@ -12,7 +12,7 @@ interface Props {
 
 const {
   stats = defaultStats,
-  eyebrow = 'נתונים מהפעילות שלנו',
+  eyebrow = '',
   title = 'ניסיון ותוצאות במספרים',
   ariaLabel = 'מספרים על העסק',
 } = Astro.props;
@@ -23,7 +23,7 @@ const {
     <Reveal>
       <div class="agency-stats__panel">
         <header class="agency-stats__header">
-          <p class="agency-stats__eyebrow">{eyebrow}</p>
+          {eyebrow ? <p class="agency-stats__eyebrow">{eyebrow}</p> : null}
           <h2 class="agency-stats__title">{title}</h2>
         </header>
 

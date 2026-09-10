@@ -42,7 +42,7 @@ const posts = defaultPosts.slice(0, 3);
                 stroke-linejoin="round"></path>
             </svg>
           </span>
-          <p class="blog-preview__eyebrow">{labels.eyebrow}</p>
+          {labels.eyebrow ? <p class="blog-preview__eyebrow">{labels.eyebrow}</p> : null}
           <h2 class="blog-preview__title" id="blog-preview-title">{labels.title}</h2>
           <p class="blog-preview__subtitle">{labels.subtitle}</p>
         </div>
