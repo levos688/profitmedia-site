@@ -70,7 +70,8 @@ const pairs = [
       'Google',
       'TikTok',
       'Meta',
-      '200 000 ₪',
+      '300 000 ₪',
+      'Aran Cucine',
       '46%',
       'SKI VIP Travel',
       'Амит Шнайдер',
@@ -175,8 +176,8 @@ assert.doesNotMatch(
   /(?:вся\s+)?платн[а-яё]*\s+реклам[а-яё]*\s*(?:—|–|-|это|является)\s*(?:только\s+)?контекстн[а-яё]*/i,
   'Paid article must not equate all paid advertising with contextual advertising',
 );
-assert.match(paidSource, /Название компании и подробные данные конфиденциальны/, 'Paid case must retain confidential identity/data caveat');
-assert.match(paidSource, /клиент сообщал о продажах более чем на 200 000 ₪/, 'Sales figure must remain explicitly client-reported');
+assert.match(paidSource, /точные суммы конфиденциальны/, 'Paid case must retain exact-sum confidentiality caveat');
+assert.match(paidSource, /Aran Cucine[\s\S]*300 000 ₪/, 'Sales figure must name Aran Cucine and keep the reported monthly volume');
 assertSemanticCaveat(
   paidSource,
   [
