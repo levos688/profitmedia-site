@@ -38,6 +38,7 @@ Lev Usinovsky (לב אוסינובסקי) — founder of Profit Media. Started a
 - [How to choose a digital advertising agency](https://profitmedia.co.il/blog/ekh-livkhor-sohnut-pirsum-digitali): Hebrew buyer's guide covering agency questions, lead quality, customer-acquisition cost, CRM, deals, and revenue
 - [How much a digital advertising agency costs](https://profitmedia.co.il/blog/kamah-oleh-sohnut-pirsum-digitali): media vs management, pricing models, budget scenarios, and what you actually pay for
 - [Agency proposal: meetings, deals, and money back from ads](https://profitmedia.co.il/blog/hatzaat-mehir-ve-hozeh-sohnut): how to check a commercial offer by cost per meeting, CRM deals, live ad-account access, and landing-page tests — not just the fee
+- [Aran Cucine case study](https://profitmedia.co.il/blog/aran-cucine-case-study): from 0 ad-driven deals to 6-8/month via end-to-end analytics, self-booking meetings, and CRM feedback to Meta/Google (media budget ~ILS 15,000-15,700)
 - [Conversion improvement](https://profitmedia.co.il/blog/shipur-yahas-hamara): why testing ads alone is not enough
 - [Landing page vs homepage](https://profitmedia.co.il/blog/daf-nechita-mul-daf-habayit): where to send paid traffic
 - [Paid campaigns guide](https://profitmedia.co.il/blog/kampeinim-memumanim-madrich): cost and channel fit
@@ -68,6 +69,7 @@ Profit Media работает из Израиля и удалённо помог
 - [Как выбрать digital-агентство в Израиле](https://profitmedia.co.il/ru/blog/kak-vybrat-digital-agentstvo): вопросы подрядчику, стоимость клиента, CRM, сделки и прозрачность данных
 - [Сколько стоит digital-агентство](https://profitmedia.co.il/ru/blog/skolko-stoit-digital-agentstvo): медиа vs ведение, модели оплаты и сценарии бюджета без жёсткого прайса
 - [Коммерческое предложение агентства: сделки, не только лиды](https://profitmedia.co.il/ru/blog/kommercheskoe-predlozhenie-i-dogovor): как проверить условия по стоимости встречи, сделкам в CRM, доступу к кабинету и тестам страницы
+- [Кейс Aran Cucine](https://profitmedia.co.il/ru/blog/kejs-aran-cucine): от 0 сделок из рекламы к 6-8 в месяц за счёт сквозной аналитики, самозаписи на встречи и возврата данных о встречах/сделках в Meta и Google (бюджет медиа ~15 000-15 700 ₪)
 - [Лендинг или главная страница](https://profitmedia.co.il/ru/blog/lending-ili-glavnaya): выбор страницы для рекламного трафика
 - [Платная реклама](https://profitmedia.co.il/ru/blog/kontekstnaya-reklama): стоимость и выбор рекламного канала
 - [Почему дешёвый лид не делает рекламу выгодной](https://profitmedia.co.il/ru/blog/pochemu-deshevyy-lid-ne-vygoda): CPL vs стоимость клиента (CAC), что смотреть в CRM
@@ -75,7 +77,7 @@ Profit Media работает из Израиля и удалённо помог
 
 ## Proof points
 - 223+ clients served
-- Aran Cucine reported 6-8 deals and more than ILS 300,000 in monthly sales from the funnel
+- Aran Cucine: gradual revenue growth from ads (crossed ILS 100,000, then ILS 200,000, then above ILS 300,000 by August) with 6-8 closed deals/month at ~ILS 15,000-15,700 media spend
 - Up to 46% reduction in cost per lead in the published SKI VIP Travel case
 - 6M+ ILS in estimated total managed ad budgets
 
@@ -107,6 +109,9 @@ Profit Media מנהלת קמפיינים בפייסבוק, אינסטגרם וג
 
 ### איך שאלון חכם עוזר?
 הוא אוסף מידע לפני יצירת קשר ומסנן פניות פחות רלוונטיות, כדי לתעדף את צוות המכירות.
+
+### מה עבד ברשת המטבחים Aran Cucine?
+חיברו אנליטיקה מקצה לקצה (תקציב Meta ב-CRM), תיאום פגישות עצמאי לפי סניף ושעות פנויות, והחזרת נתוני פגישות ועסקאות ל-Meta ול-Google. המדידה עברה מעלות לליד לאיכות פגישות וסגירות. התוצאה: מ-0 עסקאות מפרסום (אוגוסט 2023) ל-6-8 בחודש, עם צמיחה הדרגתית בהכנסות עד מעל 300,000 ₪ בחודש.
 
 ### כמה זה עולה / מה התקציב הנדרש?
 נקבע לפי שווי עסקה, תחרות ויעדים. באבחון החינם בודקים אם התקציב יכול לייצר מספיק נתונים — בלי התחייבות מראש.
