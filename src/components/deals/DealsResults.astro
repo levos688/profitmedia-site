@@ -22,9 +22,11 @@ const dealsResults = content;
         <h2 id="deals-results-title" class="deals-results__title">{dealsResults.title}</h2>
         <p class="deals-results__body">{dealsResults.body}</p>
 
-        <div class="deals-results__honesty">
-          <p>{dealsResults.honesty}</p>
-        </div>
+        {dealsResults.honesty ? (
+          <div class="deals-results__honesty">
+            <p>{dealsResults.honesty}</p>
+          </div>
+        ) : null}
 
         <p class="deals-results__disclaimer">{dealsResults.disclaimer}</p>
       </Reveal>

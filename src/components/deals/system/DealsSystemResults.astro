@@ -28,7 +28,7 @@ import { dealsResults } from '../../../data/deals';
 
     <Reveal delay={140}>
       <div class="sys-results__honesty">
-        <p>{dealsResults.honesty}</p>
+        {dealsResults.honesty ? <p>{dealsResults.honesty}</p> : null}
         <p class="sys-results__disclaimer">{dealsResults.disclaimer}</p>
       </div>
     </Reveal>

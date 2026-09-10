@@ -22,7 +22,7 @@ const {
     <Reveal>
       <div class="named-offer__panel">
         <header class="named-offer__header">
-          <p class="named-offer__eyebrow">{content.eyebrow}</p>
+          {content.eyebrow ? <p class="named-offer__eyebrow">{content.eyebrow}</p> : null}
           <h2 id="named-offer-title" class="named-offer__title">{content.title}</h2>
           <p class="named-offer__subtitle">{content.subtitle}</p>
         </header>
