@@ -43,6 +43,7 @@ const routePairs = [
   ['/', '/ru/'],
   ['/about', '/ru/about'],
   ['/blog', '/ru/blog'],
+  ['/blog/aran-cucine-case-study', '/ru/blog/kejs-aran-cucine'],
   ['/blog/shipur-yahas-hamara', '/ru/blog/povyshenie-konversii'],
   ['/blog/ekh-livkhor-sohnut-pirsum-digitali', '/ru/blog/kak-vybrat-digital-agentstvo'],
   ['/blog/kamah-oleh-sohnut-pirsum-digitali', '/ru/blog/skolko-stoit-digital-agentstvo'],

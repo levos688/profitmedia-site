@@ -1,3 +1,7 @@
 # Cloudflare Pretty URLs otherwise 308-redirect *.html → extensionless and
 # Google Search Console verification fails. Rewrite (200) keeps the .html URL.
 /googleae2d1f2277e31c67.html /googleae2d1f2277e31c67 200
+
+# Wrong RU slug from a duplicate routePairs key (aran-cucine-case-study vs kejs-aran-cucine)
+/ru/blog/aran-cucine-case-study /ru/blog/kejs-aran-cucine 301
+/ru/blog/aran-cucine-case-study/ /ru/blog/kejs-aran-cucine 301
