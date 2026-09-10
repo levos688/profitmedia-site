@@ -1,6 +1,14 @@
 import type { Locale } from './config';
 
 export const routePairs = {
+  aranCucineArticle: {
+    he: '/blog/aran-cucine-case-study',
+    ru: '/ru/blog/kejs-aran-cucine',
+  },
+  aranCucineArticle: {
+    he: '/blog/aran-cucine-case-study',
+    ru: '/ru/blog/aran-cucine-case-study',
+  },
   home: { he: '/', ru: '/ru/' },
   about: { he: '/about', ru: '/ru/about' },
   blog: { he: '/blog', ru: '/ru/blog' },

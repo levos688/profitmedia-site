@@ -134,11 +134,11 @@ assert.ok(existsSync(sitemapPath), 'Generated sitemap is missing');
 execFileSync('xmllint', ['--noout', sitemapPath], { stdio: 'pipe' });
 const sitemap = read('dist/sitemap.xml');
 const urlBlocks = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
-assert.equal(urlBlocks.length, 22, 'Sitemap must contain exactly 22 URL entries');
+assert.equal(urlBlocks.length, 24, 'Sitemap must contain exactly 24 URL entries');
 const actualUrls = urlBlocks.map((block) => decodeHtml(block.match(/<loc>(.*?)<\/loc>/)?.[1] ?? ''));
 const expectedUrls = routePairs.flatMap(([he, ru]) => [`${site}${he}`, `${site}${ru}`]);
 assert.deepEqual([...actualUrls].sort(), [...expectedUrls].sort(), 'Sitemap URL set is not exact');
-assert.equal(new Set(actualUrls).size, 22, 'Sitemap contains duplicate URLs');
+assert.equal(new Set(actualUrls).size, 24, 'Sitemap contains duplicate URLs');
 
 for (const [he, ru] of routePairs) {
   for (const path of [he, ru]) {
@@ -190,4 +190,4 @@ assert.deepEqual(
 );
 assert.doesNotMatch(russianSection, /\bофис(?:а|ы|ов|ом|е)?\s+(?:в|на)\s+(?:России|Европе|США|СНГ)\b/i, 'llms.txt invents a non-Israeli office');
 
-console.log('Task 8 checks passed: JSON-LD fidelity, exact 22-URL sitemap, reciprocal alternates, and crawler files.');
+console.log('Task 8 checks passed: JSON-LD fidelity, exact 24-URL sitemap, reciprocal alternates, and crawler files.');

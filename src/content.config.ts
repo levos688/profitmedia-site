@@ -7,6 +7,7 @@ const blog = defineCollection({
   schema: z.object({
     locale: z.enum(['he', 'ru']),
     translationKey: z.enum([
+      'aran-cucine-case-study',
       'agency-pricing-guide',
       'agency-proposal-guide',
       'cac-vs-cpl-guide',
