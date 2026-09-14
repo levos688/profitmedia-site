@@ -11,6 +11,9 @@ export interface Env {
   /** Dual-write Profit Media site leads into pm-crm (best-effort). */
   PM_CRM_INTAKE_URL?: string;
   PM_CRM_INTAKE_KEY?: string;
+  /** Dual-write Donhin LP leads into donhin-crm (best-effort). */
+  DONHIN_CRM_INTAKE_URL?: string;
+  DONHIN_CRM_INTAKE_KEY?: string;
 }
 
 export interface UtmParams {

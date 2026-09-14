@@ -259,21 +259,14 @@ function pmCrmFormElement(lead: LeadData): string {
   return 'form';
 }
 
-/** Best-effort dual-write into Profit Media CRM. Never fails the contact response. */
-async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
-  const url = env.PM_CRM_INTAKE_URL?.trim();
-  const key = env.PM_CRM_INTAKE_KEY?.trim();
-  if (!url || !key) return;
-  if (!shouldDualWritePmCrm(lead)) return;
-
-  const pageBucket = pmCrmPageBucket(lead);
+function buildCrmIntakePayload(lead: LeadData, pageBucket: string) {
   const acquisition = pmCrmAcquisitionSource(lead);
   const formElement = pmCrmFormElement(lead);
   const googleClick = hasGoogleAdsClickId(lead);
 
   // Reuse CRM columns: source = acquisition, audience = channel (Web), ad = on-page element.
   // Exception: Google Ads click IDs keep campaign/audience/term for Ads reporting joins.
-  const payload = {
+  return {
     name: lead.name,
     phone: lead.phone,
     email: lead.email || undefined,
@@ -310,7 +303,14 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
       .filter(Boolean)
       .join(' | '),
   };
+}
 
+async function postCrmIntake(
+  url: string,
+  key: string,
+  payload: ReturnType<typeof buildCrmIntakePayload>,
+  label: string,
+): Promise<void> {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -323,8 +323,30 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
 
   if (!res.ok) {
     const err = await res.text().catch(() => '');
-    console.error(`pm-crm intake ${res.status}: ${err.slice(0, 300)}`);
+    console.error(`${label} intake ${res.status}: ${err.slice(0, 300)}`);
   }
+}
+
+/** Best-effort dual-write into Profit Media CRM. Never fails the contact response. */
+async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
+  const url = env.PM_CRM_INTAKE_URL?.trim();
+  const key = env.PM_CRM_INTAKE_KEY?.trim();
+  if (!url || !key) return;
+  if (!shouldDualWritePmCrm(lead)) return;
+
+  const pageBucket = pmCrmPageBucket(lead);
+  await postCrmIntake(url, key, buildCrmIntakePayload(lead, pageBucket), 'pm-crm');
+}
+
+/** Best-effort dual-write Donhin LP leads into donhin-crm. */
+async function sendToDonhinCrm(env: Env, lead: LeadData): Promise<void> {
+  if ((lead.client || '').toLowerCase() !== 'donhin') return;
+  const url = env.DONHIN_CRM_INTAKE_URL?.trim();
+  const key = env.DONHIN_CRM_INTAKE_KEY?.trim();
+  if (!url || !key) return;
+
+  const pageBucket = 'donhin';
+  await postCrmIntake(url, key, buildCrmIntakePayload(lead, pageBucket), 'donhin-crm');
 }
 
 function pickUtm(body: ContactPayload): UtmParams {
@@ -438,6 +460,12 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     await sendToPmCrm(env, lead);
   } catch (err) {
     console.error('pm-crm dual-write failed:', err);
+  }
+
+  try {
+    await sendToDonhinCrm(env, lead);
+  } catch (err) {
+    console.error('donhin-crm dual-write failed:', err);
   }
 
   return json({ ok: true });
