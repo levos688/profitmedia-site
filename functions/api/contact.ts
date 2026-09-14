@@ -436,7 +436,10 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   };
 
   try {
-    await sendEmail(env, lead);
+    // Donhin LP: email goes from donhin-crm intake notify (Lev + Simon), not site Resend.
+    if ((lead.client || '').toLowerCase() !== 'donhin') {
+      await sendEmail(env, lead);
+    }
   } catch (err) {
     console.error(err);
     return json({ ok: false, error: 'Email delivery failed' }, 502);
