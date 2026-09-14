@@ -305,10 +305,94 @@ function buildCrmIntakePayload(lead: LeadData, pageBucket: string) {
   };
 }
 
+/** Donhin LP / future Lead Ads → CRM: keep Meta adset/ad join keys (aran schedule convention). */
+function buildDonhinCrmIntakePayload(lead: LeadData) {
+  const acquisition = pmCrmAcquisitionSource(lead);
+  const formElement = pmCrmFormElement(lead);
+  const utmSource = (lead.utm.utm_source || '').trim().toLowerCase();
+  const utmMedium = (lead.utm.utm_medium || '').trim().toLowerCase();
+  const tracking = lead.tracking || {};
+  const fbclid = (lead.utm.fbclid || tracking.fbclid || '').trim();
+  const fbc = (tracking.fbc || '').trim();
+  const fbp = (tracking.fbp || '').trim();
+
+  let leadPlatform = '';
+  if (
+    utmSource === 'ig' ||
+    utmSource === 'instagram' ||
+    utmMedium.includes('instagram')
+  ) {
+    leadPlatform = 'ig';
+  } else if (
+    utmSource === 'fb' ||
+    utmSource === 'facebook' ||
+    utmSource.startsWith('ri_') ||
+    utmMedium === 'facebook' ||
+    utmMedium === 'paidsocial' ||
+    fbclid
+  ) {
+    leadPlatform = 'fb';
+  } else if (utmSource === 'an' || utmSource === 'audience_network') {
+    leadPlatform = 'an';
+  } else if (utmSource === 'msg' || utmSource === 'messenger') {
+    leadPlatform = 'msg';
+  }
+
+  // Prefer explicit Meta naming: campaign / content(adset) / term(ad). Fallbacks keep joins useful.
+  const leadCampaign = (lead.utm.utm_campaign || '').trim() || 'donhin';
+  const leadAudience =
+    (lead.utm.utm_content || '').trim() ||
+    (lead.utm.utm_campaign || '').trim() ||
+    (fbclid || leadPlatform ? 'Facebook' : 'Web');
+  const leadAdId =
+    (lead.utm.utm_term || '').trim() ||
+    (lead.utm.utm_content || '').trim() ||
+    formElement;
+
+  return {
+    name: lead.name,
+    phone: lead.phone,
+    email: lead.email || undefined,
+    lead_source: acquisition,
+    lead_audience: leadAudience || undefined,
+    lead_ad_id: leadAdId || undefined,
+    lead_campaign: leadCampaign || undefined,
+    lead_platform: leadPlatform || undefined,
+    utm_source: lead.utm.utm_source || undefined,
+    utm_medium: lead.utm.utm_medium || undefined,
+    fbclid: fbclid || undefined,
+    fbc: fbc || undefined,
+    fbp: fbp || undefined,
+    // Future Zapier Lead Ads can also send these; pass through if present in tracking.
+    fb_lead_id: (tracking.fb_lead_id || tracking.leadgen_id || '').trim() || undefined,
+    leadgen_id: (tracking.leadgen_id || '').trim() || undefined,
+    quiz_answer: lead.quizAnswer || undefined,
+    vertical: lead.vertical || undefined,
+    page_url: lead.pageUrl || undefined,
+    landing_url: lead.landingUrl || undefined,
+    device: lead.device || undefined,
+    cta_label: lead.ctaLabel || undefined,
+    notes: [
+      `channel:${leadPlatform || 'Web'}`,
+      `page:donhin`,
+      formElement && `element:${formElement}`,
+      lead.device && `device:${lead.device}`,
+      lead.ctaLabel && `cta:${lead.ctaLabel}`,
+      lead.source && `source:${lead.source}`,
+      lead.formType && `form:${lead.formType}`,
+      lead.locale && `locale:${lead.locale}`,
+      fbclid && `fbclid:${fbclid.slice(0, 80)}`,
+      lead.referrer && `ref:${lead.referrer.slice(0, 180)}`,
+    ]
+      .filter(Boolean)
+      .join(' | '),
+  };
+}
+
 async function postCrmIntake(
   url: string,
   key: string,
-  payload: ReturnType<typeof buildCrmIntakePayload>,
+  payload: Record<string, unknown>,
   label: string,
 ): Promise<void> {
   const res = await fetch(url, {
@@ -345,8 +429,7 @@ async function sendToDonhinCrm(env: Env, lead: LeadData): Promise<void> {
   const key = env.DONHIN_CRM_INTAKE_KEY?.trim();
   if (!url || !key) return;
 
-  const pageBucket = 'donhin';
-  await postCrmIntake(url, key, buildCrmIntakePayload(lead, pageBucket), 'donhin-crm');
+  await postCrmIntake(url, key, buildDonhinCrmIntakePayload(lead), 'donhin-crm');
 }
 
 function pickUtm(body: ContactPayload): UtmParams {
