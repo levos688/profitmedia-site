@@ -402,7 +402,7 @@ async function postCrmIntake(
       'X-Intake-Key': key,
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(8_000),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
