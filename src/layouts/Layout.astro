@@ -75,7 +75,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {/* Bump this when shipping a site fix so we can confirm prod did not roll back. */}
-    <meta name="pm-release" content="2026-09-10-aran-seo-llms" />
+    <meta name="pm-release" content="2026-09-15-donhin-pixel" />
     {
       enableGtm && (
         <script is:inline>
@@ -230,6 +230,32 @@ const canonicalUrl = canonical ?? Astro.url.href;
                 }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
                 fbq('init', pixelId);
+                // Block later GTM / Tag Gateway from also init'ing the Profit Media pixel
+                // on client LPs that already set a dedicated metaPixelId.
+                (function (allowedId) {
+                  var orig = window.fbq;
+                  if (typeof orig !== 'function') return;
+                  function wrapped() {
+                    if (
+                      arguments[0] === 'init' &&
+                      arguments[1] != null &&
+                      String(arguments[1]) !== String(allowedId)
+                    ) {
+                      return;
+                    }
+                    return orig.apply(this, arguments);
+                  }
+                  for (var k in orig) {
+                    if (Object.prototype.hasOwnProperty.call(orig, k)) wrapped[k] = orig[k];
+                  }
+                  wrapped.push = orig.push;
+                  wrapped.loaded = orig.loaded;
+                  wrapped.version = orig.version;
+                  wrapped.queue = orig.queue;
+                  window.fbq = wrapped;
+                  if (window._fbq) window._fbq = wrapped;
+                })(pixelId);
+
                 var pageViewEventId = '';
                 try {
                   pageViewEventId = crypto.randomUUID();

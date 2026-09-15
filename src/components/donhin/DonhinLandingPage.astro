@@ -379,7 +379,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 
   <Fragment slot="scripts">
-<script is:inline src="/scripts/donhin-ab.js?v=20260727a"></script>
+<script is:inline src="/scripts/donhin-ab.js?v=20260915pixel"></script>
 <script is:inline>
   function readCookie(name) {
     var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -481,7 +481,11 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
         } catch (e) {}
       }
 
-      window.location.href = '/donhin/thank-you/';
+      var thankYouBase =
+        (document.getElementById('main-content') &&
+          document.getElementById('main-content').getAttribute('data-donhin-base-path')) ||
+        '/donhin';
+      window.location.href = thankYouBase.replace(/\/$/, '') + '/thank-you/';
     } catch (e) {
       if (status) {
         status.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
