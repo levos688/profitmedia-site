@@ -10,9 +10,10 @@
 
 | Field | Value |
 |-------|--------|
-| Git commit | `9c41e3e` |
+| Git commit | `0bc2c20` |
 | Feature | Donhin privacy policy page `/donhin/prat/` + footer link |
 | `pm-release` pin | `2026-09-17-donhin-prat` |
+| Cloudflare Pages deploy | `f9e9ca2d.profitmedia-site.pages.dev` |
 | Deployed at (IL) | 2026-09-17 |
 | Live URL | https://profitmedia.co.il/donhin/prat/ |
 
