@@ -291,6 +291,19 @@
     return `<span class="ab-stats__delta ${cls}">${sign}${diff}${suffix}</span>`;
   }
 
+  function cvrGapHtml(variantCvr, bestCvr) {
+    if (bestCvr == null || !(bestCvr > 0)) return '';
+    const pp = Number((variantCvr - bestCvr).toFixed(2));
+    if (Math.abs(pp) < 0.005) {
+      return `<span class="ab-stats__delta is-flat" title="Лучший CVR в тесте">лидер</span>`;
+    }
+    const relPct = Number((((variantCvr - bestCvr) / bestCvr) * 100).toFixed(0));
+    const cls = pp > 0 ? 'is-up' : 'is-down';
+    const sign = pp > 0 ? '+' : '';
+    const relSign = relPct > 0 ? '+' : '';
+    return `<span class="ab-stats__delta ${cls}" title="Разница CVR к лучшему варианту">${sign}${pp} п.п. (${relSign}${relPct}%)</span>`;
+  }
+
   const GRAIN_LABELS = {
     day: 'По дням',
     week: 'По неделям',
@@ -549,6 +562,12 @@
           : sumActiveVariants(experiment.experiment, experiment.variants);
         const showLegend = !isLeadSource;
         const totalLabel = isLeadSource ? 'Итого' : 'Итого (включённые)';
+        const bestCvr = Math.max(
+          0,
+          ...experiment.variants
+            .filter((v) => isVariantActive(experiment.experiment, v.variant))
+            .map((v) => Number(v.cvr) || 0),
+        );
         const rows = [...experiment.variants]
           .sort((a, b) => {
             const aOn = isVariantActive(experiment.experiment, a.variant) ? 0 : 1;
@@ -602,7 +621,7 @@
               <td class="ab-stats__num ab-stats__col--click">${variant.click}</td>
               <td class="ab-stats__num ab-stats__col--conv">${variant.conversion}</td>
               <td class="ab-stats__num ab-stats__col--ctr">${variant.ctr}%</td>
-              <td class="ab-stats__num ab-stats__col--cvr">${variant.cvr}%</td>
+              <td class="ab-stats__num ab-stats__col--cvr">${variant.cvr}%${cvrGapHtml(variant.cvr, bestCvr)}</td>
             </tr>`;
           })
           .join('');
