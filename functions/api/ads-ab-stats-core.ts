@@ -394,16 +394,6 @@ export type AbAllocation = {
 };
 
 const MIN_LEADER_LEADS = 2;
-/** Hint tilt when leader is mildly ahead (≥×1.10 → 55/45). */
-const LIFT_HINT = 1.1;
-/** Early nudge (≥×1.15 → 60/40). */
-const LIFT_NUDGE = 1.15;
-/** Soft tilt (≥×1.35 → 65/35). */
-const LIFT_SOFT = 1.35;
-/** Clear leader (≥×1.6 → 75/25). */
-const LIFT_CLEAR = 1.6;
-/** Strong (≥×2.0 → 85/15). */
-const LIFT_STRONG = 2.0;
 /** Crush / retire candidate (≥×3.0 → 90/10; solo needs retire rules). */
 const LIFT_CRUSH = 3.0;
 const SOFT_RETIRE_LAG_IMP = 40;
@@ -412,16 +402,20 @@ const ZERO_CVR_CLEAR_IMP = 8;
 const ZERO_CVR_CRUSH_IMP = 15;
 /** Brand-new arm (0 impressions): explore at most this share so winners keep delivering leads. */
 const NEWCOMER_EXPLORE_SHARE = 0.3;
+/** Material relative CVR gap (e.g. 24% worse) + enough leads → leader ≥75%. */
+const REL_GAP_MATERIAL = 0.2;
+const MIN_LEADS_MATERIAL = 5;
+/** Alive challengers keep at least this combined share while test is alive (not crush/solo). */
+const EXPLORE_FLOOR = 0.15;
+const THIN_SHARE_MIN = 0.55;
+const THIN_SHARE_MAX = 0.65;
+const NORM_SHARE_MIN = 0.6;
+const NORM_SHARE_MAX = 0.85;
 
 function variantScore(experiment: string, values: AbVariantStats): number {
   const cvr = values.impression > 0 ? (values.conversion / values.impression) * 100 : 0;
   const ctr = values.impression > 0 ? (values.click / values.impression) * 100 : 0;
-  if (
-    experiment === 'sticky_cta' ||
-    experiment === 'bottom_copy' ||
-    experiment === 'mid_cta' ||
-    experiment === 'offer_cta'
-  ) {
+  if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'hero_media') {
     return values.conversion * 1000 + cvr * 10 + ctr;
   }
   return values.conversion * 1000 + cvr;
@@ -474,7 +468,7 @@ function cvrLift(leader: AbVariantStats, lag: AbVariantStats): number | null {
   if (lagCvr <= 0) {
     if (lag.impression >= SOFT_RETIRE_LAG_IMP) return Number.POSITIVE_INFINITY;
     if (lag.impression >= ZERO_CVR_CRUSH_IMP) return LIFT_CRUSH;
-    if (lag.impression >= ZERO_CVR_CLEAR_IMP) return LIFT_CLEAR;
+    if (lag.impression >= ZERO_CVR_CLEAR_IMP) return 2.0; // clear pressure; CVR² clamps ≤85% until crush
     return null;
   }
   return cvrOf(leader) / lagCvr;
@@ -485,31 +479,51 @@ function formatLift(lift: number): string {
   return lift.toFixed(1);
 }
 
+function formatRelGap(relGap: number): string {
+  const pct = Math.round(relGap * 100);
+  return pct === 0 ? '0%' : `−${pct}%`;
+}
+
 function impNote(rows: AbRow[]): string {
   return rows.map((r) => r.values.impression).join('/');
 }
 
-function tierForLift(lift: number): { share: number; label: string } | null {
-  if (lift >= LIFT_CRUSH) return { share: 0.9, label: 'Разгром' };
-  if (lift >= LIFT_STRONG) return { share: 0.85, label: 'Сильный лидер' };
-  if (lift >= LIFT_CLEAR) return { share: 0.75, label: 'Явный лидер' };
-  if (lift >= LIFT_SOFT) return { share: 0.65, label: 'Мягкий лидер' };
-  if (lift >= LIFT_NUDGE) return { share: 0.6, label: 'Лёгкий перевес' };
-  if (lift >= LIFT_HINT) return { share: 0.55, label: 'Намёк' };
-  // Any measurable lead still gives the winner majority (never reward the lag at 50%).
-  if (lift > 1) return { share: 0.55, label: 'Намёк' };
-  return null;
-}
-
 /**
- * CVR-proportional share floored at 55% and capped at 90%.
- * Guarantees: higher rate → strictly more traffic than the lag arm.
+ * CVR² exploit-first share for the leader among alive arms.
+ * Returns null when there is no meaningful CVR lead (stay equal / other paths).
  */
-function majorityShareFromRates(leaderRate: number, lagRate: number): number {
-  if (leaderRate <= 0) return 0.5;
-  if (lagRate <= 0) return 0.9;
-  const raw = leaderRate / (leaderRate + lagRate);
-  return Number(Math.min(0.9, Math.max(0.55, raw)).toFixed(2));
+function cvrSquaredLeaderShare(
+  leader: AbVariantStats,
+  aliveOthers: AbRow[],
+): { share: number; label: string; relGap: number } | null {
+  const leaderCvr = cvrOf(leader);
+  if (leaderCvr <= 0 || aliveOthers.length === 0) return null;
+
+  const lagCvrs = aliveOthers.map((r) => cvrOf(r.values));
+  const worstLag = Math.min(...lagCvrs);
+  if (leaderCvr <= worstLag) return null;
+
+  const relGap = (leaderCvr - worstLag) / leaderCvr;
+  if (relGap < 0.01) return null;
+
+  const rawLeader = leaderCvr * leaderCvr;
+  const rawSum = rawLeader + lagCvrs.reduce((s, c) => s + c * c, 0);
+  let share = rawSum > 0 ? rawLeader / rawSum : 0.5;
+
+  let label = 'CVR²';
+  if (leader.conversion < MIN_LEADS_MATERIAL) {
+    share = Math.min(THIN_SHARE_MAX, Math.max(THIN_SHARE_MIN, share));
+    label = 'CVR² (мало лидов)';
+  } else {
+    if (relGap >= REL_GAP_MATERIAL) {
+      share = Math.max(share, 0.75);
+      label = 'CVR²+gap≥20%';
+    }
+    share = Math.min(NORM_SHARE_MAX, Math.max(NORM_SHARE_MIN, share));
+  }
+
+  share = Math.min(share, 1 - EXPLORE_FLOOR);
+  return { share: Number(share.toFixed(2)), label, relGap };
 }
 
 /** Leader keeps `leaderShare`; remainder split equally among alive challengers; retired = 0. */
@@ -581,17 +595,14 @@ function allocateExperiment(experiment: string, variants: readonly string[], row
     const minLift = Math.min(
       ...signaled.map(({ lift }) => (lift == null || !Number.isFinite(lift) ? LIFT_CRUSH : lift)),
     );
-    const tier = tierForLift(minLift);
-    if (tier) {
-      // Winner share = max(ladder, CVR-proportional) so a clear CVR lead cannot
-      // get less traffic than its rate share, and mild leads still get ≥55%.
-      let share = tier.share;
-      if (aliveOthers.length === 1) {
-        const lagCvr = cvrOf(aliveOthers[0].values);
-        if (lagCvr > 0) {
-          share = Math.max(share, majorityShareFromRates(cvrOf(leader.values), lagCvr));
-        }
-      }
+
+    // Crush path (unchanged priority over CVR²).
+    if (minLift >= LIFT_CRUSH) {
+      const share = 0.9;
+      const split =
+        aliveOthers.length === 1
+          ? `${Math.round(share * 100)}/${Math.round((1 - share) * 100)}`
+          : `${Math.round(share * 100)}% лидеру, остальное поровну`;
       const leaderCvrPct = (cvrOf(leader.values) * 100).toFixed(2);
       const lagCvrPct =
         aliveOthers.length === 1 ? (cvrOf(aliveOthers[0].values) * 100).toFixed(2) : null;
@@ -599,6 +610,27 @@ function allocateExperiment(experiment: string, variants: readonly string[], row
         lagCvrPct != null
           ? `, CVR ${leaderCvrPct}% vs ${lagCvrPct}%`
           : `, CVR лидера ${leaderCvrPct}%`;
+      return weightsWithLeader(
+        variants,
+        leader.variant,
+        aliveOthers.map((r) => r.variant),
+        retiredIds,
+        share,
+        'hybrid',
+        `Разгром ${leader.variant}: ${split} (CVR ×${formatLift(minLift)}${cvrGapNote}, показов ${note})`,
+      );
+    }
+
+    const squared = cvrSquaredLeaderShare(leader.values, aliveOthers);
+    if (squared) {
+      const { share, label, relGap } = squared;
+      const leaderCvrPct = (cvrOf(leader.values) * 100).toFixed(2);
+      const lagCvrPct =
+        aliveOthers.length === 1 ? (cvrOf(aliveOthers[0].values) * 100).toFixed(2) : null;
+      const gapNote =
+        lagCvrPct != null
+          ? `, CVR ${leaderCvrPct}% vs ${lagCvrPct}%, ${formatRelGap(relGap)}`
+          : `, CVR лидера ${leaderCvrPct}%, ${formatRelGap(relGap)}`;
       const split =
         aliveOthers.length === 1
           ? `${Math.round(share * 100)}/${Math.round((1 - share) * 100)}`
@@ -610,7 +642,7 @@ function allocateExperiment(experiment: string, variants: readonly string[], row
         retiredIds,
         share,
         'hybrid',
-        `${tier.label} ${leader.variant}: ${split} (CVR ×${formatLift(minLift)}${cvrGapNote}, показов ${note})`,
+        `${label} ${leader.variant}: ${split} (CVR ×${formatLift(minLift)}${gapNote}, показов ${note})`,
       );
     }
   }
@@ -680,10 +712,9 @@ function allocateExperiment(experiment: string, variants: readonly string[], row
 }
 
 /**
- * Signal ladder (2+ arms):
- * equal → newcomer explore ≤30% (only if established has ≥2 leads)
- * → 55%/60%/65%/75%/85%/90% (hint→crush) → solo (≥3×, ≥40 imp).
- * Mild CVR leads (≥×1.10 or any lift >1) already shift majority to the winner.
+ * Signal path (2+ arms):
+ * equal → newcomer explore ≤30% → CVR² exploit-first (60–85%, explore ≥15%;
+ * gap≥20% + ≥5 leads → ≥75%) → crush 90% → solo (≥3×, ≥40 imp).
  * Never boost a weaker under-sampled arm just because it has fewer impressions.
  */
 export function computeHybridAllocation(stats: AbStatsStore): Record<string, AbAllocation> {

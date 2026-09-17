@@ -1,7 +1,7 @@
 # A/B traffic: CVR² exploit-first (all clients)
 
 Date: 2026-09-18  
-Status: approved (design)  
+Status: implemented (2026-09-18)  
 Scope: shared allocation policy for **Donhin** (`ab-stats-core`), **home**, **ads**, and **Aran Widgets** (`worker/src/ab-allocate.ts`)
 
 Supersedes the soft-tilt floors of the 2026-09-17 early-ladder change for 2-arm (and multi-arm) experiments when CVR signal exists. Soft-retire / solo rules from [2026-07-26 Donhin hybrid allocation](./2026-07-26-donhin-ab-hybrid-allocation-design.md) stay unless noted.
