@@ -10,7 +10,7 @@
 
 | Field | Value |
 |-------|--------|
-| Git commit | *(filled after commit)* |
+| Git commit | `9c41e3e` |
 | Feature | Donhin privacy policy page `/donhin/prat/` + footer link |
 | `pm-release` pin | `2026-09-17-donhin-prat` |
 | Deployed at (IL) | 2026-09-17 |
