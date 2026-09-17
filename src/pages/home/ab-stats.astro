@@ -67,7 +67,7 @@ import Layout from '../../layouts/Layout.astro';
   </main>
 </Layout>
 
-<script src="/scripts/pm-home-ab-stats-dashboard.js?v=20260917a" defer></script>
+<script src="/scripts/pm-home-ab-stats-dashboard.js?v=20260918a" defer></script>
 <script>
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token');
@@ -309,22 +309,29 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   .ab-stats__delta {
-    display: block;
-    margin-top: 0.15rem;
-    font-size: 0.72rem;
-    font-weight: 700;
+    display: inline-block;
+    margin-top: 0.25rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1.25;
   }
 
   .ab-stats__delta.is-up {
-    color: #1f6b3a;
+    color: #14532d;
+    background: #dcfce7;
   }
 
   .ab-stats__delta.is-down {
-    color: #8f3d3d;
+    color: #7f1d1d;
+    background: #fee2e2;
   }
 
   .ab-stats__delta.is-flat {
-    color: #7b8a9a;
+    color: #1e3a5f;
+    background: #e8eef5;
   }
 
   .ab-stats__chart-card {

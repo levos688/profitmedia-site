@@ -301,16 +301,18 @@
   }
 
   function cvrGapHtml(variantCvr, bestCvr) {
-    if (bestCvr == null || !(bestCvr > 0)) return '';
+    if (bestCvr == null || !(bestCvr > 0)) {
+      return `<span class="ab-stats__delta is-flat" title="Нет CVR за выбранный период — смени период или канал fb_ads">Δ н/д</span>`;
+    }
     const pp = Number((variantCvr - bestCvr).toFixed(2));
     if (Math.abs(pp) < 0.005) {
-      return `<span class="ab-stats__delta is-flat" title="Лучший CVR в тесте">лидер</span>`;
+      return `<span class="ab-stats__delta is-flat" title="Лучший CVR в этом тесте">лучш. CVR</span>`;
     }
     const relPct = Number((((variantCvr - bestCvr) / bestCvr) * 100).toFixed(0));
     const cls = pp > 0 ? 'is-up' : 'is-down';
     const sign = pp > 0 ? '+' : '';
     const relSign = relPct > 0 ? '+' : '';
-    return `<span class="ab-stats__delta ${cls}" title="Разница CVR к лучшему варианту">${sign}${pp} п.п. (${relSign}${relPct}%)</span>`;
+    return `<span class="ab-stats__delta ${cls}" title="Разница CVR к лучшему варианту теста">${sign}${pp} п.п. (${relSign}${relPct}%)</span>`;
   }
 
   const GRAIN_LABELS = {
