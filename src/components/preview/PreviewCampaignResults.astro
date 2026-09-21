@@ -72,6 +72,7 @@ import { campaignResults } from '../../data/site';
                       <p class="case-card__proof-title">Aran Cucine</p>
                       <p class="case-card__proof-subtitle">שישה–שמונה עסקאות בחודש · מעל ₪300K</p>
                       <p class="case-card__proof-note">לפי נתוני CRM של הלקוח. הסכומים המדויקים חסויים</p>
+                      <a class="case-card__proof-link" href="/blog/aran-cucine-case-study">לקריאת הקייס המלא</a>
                     </div>
                   )
                 }
@@ -285,5 +286,21 @@ import { campaignResults } from '../../data/site';
     font-weight: 700;
     line-height: 1.4;
     color: #4b5563;
+  }
+
+  .case-card__proof-link {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    margin-top: 1rem;
+    color: #c60691;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .case-card__proof-link:hover {
+    color: #651561;
   }
 </style>

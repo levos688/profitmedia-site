@@ -30,6 +30,13 @@ import { dealsResults } from '../../../data/deals';
       <div class="sys-results__honesty">
         {dealsResults.honesty ? <p>{dealsResults.honesty}</p> : null}
         <p class="sys-results__disclaimer">{dealsResults.disclaimer}</p>
+        {
+          dealsResults.caseStudyHref && dealsResults.caseStudyCta ? (
+            <p class="sys-results__cta">
+              <a href={dealsResults.caseStudyHref}>{dealsResults.caseStudyCta}</a>
+            </p>
+          ) : null
+        }
       </div>
     </Reveal>
   </div>
@@ -145,6 +152,21 @@ import { dealsResults } from '../../../data/deals';
     margin-top: 0.75rem !important;
     font-size: 0.8125rem !important;
     color: #6b5570 !important;
+  }
+
+  .sys-results__cta {
+    margin-top: 0.9rem !important;
+  }
+
+  .sys-results__cta a {
+    color: #c60691;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .sys-results__cta a:hover {
+    color: #651561;
   }
 
   @media (min-width: 768px) {

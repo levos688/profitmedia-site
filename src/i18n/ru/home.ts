@@ -483,5 +483,7 @@ export const home = {
     barsCaption: 'Закрытые сделки по кухням за месяц по данным CRM Aran Cucine.',
     honesty: '',
     disclaimer: 'По данным, предоставленным Aran Cucine и внесённым в CRM. Точные суммы конфиденциальны.',
+    caseStudyHref: '/ru/blog/kejs-aran-cucine',
+    caseStudyCta: 'Читать полный кейс',
   },
 } satisfies HomeContent;

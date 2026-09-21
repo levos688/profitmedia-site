@@ -29,6 +29,13 @@ const dealsResults = content;
         ) : null}
 
         <p class="deals-results__disclaimer">{dealsResults.disclaimer}</p>
+        {
+          dealsResults.caseStudyHref && dealsResults.caseStudyCta ? (
+            <p class="deals-results__cta">
+              <a href={dealsResults.caseStudyHref}>{dealsResults.caseStudyCta}</a>
+            </p>
+          ) : null
+        }
       </Reveal>
 
       <Reveal class="deals-results__chart-wrap" delay={120}>
@@ -103,6 +110,21 @@ const dealsResults = content;
     font-size: 0.8125rem;
     line-height: 1.6;
     color: #6b5570;
+  }
+
+  .deals-results__cta {
+    margin: 1.1rem 0 0;
+  }
+
+  .deals-results__cta a {
+    color: #c60691;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .deals-results__cta a:hover {
+    color: #651561;
   }
 
   .deals-results__chart {

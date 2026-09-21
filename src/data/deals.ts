@@ -108,6 +108,8 @@ export const dealsResults = {
   barsCaption: 'עסקאות מטבחים שנסגרו בחודש, לפי רישום ב־CRM של Aran Cucine.',
   honesty: '',
   disclaimer: 'לפי נתונים שנמסרו ונרשמו ב־CRM של Aran Cucine. הסכומים המדויקים נשמרים חסויים.',
+  caseStudyHref: '/blog/aran-cucine-case-study',
+  caseStudyCta: 'לקריאת הקייס המלא',
 };
 
 export const dealsGuard = {
