@@ -475,7 +475,8 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       var data = await res.json();
       if (!res.ok || !data.ok) throw new Error('submit failed');
 
-      if (window.donhinAb && window.donhinAb.trackConversion) {
+      // Duplicate within 24h: still thank the user, but do not count AB conversion again.
+      if (!data.duplicate && window.donhinAb && window.donhinAb.trackConversion) {
         try {
           await window.donhinAb.trackConversion(formType);
         } catch (e) {}

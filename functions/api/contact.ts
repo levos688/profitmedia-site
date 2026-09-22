@@ -394,7 +394,7 @@ async function postCrmIntake(
   key: string,
   payload: Record<string, unknown>,
   label: string,
-): Promise<void> {
+): Promise<{ ok: boolean; status: number; data: Record<string, unknown> | null }> {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -405,10 +405,21 @@ async function postCrmIntake(
     signal: AbortSignal.timeout(15_000),
   });
 
-  if (!res.ok) {
-    const err = await res.text().catch(() => '');
-    console.error(`${label} intake ${res.status}: ${err.slice(0, 300)}`);
+  const text = await res.text().catch(() => '');
+  let data: Record<string, unknown> | null = null;
+  if (text) {
+    try {
+      data = JSON.parse(text) as Record<string, unknown>;
+    } catch {
+      data = null;
+    }
   }
+
+  if (!res.ok) {
+    console.error(`${label} intake ${res.status}: ${text.slice(0, 300)}`);
+  }
+
+  return { ok: res.ok, status: res.status, data };
 }
 
 /** Best-effort dual-write into Profit Media CRM. Never fails the contact response. */
@@ -422,14 +433,24 @@ async function sendToPmCrm(env: Env, lead: LeadData): Promise<void> {
   await postCrmIntake(url, key, buildCrmIntakePayload(lead, pageBucket), 'pm-crm');
 }
 
+type DonhinCrmIntakeResult =
+  | { status: 'skipped' }
+  | { status: 'failed' }
+  | { status: 'created'; id?: number }
+  | { status: 'duplicate'; id?: number };
+
 /** Best-effort dual-write Donhin LP leads into donhin-crm. */
-async function sendToDonhinCrm(env: Env, lead: LeadData): Promise<void> {
-  if ((lead.client || '').toLowerCase() !== 'donhin') return;
+async function sendToDonhinCrm(env: Env, lead: LeadData): Promise<DonhinCrmIntakeResult> {
+  if ((lead.client || '').toLowerCase() !== 'donhin') return { status: 'skipped' };
   const url = env.DONHIN_CRM_INTAKE_URL?.trim();
   const key = env.DONHIN_CRM_INTAKE_KEY?.trim();
-  if (!url || !key) return;
+  if (!url || !key) return { status: 'skipped' };
 
-  await postCrmIntake(url, key, buildDonhinCrmIntakePayload(lead), 'donhin-crm');
+  const result = await postCrmIntake(url, key, buildDonhinCrmIntakePayload(lead), 'donhin-crm');
+  if (!result.ok) return { status: 'failed' };
+  const id = typeof result.data?.id === 'number' ? result.data.id : undefined;
+  if (result.data?.duplicate === true) return { status: 'duplicate', id };
+  return { status: 'created', id };
 }
 
 function pickUtm(body: ContactPayload): UtmParams {
@@ -528,12 +549,39 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     return json({ ok: false, error: 'Email delivery failed' }, 502);
   }
 
-  if (lead.client === 'donhin') {
+  // Donhin: CRM first so phone cooldown can skip Meta/Telegram duplicate noise.
+  if ((lead.client || '').toLowerCase() === 'donhin') {
+    let crmResult: DonhinCrmIntakeResult = { status: 'failed' };
+    try {
+      crmResult = await sendToDonhinCrm(env, lead);
+    } catch (err) {
+      console.error('donhin-crm dual-write failed:', err);
+      crmResult = { status: 'failed' };
+    }
+
+    if (crmResult.status === 'duplicate') {
+      return json({ ok: true, duplicate: true, id: crmResult.id });
+    }
+
     try {
       await sendMetaLeadEvent(env, lead, body.eventId?.trim());
     } catch (err) {
       console.error(err);
     }
+
+    try {
+      await sendTelegram(env, lead);
+    } catch (err) {
+      console.error(err);
+    }
+
+    try {
+      await sendToPmCrm(env, lead);
+    } catch (err) {
+      console.error('pm-crm dual-write failed:', err);
+    }
+
+    return json({ ok: true, duplicate: false, id: crmResult.id });
   }
 
   try {
@@ -546,12 +594,6 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     await sendToPmCrm(env, lead);
   } catch (err) {
     console.error('pm-crm dual-write failed:', err);
-  }
-
-  try {
-    await sendToDonhinCrm(env, lead);
-  } catch (err) {
-    console.error('donhin-crm dual-write failed:', err);
   }
 
   return json({ ok: true });
