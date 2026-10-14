@@ -20,22 +20,31 @@
   }
 
   var CONFIG = {
+    // 2026-10-14 marketing-psychology review (canvases/donhin-ab-home-review):
+    // retired arms stay server-side (ab-stats-core.ts AB_EXPERIMENTS) for history,
+    // but are removed from these live variant lists so pickVariant/rebalance skip them.
     sticky_cta: {
       variants: [
         { id: 'ask_lawyer', label: 'Задать вопрос адвокату' },
         { id: 'lawyer_reply', label: 'Получить ответ адвоката' },
+        // Zero-Price Effect challenger: historic free_consult beat get_consult 4.5x on CVR.
+        { id: 'free_check', label: 'Бесплатно узнать компенсацию' },
       ],
     },
     popup_delay: {
       variants: [
         { id: '22s', ms: 22000 },
         { id: '25s', ms: 25000 },
+        // Later delay kept winning over 15s/18s; test whether the trend continues.
+        { id: '28s', ms: 28000 },
       ],
     },
     popup_scroll: {
       variants: [
         { id: '60pct', ratio: 0.6 },
         { id: '50pct', ratio: 0.5 },
+        // Earlier scroll kept winning over 80pct; test whether even earlier helps.
+        { id: '40pct', ratio: 0.4 },
       ],
     },
     quiz_copy: {
@@ -50,16 +59,8 @@
           submitLabel: 'Отправить',
           theme: 'light',
         },
-        {
-          id: 'ask_case',
-          label: '1 вопрос → разбор случая',
-          sectionTitle: '1 короткий вопрос — адвокат разберёт ваш случай',
-          question: 'Было ли у вас стоматологическое лечение за последние 7 лет?',
-          nextLabel: 'Продолжить',
-          step2Heading: 'Куда прислать ответ адвоката?',
-          submitLabel: 'Жду звонок адвоката',
-          theme: 'light',
-        },
+        // ask_case retired 2026-10-14: 0 conversions / 13 impressions (fb channel),
+        // "разбор случая" + "Жду звонок адвоката" added friction vs control's plain yes/no question.
         {
           id: 'dark_band',
           label: 'Дизайн: синяя полоса 100%',
@@ -70,28 +71,34 @@
           submitLabel: 'Отправить',
           theme: 'dark_band',
         },
+        {
+          id: 'risk_reversal',
+          label: 'Текст: оплата по результату',
+          sectionTitle: 'Ответьте на вопрос — получите бесплатную консультацию адвоката',
+          question: 'Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?',
+          nextLabel: 'Следующий',
+          step2Heading: 'Запишитесь на бесплатную консультацию',
+          submitLabel: 'Отправить — оплата только если выиграем дело',
+          theme: 'light',
+        },
       ],
     },
     bottom_copy: {
       variants: [
-        {
-          id: 'control',
-          label: 'Контроль: светлая форма',
-          title: 'Оставьте заявку для бесплатной консультации',
-          submitLabel: 'Отправить',
-          theme: 'light',
-        },
-        {
-          id: 'ask_lawyer',
-          label: 'Текст: задайте вопрос',
-          title: 'Задайте вопрос адвокату — без обязательств',
-          submitLabel: 'Задать вопрос',
-          theme: 'light',
-        },
+        // control / ask_lawyer retired 2026-10-14: 0 conversions / 33 impressions combined
+        // (both light theme). Only dark_band (visual contrast) had conversions — the lift
+        // is the Peak-End contrast, not the copy, so both light-text variants were dropped.
         {
           id: 'dark_band',
           label: 'Дизайн: тёмная полоса 100%',
           title: 'Оставьте заявку для бесплатной консультации',
+          submitLabel: 'Отправить',
+          theme: 'dark_band',
+        },
+        {
+          id: 'dark_band_risk',
+          label: 'Тёмная полоса + оплата по результату',
+          title: 'Оставьте заявку — платите только если выиграем дело',
           submitLabel: 'Отправить',
           theme: 'dark_band',
         },

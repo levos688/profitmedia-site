@@ -35,27 +35,32 @@
       free_consult: 'Бесплатная консультация',
       ask_lawyer: 'Задать вопрос адвокату',
       lawyer_reply: 'Получить ответ адвоката',
+      free_check: 'Бесплатно узнать компенсацию',
     },
     popup_delay: {
       '15s': '15 секунд',
       '18s': '18 секунд',
       '22s': '22 секунды',
       '25s': '25 секунд',
+      '28s': '28 секунд',
     },
     popup_scroll: {
       '80pct': 'Скролл 80%',
       '60pct': 'Скролл 60%',
       '50pct': 'Скролл 50%',
+      '40pct': 'Скролл 40%',
     },
     quiz_copy: {
       control: 'Контроль: ответьте на вопрос',
-      ask_case: '1 вопрос → разбор случая',
+      ask_case: '1 вопрос → разбор случая (retired)',
       dark_band: 'Дизайн: синяя полоса 100%',
+      risk_reversal: 'Текст: оплата по результату',
     },
     bottom_copy: {
-      control: 'Контроль: светлая форма',
-      ask_lawyer: 'Текст: задайте вопрос',
+      control: 'Контроль: светлая форма (retired)',
+      ask_lawyer: 'Текст: задайте вопрос (retired)',
       dark_band: 'Дизайн: тёмная полоса 100%',
+      dark_band_risk: 'Тёмная полоса + оплата по результату',
     },
     hero_media: {
       photo: 'Фото в hero',
@@ -81,11 +86,11 @@
   };
 
   const activeVariantsFallback = {
-    sticky_cta: ['ask_lawyer', 'lawyer_reply'],
-    popup_delay: ['22s', '25s'],
-    popup_scroll: ['60pct', '50pct'],
-    quiz_copy: ['control', 'ask_case', 'dark_band'],
-    bottom_copy: ['control', 'ask_lawyer', 'dark_band'],
+    sticky_cta: ['ask_lawyer', 'lawyer_reply', 'free_check'],
+    popup_delay: ['22s', '25s', '28s'],
+    popup_scroll: ['60pct', '50pct', '40pct'],
+    quiz_copy: ['control', 'dark_band', 'risk_reversal'],
+    bottom_copy: ['dark_band', 'dark_band_risk'],
     hero_media: ['photo', 'video'],
     lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
   };

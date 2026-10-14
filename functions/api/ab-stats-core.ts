@@ -21,22 +21,31 @@ export type AbStatsStore = Record<string, Record<string, AbVariantStats>>;
 const AB_NAMESPACE: AbD1Namespace = 'donhin';
 
 export const AB_EXPERIMENTS = {
-  sticky_cta: ['get_consult', 'free_consult', 'ask_lawyer', 'lawyer_reply'],
-  popup_delay: ['15s', '18s', '22s', '25s'],
-  popup_scroll: ['80pct', '60pct', '50pct'],
-  quiz_copy: ['control', 'ask_case', 'dark_band'],
-  bottom_copy: ['control', 'ask_lawyer', 'dark_band'],
+  sticky_cta: ['get_consult', 'free_consult', 'ask_lawyer', 'lawyer_reply', 'free_check'],
+  popup_delay: ['15s', '18s', '22s', '25s', '28s'],
+  popup_scroll: ['80pct', '60pct', '50pct', '40pct'],
+  quiz_copy: ['control', 'ask_case', 'dark_band', 'risk_reversal'],
+  bottom_copy: ['control', 'ask_lawyer', 'dark_band', 'dark_band_risk'],
   hero_media: ['photo', 'video'],
   lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
 } as const;
 
-/** Live traffic variants only (retired rows stay in stats but get 0 traffic). */
+/**
+ * Live traffic variants only (retired rows stay in stats but get 0 traffic).
+ * 2026-10-14 marketing-psychology review (see canvases/donhin-ab-home-review):
+ * - sticky_cta: added free_check (Zero-Price Effect challenger)
+ * - popup_delay: added 28s (later-is-better trend from 22s/25s)
+ * - popup_scroll: added 40pct (earlier-is-better trend from 50pct/60pct vs retired 80pct)
+ * - quiz_copy: retired ask_case (clear loser, 0 conv / 13 imp); added risk_reversal
+ * - bottom_copy: retired control + ask_lawyer (0 conv / 33 imp combined, light theme);
+ *   added dark_band_risk (risk-reversal copy on the proven dark_band design)
+ */
 export const ACTIVE_AB_VARIANTS: Record<string, readonly string[]> = {
-  sticky_cta: ['ask_lawyer', 'lawyer_reply'],
-  popup_delay: ['22s', '25s'],
-  popup_scroll: ['60pct', '50pct'],
-  quiz_copy: ['control', 'ask_case', 'dark_band'],
-  bottom_copy: ['control', 'ask_lawyer', 'dark_band'],
+  sticky_cta: ['ask_lawyer', 'lawyer_reply', 'free_check'],
+  popup_delay: ['22s', '25s', '28s'],
+  popup_scroll: ['60pct', '50pct', '40pct'],
+  quiz_copy: ['control', 'dark_band', 'risk_reversal'],
+  bottom_copy: ['dark_band', 'dark_band_risk'],
   hero_media: ['photo', 'video'],
 };
 
