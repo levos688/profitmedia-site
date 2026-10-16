@@ -11,12 +11,12 @@
 
 | Field | Value |
 |-------|--------|
-| Git commit | `6943533` (pin `62adbcd`, feature `165dccb`) |
-| Feature | Donhin AB: retire losers + psychology challengers (`free_check`, `28s`, `40pct`, `risk_reversal`, `dark_band_risk`); cache bust `?v=20261014psych` |
-| `pm-release` pin | `2026-10-14-donhin-ab-psych` |
-| Cloudflare Pages deploy | `https://8244da76.profitmedia-site.pages.dev` |
-| Deployed at (IL) | 2026-10-14 |
-| Do not roll back past | Any tree without `ACTIVE_AB_VARIANTS` free_check / 28s / 40pct / risk_reversal / dark_band_risk |
-| Live check | https://profitmedia.co.il/donhin/ — HTML must include `pm-release` = `2026-10-14-donhin-ab-psych` and `donhin-ab.js?v=20261014psych` |
+| Git commit | `5171de5` |
+| Feature | Donhin AB stats chart: percent scale, lead bars, skip empty days; cache bust `donhin-ab-stats-dashboard.js?v=20261016chart`. Keeps psychology challengers (`free_check`, `28s`, `40pct`, `risk_reversal`, `dark_band_risk`) and `donhin-ab.js?v=20261014psych` |
+| `pm-release` pin | `2026-10-16-donhin-ab-chart` |
+| Cloudflare Pages deploy | `https://eab7e9ef.profitmedia-site.pages.dev` |
+| Deployed at (IL) | 2026-10-16 |
+| Do not roll back past | Any tree older than this pin, or without the chart script `20261016chart` and `ACTIVE_AB_VARIANTS` free_check / 28s / 40pct / risk_reversal / dark_band_risk |
+| Live check | https://profitmedia.co.il/ and https://profitmedia.co.il/donhin/ab-stats/ — HTML must include `pm-release` = `2026-10-16-donhin-ab-chart` and the stats page must load `donhin-ab-stats-dashboard.js?v=20261016chart` |
 
-If production looks “old”, check live HTML for `<meta name="pm-release" content="2026-10-14-donhin-ab-psych">`. Never promote a Cloudflare preview from `feature/russian-localization` or a stale checkout over this pin.
+If production looks old, check live HTML for `<meta name="pm-release" content="2026-10-16-donhin-ab-chart">`. Never promote a Cloudflare preview from `feature/russian-localization` or a stale checkout over this pin.
