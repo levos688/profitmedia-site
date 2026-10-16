@@ -378,6 +378,32 @@
     }));
   }
 
+  const CHART_MIN_VIEWS = 5;
+
+  function chartAxisLabel(point, grain) {
+    const d = parseDay(point.date);
+    if (!d) return point.label;
+    if (grain === 'month') return fmtMonth(monthKey(point.date));
+    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', timeZone: 'UTC' }).replace('.', '');
+  }
+
+  function niceCvrMax(values) {
+    const peak = Math.max(0, ...values);
+    const padded = peak <= 0 ? 8 : peak * 1.25;
+    if (padded <= 8) return 8;
+    if (padded <= 10) return 10;
+    if (padded <= 12) return 12;
+    if (padded <= 15) return 15;
+    if (padded <= 20) return 20;
+    if (padded <= 30) return 30;
+    return Math.ceil(padded / 10) * 10;
+  }
+
+  function fmtPct(value) {
+    const n = Number(value) || 0;
+    return Number.isInteger(n) ? String(n) : String(Number(n.toFixed(1)));
+  }
+
   function renderChart(daily, compareDaily) {
     const grain = chartGrain;
     const points = aggregateSeries(daily, grain);
@@ -404,97 +430,149 @@
       </section>`;
     }
 
-    const width = 720;
-    const height = 210;
-    const pad = { top: 16, right: 16, bottom: 34, left: 42 };
+    const page = cachedData?.primary?.page || { views: 0, leads: 0, cvr: 0 };
+    const reliable = [...points, ...comparePoints].filter((p) => (p.views || 0) >= CHART_MIN_VIEWS);
+    const scalePool = (reliable.length ? reliable : [...points, ...comparePoints]).map((p) => Number(p.cvr) || 0);
+    const maxCvr = niceCvrMax(scalePool);
+    const peakLeads = Math.max(0, ...points.map((p) => Number(p.leads) || 0));
+    const leadMax = peakLeads <= 4 ? Math.max(1, peakLeads) : peakLeads <= 10 ? Math.ceil(peakLeads / 2) * 2 : Math.ceil(peakLeads / 5) * 5;
+    const thinDays = points.filter((p) => (p.views || 0) > 0 && p.views < CHART_MIN_VIEWS && p.cvr > maxCvr);
+
+    const width = 960;
+    const height = 380;
+    const pad = { top: 22, right: 52, bottom: 44, left: 58 };
     const innerW = width - pad.left - pad.right;
     const innerH = height - pad.top - pad.bottom;
-    const maxCvr = Math.max(
-      5,
-      ...points.map((p) => p.cvr),
-      ...comparePoints.map((p) => p.cvr || 0),
-    );
+    const slot = innerW / points.length;
 
-    const coords = (series) =>
-      series.map((p, i) => {
-        const x = pad.left + (series.length === 1 ? innerW / 2 : (i / (series.length - 1)) * innerW);
-        const y = pad.top + innerH - (p.cvr / maxCvr) * innerH;
-        return { x, y, ...p };
-      });
+    const yFor = (cvr) => pad.top + innerH - (Math.min(Number(cvr) || 0, maxCvr) / maxCvr) * innerH;
 
-    const primary = coords(points);
+    const placed = points.map((p, i) => ({
+      ...p,
+      x: pad.left + (i + 0.5) * slot,
+      y: yFor(p.cvr),
+      clipped: (Number(p.cvr) || 0) > maxCvr,
+      axis: chartAxisLabel(p, grain),
+    }));
+
     const compare =
       rangeState.compare && comparePoints.length
-        ? coords(
-            points.map((p, i) => {
-              const c = comparePoints[i] || { cvr: 0, views: 0, leads: 0, label: p.label };
-              return {
-                key: p.key,
-                date: p.date,
-                label: c.label || p.label,
-                cvr: c.cvr || 0,
-                views: c.views || 0,
-                leads: c.leads || 0,
-              };
-            }),
-          )
+        ? placed.map((p, i) => {
+            const c = comparePoints[i] || { cvr: 0, views: 0, leads: 0, label: p.label };
+            return {
+              ...c,
+              x: p.x,
+              y: yFor(c.cvr || 0),
+              clipped: (Number(c.cvr) || 0) > maxCvr,
+              axis: p.axis,
+            };
+          })
         : [];
+
+    const avg = Number(page.cvr) || 0;
+    const avgY = avg > 0 && avg <= maxCvr ? yFor(avg) : null;
 
     const line = (series, cls) => {
       if (!series.length) return '';
-      const d = series.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-      return `<path class="${cls}" d="${d}" fill="none" stroke-width="2.5" />`;
+      let d = '';
+      let drawing = false;
+      series.forEach((p) => {
+        if (!(Number(p.views) > 0)) {
+          drawing = false;
+          return;
+        }
+        d += `${drawing ? 'L' : 'M'}${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+        drawing = true;
+      });
+      return d ? `<path class="${cls}" d="${d}" fill="none" />` : '';
     };
+
+    const bars = placed
+      .map((p) => {
+        const leads = Number(p.leads) || 0;
+        if (!leads) return '';
+        const barH = (leads / leadMax) * innerH;
+        const barW = Math.max(5, Math.min(22, slot * 0.62));
+        return `<rect class="ab-stats__chart-bar" x="${(p.x - barW / 2).toFixed(1)}" y="${(pad.top + innerH - barH).toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="3"></rect>`;
+      })
+      .join('');
 
     const dots = (series, cls) =>
       series
-        .map(
-          (p) =>
-            `<circle class="${cls}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5"><title>${p.label}: ${p.cvr}% (${p.leads}/${p.views})</title></circle>`,
-        )
+        .filter((p) => Number(p.views) > 0)
+        .map((p) => {
+          const extra = p.clipped ? ' is-clipped' : '';
+          return `<circle class="${cls}${extra}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.clipped ? 5.5 : 4.5}"></circle>`;
+        })
         .join('');
 
+    const hits = placed
+      .map((p, i) => {
+        const c = compare[i];
+        const thin = (p.views || 0) > 0 && p.views < CHART_MIN_VIEWS;
+        const note = p.clipped
+          ? `Мало показов: ${p.cvr}% не задаёт шкалу`
+          : thin
+            ? 'Мало показов, процент шумный'
+            : '';
+        return `<rect class="ab-stats__chart-hit" x="${(pad.left + i * slot).toFixed(1)}" y="${pad.top}" width="${slot.toFixed(1)}" height="${innerH}" data-label="${p.label}" data-leads="${p.leads || 0}" data-views="${p.views || 0}" data-cvr="${p.cvr || 0}" data-note="${note}" data-compare-cvr="${c ? c.cvr || 0 : ''}" data-compare-leads="${c ? c.leads || 0 : ''}" data-compare-views="${c ? c.views || 0 : ''}"></rect>`;
+      })
+      .join('');
+
     const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => {
-      const val = Number((maxCvr * t).toFixed(1));
+      const val = fmtPct(maxCvr * t);
       const y = pad.top + innerH - t * innerH;
+      const leadVal = Math.round(leadMax * t);
       return `<g>
         <line x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}" class="ab-stats__chart-grid" />
-        <text x="${pad.left - 8}" y="${y + 4}" class="ab-stats__chart-axis" text-anchor="end">${val}%</text>
+        <text x="${pad.left - 10}" y="${y + 4}" class="ab-stats__chart-axis" text-anchor="end">${val}%</text>
+        <text x="${width - pad.right + 10}" y="${y + 4}" class="ab-stats__chart-axis ab-stats__chart-axis--leads" text-anchor="start">${leadVal}</text>
       </g>`;
     });
 
-    const labelStep = Math.max(1, Math.ceil(primary.length / 6));
-    const xLabels = primary
-      .filter((_, i) => i === 0 || i === primary.length - 1 || i % labelStep === 0)
+    const labelStep = Math.max(1, Math.ceil(placed.length / 7));
+    const xLabels = placed
+      .filter((_, i) => i === 0 || i === placed.length - 1 || i % labelStep === 0)
       .map(
         (p) =>
-          `<text x="${p.x}" y="${height - 10}" class="ab-stats__chart-axis" text-anchor="middle">${p.label}</text>`,
+          `<text x="${p.x}" y="${height - 14}" class="ab-stats__chart-axis" text-anchor="middle">${p.axis}</text>`,
       )
       .join('');
+
+    const explain = `Слева проценты: ${fmtPct(page.cvr)}% за период = ${page.leads || 0} заявок на ${page.views || 0} показов sticky. Справа и столбцы — число заявок. Дни без показов на линии пропущены.`;
+    const thinNote = thinDays.length
+      ? ` ${thinDays.length} ${thinDays.length === 1 ? 'день' : thinDays.length < 5 ? 'дня' : 'дней'} с менее чем ${CHART_MIN_VIEWS} показами дали до 100% и не растягивают шкалу.`
+      : '';
 
     return `<section class="ab-stats__chart-card">
       <div class="ab-stats__block-head">
         <div>
           <h2>${title}</h2>
-          <p class="ab-stats__legend-note">CVR = заявки / показы sticky · ${TZ}</p>
+          <p class="ab-stats__chart-explain">${explain}</p>
         </div>
         ${grainToggle}
       </div>
       <div class="ab-stats__chart-wrap">
-        <svg viewBox="0 0 ${width} ${height}" class="ab-stats__chart" role="img" aria-label="${title}">
+        <svg viewBox="0 0 ${width} ${height}" class="ab-stats__chart" role="img" aria-label="${title}. ${explain}">
           ${yTicks.join('')}
+          ${avgY != null ? `<line x1="${pad.left}" y1="${avgY.toFixed(1)}" x2="${width - pad.right}" y2="${avgY.toFixed(1)}" class="ab-stats__chart-avg"></line>` : ''}
+          ${bars}
           ${line(compare, 'ab-stats__chart-line ab-stats__chart-line--compare')}
-          ${line(primary, 'ab-stats__chart-line ab-stats__chart-line--primary')}
+          ${line(placed, 'ab-stats__chart-line ab-stats__chart-line--primary')}
           ${dots(compare, 'ab-stats__chart-dot ab-stats__chart-dot--compare')}
-          ${dots(primary, 'ab-stats__chart-dot ab-stats__chart-dot--primary')}
+          ${dots(placed, 'ab-stats__chart-dot ab-stats__chart-dot--primary')}
           ${xLabels}
+          ${hits}
         </svg>
+        <div class="ab-stats__chart-tip" hidden></div>
       </div>
-      ${
-        rangeState.compare
-          ? `<p class="ab-stats__chart-legend"><span class="ab-stats__swatch ab-stats__swatch--primary"></span> Текущий период <span class="ab-stats__swatch ab-stats__swatch--compare"></span> Сравнение</p>`
-          : ''
-      }
+      <p class="ab-stats__chart-legend">
+        <span><span class="ab-stats__swatch ab-stats__swatch--primary"></span> Конверсия, %</span>
+        <span><span class="ab-stats__swatch ab-stats__swatch--bar"></span> Заявки</span>
+        ${avgY != null ? `<span><span class="ab-stats__swatch ab-stats__swatch--avg"></span> Средняя за период, ${fmtPct(page.cvr)}%</span>` : ''}
+        ${rangeState.compare ? `<span><span class="ab-stats__swatch ab-stats__swatch--compare"></span> Сравнение</span>` : ''}
+      </p>
+      <p class="ab-stats__alloc-note">Время ${TZ}.${thinNote}</p>
     </section>`;
   }
 
@@ -786,6 +864,38 @@
         renderDashboard();
       });
     });
+
+    const chartWrap = rootEl.querySelector('.ab-stats__chart-wrap');
+    const tip = chartWrap?.querySelector('.ab-stats__chart-tip');
+    if (chartWrap && tip) {
+      const hideTip = () => {
+        tip.hidden = true;
+      };
+      chartWrap.addEventListener('pointermove', (event) => {
+        const hit = event.target.closest?.('[data-label]');
+        if (!hit || !chartWrap.contains(hit)) {
+          hideTip();
+          return;
+        }
+        const leads = hit.getAttribute('data-leads') || '0';
+        const views = hit.getAttribute('data-views') || '0';
+        const cvr = hit.getAttribute('data-cvr') || '0';
+        const note = hit.getAttribute('data-note') || '';
+        const compareCvr = hit.getAttribute('data-compare-cvr');
+        const compareLine =
+          compareCvr !== '' && compareCvr != null
+            ? `<br>Сравнение: ${compareCvr}% (${hit.getAttribute('data-compare-leads') || 0} / ${hit.getAttribute('data-compare-views') || 0})`
+            : '';
+        tip.innerHTML = `<strong>${hit.getAttribute('data-label')}</strong><br>${cvr}% · ${leads} заявок / ${views} показов${compareLine}${note ? `<br><span>${note}</span>` : ''}`;
+        tip.hidden = false;
+        const bounds = chartWrap.getBoundingClientRect();
+        const x = event.clientX - bounds.left;
+        const y = event.clientY - bounds.top;
+        tip.style.left = `${Math.min(Math.max(8, x + 12), bounds.width - tip.offsetWidth - 8)}px`;
+        tip.style.top = `${Math.max(8, y - tip.offsetHeight - 10)}px`;
+      });
+      chartWrap.addEventListener('pointerleave', hideTip);
+    }
   }
 
   async function loadStats() {

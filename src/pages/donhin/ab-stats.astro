@@ -60,7 +60,7 @@ import Layout from '../../layouts/Layout.astro';
   </main>
 </Layout>
 
-<script src="/scripts/donhin-ab-stats-dashboard.js?v=20261014psych" defer></script>
+<script src="/scripts/donhin-ab-stats-dashboard.js?v=20261016chart" defer></script>
 
 <style is:global>
   .ab-stats {
@@ -293,14 +293,57 @@ import Layout from '../../layouts/Layout.astro';
     background: #fff;
   }
 
+  .ab-stats__chart-explain {
+    margin: 0.35rem 0 0;
+    max-width: 46rem;
+    color: var(--ab-ink);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
   .ab-stats__chart-wrap {
-    margin-top: 0.35rem;
+    position: relative;
+    margin-top: 0.85rem;
   }
 
   .ab-stats__chart {
     width: 100%;
-    height: 13.5rem;
+    height: auto;
     display: block;
+  }
+
+  .ab-stats__chart-bar {
+    fill: #d5e4f2;
+  }
+
+  .ab-stats__chart-hit {
+    fill: transparent;
+    cursor: crosshair;
+  }
+
+  .ab-stats__chart-avg {
+    stroke: #c4a15a;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+  }
+
+  .ab-stats__chart-tip {
+    position: absolute;
+    z-index: 2;
+    max-width: 16rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--ab-line);
+    border-radius: 0.55rem;
+    background: #fff;
+    color: var(--ab-ink);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    box-shadow: 0 8px 24px rgba(22, 50, 79, 0.12);
+    pointer-events: none;
+  }
+
+  .ab-stats__chart-tip span {
+    color: var(--ab-muted);
   }
 
   .ab-stats__grain {
@@ -337,21 +380,34 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   .ab-stats__chart-axis {
-    fill: #7b8a9a;
-    font-size: 10px;
+    fill: #4d5e70;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .ab-stats__chart-axis--leads {
+    fill: #6d8498;
   }
 
   .ab-stats__chart-line--primary {
     stroke: #1f4e79;
+    stroke-width: 2.75;
   }
 
   .ab-stats__chart-line--compare {
     stroke: #9aa7b8;
+    stroke-width: 2.25;
     stroke-dasharray: 5 4;
   }
 
   .ab-stats__chart-dot--primary {
     fill: #1f4e79;
+    stroke: #fff;
+    stroke-width: 1.5;
+  }
+
+  .ab-stats__chart-dot--primary.is-clipped {
+    fill: #9a3412;
   }
 
   .ab-stats__chart-dot--compare {
@@ -360,11 +416,12 @@ import Layout from '../../layouts/Layout.astro';
 
   .ab-stats__chart-legend {
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.85rem 1.25rem;
     align-items: center;
-    margin: 0.65rem 0 0;
-    color: var(--ab-muted);
-    font-size: 0.8rem;
+    margin: 0.75rem 0 0;
+    color: var(--ab-ink);
+    font-size: 0.92rem;
   }
 
   .ab-stats__swatch {
@@ -382,6 +439,15 @@ import Layout from '../../layouts/Layout.astro';
 
   .ab-stats__swatch--compare {
     background: #9aa7b8;
+  }
+
+  .ab-stats__swatch--bar {
+    background: #d5e4f2;
+    border-radius: 2px;
+  }
+
+  .ab-stats__swatch--avg {
+    background: #c4a15a;
   }
 
   .ab-stats__modal-root[hidden] {
