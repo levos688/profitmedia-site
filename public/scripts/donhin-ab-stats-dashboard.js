@@ -61,13 +61,16 @@
       ask_lawyer: 'Текст: задайте вопрос (retired)',
       dark_band: 'Дизайн: тёмная полоса 100% (retired)',
       dark_band_risk: 'Тёмная полоса + оплата по результату (retired)',
-      answer: 'Ответ адвоката',
-      compensation: 'Бесплатно узнать компенсацию',
-      owed: 'Положенная компенсация',
+      answer: 'Ответ адвоката (retired)',
+      compensation: 'Бесплатно узнать компенсацию (retired)',
+      owed: 'Положенная компенсация (retired)',
+      chances: 'Перспективы дела',
+      amount: 'Размер компенсации',
+      right: 'Право на компенсацию',
     },
     form_button: {
       black: 'Чёрная кнопка',
-      mist: 'Светло-серая кнопка, тёмный текст',
+      mist: 'Светло-серая кнопка (retired)',
     },
     hero_media: {
       photo: 'Фото в hero',
@@ -99,8 +102,8 @@
     popup_delay: ['22s', '25s', '28s'],
     popup_scroll: ['60pct', '50pct', '40pct'],
     quiz_copy: ['control', 'dark_band', 'risk_reversal'],
-    bottom_copy: ['answer', 'compensation', 'owed'],
-    form_button: ['black', 'mist'],
+    bottom_copy: ['chances', 'amount', 'right'],
+    form_button: ['black'],
     hero_media: ['photo', 'video'],
     lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
   };
@@ -754,9 +757,9 @@
                   : experiment.experiment === 'hero_media'
                     ? '<p class="ab-stats__alloc-note">Фото vs видео в шапке. Показ = визит. Клик = нажатие hero CTA. Конверсия = любая заявка с страницы.</p>'
                   : experiment.experiment === 'bottom_copy'
-                    ? '<p class="ab-stats__alloc-note">Три текста форм. «Ответ адвоката» — лидер нижней кнопки. «Компенсация» — бесплатная проверка, как в кнопке free_check и в объявлениях. «Положенная компенсация» — тот же смысл, что заголовок страницы. Обещание про оплату только в подзаголовке, кнопка короткая.</p>'
+                    ? '<p class="ab-stats__alloc-note">Три текста на чёрной кнопке. «Перспективы» спрашивает про шансы дела. «Размер» спрашивает про сумму компенсации. «Право» снимает страх обязательства. Оплата только в подзаголовке.</p>'
                   : experiment.experiment === 'form_button'
-                    ? '<p class="ab-stats__alloc-note">Цвет кнопки внутри форм: чёрная, как кнопка в шапке, или светло-серая с жирным тёмно-синим текстом. Текст кнопки задаёт тест выше.</p>'
+                    ? '<p class="ab-stats__alloc-note">Цвет зафиксирован: чёрная кнопка. Светло-серая снята, чтобы не делить трафик с тестом текстов.</p>'
                     : ''
           }
           <div class="ab-stats__table-wrap">
