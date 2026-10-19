@@ -64,9 +64,12 @@
       answer: 'Ответ адвоката (retired)',
       compensation: 'Бесплатно узнать компенсацию (retired)',
       owed: 'Положенная компенсация (retired)',
-      chances: 'Перспективы дела',
-      amount: 'Размер компенсации',
-      right: 'Право на компенсацию',
+      chances: 'Перспективы дела (retired)',
+      amount: 'Размер компенсации (retired)',
+      right: 'Право на компенсацию (retired)',
+      sum: 'Сумма компенсации',
+      reply: 'Ответ адвоката',
+      claim: 'Право на компенсацию',
     },
     form_button: {
       black: 'Чёрная кнопка',
@@ -102,7 +105,7 @@
     popup_delay: ['22s', '25s', '28s'],
     popup_scroll: ['60pct', '50pct', '40pct'],
     quiz_copy: ['control', 'dark_band', 'risk_reversal'],
-    bottom_copy: ['chances', 'amount', 'right'],
+    bottom_copy: ['sum', 'reply', 'claim'],
     form_button: ['black'],
     hero_media: ['photo', 'video'],
     lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
@@ -757,9 +760,9 @@
                   : experiment.experiment === 'hero_media'
                     ? '<p class="ab-stats__alloc-note">Фото vs видео в шапке. Показ = визит. Клик = нажатие hero CTA. Конверсия = любая заявка с страницы.</p>'
                   : experiment.experiment === 'bottom_copy'
-                    ? '<p class="ab-stats__alloc-note">Три текста на чёрной кнопке. На одной странице верхняя и нижняя формы всегда разные. «Перспективы» спрашивает про шансы дела. «Размер» спрашивает про сумму компенсации. «Право» снимает страх обязательства.</p>'
+                    ? '<p class="ab-stats__alloc-note">Три текста, цвет не делится. На одной странице верхняя и нижняя формы всегда разные. «Сумма» считает компенсацию. «Ответ» сохраняет кнопку-лидер без слова «консультация». «Право» совпадает с заголовком и кнопкой.</p>'
                   : experiment.experiment === 'form_button'
-                    ? '<p class="ab-stats__alloc-note">Цвет зафиксирован: чёрная кнопка. Светло-серая снята, чтобы не делить трафик с тестом текстов.</p>'
+                    ? '<p class="ab-stats__alloc-note">Цвет не в тесте. На синей полосе кнопка светлая, во всплывающем окне на белом фоне чёрная.</p>'
                     : ''
           }
           <div class="ab-stats__table-wrap">

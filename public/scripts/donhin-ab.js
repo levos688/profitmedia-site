@@ -86,27 +86,27 @@
     bottom_copy: {
       variants: [
         {
-          id: 'chances',
-          label: 'Перспективы дела',
-          title: 'Бесплатно оцените перспективы вашего дела',
-          note: 'Оплата адвокату только после победы. Никаких рисков.',
-          submitLabel: 'Узнать шансы',
+          id: 'sum',
+          label: 'Сумма компенсации',
+          title: 'Узнайте сумму вашей компенсации',
+          note: 'Проверка дела - бесплатно. Оплата только при выигрыше',
+          submitLabel: 'Рассчитать сумму',
           theme: 'dark_band',
         },
         {
-          id: 'amount',
-          label: 'Размер компенсации',
-          title: 'Узнайте размер положенной компенсации',
-          note: 'Проверка бесплатна. Вы платите только в случае победы.',
-          submitLabel: 'Проверить дело',
-          theme: 'dark_band',
-        },
-        {
-          id: 'right',
-          label: 'Право на компенсацию',
-          title: 'Есть ли у вас право на компенсацию?',
-          note: 'Консультация бесплатна и ни к чему не обязывает.',
+          id: 'reply',
+          label: 'Ответ адвоката',
+          title: 'Получите ответ адвоката по вашему делу',
+          note: 'Бесплатный разбор ситуации. Оплата только при выигрыше',
           submitLabel: 'Получить ответ',
+          theme: 'dark_band',
+        },
+        {
+          id: 'claim',
+          label: 'Право на компенсацию',
+          title: 'Проверьте право на компенсацию',
+          note: 'Без расходов сейчас. Оплата услуг только если выиграем дело',
+          submitLabel: 'Проверить право',
           theme: 'dark_band',
         },
       ],
@@ -423,15 +423,14 @@
     return copy;
   }
 
-  function formSubmitButtons() {
-    return document.querySelectorAll('#donhin-top-form button[type="submit"], #donhin-bottom-form button[type="submit"], #donhin-popup-simple-form button[type="submit"]');
-  }
-
-  function applyFormButton(variantId) {
-    var mist = variantId === 'mist';
-    formSubmitButtons().forEach(function (el) {
-      el.classList.toggle('donhin-btn--form-black', !mist);
-      el.classList.toggle('donhin-btn--form-mist', mist);
+  function applyFormButton() {
+    document.querySelectorAll('#donhin-top-form button[type="submit"], #donhin-bottom-form button[type="submit"]').forEach(function (el) {
+      el.classList.add('donhin-btn--form-mist');
+      el.classList.remove('donhin-btn--form-black');
+    });
+    document.querySelectorAll('#donhin-popup-simple-form button[type="submit"]').forEach(function (el) {
+      el.classList.add('donhin-btn--form-black');
+      el.classList.remove('donhin-btn--form-mist');
     });
   }
 
@@ -480,7 +479,7 @@
   function applyCopyVariants(assignments) {
     applyQuizCopy(assignments.quiz_copy);
     applyBottomCopy(assignments.bottom_copy, assignments.bottom_copy_b);
-    applyFormButton(assignments.form_button);
+    applyFormButton();
     applyHeroCta(assignments.sticky_cta);
     applyHeroMedia(assignments.hero_media);
   }
