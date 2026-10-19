@@ -85,21 +85,14 @@
     },
     bottom_copy: {
       variants: [
-        // control / ask_lawyer retired 2026-10-14: 0 conversions / 33 impressions combined
-        // (both light theme). Only dark_band (visual contrast) had conversions — the lift
-        // is the Peak-End contrast, not the copy, so both light-text variants were dropped.
+        // dark_band / dark_band_risk retired 2026-10-19: 2 on-page leads all-time.
+        // One line now, the promise that already wins in ads and on the sticky path.
         {
-          id: 'dark_band',
-          label: 'Дизайн: тёмная полоса 100%',
-          title: 'Оставьте заявку для бесплатной консультации',
-          submitLabel: 'Отправить',
-          theme: 'dark_band',
-        },
-        {
-          id: 'dark_band_risk',
-          label: 'Тёмная полоса + оплата по результату',
-          title: 'Оставьте заявку — платите только если выиграем дело',
-          submitLabel: 'Отправить',
+          id: 'answer',
+          label: 'Получите ответ адвоката',
+          title: 'Получите ответ адвоката',
+          note: 'Консультация бесплатно. Оплата только если выиграем дело',
+          submitLabel: 'Получить ответ',
           theme: 'dark_band',
         },
       ],
@@ -356,19 +349,27 @@
 
   function applyBottomCopy(variantId) {
     var copy = findVariant('bottom_copy', variantId) || CONFIG.bottom_copy.variants[0];
-    var section = document.getElementById('form-bottom') || document.querySelector('.donhin-bottom-form');
-    if (section) {
+    document.querySelectorAll('.donhin-short-form').forEach(function (section) {
       section.classList.toggle('donhin-bottom-form--dark-band', copy.theme === 'dark_band');
       section.setAttribute('data-ab-band', copy.theme === 'dark_band' ? 'dark' : 'light');
-    }
-    setText(document.querySelector('.donhin-bottom-form__title'), copy.title);
-    var submit = document.querySelector('#donhin-bottom-form button[type="submit"]');
-    setText(submit, copy.submitLabel);
+    });
+    document.querySelectorAll('.donhin-bottom-form__title').forEach(function (el) {
+      setText(el, copy.title);
+    });
+    document.querySelectorAll('.donhin-form-promise').forEach(function (el) {
+      setText(el, copy.note);
+    });
+    document.querySelectorAll('#donhin-top-form button[type="submit"], #donhin-bottom-form button[type="submit"], #donhin-popup-simple-form button[type="submit"]').forEach(function (el) {
+      setText(el, copy.submitLabel);
+    });
     var popup = document.getElementById('donhin-popup');
     if (popup) popup.dataset.simpleTitle = copy.title;
-    var popupSimpleSubmit = document.querySelector('#donhin-popup-simple-form button[type="submit"]');
-    setText(popupSimpleSubmit, copy.submitLabel);
     return copy;
+  }
+
+  function applyHeroCta(stickyId) {
+    var hero = document.getElementById('donhin-hero-cta');
+    setText(hero, stickyLabel(stickyId));
   }
 
   function ensureVimeoApi() {
@@ -411,6 +412,7 @@
   function applyCopyVariants(assignments) {
     applyQuizCopy(assignments.quiz_copy);
     applyBottomCopy(assignments.bottom_copy);
+    applyHeroCta(assignments.sticky_cta);
     applyHeroMedia(assignments.hero_media);
   }
 
@@ -554,8 +556,9 @@
       var a = assignments || getAssignments();
       return trackEvents([
         { experiment: 'sticky_cta', variant: a.sticky_cta, metric: 'impression' },
-        { experiment: 'lead_source', variant: 'quiz', metric: 'impression' },
+        { experiment: 'lead_source', variant: 'top_form', metric: 'impression' },
         { experiment: 'lead_source', variant: 'simple', metric: 'impression' },
+        { experiment: 'lead_source', variant: 'hero_cta', metric: 'impression' },
         { experiment: 'quiz_copy', variant: a.quiz_copy, metric: 'impression' },
         { experiment: 'bottom_copy', variant: a.bottom_copy, metric: 'impression' },
         { experiment: 'hero_media', variant: a.hero_media, metric: 'impression' },
@@ -582,6 +585,7 @@
     var map = {
       quiz: 'quiz',
       simple: 'simple',
+      top_form: 'top_form',
       'popup-quiz': 'popup_quiz',
       popup_quiz: 'popup_quiz',
       'popup-simple': 'popup_simple',

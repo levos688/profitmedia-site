@@ -99,7 +99,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             <span>Адвокат Саймон Донхин</span>
           </p>
         </div>
-        <a href="#form-quiz" id="donhin-hero-cta" class="donhin-btn donhin-btn--hero">Запишитесь на бесплатную консультацию</a>
+        <button type="button" id="donhin-hero-cta" class="donhin-btn donhin-btn--hero">Получить ответ адвоката</button>
       </div>
     </section>
 
@@ -122,66 +122,38 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       </div>
     </section>
 
-    <section id="form-quiz" class="donhin-form-section">
-      <div class="donhin-container donhin-form-section__inner">
-        <h2 class="donhin-form-section__title">{quizFormTitle}</h2>
+    <section id="form-top" class="donhin-bottom-form donhin-short-form donhin-bottom-form--dark-band" data-ab-band="dark">
+      <div class="donhin-container donhin-bottom-form__inner">
+        <h2 class="donhin-bottom-form__title">Получите ответ адвоката</h2>
+        <p class="donhin-form-promise">Консультация бесплатно. Оплата только если выиграем дело</p>
 
-        <form class="donhin-form donhin-form--quiz" id="donhin-quiz-form" data-donhin-form="quiz" novalidate>
-          <div class="donhin-form__viewport">
-          <div class="donhin-form__step is-active" data-step="1">
-            <fieldset class="donhin-quiz">
-              <legend class="donhin-quiz__question">
-                Оказывалась ли вам медицинская или стоматологическая помощь в последние 7 лет?
-              </legend>
-              <div class="donhin-quiz__options">
-                <label class="donhin-radio">
-                  <input type="radio" name="quiz" value="да" required />
-                  <span>Да</span>
-                </label>
-                <label class="donhin-radio">
-                  <input type="radio" name="quiz" value="нет" />
-                  <span>Нет</span>
-                </label>
-              </div>
-            </fieldset>
-            <button type="button" class="donhin-btn donhin-btn--quiz-action" data-quiz-next disabled>
-              Следующий
-            </button>
-          </div>
-
-          <div class="donhin-form__step" data-step="2" hidden>
-            <button type="button" class="donhin-btn donhin-btn--quiz-back" data-quiz-back>
-              ← Назад к вопросу
-            </button>
-            <h3 class="donhin-form__heading">Запишитесь на бесплатную консультацию</h3>
-            <label class="donhin-field">
-              <span class="sr-only">Имя</span>
-              <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
-            </label>
-            <label class="donhin-field">
-              <span class="sr-only">Телефон</span>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Номер телефона"
-                required
-                autocomplete="tel"
-                inputmode="tel"
-                pattern="[0-9\-+() ]{9,18}"
-              />
-            </label>
-            <label class="donhin-privacy">
-              <input type="checkbox" name="privacy" required />
-              <span>
-                Я ознакомлен(а) с{' '}
-                <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
-                {' '}и согласен(а) на обработку моих данных (обязательно)
-              </span>
-            </label>
-            <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-            <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
-          </div>
-          </div>
+        <form class="donhin-form donhin-form--bottom" id="donhin-top-form" data-donhin-form="top_form" novalidate>
+          <label class="donhin-field">
+            <span class="sr-only">Имя</span>
+            <input type="text" name="name" placeholder="Ваше имя" required autocomplete="name" />
+          </label>
+          <label class="donhin-field">
+            <span class="sr-only">Телефон</span>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Номер телефона"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+              pattern="[0-9\-+() ]{9,18}"
+            />
+          </label>
+          <label class="donhin-privacy">
+            <input type="checkbox" name="privacy" required />
+            <span>
+              Я ознакомлен(а) с{' '}
+              <a href="/prat" target="_blank" rel="noopener noreferrer">политикой конфиденциальности</a>
+              {' '}и согласен(а) на обработку моих данных (обязательно)
+            </span>
+          </label>
+          <p class="donhin-error hidden" data-privacy-error role="alert"></p>
+          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide">Получить ответ</button>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -226,9 +198,10 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       </div>
     </section>
 
-    <section id="form-bottom" class="donhin-bottom-form">
+    <section id="form-bottom" class="donhin-bottom-form donhin-short-form donhin-bottom-form--dark-band" data-ab-band="dark">
       <div class="donhin-container donhin-bottom-form__inner">
-        <h2 class="donhin-bottom-form__title">Оставьте заявку для бесплатной консультации</h2>
+        <h2 class="donhin-bottom-form__title">Получите ответ адвоката</h2>
+        <p class="donhin-form-promise">Консультация бесплатно. Оплата только если выиграем дело</p>
 
         <form class="donhin-form donhin-form--bottom" id="donhin-bottom-form" data-donhin-form="simple" novalidate>
           <label class="donhin-field">
@@ -256,7 +229,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             </span>
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide">Отправить</button>
+          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide">Получить ответ</button>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -345,6 +318,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       </div>
 
       <div id="donhin-popup-simple-wrap" class="donhin-popup__simple" hidden>
+        <p class="donhin-form-promise">Консультация бесплатно. Оплата только если выиграем дело</p>
         <form class="donhin-form donhin-form--quiz donhin-form--popup-simple" id="donhin-popup-simple-form" data-donhin-form="popup-simple" novalidate>
           <label class="donhin-field">
             <span class="sr-only">Имя</span>
@@ -371,7 +345,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             </span>
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-          <button type="submit" class="donhin-btn donhin-btn--primary">Отправить</button>
+          <button type="submit" class="donhin-btn donhin-btn--primary">Получить ответ</button>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -379,7 +353,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 
   <Fragment slot="scripts">
-<script is:inline src="/scripts/donhin-ab.js?v=20261019popup"></script>
+<script is:inline src="/scripts/donhin-ab.js?v=20261019forms"></script>
 <script is:inline>
   function readCookie(name) {
     var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -593,6 +567,8 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       } catch (e) {}
     }
 
+    var popupLeadSource = 'popup-simple';
+
     function setPopupMode(mode) {
       var quizCopy = ab.getQuizCopy ? ab.getQuizCopy(assignments.quiz_copy) : null;
       var bottomCopy = ab.getBottomCopy ? ab.getBottomCopy(assignments.bottom_copy) : null;
@@ -638,6 +614,13 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       setPopupMode(mode);
       showPopupShell();
 
+      if (trigger === 'hero') {
+        popupLeadSource = 'hero_cta';
+        return;
+      }
+
+      popupLeadSource = mode === 'simple' ? 'popup-simple' : 'popup-quiz';
+
       if (isAuto) {
         ab.trackPopupImpression(assignments, mode === 'simple' ? 'popup-simple' : 'popup-quiz');
       } else if (ab.trackLeadSource) {
@@ -664,6 +647,16 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       openPopup('sticky', { force: true, mode: 'simple' });
     });
 
+    var heroCta = document.getElementById('donhin-hero-cta');
+    if (heroCta) {
+      heroCta.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (ab.trackLeadSource) ab.trackLeadSource('hero_cta', 'click');
+        if (ab.trackCopyMetric) ab.trackCopyMetric('hero_media', 'click');
+        openPopup('hero', { force: true, mode: 'simple' });
+      });
+    }
+
     ab.initPopup(assignments, function (trigger) {
       openPopup(trigger, { mode: 'quiz' });
     });
@@ -672,15 +665,14 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     if (popupSimpleForm) {
       popupSimpleForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        submitDonhinLead(popupSimpleForm, 'popup-simple');
+        submitDonhinLead(popupSimpleForm, popupLeadSource);
       });
     }
   }
 
   function bootDonhinPage() {
-    var quizForm = document.getElementById('donhin-quiz-form');
+    var topForm = document.getElementById('donhin-top-form');
     var bottomForm = document.getElementById('donhin-bottom-form');
-    var heroCta = document.getElementById('donhin-hero-cta');
     var ab = window.donhinAb;
 
     // Apply copy/theme immediately so force_* preview works before allocate fetch.
@@ -694,17 +686,16 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       var assignments = ab && ab.getAssignments ? ab.getAssignments() : null;
       if (ab && ab.applyCopyVariants && assignments) ab.applyCopyVariants(assignments);
 
-      if (quizForm) initQuizForm(quizForm);
       initDonhinPopup();
 
       if (ab && ab.trackPageImpressions && assignments) {
         ab.trackPageImpressions(assignments);
       }
 
-      if (heroCta && ab) {
-        heroCta.addEventListener('click', function () {
-          if (ab.trackLeadSource) ab.trackLeadSource('hero_cta', 'click');
-          if (ab.trackCopyMetric) ab.trackCopyMetric('hero_media', 'click');
+      if (topForm) {
+        topForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          submitDonhinLead(topForm, 'top_form');
         });
       }
 
@@ -887,8 +878,11 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     min-height: 48px;
     padding: 0.875rem 1.75rem;
     border-radius: 9999px;
+    font-family: inherit;
     font-size: 1rem;
     font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
     text-decoration: none;
     border: none;
     cursor: pointer;
@@ -914,6 +908,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     border: none;
     margin-top: 0;
     border-radius: 3.1875rem;
+    white-space: normal;
   }
 
   .donhin-btn--hero:hover {
@@ -1490,7 +1485,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   }
 
   .donhin-bottom-form__title {
-    margin: 0 0 1.5rem;
+    margin: 0 0 0.75rem;
     color: #15477f;
     text-align: center;
     font-size: clamp(1.375rem, 3vw, 2rem);
@@ -1498,9 +1493,24 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     text-wrap: balance;
   }
 
+  .donhin-form-promise {
+    margin: 0 0 1.5rem;
+    text-align: center;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #15477f;
+  }
+
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-form-promise),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-form-promise),
+  .donhin-popup .donhin-form-promise {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
   /* Dynamically toggled by AB — must be :global so class added via JS always matches */
-  :global(#form-bottom.donhin-bottom-form--dark-band),
-  :global(#form-bottom[data-ab-band='dark']) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band),
+  :global(.donhin-short-form[data-ab-band='dark']) {
     width: 100%;
     max-width: none;
     margin: 0;
@@ -1510,61 +1520,61 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       linear-gradient(180deg, #16457a 0%, #0f2f54 100%);
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-bottom-form__inner),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-bottom-form__inner) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-bottom-form__inner),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-bottom-form__inner) {
     max-width: 36rem;
     margin-inline: auto;
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-bottom-form__title),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-bottom-form__title) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-bottom-form__title),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-bottom-form__title) {
     color: #fff;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-form--bottom),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-form--bottom) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-form--bottom),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-form--bottom) {
     background: transparent;
     border: none;
     box-shadow: none;
     padding: 0;
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input) {
     background: #fff;
     border: 1px solid rgba(255, 255, 255, 0.35);
     color: #0f172a;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input::placeholder),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input::placeholder) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input::placeholder),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input::placeholder) {
     color: #64748b;
     opacity: 1;
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-privacy),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-privacy) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-privacy),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-privacy) {
     color: rgba(255, 255, 255, 0.9);
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-privacy a),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-privacy a) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-privacy a),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-privacy a) {
     color: #fff;
     text-decoration: underline;
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-btn--brand),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-btn--brand) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-btn--brand),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-btn--brand) {
     background: #fff;
     color: #143c6f;
     border: none;
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
   }
 
-  :global(#form-bottom.donhin-bottom-form--dark-band) :global(.donhin-btn--brand:hover),
-  :global(#form-bottom[data-ab-band='dark']) :global(.donhin-btn--brand:hover) {
+  :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-btn--brand:hover),
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-btn--brand:hover) {
     background: #f0f6ff;
     color: #0f2f54;
   }

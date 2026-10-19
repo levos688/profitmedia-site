@@ -59,16 +59,18 @@
     bottom_copy: {
       control: 'Контроль: светлая форма (retired)',
       ask_lawyer: 'Текст: задайте вопрос (retired)',
-      dark_band: 'Дизайн: тёмная полоса 100%',
-      dark_band_risk: 'Тёмная полоса + оплата по результату',
+      dark_band: 'Дизайн: тёмная полоса 100% (retired)',
+      dark_band_risk: 'Тёмная полоса + оплата по результату (retired)',
+      answer: 'Получите ответ адвоката',
     },
     hero_media: {
       photo: 'Фото в hero',
       video: 'Видео Vimeo в hero',
     },
     lead_source: {
-      quiz: 'Квиз на странице',
+      quiz: 'Квиз на странице (retired)',
       simple: 'Форма внизу страницы',
+      top_form: 'Форма под видео',
       popup_quiz: 'Popup с квизом',
       popup_simple: 'Popup со sticky-кнопки',
       hero_cta: 'Кнопка в шапке (hero)',
@@ -90,9 +92,9 @@
     popup_delay: ['22s', '25s', '28s'],
     popup_scroll: ['60pct', '50pct', '40pct'],
     quiz_copy: ['control', 'dark_band', 'risk_reversal'],
-    bottom_copy: ['dark_band', 'dark_band_risk'],
+    bottom_copy: ['answer'],
     hero_media: ['photo', 'video'],
-    lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
+    lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
   };
 
   function getActiveList(experiment) {
@@ -744,7 +746,7 @@
                   : experiment.experiment === 'hero_media'
                     ? '<p class="ab-stats__alloc-note">Фото vs видео в шапке. Показ = визит. Клик = нажатие hero CTA. Конверсия = любая заявка с страницы.</p>'
                   : experiment.experiment === 'bottom_copy'
-                    ? '<p class="ab-stats__alloc-note">3 варианта: светлая форма (контроль), другой текст, тёмная full-bleed полоса с тем же текстом контроля. Показ = визит. Клик = отправка. Конверсия = успешная заявка (низ или popup sticky).</p>'
+                    ? '<p class="ab-stats__alloc-note">Тест текстов остановлен. На странице один вариант: «Получите ответ адвоката». Старые строки оставлены в истории и трафик не получают.</p>'
                     : ''
           }
           <div class="ab-stats__table-wrap">
