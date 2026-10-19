@@ -218,6 +218,33 @@
     return assignments;
   }
 
+  function pickDifferentVariant(experiment, excludeId) {
+    var list = CONFIG[experiment].variants.filter(function (variant) {
+      return variant.id !== excludeId && isActiveVariant(experiment, variant.id);
+    });
+    if (!list.length) return excludeId;
+    var weights = getWeights(experiment);
+    var total = 0;
+    for (var i = 0; i < list.length; i++) total += Number(weights[list[i].id]) || 0;
+    if (!(total > 0)) return list[Math.floor(Math.random() * list.length)].id;
+    var roll = Math.random() * total;
+    var cursor = 0;
+    for (var j = 0; j < list.length; j++) {
+      cursor += Number(weights[list[j].id]) || 0;
+      if (roll <= cursor) return list[j].id;
+    }
+    return list[list.length - 1].id;
+  }
+
+  function ensureFormPair(assignments) {
+    var primary = assignments.bottom_copy;
+    var alt = assignments.bottom_copy_b;
+    if (!alt || alt === primary || !isActiveVariant('bottom_copy', alt)) {
+      assignments.bottom_copy_b = pickDifferentVariant('bottom_copy', primary);
+    }
+    return assignments;
+  }
+
   function getAssignments() {
     var existing = readAssignments();
     if (existing) {
@@ -229,7 +256,7 @@
         }
       });
       if (changed) writeAssignments(existing);
-      return applyForceOverrides(existing);
+      return finishAssignments(existing);
     }
 
     var assignments = {
@@ -241,8 +268,14 @@
       form_button: pickVariant('form_button').id,
       hero_media: pickVariant('hero_media').id,
     };
+    return finishAssignments(assignments);
+  }
+
+  function finishAssignments(assignments) {
+    applyForceOverrides(assignments);
+    ensureFormPair(assignments);
     writeAssignments(assignments);
-    return applyForceOverrides(assignments);
+    return assignments;
   }
 
   function readCookie(name) {
@@ -366,21 +399,25 @@
     return copy;
   }
 
-  function applyBottomCopy(variantId) {
+  function paintShortForm(root, copy) {
+    if (!root || !copy) return;
+    setText(root.querySelector('.donhin-bottom-form__title'), copy.title);
+    setText(root.querySelector('.donhin-form-promise'), copy.note);
+    setText(root.querySelector('button[type="submit"]'), copy.submitLabel);
+  }
+
+  function applyBottomCopy(variantId, altId) {
     var copy = findVariant('bottom_copy', variantId) || CONFIG.bottom_copy.variants[0];
+    var alt = findVariant('bottom_copy', altId);
+    if (!alt || alt.id === copy.id) {
+      alt = findVariant('bottom_copy', pickDifferentVariant('bottom_copy', copy.id)) || copy;
+    }
     document.querySelectorAll('.donhin-short-form').forEach(function (section) {
       section.classList.toggle('donhin-bottom-form--dark-band', copy.theme === 'dark_band');
       section.setAttribute('data-ab-band', copy.theme === 'dark_band' ? 'dark' : 'light');
     });
-    document.querySelectorAll('.donhin-bottom-form__title').forEach(function (el) {
-      setText(el, copy.title);
-    });
-    document.querySelectorAll('.donhin-form-promise').forEach(function (el) {
-      setText(el, copy.note);
-    });
-    document.querySelectorAll('#donhin-top-form button[type="submit"], #donhin-bottom-form button[type="submit"], #donhin-popup-simple-form button[type="submit"]').forEach(function (el) {
-      setText(el, copy.submitLabel);
-    });
+    paintShortForm(document.getElementById('form-top'), copy);
+    paintShortForm(document.getElementById('form-bottom'), alt);
     var popup = document.getElementById('donhin-popup');
     if (popup) popup.dataset.simpleTitle = copy.title;
     return copy;
@@ -442,7 +479,7 @@
 
   function applyCopyVariants(assignments) {
     applyQuizCopy(assignments.quiz_copy);
-    applyBottomCopy(assignments.bottom_copy);
+    applyBottomCopy(assignments.bottom_copy, assignments.bottom_copy_b);
     applyFormButton(assignments.form_button);
     applyHeroCta(assignments.sticky_cta);
     applyHeroMedia(assignments.hero_media);
@@ -520,7 +557,9 @@
         changed = true;
       } catch (e) {}
     });
-    if (changed) writeAssignments(existing);
+    var pairBefore = existing.bottom_copy_b;
+    ensureFormPair(existing);
+    if (changed || existing.bottom_copy_b !== pairBefore) writeAssignments(existing);
   }
 
   function loadAllocation() {
@@ -569,7 +608,8 @@
         events.push({ experiment: 'quiz_copy', variant: assignments.quiz_copy, metric: 'conversion' });
       }
       if (source === 'simple' || source === 'popup_simple' || source === 'top_form' || source === 'hero_cta') {
-        events.push({ experiment: 'bottom_copy', variant: assignments.bottom_copy, metric: 'conversion' });
+        var copyId = source === 'simple' || source === 'popup_simple' ? assignments.bottom_copy_b : assignments.bottom_copy;
+        events.push({ experiment: 'bottom_copy', variant: copyId || assignments.bottom_copy, metric: 'conversion' });
         events.push({ experiment: 'form_button', variant: assignments.form_button, metric: 'conversion' });
       }
       return trackEvents(events);
@@ -584,17 +624,18 @@
       if (!assignments[experiment] || !metric) return Promise.resolve();
       return track(experiment, assignments[experiment], metric);
     },
-    trackFormClick: function () {
+    trackFormClick: function (slot) {
       var assignments = getAssignments();
+      var variant = slot === 'bottom' || slot === 'sticky' ? assignments.bottom_copy_b : assignments.bottom_copy;
       return trackEvents([
-        { experiment: 'bottom_copy', variant: assignments.bottom_copy, metric: 'click' },
+        { experiment: 'bottom_copy', variant: variant || assignments.bottom_copy, metric: 'click' },
         { experiment: 'form_button', variant: assignments.form_button, metric: 'click' },
       ]);
     },
     /** One batched request for all page-load impressions. */
     trackPageImpressions: function (assignments) {
       var a = assignments || getAssignments();
-      return trackEvents([
+      var events = [
         { experiment: 'sticky_cta', variant: a.sticky_cta, metric: 'impression' },
         { experiment: 'lead_source', variant: 'top_form', metric: 'impression' },
         { experiment: 'lead_source', variant: 'simple', metric: 'impression' },
@@ -603,7 +644,11 @@
         { experiment: 'bottom_copy', variant: a.bottom_copy, metric: 'impression' },
         { experiment: 'form_button', variant: a.form_button, metric: 'impression' },
         { experiment: 'hero_media', variant: a.hero_media, metric: 'impression' },
-      ]);
+      ];
+      if (a.bottom_copy_b && a.bottom_copy_b !== a.bottom_copy) {
+        events.push({ experiment: 'bottom_copy', variant: a.bottom_copy_b, metric: 'impression' });
+      }
+      return trackEvents(events);
     },
     trackPopupImpression: function (assignments, leadSource) {
       var events = [

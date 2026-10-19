@@ -200,8 +200,8 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
     <section id="form-bottom" class="donhin-bottom-form donhin-short-form donhin-bottom-form--dark-band" data-ab-band="dark">
       <div class="donhin-container donhin-bottom-form__inner">
-        <h2 class="donhin-bottom-form__title">Бесплатно оцените перспективы вашего дела</h2>
-        <p class="donhin-form-promise">Оплата адвокату только после победы. Никаких рисков.</p>
+        <h2 class="donhin-bottom-form__title">Узнайте размер положенной компенсации</h2>
+        <p class="donhin-form-promise">Проверка бесплатна. Вы платите только в случае победы.</p>
 
         <form class="donhin-form donhin-form--bottom" id="donhin-bottom-form" data-donhin-form="simple" novalidate>
           <label class="donhin-field">
@@ -229,7 +229,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             </span>
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
-          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide donhin-btn--form-black">Узнать шансы</button>
+          <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide donhin-btn--form-black">Проверить дело</button>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -353,7 +353,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 
   <Fragment slot="scripts">
-<script is:inline src="/scripts/donhin-ab.js?v=20261019formtest2"></script>
+<script is:inline src="/scripts/donhin-ab.js?v=20261019formpair"></script>
 <script is:inline>
   function readCookie(name) {
     var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -569,9 +569,10 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
     var popupLeadSource = 'popup-simple';
 
-    function setPopupMode(mode) {
+    function setPopupMode(mode, trigger) {
       var quizCopy = ab.getQuizCopy ? ab.getQuizCopy(assignments.quiz_copy) : null;
-      var bottomCopy = ab.getBottomCopy ? ab.getBottomCopy(assignments.bottom_copy) : null;
+      var copyId = trigger === 'sticky' ? assignments.bottom_copy_b : assignments.bottom_copy;
+      var bottomCopy = ab.getBottomCopy ? ab.getBottomCopy(copyId) : null;
       if (mode === 'simple') {
         if (quizWrap) quizWrap.setAttribute('hidden', '');
         if (simpleWrap) simpleWrap.removeAttribute('hidden');
@@ -580,6 +581,12 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             (bottomCopy && bottomCopy.title) ||
             popup.dataset.simpleTitle ||
             'Оставьте заявку для бесплатной консультации';
+        }
+        if (bottomCopy) {
+          var note = document.querySelector('#donhin-popup-simple-wrap .donhin-form-promise');
+          var submit = document.querySelector('#donhin-popup-simple-form button[type="submit"]');
+          if (note) note.textContent = bottomCopy.note;
+          if (submit) submit.textContent = bottomCopy.submitLabel;
         }
       } else {
         if (simpleWrap) simpleWrap.setAttribute('hidden', '');
@@ -611,7 +618,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
 
       if (isAuto) markAutoSeen();
 
-      setPopupMode(mode);
+      setPopupMode(mode, trigger);
       showPopupShell();
 
       if (trigger === 'hero') {
@@ -665,7 +672,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     if (popupSimpleForm) {
       popupSimpleForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (ab.trackFormClick) ab.trackFormClick();
+        if (ab.trackFormClick) ab.trackFormClick(popupLeadSource === 'hero_cta' ? 'top' : 'sticky');
         submitDonhinLead(popupSimpleForm, popupLeadSource);
       });
     }
@@ -696,7 +703,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       if (topForm) {
         topForm.addEventListener('submit', function (e) {
           e.preventDefault();
-          if (ab && ab.trackFormClick) ab.trackFormClick();
+          if (ab && ab.trackFormClick) ab.trackFormClick('top');
           submitDonhinLead(topForm, 'top_form');
         });
       }
@@ -704,7 +711,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
       if (bottomForm) {
         bottomForm.addEventListener('submit', function (e) {
           e.preventDefault();
-          if (ab && ab.trackFormClick) ab.trackFormClick();
+          if (ab && ab.trackFormClick) ab.trackFormClick('bottom');
           submitDonhinLead(bottomForm, 'simple');
         });
       }
