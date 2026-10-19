@@ -431,10 +431,15 @@
     });
   }
 
+  var POPUP_ARM_MS = 8000;
+  var POPUP_MIN_SCROLL_PX = 400;
+  var POPUP_MIN_SCROLLABLE_PX = 600;
+
   function initPopup(assignments, openPopup) {
     var delay = delayMs(assignments.popup_delay);
     var ratio = scrollRatio(assignments.popup_scroll);
     var scrollTriggered = false;
+    var armedAt = Date.now() + POPUP_ARM_MS;
 
     window.setTimeout(function () {
       openPopup('timer');
@@ -442,7 +447,14 @@
 
     function onScroll() {
       if (scrollTriggered) return;
-      if (getScrollDepth() >= ratio) {
+      if (Date.now() < armedAt) return;
+      var doc = document.documentElement;
+      var scrollable = doc.scrollHeight - window.innerHeight;
+      // Instagram in-app often reports a collapsed first layout. A ratio
+      // against ~0px of scroll room opens the quiz before the page is seen.
+      if (scrollable < POPUP_MIN_SCROLLABLE_PX) return;
+      if (window.scrollY < POPUP_MIN_SCROLL_PX) return;
+      if (window.scrollY / scrollable >= ratio) {
         scrollTriggered = true;
         openPopup('scroll');
       }
@@ -450,13 +462,6 @@
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
-    onScroll();
-  }
-
-  function getScrollDepth() {
-    var doc = document.documentElement;
-    var total = Math.max(doc.scrollHeight - window.innerHeight, 1);
-    return window.scrollY / total;
   }
 
   var HYBRID_REROLL_MAX_WEIGHT = 0.15;
