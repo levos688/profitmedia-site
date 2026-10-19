@@ -116,6 +116,12 @@
     form_button: {
       variants: [{ id: 'black', label: 'Чёрная кнопка' }],
     },
+    page_design: {
+      variants: [
+        { id: 'current', label: 'Текущий экран' },
+        { id: 'quiet', label: 'Новый вид' },
+      ],
+    },
     hero_media: {
       variants: [
         { id: 'photo', label: 'Фото в hero' },
@@ -201,6 +207,7 @@
         force_bottom: 'bottom_copy',
         force_form_button: 'form_button',
         force_hero: 'hero_media',
+        force_page: 'page_design',
         force_delay: 'popup_delay',
         force_scroll: 'popup_scroll',
       };
@@ -268,6 +275,7 @@
       quiz_copy: pickVariant('quiz_copy').id,
       bottom_copy: pickVariant('bottom_copy').id,
       form_button: pickVariant('form_button').id,
+      page_design: pickVariant('page_design').id,
       hero_media: pickVariant('hero_media').id,
     };
     return finishAssignments(assignments);
@@ -478,12 +486,19 @@
     }
   }
 
+  function applyPageDesign(variantId) {
+    var main = document.getElementById('main-content');
+    if (!main || main.getAttribute('data-donhin-design') === 'quiet') return;
+    main.classList.toggle('donhin-page--quiet', variantId === 'quiet');
+  }
+
   function applyCopyVariants(assignments) {
     applyQuizCopy(assignments.quiz_copy);
     applyBottomCopy(assignments.bottom_copy, assignments.bottom_copy_b);
     applyFormButton();
     applyHeroCta(assignments.sticky_cta);
     applyHeroMedia(assignments.hero_media);
+    applyPageDesign(assignments.page_design);
   }
 
   function initStickyCta(assignments, openPopupFromSticky) {
@@ -600,6 +615,7 @@
         { experiment: 'popup_delay', variant: assignments.popup_delay, metric: 'conversion' },
         { experiment: 'popup_scroll', variant: assignments.popup_scroll, metric: 'conversion' },
         { experiment: 'hero_media', variant: assignments.hero_media, metric: 'conversion' },
+        { experiment: 'page_design', variant: assignments.page_design, metric: 'conversion' },
       ];
       var source = normalizeLeadSource(formType);
       if (source) {
@@ -645,6 +661,7 @@
         { experiment: 'bottom_copy', variant: a.bottom_copy, metric: 'impression' },
         { experiment: 'form_button', variant: a.form_button, metric: 'impression' },
         { experiment: 'hero_media', variant: a.hero_media, metric: 'impression' },
+        { experiment: 'page_design', variant: a.page_design, metric: 'impression' },
       ];
       if (a.bottom_copy_b && a.bottom_copy_b !== a.bottom_copy) {
         events.push({ experiment: 'bottom_copy', variant: a.bottom_copy_b, metric: 'impression' });

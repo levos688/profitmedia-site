@@ -17,6 +17,7 @@ const EXPERIMENT_TITLES: Record<string, string> = {
   bottom_copy: 'Текст форм',
   form_button: 'Цвет кнопки формы',
   hero_media: 'Hero фото/видео',
+  page_design: 'Вид страницы',
 };
 
 function dedupeKey(channel: string, experiment: string, leader: string): string {

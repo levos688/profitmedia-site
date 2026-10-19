@@ -57,20 +57,36 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   description="Получите положенную вам компенсацию за халатность стоматолога. Бесплатная консультация адвоката Саймона Донхина."
 >
   <main id="main-content" class={quiet ? 'donhin-page--quiet' : undefined} data-donhin-base-path={basePath} data-donhin-design={quiet ? 'quiet' : undefined}>
+    <script is:inline>
+      (function () {
+        var main = document.currentScript && document.currentScript.parentElement;
+        if (!main || main.getAttribute('data-donhin-design') === 'quiet') return;
+        var id = 'current';
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var force = params.get('force_page');
+          var raw = localStorage.getItem('donhin_ab_v1');
+          var saved = raw ? JSON.parse(raw) : null;
+          if (force === 'quiet' || force === 'current') {
+            id = force;
+          } else if (saved && (saved.page_design === 'quiet' || saved.page_design === 'current')) {
+            id = saved.page_design;
+          } else {
+            id = Math.random() < 0.5 ? 'quiet' : 'current';
+            var next = saved && typeof saved === 'object' ? saved : {};
+            next.page_design = id;
+            localStorage.setItem('donhin_ab_v1', JSON.stringify(next));
+          }
+        } catch (e) {}
+        main.classList.toggle('donhin-page--quiet', id === 'quiet');
+      })();
+    </script>
     <section class="donhin-hero">
       <div class="donhin-container donhin-hero__grid">
         <div class="donhin-hero__content">
           <p class="donhin-eyebrow">Медицинская халатность</p>
           <h1 class="donhin-hero__title">
-            {
-              quiet ? (
-                <>
-                  Получите положенную вам <span class="donhin-hero__accent">компенсацию за халатность</span> стоматолога
-                </>
-              ) : (
-                'Получите положенную вам компенсацию за халатность стоматолога'
-              )
-            }
+            Получите положенную вам <span class="donhin-hero__accent">компенсацию за халатность</span> стоматолога
           </h1>
           <p class="donhin-hero__subtitle">
             За последние 15 лет мои клиенты получили более 20 миллионов шекелей
@@ -104,19 +120,15 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             </div>
           </div>
           <p class="donhin-hero__name">
-            {
-              !quiet && (
-                <img
-                  src="/images/donhin/icon-scales.svg"
-                  alt=""
-                  width="47"
-                  height="33"
-                  class="donhin-hero__scales"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )
-            }
+            <img
+              src="/images/donhin/icon-scales.svg"
+              alt=""
+              width="47"
+              height="33"
+              class="donhin-hero__scales"
+              loading="lazy"
+              decoding="async"
+            />
             <span>Адвокат Саймон Донхин</span>
           </p>
         </div>
@@ -132,11 +144,8 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             benefits.map((item, index) => (
               <article class="donhin-benefit">
                 <div class="donhin-benefit__icon-wrap">
-                  {quiet ? (
-                    <span class="donhin-benefit__mark" set:html={quietIcons[index]} />
-                  ) : (
-                    <img src={item.icon} alt="" width="150" height="150" class="donhin-benefit__icon" loading="lazy" decoding="async" />
-                  )}
+                  <img src={item.icon} alt="" width="150" height="150" class="donhin-benefit__icon" loading="lazy" decoding="async" />
+                  <span class="donhin-benefit__mark" set:html={quietIcons[index]} />
                 </div>
                 <h3 class="donhin-benefit__title">{item.title}</h3>
                 <p class="donhin-benefit__text">{item.text}</p>
@@ -179,7 +188,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
           <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide donhin-btn--form-mist">Рассчитать сумму</button>
-          {quiet && <p class="donhin-form-trust">Ваши данные защищены адвокатской тайной. Никакого спама</p>}
+          <p class="donhin-form-trust">Ваши данные защищены адвокатской тайной. Никакого спама</p>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -256,7 +265,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
           <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide donhin-btn--form-mist">Получить ответ</button>
-          {quiet && <p class="donhin-form-trust">Ваши данные защищены адвокатской тайной. Никакого спама</p>}
+          <p class="donhin-form-trust">Ваши данные защищены адвокатской тайной. Никакого спама</p>
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -380,7 +389,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 
   <Fragment slot="scripts">
-<script is:inline src="/scripts/donhin-ab.js?v=20261019designv2"></script>
+<script is:inline src="/scripts/donhin-ab.js?v=20261019pagedesign"></script>
 <script is:inline>
   function readCookie(name) {
     var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -1878,6 +1887,18 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     color: #93c5fd;
   }
 
+  .donhin-page--quiet .donhin-hero__scales {
+    display: none;
+  }
+
+  .donhin-benefit__mark {
+    display: none;
+  }
+
+  .donhin-page--quiet .donhin-benefit__icon {
+    display: none;
+  }
+
   .donhin-page--quiet .donhin-hero__video {
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -1947,6 +1968,11 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   }
 
   .donhin-form-trust {
+    display: none;
+  }
+
+  .donhin-page--quiet .donhin-form-trust {
+    display: block;
     margin: 0.75rem 0 0;
     color: #cbd5e1;
     font-size: 12px;

@@ -28,6 +28,7 @@ export const AB_EXPERIMENTS = {
   bottom_copy: ['control', 'ask_lawyer', 'dark_band', 'dark_band_risk', 'answer', 'compensation', 'owed', 'chances', 'amount', 'right', 'sum', 'reply', 'claim'],
   form_button: ['black', 'mist'],
   hero_media: ['photo', 'video'],
+  page_design: ['current', 'quiet'],
   lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
 } as const;
 
@@ -41,6 +42,8 @@ export const AB_EXPERIMENTS = {
  * - bottom_copy: 2026-10-19 third round. sum / reply / claim.
  *   chances, amount, right retired the same day. Color is not a cell:
  *   light button on the blue band, black button in the white popup.
+ * - page_design: 2026-10-19. current vs quiet on the same URL.
+ *   Photo/video stays its own test.
  */
 export const ACTIVE_AB_VARIANTS: Record<string, readonly string[]> = {
   sticky_cta: ['ask_lawyer', 'lawyer_reply', 'free_check'],
@@ -50,6 +53,7 @@ export const ACTIVE_AB_VARIANTS: Record<string, readonly string[]> = {
   bottom_copy: ['sum', 'reply', 'claim'],
   form_button: ['black'],
   hero_media: ['photo', 'video'],
+  page_design: ['current', 'quiet'],
 };
 
 export const AB_TIMEZONE = 'Asia/Jerusalem';
@@ -419,7 +423,7 @@ const NORM_SHARE_MAX = 0.85;
 function variantScore(experiment: string, values: AbVariantStats): number {
   const cvr = values.impression > 0 ? (values.conversion / values.impression) * 100 : 0;
   const ctr = values.impression > 0 ? (values.click / values.impression) * 100 : 0;
-  if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'form_button' || experiment === 'hero_media') {
+  if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'form_button' || experiment === 'hero_media' || experiment === 'page_design') {
     return values.conversion * 1000 + cvr * 10 + ctr;
   }
   return values.conversion * 1000 + cvr;

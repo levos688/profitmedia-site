@@ -79,6 +79,10 @@
       photo: 'Фото в hero',
       video: 'Видео Vimeo в hero',
     },
+    page_design: {
+      current: 'Текущий экран',
+      quiet: 'Новый вид',
+    },
     lead_source: {
       quiz: 'Квиз на странице (retired)',
       simple: 'Форма внизу страницы',
@@ -97,6 +101,7 @@
     bottom_copy: 'Текст форм на странице',
     form_button: 'Цвет кнопки в форме',
     hero_media: 'Hero: фото или видео',
+    page_design: 'Вид страницы',
     lead_source: 'Детализация источников заявок',
   };
 
@@ -108,6 +113,7 @@
     bottom_copy: ['sum', 'reply', 'claim'],
     form_button: ['black'],
     hero_media: ['photo', 'video'],
+    page_design: ['current', 'quiet'],
     lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
   };
 
@@ -236,7 +242,7 @@
 
   function scoreVariant(experiment, variant) {
     if (experiment === 'lead_source') return variant.conversion * 1000 + variant.click;
-    if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'form_button' || experiment === 'hero_media') {
+    if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'form_button' || experiment === 'hero_media' || experiment === 'page_design') {
       return variant.cvr * 1000 + variant.ctr * 10 + variant.conversion;
     }
     return variant.cvr * 1000 + variant.conversion;
@@ -647,7 +653,7 @@
   }
 
   function renderExperiments(experiments) {
-    const experimentOrder = ['hero_media', 'quiz_copy', 'bottom_copy', 'form_button', 'lead_source', 'sticky_cta', 'popup_delay', 'popup_scroll'];
+    const experimentOrder = ['page_design', 'hero_media', 'quiz_copy', 'bottom_copy', 'form_button', 'lead_source', 'sticky_cta', 'popup_delay', 'popup_scroll'];
     const sorted = [...experiments].sort((a, b) => {
       const ai = experimentOrder.indexOf(a.experiment);
       const bi = experimentOrder.indexOf(b.experiment);
@@ -757,6 +763,8 @@
                 ? '<p class="ab-stats__alloc-note">CVR в строках — конверсия этого источника (заявки / показы источника). Итоговый CTR/CVR здесь не смешивается: у форм разные знаменатели.</p>'
                 : experiment.experiment === 'quiz_copy'
                   ? '<p class="ab-stats__alloc-note">3 варианта: контроль текста, новый текст, синяя full-bleed полоса с заголовком внутри. Показ = визит. Клик = «Продолжить/Следующий». Конверсия = заявка с квиза.</p>'
+                  : experiment.experiment === 'page_design'
+                    ? '<p class="ab-stats__alloc-note">Один тест всего экрана: голубой акцент в заголовке, без иконки у имени, новые значки в карточках и белая кнопка формы. Фото и видео в шапке остаются отдельным тестом. Показ = визит. Конверсия = любая заявка со страницы.</p>'
                   : experiment.experiment === 'hero_media'
                     ? '<p class="ab-stats__alloc-note">Фото vs видео в шапке. Показ = визит. Клик = нажатие hero CTA. Конверсия = любая заявка с страницы.</p>'
                   : experiment.experiment === 'bottom_copy'
