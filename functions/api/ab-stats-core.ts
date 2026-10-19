@@ -25,7 +25,8 @@ export const AB_EXPERIMENTS = {
   popup_delay: ['15s', '18s', '22s', '25s', '28s'],
   popup_scroll: ['80pct', '60pct', '50pct', '40pct'],
   quiz_copy: ['control', 'ask_case', 'dark_band', 'risk_reversal'],
-  bottom_copy: ['control', 'ask_lawyer', 'dark_band', 'dark_band_risk', 'answer'],
+  bottom_copy: ['control', 'ask_lawyer', 'dark_band', 'dark_band_risk', 'answer', 'compensation', 'owed'],
+  form_button: ['black', 'mist'],
   hero_media: ['photo', 'video'],
   lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
 } as const;
@@ -37,15 +38,16 @@ export const AB_EXPERIMENTS = {
  * - popup_delay: added 28s (later-is-better trend from 22s/25s)
  * - popup_scroll: added 40pct (earlier-is-better trend from 50pct/60pct vs retired 80pct)
  * - quiz_copy: retired ask_case (clear loser, 0 conv / 13 imp); added risk_reversal
- * - bottom_copy: 2026-10-19 retired dark_band + dark_band_risk (2 on-page leads).
- *   Live copy is a single arm, answer.
+ * - bottom_copy: 2026-10-19 three live lines from the sticky winner, the free-compensation
+ *   challenger, and the page headline. form_button: black vs near-white gray.
  */
 export const ACTIVE_AB_VARIANTS: Record<string, readonly string[]> = {
   sticky_cta: ['ask_lawyer', 'lawyer_reply', 'free_check'],
   popup_delay: ['22s', '25s', '28s'],
   popup_scroll: ['60pct', '50pct', '40pct'],
   quiz_copy: ['control', 'dark_band', 'risk_reversal'],
-  bottom_copy: ['answer'],
+  bottom_copy: ['answer', 'compensation', 'owed'],
+  form_button: ['black', 'mist'],
   hero_media: ['photo', 'video'],
 };
 
@@ -416,7 +418,7 @@ const NORM_SHARE_MAX = 0.85;
 function variantScore(experiment: string, values: AbVariantStats): number {
   const cvr = values.impression > 0 ? (values.conversion / values.impression) * 100 : 0;
   const ctr = values.impression > 0 ? (values.click / values.impression) * 100 : 0;
-  if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'hero_media') {
+  if (experiment === 'sticky_cta' || experiment === 'quiz_copy' || experiment === 'bottom_copy' || experiment === 'form_button' || experiment === 'hero_media') {
     return values.conversion * 1000 + cvr * 10 + ctr;
   }
   return values.conversion * 1000 + cvr;

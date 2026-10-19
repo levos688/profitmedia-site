@@ -85,16 +85,36 @@
     },
     bottom_copy: {
       variants: [
-        // dark_band / dark_band_risk retired 2026-10-19: 2 on-page leads all-time.
-        // One line now, the promise that already wins in ads and on the sticky path.
         {
           id: 'answer',
-          label: 'Получите ответ адвоката',
+          label: 'Ответ адвоката',
           title: 'Получите ответ адвоката',
           note: 'Консультация бесплатно. Оплата только если выиграем дело',
           submitLabel: 'Получить ответ',
           theme: 'dark_band',
         },
+        {
+          id: 'compensation',
+          label: 'Бесплатно узнать компенсацию',
+          title: 'Бесплатно узнать компенсацию',
+          note: 'Платите только если выиграем дело',
+          submitLabel: 'Узнать компенсацию',
+          theme: 'dark_band',
+        },
+        {
+          id: 'owed',
+          label: 'Положенная компенсация',
+          title: 'Получите положенную компенсацию',
+          note: 'Проверка бесплатно. Оплата только если выиграем дело',
+          submitLabel: 'Проверить дело',
+          theme: 'dark_band',
+        },
+      ],
+    },
+    form_button: {
+      variants: [
+        { id: 'black', label: 'Чёрная кнопка' },
+        { id: 'mist', label: 'Светло-серая кнопка' },
       ],
     },
     hero_media: {
@@ -180,6 +200,7 @@
         force_sticky: 'sticky_cta',
         force_quiz: 'quiz_copy',
         force_bottom: 'bottom_copy',
+        force_form_button: 'form_button',
         force_hero: 'hero_media',
         force_delay: 'popup_delay',
         force_scroll: 'popup_scroll',
@@ -220,6 +241,7 @@
       popup_scroll: pickVariant('popup_scroll').id,
       quiz_copy: pickVariant('quiz_copy').id,
       bottom_copy: pickVariant('bottom_copy').id,
+      form_button: pickVariant('form_button').id,
       hero_media: pickVariant('hero_media').id,
     };
     writeAssignments(assignments);
@@ -367,6 +389,18 @@
     return copy;
   }
 
+  function formSubmitButtons() {
+    return document.querySelectorAll('#donhin-top-form button[type="submit"], #donhin-bottom-form button[type="submit"], #donhin-popup-simple-form button[type="submit"]');
+  }
+
+  function applyFormButton(variantId) {
+    var mist = variantId === 'mist';
+    formSubmitButtons().forEach(function (el) {
+      el.classList.toggle('donhin-btn--form-black', !mist);
+      el.classList.toggle('donhin-btn--form-mist', mist);
+    });
+  }
+
   function applyHeroCta(stickyId) {
     var hero = document.getElementById('donhin-hero-cta');
     setText(hero, stickyLabel(stickyId));
@@ -412,6 +446,7 @@
   function applyCopyVariants(assignments) {
     applyQuizCopy(assignments.quiz_copy);
     applyBottomCopy(assignments.bottom_copy);
+    applyFormButton(assignments.form_button);
     applyHeroCta(assignments.sticky_cta);
     applyHeroMedia(assignments.hero_media);
   }
@@ -536,8 +571,9 @@
       if (source === 'quiz' || source === 'popup_quiz') {
         events.push({ experiment: 'quiz_copy', variant: assignments.quiz_copy, metric: 'conversion' });
       }
-      if (source === 'simple' || source === 'popup_simple') {
+      if (source === 'simple' || source === 'popup_simple' || source === 'top_form' || source === 'hero_cta') {
         events.push({ experiment: 'bottom_copy', variant: assignments.bottom_copy, metric: 'conversion' });
+        events.push({ experiment: 'form_button', variant: assignments.form_button, metric: 'conversion' });
       }
       return trackEvents(events);
     },
@@ -551,6 +587,13 @@
       if (!assignments[experiment] || !metric) return Promise.resolve();
       return track(experiment, assignments[experiment], metric);
     },
+    trackFormClick: function () {
+      var assignments = getAssignments();
+      return trackEvents([
+        { experiment: 'bottom_copy', variant: assignments.bottom_copy, metric: 'click' },
+        { experiment: 'form_button', variant: assignments.form_button, metric: 'click' },
+      ]);
+    },
     /** One batched request for all page-load impressions. */
     trackPageImpressions: function (assignments) {
       var a = assignments || getAssignments();
@@ -561,6 +604,7 @@
         { experiment: 'lead_source', variant: 'hero_cta', metric: 'impression' },
         { experiment: 'quiz_copy', variant: a.quiz_copy, metric: 'impression' },
         { experiment: 'bottom_copy', variant: a.bottom_copy, metric: 'impression' },
+        { experiment: 'form_button', variant: a.form_button, metric: 'impression' },
         { experiment: 'hero_media', variant: a.hero_media, metric: 'impression' },
       ]);
     },

@@ -14,7 +14,8 @@ const EXPERIMENT_TITLES: Record<string, string> = {
   popup_delay: 'Таймер popup',
   popup_scroll: 'Скролл popup',
   quiz_copy: 'Квиз (текст/дизайн)',
-  bottom_copy: 'Нижняя форма',
+  bottom_copy: 'Текст форм',
+  form_button: 'Цвет кнопки формы',
   hero_media: 'Hero фото/видео',
 };
 
