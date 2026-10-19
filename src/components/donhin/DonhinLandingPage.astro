@@ -1887,44 +1887,49 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     background: #fff;
   }
 
+  .donhin-page--quiet .donhin-benefits__grid {
+    gap: 12px;
+  }
+
   .donhin-page--quiet .donhin-benefit {
-    text-align: start;
+    text-align: center;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 24px;
+    padding: 20px 18px;
   }
 
   .donhin-page--quiet .donhin-benefit__icon-wrap {
-    width: 40px;
-    height: 40px;
-    margin-inline: 0;
+    width: 56px;
+    height: 56px;
+    margin-inline: auto;
   }
 
   .donhin-page--quiet .donhin-benefit__mark {
     display: block;
-    width: 40px;
-    height: 40px;
+    width: 56px;
+    height: 56px;
     line-height: 0;
   }
 
   .donhin-page--quiet .donhin-benefit__mark :global(svg) {
     display: block;
-    width: 40px;
-    height: 40px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .donhin-page--quiet .donhin-benefit__title {
+    margin: 12px 0 6px;
+    text-align: center;
   }
 
   .donhin-page--quiet .donhin-benefit__text {
     color: #475569;
     max-width: none;
-  }
-
-  @media (max-width: 639px) {
-    .donhin-page--quiet .donhin-benefit__title,
-    .donhin-page--quiet .donhin-benefit__text {
-      margin-inline: 0;
-      max-width: none;
-    }
+    margin-inline: auto;
+    font-size: 16px;
+    line-height: 1.45;
+    text-align: center;
   }
 
   .donhin-page--quiet :global(.donhin-short-form) :global(.donhin-btn--form-mist),
