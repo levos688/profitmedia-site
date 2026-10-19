@@ -25,9 +25,9 @@ export const AB_EXPERIMENTS = {
   popup_delay: ['15s', '18s', '22s', '25s', '28s'],
   popup_scroll: ['80pct', '60pct', '50pct', '40pct'],
   quiz_copy: ['control', 'ask_case', 'dark_band', 'risk_reversal'],
-  bottom_copy: ['control', 'ask_lawyer', 'dark_band', 'dark_band_risk'],
+  bottom_copy: ['control', 'ask_lawyer', 'dark_band', 'dark_band_risk', 'answer'],
   hero_media: ['photo', 'video'],
-  lead_source: ['quiz', 'simple', 'popup_quiz', 'popup_simple', 'hero_cta'],
+  lead_source: ['quiz', 'simple', 'top_form', 'popup_quiz', 'popup_simple', 'hero_cta'],
 } as const;
 
 /**
@@ -37,15 +37,15 @@ export const AB_EXPERIMENTS = {
  * - popup_delay: added 28s (later-is-better trend from 22s/25s)
  * - popup_scroll: added 40pct (earlier-is-better trend from 50pct/60pct vs retired 80pct)
  * - quiz_copy: retired ask_case (clear loser, 0 conv / 13 imp); added risk_reversal
- * - bottom_copy: retired control + ask_lawyer (0 conv / 33 imp combined, light theme);
- *   added dark_band_risk (risk-reversal copy on the proven dark_band design)
+ * - bottom_copy: 2026-10-19 retired dark_band + dark_band_risk (2 on-page leads).
+ *   Live copy is a single arm, answer.
  */
 export const ACTIVE_AB_VARIANTS: Record<string, readonly string[]> = {
   sticky_cta: ['ask_lawyer', 'lawyer_reply', 'free_check'],
   popup_delay: ['22s', '25s', '28s'],
   popup_scroll: ['60pct', '50pct', '40pct'],
   quiz_copy: ['control', 'dark_band', 'risk_reversal'],
-  bottom_copy: ['dark_band', 'dark_band_risk'],
+  bottom_copy: ['answer'],
   hero_media: ['photo', 'video'],
 };
 
