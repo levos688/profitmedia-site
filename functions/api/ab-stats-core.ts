@@ -256,19 +256,26 @@ export async function incrementAbMetric(
 }
 
 export function withRates(stats: AbStatsStore) {
-  return Object.entries(stats).map(([experiment, variants]) => ({
-    experiment,
-    variants: Object.entries(variants).map(([variant, values]) => {
-      const ctr = values.impression > 0 ? (values.click / values.impression) * 100 : 0;
-      const cvr = values.impression > 0 ? (values.conversion / values.impression) * 100 : 0;
-      return {
-        variant,
-        ...values,
-        ctr: Number(ctr.toFixed(2)),
-        cvr: Number(cvr.toFixed(2)),
-      };
-    }),
-  }));
+  const experiments = new Set([...Object.keys(stats), ...Object.keys(ACTIVE_AB_VARIANTS)]);
+  return [...experiments].map((experiment) => {
+    const stored = stats[experiment] || {};
+    const active = ACTIVE_AB_VARIANTS[experiment] || [];
+    const ids = new Set([...Object.keys(stored), ...active]);
+    return {
+      experiment,
+      variants: [...ids].map((variant) => {
+        const values = stored[variant] || { impression: 0, click: 0, conversion: 0 };
+        const ctr = values.impression > 0 ? (values.click / values.impression) * 100 : 0;
+        const cvr = values.impression > 0 ? (values.conversion / values.impression) * 100 : 0;
+        return {
+          variant,
+          ...values,
+          ctr: Number(ctr.toFixed(2)),
+          cvr: Number(cvr.toFixed(2)),
+        };
+      }),
+    };
+  });
 }
 
 export type AbMetricTotals = {
