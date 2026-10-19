@@ -3,6 +3,8 @@
   var SKIP_KEY = 'pm_ab_skip';
 
   function isTrackingSkipped() {
+    var main = document.getElementById('main-content');
+    if (main && main.getAttribute('data-donhin-design') === 'quiet') return true;
     try {
       var params = new URL(window.location.href).searchParams;
       if (params.get('ab_skip') === '1') {

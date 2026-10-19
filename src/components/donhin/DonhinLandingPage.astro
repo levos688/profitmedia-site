@@ -3,9 +3,18 @@ import LandingLayout from '../../layouts/LandingLayout.astro';
 
 interface Props {
   basePath?: string;
+  design?: 'current' | 'quiet';
 }
 
-const { basePath = '/donhin' } = Astro.props;
+const { basePath = '/donhin', design = 'current' } = Astro.props;
+const quiet = design === 'quiet';
+
+const quietIcons = [
+  `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"></path><path d="M6 7l6-2 6 2"></path><path d="M6 7L3 13h6L6 7z"></path><path d="M18 7l-3 6h6l-3-6z"></path></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="13" y2="16"></line></svg>`,
+];
 
 const benefits = [
   {
@@ -47,13 +56,21 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   title="Медицинская халатность в стоматологии | Адвокат Саймон Донхин"
   description="Получите положенную вам компенсацию за халатность стоматолога. Бесплатная консультация адвоката Саймона Донхина."
 >
-  <main id="main-content" data-donhin-base-path={basePath}>
+  <main id="main-content" class={quiet ? 'donhin-page--quiet' : undefined} data-donhin-base-path={basePath} data-donhin-design={quiet ? 'quiet' : undefined}>
     <section class="donhin-hero">
       <div class="donhin-container donhin-hero__grid">
         <div class="donhin-hero__content">
           <p class="donhin-eyebrow">Медицинская халатность</p>
           <h1 class="donhin-hero__title">
-            Получите положенную вам компенсацию за халатность стоматолога
+            {
+              quiet ? (
+                <>
+                  Получите положенную вам <span class="donhin-hero__accent">компенсацию за халатность</span> стоматолога
+                </>
+              ) : (
+                'Получите положенную вам компенсацию за халатность стоматолога'
+              )
+            }
           </h1>
           <p class="donhin-hero__subtitle">
             За последние 15 лет мои клиенты получили более 20 миллионов шекелей
@@ -87,15 +104,19 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
             </div>
           </div>
           <p class="donhin-hero__name">
-            <img
-              src="/images/donhin/icon-scales.svg"
-              alt=""
-              width="47"
-              height="33"
-              class="donhin-hero__scales"
-              loading="lazy"
-              decoding="async"
-            />
+            {
+              !quiet && (
+                <img
+                  src="/images/donhin/icon-scales.svg"
+                  alt=""
+                  width="47"
+                  height="33"
+                  class="donhin-hero__scales"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )
+            }
             <span>Адвокат Саймон Донхин</span>
           </p>
         </div>
@@ -108,10 +129,14 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
         <h2 class="donhin-section-title">Почему стоит обратиться к адвокату Саймону?</h2>
         <div class="donhin-benefits__grid">
           {
-            benefits.map((item) => (
+            benefits.map((item, index) => (
               <article class="donhin-benefit">
                 <div class="donhin-benefit__icon-wrap">
-                  <img src={item.icon} alt="" width="150" height="150" class="donhin-benefit__icon" loading="lazy" decoding="async" />
+                  {quiet ? (
+                    <span class="donhin-benefit__mark" set:html={quietIcons[index]} />
+                  ) : (
+                    <img src={item.icon} alt="" width="150" height="150" class="donhin-benefit__icon" loading="lazy" decoding="async" />
+                  )}
                 </div>
                 <h3 class="donhin-benefit__title">{item.title}</h3>
                 <p class="donhin-benefit__text">{item.text}</p>
@@ -154,6 +179,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
           <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide donhin-btn--form-mist">Рассчитать сумму</button>
+          {quiet && <p class="donhin-form-trust">Ваши данные защищены адвокатской тайной. Никакого спама</p>}
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -230,6 +256,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
           </label>
           <p class="donhin-error hidden" data-privacy-error role="alert"></p>
           <button type="submit" class="donhin-btn donhin-btn--brand donhin-btn--wide donhin-btn--form-mist">Получить ответ</button>
+          {quiet && <p class="donhin-form-trust">Ваши данные защищены адвокатской тайной. Никакого спама</p>}
           <p class="donhin-status hidden" data-status role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -353,7 +380,7 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   </div>
 
   <Fragment slot="scripts">
-<script is:inline src="/scripts/donhin-ab.js?v=20261019formcopy3"></script>
+<script is:inline src="/scripts/donhin-ab.js?v=20261019designv2"></script>
 <script is:inline>
   function readCookie(name) {
     var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -683,16 +710,32 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     var bottomForm = document.getElementById('donhin-bottom-form');
     var ab = window.donhinAb;
 
+    function showQuietVideo() {
+      var main = document.getElementById('main-content');
+      if (!main || main.getAttribute('data-donhin-design') !== 'quiet') return;
+      var iframe = document.getElementById('donhin-hero-vimeo');
+      var videoPanel = document.querySelector('[data-hero-panel="video"]');
+      var photoPanel = document.querySelector('[data-hero-panel="photo"]');
+      if (photoPanel) photoPanel.setAttribute('hidden', '');
+      if (videoPanel) videoPanel.removeAttribute('hidden');
+      if (iframe && !iframe.getAttribute('src')) {
+        var src = iframe.getAttribute('data-src') || '';
+        if (src) iframe.setAttribute('src', src);
+      }
+    }
+
     // Apply copy/theme immediately so force_* preview works before allocate fetch.
     if (ab && ab.getAssignments && ab.applyCopyVariants) {
       try {
         ab.applyCopyVariants(ab.getAssignments());
       } catch (e) {}
     }
+    showQuietVideo();
 
     function start() {
       var assignments = ab && ab.getAssignments ? ab.getAssignments() : null;
       if (ab && ab.applyCopyVariants && assignments) ab.applyCopyVariants(assignments);
+      showQuietVideo();
 
       initDonhinPopup();
 
@@ -1829,5 +1872,80 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     border: none;
     box-shadow: none;
     background: transparent;
+  }
+
+  .donhin-page--quiet .donhin-hero__accent {
+    color: #93c5fd;
+  }
+
+  .donhin-page--quiet .donhin-hero__video {
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .donhin-page--quiet .donhin-benefits {
+    background: #fff;
+  }
+
+  .donhin-page--quiet .donhin-benefit {
+    text-align: start;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+  }
+
+  .donhin-page--quiet .donhin-benefit__icon-wrap {
+    width: 40px;
+    height: 40px;
+    margin-inline: 0;
+  }
+
+  .donhin-page--quiet .donhin-benefit__mark {
+    display: block;
+    width: 40px;
+    height: 40px;
+    line-height: 0;
+  }
+
+  .donhin-page--quiet .donhin-benefit__mark :global(svg) {
+    display: block;
+    width: 40px;
+    height: 40px;
+  }
+
+  .donhin-page--quiet .donhin-benefit__text {
+    color: #475569;
+    max-width: none;
+  }
+
+  @media (max-width: 639px) {
+    .donhin-page--quiet .donhin-benefit__title,
+    .donhin-page--quiet .donhin-benefit__text {
+      margin-inline: 0;
+      max-width: none;
+    }
+  }
+
+  .donhin-page--quiet :global(.donhin-short-form) :global(.donhin-btn--form-mist),
+  .donhin-page--quiet :global(.donhin-short-form) :global(.donhin-btn--form-mist:hover) {
+    background: #ffffff;
+    color: #0f2942;
+    font-weight: 800;
+  }
+
+  .donhin-page--quiet :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-form--bottom .donhin-field input),
+  .donhin-page--quiet :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-form--bottom .donhin-field input) {
+    background: #f8fafc;
+    border-color: rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1px 2px rgba(15, 41, 66, 0.16);
+  }
+
+  .donhin-form-trust {
+    margin: 0.75rem 0 0;
+    color: #cbd5e1;
+    font-size: 12px;
+    line-height: 1.45;
+    text-align: center;
   }
 </style>
