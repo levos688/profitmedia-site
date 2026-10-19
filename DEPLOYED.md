@@ -11,10 +11,10 @@
 
 | Field | Value |
 |-------|--------|
-| Git commit | `68fd645` |
+| Git commit | `8e3b01e` |
 | Feature | Donhin form buttons are yellow on the blue band. Privacy link is white and underlined so it does not disappear into the background. |
 | `pm-release` pin | `2026-10-19-donhin-form-contrast` |
-| Cloudflare Pages deploy | *(filled after ship)* |
+| Cloudflare Pages deploy | `https://e15726f8.profitmedia-site.pages.dev` |
 | Deployed at (IL) | 2026-10-19 |
 | Do not roll back past | Any tree older than `2026-10-19-donhin-form-contrast`. Keep the short forms, the Instagram popup arm, and AB arms `free_check` / `28s` / `40pct` / `risk_reversal` |
 | Live check | https://profitmedia.co.il/donhin/ and https://profitmedia.co.il/adv_lp3/ must include `pm-release` = `2026-10-19-donhin-form-contrast` |
