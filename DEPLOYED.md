@@ -11,10 +11,10 @@
 
 | Field | Value |
 |-------|--------|
-| Git commit | `8e3b01e` |
+| Git commit | `b412200` |
 | Feature | Donhin form copy test (answer / compensation / owed) and button color test (black / light gray). Yellow button removed. |
 | `pm-release` pin | `2026-10-19-donhin-form-test` |
-| Cloudflare Pages deploy | *(filled after ship)* |
+| Cloudflare Pages deploy | `https://fb0bd347.profitmedia-site.pages.dev` |
 | Deployed at (IL) | 2026-10-19 |
 | Do not roll back past | Any tree older than `2026-10-19-donhin-form-test`. Keep short forms, popup arm, and live arms `answer` / `compensation` / `owed` / `black` / `mist` |
 | Live check | https://profitmedia.co.il/donhin/ and https://profitmedia.co.il/adv_lp3/ must include `pm-release` = `2026-10-19-donhin-form-test` and `donhin-ab.js?v=20261019formtest` |
