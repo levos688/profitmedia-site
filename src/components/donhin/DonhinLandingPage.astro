@@ -1371,6 +1371,21 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
     color: #0f3460;
   }
 
+  .donhin-short-form .donhin-privacy,
+  .donhin-short-form .donhin-form--bottom .donhin-privacy a,
+  .donhin-popup .donhin-privacy,
+  .donhin-popup .donhin-privacy a {
+    color: #fff;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .donhin-short-form .donhin-form--bottom .donhin-privacy a,
+  .donhin-popup .donhin-privacy a {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
   .donhin-error,
   .donhin-status {
     margin: 0.75rem 0 0;
@@ -1566,17 +1581,19 @@ const quizFormTitle = 'Ответьте на вопрос — получите �
   }
 
   :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-btn--brand),
-  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-btn--brand) {
-    background: #fff;
-    color: #143c6f;
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-btn--brand),
+  .donhin-popup .donhin-form--popup-simple .donhin-btn--primary {
+    background: #fcc000;
+    color: #14283f;
     border: none;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
   }
 
   :global(.donhin-short-form.donhin-bottom-form--dark-band) :global(.donhin-btn--brand:hover),
-  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-btn--brand:hover) {
-    background: #f0f6ff;
-    color: #0f2f54;
+  :global(.donhin-short-form[data-ab-band='dark']) :global(.donhin-btn--brand:hover),
+  .donhin-popup .donhin-form--popup-simple .donhin-btn--primary:hover {
+    background: #e6ad00;
+    color: #14283f;
   }
 
   :global(#form-quiz.donhin-form-section--dark-band),
