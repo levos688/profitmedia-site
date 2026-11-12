@@ -36,6 +36,10 @@ interface Props {
 }
 
 const DEFAULT_OG_IMAGE = 'https://profitmedia.co.il/icons/site-icon.png';
+const PROFITMEDIA_META_PIXEL_ID = '176544999928090';
+const PROFITMEDIA_GA4_ID = 'G-V1VC7NHQRZ';
+const PROFITMEDIA_GADS_ID = 'AW-706095450';
+const PROFITMEDIA_GADS_SEND_TO = 'AW-706095450/ILkZCISTo9sCENrS2NAC';
 
 const {
   title = 'פרסום באינטרנט | פרסום שמביא רווחים | Profit Media',
@@ -57,6 +61,8 @@ const {
   enableA11y = true,
 } = Astro.props;
 
+const resolvedMetaPixelId = metaPixelId ?? (enableGtm ? PROFITMEDIA_META_PIXEL_ID : undefined);
+
 const resolvedTwitterCard =
   twitterCard ?? (ogImage !== DEFAULT_OG_IMAGE ? 'summary_large_image' : 'summary');
 
@@ -75,21 +81,24 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {/* Bump this when shipping a site fix so we can confirm prod did not roll back. */}
-    <meta name="pm-release" content="2026-10-19-donhin-page-design" />
+    <meta name="pm-release" content="2026-11-12-direct-tags" />
     {
       enableGtm && (
-        <script is:inline>
-          (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-            var f = d.getElementsByTagName(s)[0],
-              j = d.createElement(s),
-              dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-          })(window, document, 'script', 'dataLayer', 'GTM-57J48TC');
-        </script>
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${PROFITMEDIA_GA4_ID}`}></script>
+          <script is:inline define:vars={{ ga4Id: PROFITMEDIA_GA4_ID, gadsId: PROFITMEDIA_GADS_ID, gadsSendTo: PROFITMEDIA_GADS_SEND_TO, fireLead: metaPixelLead, locale }}>
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+              window.dataLayer.push(arguments);
+            };
+            window.gtag('js', new Date());
+            window.gtag('config', ga4Id, { page_language: locale });
+            window.gtag('config', gadsId);
+            if (fireLead) {
+              window.gtag('event', 'conversion', { send_to: gadsSendTo });
+            }
+          </script>
+        </>
       )
     }
     <meta name="description" content={description} />
@@ -176,18 +185,10 @@ const canonicalUrl = canonical ?? Astro.url.href;
     />
     <title>{title}</title>
     {
-      enableGtm && (
-        <script is:inline define:vars={{ locale }}>
-          window.dataLayer = window.dataLayer || [];
-          window.dataLayer.push({ event: 'page_context', page_language: locale });
-        </script>
-      )
-    }
-    {
-      metaPixelId && (
+      resolvedMetaPixelId && (
         <>
-          <script is:inline define:vars={{ metaPixelId, metaPixelLead }}>
-            (function (pixelId, fireLead) {
+          <script is:inline define:vars={{ metaPixelId: resolvedMetaPixelId, metaPixelLead, gadsSendTo: PROFITMEDIA_GADS_SEND_TO, trackContactClicks: enableGtm }}>
+            (function (pixelId, fireLead, gadsLabel, trackContacts) {
               var loaded = false;
 
               function readCookie(name) {
@@ -230,8 +231,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
                 }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
                 fbq('init', pixelId);
-                // Block later GTM / Tag Gateway from also init'ing the Profit Media pixel
-                // on client LPs that already set a dedicated metaPixelId.
+                // Block later Tag Gateway / third-party scripts from also init'ing another pixel
                 (function (allowedId) {
                   var orig = window.fbq;
                   if (typeof orig !== 'function') return;
@@ -265,29 +265,40 @@ const canonicalUrl = canonical ?? Astro.url.href;
                 fbq('track', 'PageView', {}, { eventID: pageViewEventId });
                 sendCapi('PageView', pageViewEventId);
 
-                if (!fireLead) return;
+                if (fireLead) {
+                  var leadEventId = '';
+                  try {
+                    leadEventId = sessionStorage.getItem('donhin_lead_event_id') || '';
+                    sessionStorage.removeItem('donhin_lead_event_id');
+                  } catch (e) {}
+                  if (leadEventId) {
+                    fbq('track', 'Lead', {}, { eventID: leadEventId });
+                  } else {
+                    fbq('track', 'Lead');
+                  }
+                }
 
-                var leadEventId = '';
-                try {
-                  leadEventId = sessionStorage.getItem('donhin_lead_event_id') || '';
-                  sessionStorage.removeItem('donhin_lead_event_id');
-                } catch (e) {}
-                if (leadEventId) {
-                  fbq('track', 'Lead', {}, { eventID: leadEventId });
-                } else {
-                  fbq('track', 'Lead');
+                if (trackContacts) {
+                  document.addEventListener('click', function (ev) {
+                    var link = ev.target && ev.target.closest ? ev.target.closest('a[href^="tel:"], a[href*="wa.me"], a[href*="api.whatsapp.com"]') : null;
+                    if (!link) return;
+                    if (window.fbq) fbq('track', 'Lead');
+                    if (window.gtag && gadsLabel) {
+                      window.gtag('event', 'conversion', { send_to: gadsLabel });
+                    }
+                  });
                 }
               }
 
               loadPixel();
-            })(metaPixelId, metaPixelLead);
+            })(metaPixelId, metaPixelLead, gadsSendTo, trackContactClicks);
           </script>
           <noscript>
             <img
               height="1"
               width="1"
               style="display:none"
-              src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
+              src={`https://www.facebook.com/tr?id=${resolvedMetaPixelId}&ev=PageView&noscript=1`}
               alt=""
             />
             {
@@ -296,7 +307,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
                   height="1"
                   width="1"
                   style="display:none"
-                  src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=Lead&noscript=1`}
+                  src={`https://www.facebook.com/tr?id=${resolvedMetaPixelId}&ev=Lead&noscript=1`}
                   alt=""
                 />
               )
@@ -308,18 +319,6 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <slot name="head" />
   </head>
   <body class="bg-white text-gray-900 antialiased">
-    {
-      enableGtm && (
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-57J48TC"
-            height="0"
-            width="0"
-            style="display:none;visibility:hidden"
-          />
-        </noscript>
-      )
-    }
     <a href="#main-content" class="skip-link">
       {locale === 'he' ? 'דילוג לתוכן' : 'Перейти к содержанию'}
     </a>
