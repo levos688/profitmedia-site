@@ -53,7 +53,7 @@ async function sendSoloEmail(
     'Сейчас работает только один вариант.',
     'Предложи новый challenger — и можно запускать следующий тест.',
     '',
-    'Дашборд: https://profitmedia.co.il/donhin/ab-stats/?token=profitmedia-ab-stats&channel=fb_ads&preset=all_time',
+    'Дашборд: https://profitmedia.co.il/donhin/ab-stats/?channel=fb_ads&preset=all_time',
   ].join('\n');
 
   const from = env.FROM_EMAIL || 'Profit Media <onboarding@resend.dev>';
