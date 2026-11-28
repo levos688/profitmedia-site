@@ -36,6 +36,11 @@ export function withAbStatsSecurityHeaders(response: Response, setAuthCookie = f
   const secured = new Response(response.body, response);
   secured.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
   secured.headers.set('Cache-Control', 'private, no-store');
+  secured.headers.delete('X-Frame-Options');
+  secured.headers.set(
+    'Content-Security-Policy',
+    "frame-ancestors 'self' https://donhin-crm.profitmedia.co.il https://crm.profitmedia.co.il",
+  );
 
   if (setAuthCookie && token) {
     secured.headers.append(
