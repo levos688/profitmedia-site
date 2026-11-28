@@ -26,7 +26,7 @@ fi
 MSG="${1:-Выгрузка на прод}"
 if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
   # Tracked edits only — never scoop untracked dumps like docs/meta-ads-creatives.
-  git add -u -- src docs scripts public package.json wrangler.toml astro.config.mjs
+  git add -u -- src docs scripts public functions package.json wrangler.toml astro.config.mjs
   git add -- scripts/ship.sh package.json запуск
   if git diff --cached --quiet; then
     echo "Nothing staged under src/docs/scripts/public. Stage files, then retry." >&2

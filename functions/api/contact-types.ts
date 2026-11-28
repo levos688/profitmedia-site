@@ -14,6 +14,10 @@ export interface Env {
   /** Dual-write Donhin LP leads into donhin-crm (best-effort). */
   DONHIN_CRM_INTAKE_URL?: string;
   DONHIN_CRM_INTAKE_KEY?: string;
+  /** Optional Cloudflare Turnstile secret key for /api/contact verification. */
+  TURNSTILE_SECRET_KEY?: string;
+  /** KV namespace used for IP rate limiting on /api/contact. */
+  DONHIN_AB_STATS?: KVNamespace;
 }
 
 export interface UtmParams {
@@ -50,6 +54,11 @@ export interface ContactPayload {
   device?: string;
   /** Visible CTA / A/B button copy that opened or submitted the form */
   ctaLabel?: string;
+  /** Honeypot fields (must remain empty for human submissions) */
+  hp?: string;
+  website?: string;
+  /** Cloudflare Turnstile token */
+  turnstileToken?: string;
 }
 
 export interface LeadData extends Required<Pick<ContactPayload, 'name' | 'phone'>> {
