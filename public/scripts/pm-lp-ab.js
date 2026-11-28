@@ -110,7 +110,16 @@
 
   function writeAssignments(assignments) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments));
+      var safe = {};
+      if (assignments && typeof assignments === 'object') {
+        Object.keys(CONFIG).forEach(function (slot) {
+          var val = assignments[slot];
+          if (typeof val === 'string' && variantExists(slot, val)) {
+            safe[slot] = val;
+          }
+        });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(safe));
     } catch (e) {}
   }
 

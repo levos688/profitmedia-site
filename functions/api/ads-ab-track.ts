@@ -1,5 +1,6 @@
 import type { AbChannel, AbMetric, AbTrackEvent } from './ads-ab-stats-core';
 import { incrementAbMetrics } from './ads-ab-stats-core';
+import { guardPublicPost } from '../lib/request-guard';
 
 interface Env {
   AB_DB: D1Database;
@@ -40,6 +41,9 @@ function normalizeEvents(body: TrackPayload): AbTrackEvent[] {
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
   const { request, env } = context;
+
+  const blocked = guardPublicPost(request);
+  if (blocked) return blocked;
 
   if (!env.AB_DB) {
     return json({ ok: false, error: 'Stats storage is not configured' }, 503);

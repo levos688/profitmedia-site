@@ -4,6 +4,7 @@ import {
   type LpAbMetric,
   type LpAbTrackEvent,
 } from './lp-ab-stats-core';
+import { guardPublicPost } from '../lib/request-guard';
 
 interface Env {
   AB_DB: D1Database;
@@ -25,6 +26,9 @@ const json = (body: object, status = 200) =>
   });
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
+  const blocked = guardPublicPost(context.request);
+  if (blocked) return blocked;
+
   if (!context.env.AB_DB) return json({ ok: false, error: 'Stats storage is not configured' }, 503);
 
   let body: TrackPayload;

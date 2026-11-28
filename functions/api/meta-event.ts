@@ -1,5 +1,6 @@
 import type { Env } from './contact-types';
 import { sendMetaPageViewEvent } from './meta-capi';
+import { guardPublicPost } from '../lib/request-guard';
 
 const json = (body: object, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -19,6 +20,9 @@ interface MetaEventPayload {
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
   const { request, env } = context;
+
+  const blocked = guardPublicPost(request);
+  if (blocked) return blocked;
 
   if (request.headers.get('Content-Type')?.includes('application/json') === false) {
     return json({ ok: false, error: 'Invalid content type' }, 415);

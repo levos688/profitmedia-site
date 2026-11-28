@@ -132,7 +132,7 @@ for (const page of pageDescriptors) {
 
 const sitemapPath = resolve(root, 'dist/sitemap.xml');
 assert.ok(existsSync(sitemapPath), 'Generated sitemap is missing');
-execFileSync('xmllint', ['--noout', sitemapPath], { stdio: 'pipe' });
+execFileSync('/usr/bin/xmllint', ['--noout', sitemapPath], { stdio: 'pipe' });
 const sitemap = read('dist/sitemap.xml');
 const urlBlocks = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
 assert.equal(urlBlocks.length, 24, 'Sitemap must contain exactly 24 URL entries');

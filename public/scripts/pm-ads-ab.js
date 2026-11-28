@@ -179,7 +179,16 @@
 
   function writeAssignments(assignments) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments));
+      var safe = {};
+      if (assignments && typeof assignments === 'object') {
+        Object.keys(assignments).forEach(function (key) {
+          var val = assignments[key];
+          if (typeof val === 'string' && /^[a-zA-Z0-9_-]{1,64}$/.test(val)) {
+            safe[key] = val;
+          }
+        });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(safe));
     } catch (e) {}
   }
 

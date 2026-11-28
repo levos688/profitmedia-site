@@ -1,6 +1,7 @@
 import type { ContactPayload, Env, LeadData, UtmParams } from './contact-types';
 import { buildDonhinLeadText, getDonhinRecipients } from './donhin-lead';
 import { sendMetaLeadEvent } from './meta-capi';
+import { guardPublicPost } from '../lib/request-guard';
 
 const json = (body: object, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -484,94 +485,11 @@ function pickTracking(body: ContactPayload): Record<string, string> {
   return out;
 }
 
-const BLOCKED_UA_RE =
-  /\b(curl|wget|python-requests|python-urllib|aiohttp|httpx|go-http-client|axios|node-fetch|undici|httpie|postman|insomnia|libwww-perl|okhttp|java\/)\b/i;
-
-function isAllowedOrigin(originHeader: string | null): boolean {
-  if (!originHeader) return false;
-  try {
-    const url = new URL(originHeader);
-    const host = url.hostname.toLowerCase();
-    if (
-      host === 'profitmedia.co.il' ||
-      host === 'www.profitmedia.co.il' ||
-      host === 'profitmedia-site.pages.dev' ||
-      host.endsWith('.profitmedia-site.pages.dev')
-    ) {
-      return url.protocol === 'https:';
-    }
-    if (host === 'localhost' || host === '127.0.0.1') {
-      return url.protocol === 'http:' || url.protocol === 'https:';
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-function isBlockedUserAgent(ua: string | null): boolean {
-  const trimmed = (ua || '').trim();
-  if (!trimmed) return true;
-  return BLOCKED_UA_RE.test(trimmed);
-}
-
-function isJunkLead(phone: string, email: string): boolean {
-  const digits = phone.replace(/\D/g, '');
-  if (/^(\d)\1+$/.test(digits)) return true;
-  if (/^05\d(\d)\1{6}$/.test(digits)) return true;
-  if (digits === '1234567890' || digits === '0123456789' || digits === '0501234567') {
-    return true;
-  }
-  if (email && /@(example\.(com|org|net)|test\.com|mailinator\.com)$/i.test(email)) {
-    return true;
-  }
-  return false;
-}
-
-async function isRateLimited(env: Env, ip: string): Promise<boolean> {
-  if (!env.DONHIN_AB_STATS || !ip) return false;
-  const key = `rl:contact:${ip}`;
-  try {
-    const current = Number((await env.DONHIN_AB_STATS.get(key)) || '0');
-    if (current >= 5) return true;
-    await env.DONHIN_AB_STATS.put(key, String(current + 1), { expirationTtl: 600 });
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-async function verifyTurnstile(secret: string, token: string, ip: string): Promise<boolean> {
-  if (!token) return false;
-  try {
-    const body = new URLSearchParams({ secret, response: token });
-    if (ip) body.set('remoteip', ip);
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-      signal: AbortSignal.timeout(5_000),
-    });
-    if (!res.ok) return false;
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
-  } catch {
-    return false;
-  }
-}
-
 export async function onRequestPost(context: { request: Request; env: Env }) {
   const { request, env } = context;
 
-  const origin = request.headers.get('Origin');
-  const secFetchSite = request.headers.get('Sec-Fetch-Site');
-  if (!isAllowedOrigin(origin) || secFetchSite === 'cross-site') {
-    return json({ ok: false, error: 'Forbidden' }, 403);
-  }
-
-  if (isBlockedUserAgent(request.headers.get('User-Agent'))) {
-    return json({ ok: false, error: 'Forbidden' }, 403);
-  }
+  const blocked = guardPublicPost(request);
+  if (blocked) return blocked;
 
   if (request.headers.get('Content-Type')?.includes('application/json') === false) {
     return json({ ok: false, error: 'Invalid content type' }, 415);

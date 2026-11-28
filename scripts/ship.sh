@@ -47,7 +47,7 @@ fi
 
 git push origin main
 
-npx wrangler pages deploy dist --project-name=profitmedia-site --commit-dirty=true
+./node_modules/.bin/wrangler pages deploy dist --project-name=profitmedia-site --commit-dirty=true
 
 echo "Checking live pin..."
 LIVE=""
