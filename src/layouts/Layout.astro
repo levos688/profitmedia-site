@@ -81,7 +81,8 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {/* Bump this when shipping a site fix so we can confirm prod did not roll back. */}
-    <meta name="pm-release" content="2026-11-12-direct-tags" />
+    <meta name="pm-release" content="2026-11-28-contact-guard" />
+    <meta name="pm-turnstile-site-key" content={import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || ''} />
     {
       enableGtm && (
         <>
@@ -571,5 +572,6 @@ const canonicalUrl = canonical ?? Astro.url.href;
         }
       })();
     </script>
+    <script defer src="/scripts/pm-contact-guard.js"></script>
   </body>
 </html>
